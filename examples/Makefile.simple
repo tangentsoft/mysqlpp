@@ -1,6 +1,6 @@
 ## This version of the Makefile is for compiling the examples outside the
 ## mysql++ source tree, using the MySQL++ library and headers installed
-## into the system directories rather than the ones in ../src.
+## into the system directories.
 
 # --- Things you might need to change:
 

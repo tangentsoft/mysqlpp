@@ -5,7 +5,7 @@
     <VERSION value="BCB.06.00"/>
     <PROJECT value="P:\mtkProject\StableBins\mysqlpp.lib"/>
     <OBJFILES value="field_types.obj connection.obj datetime.obj field_names.obj coldata.obj 
-      manip.obj query.obj result.obj set.obj sql_query.obj string_util.obj 
+      manip.obj query.obj result.obj set.obj sql_query.obj sql_string.obj string_util.obj 
       type_info.obj vallist.obj"/>
     <RESFILES value=""/>
     <DEFFILE value=""/>
@@ -41,19 +41,20 @@
   </LINKER>
   <FILELIST>
       <FILE FILENAME="mysqlpp.bpf" FORMNAME="" UNITNAME="mysqlpp" CONTAINERID="BPF" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="field_types.cc" FORMNAME="" UNITNAME="field_types.cc" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="connection.cc" FORMNAME="" UNITNAME="connection.cc" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="datetime.cc" FORMNAME="" UNITNAME="datetime.cc" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="field_names.cc" FORMNAME="" UNITNAME="field_names.cc" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="coldata.cc" FORMNAME="" UNITNAME="coldata.cc" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="manip.cc" FORMNAME="" UNITNAME="manip.cc" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="query.cc" FORMNAME="" UNITNAME="query.cc" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="result.cc" FORMNAME="" UNITNAME="result.cc" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="set.cc" FORMNAME="" UNITNAME="set.cc" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="sql_query.cc" FORMNAME="" UNITNAME="sql_query.cc" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="string_util.cc" FORMNAME="" UNITNAME="string_util.cc" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="type_info.cc" FORMNAME="" UNITNAME="type_info.cc" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="vallist.cc" FORMNAME="" UNITNAME="vallist.cc" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="field_types.cpp" FORMNAME="" UNITNAME="field_types.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="connection.cpp" FORMNAME="" UNITNAME="connection.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="datetime.cpp" FORMNAME="" UNITNAME="datetime.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="field_names.cpp" FORMNAME="" UNITNAME="field_names.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="coldata.cpp" FORMNAME="" UNITNAME="coldata.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="manip.cpp" FORMNAME="" UNITNAME="manip.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="query.cpp" FORMNAME="" UNITNAME="query.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="result.cpp" FORMNAME="" UNITNAME="result.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="set.cpp" FORMNAME="" UNITNAME="set.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="sql_query.cpp" FORMNAME="" UNITNAME="sql_query.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="sql_string.cpp" FORMNAME="" UNITNAME="sql_string.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="string_util.cpp" FORMNAME="" UNITNAME="string_util.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="type_info.cpp" FORMNAME="" UNITNAME="type_info.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="vallist.cpp" FORMNAME="" UNITNAME="vallist.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>

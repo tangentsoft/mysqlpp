@@ -1,3 +1,21 @@
+1.7.27, 2004.01.12
+
+	o configure check for libmysqlclient now halts configuration if the
+	  library isn't found.  Previously, it would just be flagged as
+	  missing, and MySQL++ would fail to build.
+
+	o Added sql_string.cpp to VC++ and BCBuilder project files.
+
+	o Removed Totte Karlsson's 'populate' example, which never made it
+	  into the distribution anyway.
+
+	o Removed last vestiges of 'dummy.cpp'.
+
+	o Renamed *.cc to *.cpp in BCBuilder project files.
+
+	o Worked around a BCBuilder C++ syntax processing bug in row.h.
+
+
 1.7.26, 2004.12.17
 
 	o Moved all of the SQLString definitions out of the header and into

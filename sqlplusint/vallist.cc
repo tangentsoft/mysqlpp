@@ -1,6 +1,12 @@
-#include "vallist3.hh"
-#include "row2.hh"
+#include "vallist.h"
+
+#include "result.h"
+#include "row.h"
+
 using std::string;
+using namespace mysqlpp;
+
+
 void create_vector(int size, std::vector<bool>& v, bool t0,
 		   bool t1, bool t2, bool t3, bool t4,
 		   bool t5, bool t6, bool t7, bool t8,

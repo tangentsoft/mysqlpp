@@ -1,13 +1,16 @@
-#include <datetime1.hh>
-#include <set1.hh>
-#include <type_info3.hh>
+#include "platform.h"
 
-#include <mysql++-windows.hh>
+#include "datetime.h"
+#include "set.h"
+#include "type_info.h"
+
 #include <mysql.h>
 
 #include <string>
 
 using namespace std;
+using namespace mysqlpp;
+
 
 typedef string Enum;
 

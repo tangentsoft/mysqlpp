@@ -1,11 +1,13 @@
-#ifdef __WIN32__
-#include <winsock.h>
-#endif
+#define MYSQLPP_NOT_HEADER
+#include "platform.h"
 
-#include "sql_query3.hh"
-#include "exceptions.hh"
+#include "sql_query.h"
+
+#include "exceptions.h"
 
 using namespace std;
+using namespace mysqlpp;
+
 
 SQLQuery::SQLQuery(const SQLQuery &q) :
 stringstream(const_cast<SQLQuery&>(q).str()),	// yes, the cast is evil -- got a better idea?

@@ -1,11 +1,12 @@
-#ifdef __WIN32__
-#include <winsock.h>
-#endif
+#define MYSQLPP_NOT_HEADER
+#include "platform.h"
 
-#include "datetime3.hh"
+#include "datetime.h"
+
 #include <iomanip>
 
 using namespace std;
+using namespace mysqlpp;
 
 ostream& mysql_date::out_stream (ostream& s) const {
   char fill = s.fill('0');
@@ -29,7 +30,7 @@ ostream& mysql_time::out_stream (ostream& s) const {
   return s;
 }
 
-ostream& MysqlDateTime::out_stream (ostream& s) const {
+ostream& DateTime::out_stream (ostream& s) const {
   mysql_date::out_stream(s);
   s << " ";
   mysql_time::out_stream(s);
@@ -62,7 +63,7 @@ cchar* mysql_time::convert (cchar* str) {
   return str;
 }
 
-cchar* MysqlDateTime::convert (cchar* str) {
+cchar* DateTime::convert (cchar* str) {
   str = mysql_date::convert(str);
   if (*str == ' ') str++;
   str = mysql_time::convert(str);
@@ -81,7 +82,7 @@ short int mysql_time::compare(const mysql_time* other) const {
   return second - other->second;
 }
 
-short int MysqlDateTime::compare(const MysqlDateTime &other) const {
+short int DateTime::compare(const DateTime &other) const {
   int x;
   x = mysql_date::compare(&other);
   if (x) return x;

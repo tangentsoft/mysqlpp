@@ -1,4 +1,6 @@
+#include "set.h"
 
-#include "set3.hh"
+using namespace mysqlpp;
+
 
 template class Set<std::set<std::string> >;

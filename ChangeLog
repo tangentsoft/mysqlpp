@@ -1,3 +1,43 @@
+1.7.20, 2004.11.03
+
+	o Collapsed all numbered *.hh headers into a single *.h file.  For
+	  example, the contents of row1.hh, row2.hh and row3.hh are now in
+	  row.h.
+
+	o While doing the previous change, broke several circular
+	  dependencies.  (The numbered file scheme was probably partly done
+	  to avoid this problem.)  The practical upshot of most of these
+	  changes is that some functions are no longer inline.
+
+	o Removed define_short.hh and everything associated with it.  The
+	  library now uses the short names exclusively (e.g. Row instead of
+	  MysqlRow).
+
+	o Put all definitions into namespace mysqlpp.  For most programs,
+	  simply adding a 'using namespace mysqlpp' near the top of the
+	  program will suffice to convert to this version.
+
+	o Once again, the main include file was renamed, this time to
+	  mysql++.h.  Hopefully this is the last renaming!
+
+	o mysql++.hh still exists.  It emits a compiler warning that the
+	  file is obsolete, then it #includes mysql++.h for you.
+
+	o sqlplus.hh is back, being a copy of the new mysql++.hh.  Both of
+	  these files may go away at any time.  They exist simply to help
+	  people transition to the new file naming scheme.
+
+	o Renamed mysql++-windows.hh to platform.h, and added code to it to
+	  handle #inclusion of config.h on autotools-based systems
+	  intelligently.  This fixes the config.h error when building under
+	  Visual C++.
+
+	o There is now only one place where conditional inclusion of
+	  winsock.h happens: platform.h.
+
+	o Beautified the example programs.
+
+
 1.7.19, 2004.10.25
 
 	o Fixed an infinite loop in the query mechanism resulting from the

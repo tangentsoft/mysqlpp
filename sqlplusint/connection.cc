@@ -1,12 +1,17 @@
-#include "connection3.hh"
-#include "result3.hh"
-#include "config.h"
+#define MYSQLPP_NOT_HEADER
+#include "platform.h"
+
+#include "connection.h"
+
+#include "result.h"
 
 #if defined(HAVE_MYSQL_SHUTDOWN_LEVEL_ARG)
 #	define SHUTDOWN_ARG ,SHUTDOWN_DEFAULT
 #else
 #	define SHUTDOWN_ARG
 #endif
+
+using namespace mysqlpp;
 
 Connection::Connection (const char *db, const char *host, const char *user, 
 			const char *passwd, bool te) 
@@ -78,19 +83,19 @@ Connection::~Connection () {
 
 bool Connection::select_db (const char *db) {
   bool suc = !(mysql_select_db(&mysql, db));
-  if (throw_exceptions && !suc) throw MysqlBadQuery(error());
+  if (throw_exceptions && !suc) throw BadQuery(error());
   else return suc;
 }
 
 bool Connection::reload() {
   bool suc = !mysql_reload(&mysql);
-  if (throw_exceptions && !suc) throw MysqlBadQuery(error());
+  if (throw_exceptions && !suc) throw BadQuery(error());
   else return suc;
 }
 
 bool Connection::shutdown () {
   bool suc = !(mysql_shutdown(&mysql SHUTDOWN_ARG));
-  if (throw_exceptions && !suc) throw MysqlBadQuery(error());
+  if (throw_exceptions && !suc) throw BadQuery(error());
   else return suc;
 }  
 
@@ -174,5 +179,8 @@ ResUse Connection::use(const std::string &str, bool throw_excptns) {
   return ResUse(mysql_use_result(&mysql), this);
 }
 
-
+Query Connection::query()
+{
+	return Query(this, throw_exceptions);
+}
 

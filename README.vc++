@@ -2,10 +2,6 @@ Building the Library and Example Programs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	The included project files (mysql++.sln and all the *.vcproj
 	files) work with Visual C++ 7.1, part of Visual Studio 2003.
-	The only thing you're likely to need to change is the location
-	of the MySQL client library.  I installed MySQL in c:\Program
-	Files\mysql on my development system, so it'll work without
-	change if you do the same.
 
 	I did try to get the library to work with VC++ 7.0, but there
 	were too many cases where the compiler wasn't adequately close
@@ -15,6 +11,14 @@ Building the Library and Example Programs
 	VC++ 6.0 and older are all but hopeless from the conformance
 	point of view.	MySQL++ pushes the C++ language hard, and VC++
 	6 just can't put up with this.
+
+	If you didn't install MySQL in the default location (c:\mysql),
+	you will have to change the project settings for the MySQL client
+	library include and library paths.
+
+	You should look through the Windows-specific section of
+	sqlplusint\platform.h to see if there are any #defines that you need
+	to uncomment on your system.
 
 
 Making a New MySQL++-Using Solution

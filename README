@@ -25,9 +25,10 @@ The configure script takes several interesting options.  Say,
 
 to get a list.
 
-Because MySQL++ comes with a great many header files, I highly recommend
-you add '--includedir=/usr/local/include/mysql++' to the configure
-command.  This puts the MySQL++ header files in their own directory.
+Because MySQL++ comes with a great many header files -- some of which
+have some fairly generic names -- I highly recommend you add something
+like '--includedir=/usr/local/include/mysql++' to the configure command.
+This puts the MySQL++ header files in their own directory.
 
 If you wish to install mysql++ in a root directory other than /usr/local,
 run configure with --prefix=.....
@@ -38,19 +39,23 @@ properly.  See examples/README for further details.
 
 If you've got a fresh CVS checkout, you will need to say:
 
-	$ ./bootstrap
+	$ ./bootstrap [options]
 
-before running configure for the first time.  The bootstrap script
-should only need to be run once in normal circumstances.  Occasionally
-automake/autoconf gets confused and you have to run it again, but this
-only affects people tweaking these configuration files. (*.am, *.in,
-and everything in the config subdir, mostly.)
+before running configure for the first time.  Any options given to the
+bootstrap script are passed to the configure script, which is run with
+the "maintainer mode" option.  Because we set the maintainer mode, the
+bootstrap script should only need to be run once in normal circumstances.
+Occasionally automake/autoconf gets confused and you have to run it again,
+but this only affects people tweaking these configuration files. (*.am,
+*.in, and everything in the config subdir, mostly.)
 
-At the moment, this project only builds under GCC 3.0 and higher. If
-enough demand is there, I can fix it to build under 2.95 and newer again.
-I'd rather that people just upgraded to 3.x, though. I won't be making
-any effort to support older compilers.
+At the moment, this project only builds under GCC 3.0 and higher. It's
+probably possible to make it work on 2.95.x versions without breaking
+forward compatibility, but I'll only go to that effort if demand is there.
+So far, it seems that most people are just upgrading to GCC 3.x where
+necessary.
 
-As for non-GCC compilers, these ports will live solely through contributed
-patches. I don't have access to any non-GCC based systems, so if you
-want support for those systems, you'll have to help out.
+I only have access to GCC-based Linux systems, and Visual C++ on
+Windows. All other ports will live or die solely as a function of
+contributed patches. If you want support for a currently-unsupported
+system, you'll have to help out.

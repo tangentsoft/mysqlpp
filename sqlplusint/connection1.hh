@@ -109,8 +109,8 @@ public:
 	std::string infoo (void) {return info ();}
 	st_mysql_options get_options (void) const {return mysql.options;}
 	int read_options(enum mysql_option option,const char *arg) {return  mysql_options(&mysql, option,arg);}
-  int          affected_rows()  {return mysql_affected_rows((MYSQL*) &mysql);}
-  int          insert_id () {return mysql_insert_id(&mysql);}
+  my_ulonglong affected_rows()  {return mysql_affected_rows((MYSQL*) &mysql);}
+  my_ulonglong insert_id () {return mysql_insert_id(&mysql);}
 
   template <class Sequence> void storein_sequence(Sequence &, const std::string &); //:
   template <class Set>      void storein_set(Set &, const std::string &);  //:

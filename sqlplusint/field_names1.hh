@@ -34,7 +34,7 @@ public:
   uint     operator [] (std::string i) const
   {
 	  std::string temp(i); str_to_lwr(temp);
-	  return std::find(begin(),end(), temp) - begin();
+	  return uint(std::find(begin(),end(), temp) - begin());
 	}
   //: returns the index number of the field with that name
 };

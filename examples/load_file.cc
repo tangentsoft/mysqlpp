@@ -1,10 +1,12 @@
-#include <sys/stat.h>
-#include <fstream>
 #include <mysql++.hh>
+
+#include <sys/stat.h>
+
+#include <stdlib.h>
+#include <fstream>
 
 using namespace std;
 
-extern int errno;
 const char  MY_DATABASE[]="telcent";
 const char  MY_TABLE[]="fax";
 const char  MY_HOST[]="localhost";

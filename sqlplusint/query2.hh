@@ -39,11 +39,11 @@ inline Result Query::store(parms &p, query_reset r) {
   return mysql->store(str(p,r));
 }
 
-inline int Query::affected_rows() const {
+inline my_ulonglong Query::affected_rows() const {
   return mysql->affected_rows();
 }
 
-inline int Query::insert_id () {
+inline my_ulonglong Query::insert_id () {
   return mysql->insert_id();
 }
 

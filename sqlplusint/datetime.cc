@@ -39,26 +39,26 @@ ostream& MysqlDateTime::out_stream (ostream& s) const {
 cchar* mysql_date::convert (cchar* str) {
   char num[5];
   num[0] =*str++; num[1] =*str++; num[2] =*str++; num[3] =*str++; num[4] = 0;
-  year = strtol(num,0,10);
+  year = short(strtol(num,0,10));
   if (*str == '-') str++;
   num[0] = *str++; num[1] = *str++; num[2] = 0;
-  month = strtol(num,0,10);
+  month = short(strtol(num,0,10));
   if (*str == '-') str++;
   num[0] = *str++; num[1] = *str++; num[2] = 0;
-  day = strtol(num,0,10);
+  day = short(strtol(num,0,10));
   return str;
 }
 
 cchar* mysql_time::convert (cchar* str) {
   char num[5];
   num[0] = *str++; num[1] = *str++; num[2] = 0;
-  hour = strtol(num,0,10);
+  hour = short(strtol(num,0,10));
   if (*str == ':') str++;
   num[0] = *str++; num[1] = *str++; num[2] = 0;
-  minute = strtol(num,0,10);
+  minute = short(strtol(num,0,10));
   if (*str == ':') str++;
   num[0] = *str++; num[1] = *str++; num[2] = 0;
-  second = strtol(num,0,10);
+  second = short(strtol(num,0,10));
   return str;
 }
 

@@ -1,3 +1,12 @@
+1.7.16, 2004.09.13
+
+	o Building VC++ version with DLL version of C runtime libraries, and
+	  at warning level 3 with no warnings emitted.
+
+	o VC++ build no longer attempts to fake "long long" support.  See
+	  the Wishlist for further thoughts on this.
+
+
 1.7.15, 2004.09.02
 
 	o Renamed Configure file to common.am, to avoid file name conflict

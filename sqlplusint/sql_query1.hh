@@ -26,7 +26,7 @@ private:
 public:
   SQLQueryParms () : parent(NULL) {} 
   SQLQueryParms (SQLQuery *p) : parent(p) {}
-  bool  bound() {return parent;}
+  bool  bound() { return parent != 0; }
   void               clear() {erase(begin(),end());} //: Clears the list
   SQLString &operator [] (size_type n) {
     if (n >= size()) insert(end(),(n+1) - size(), "");

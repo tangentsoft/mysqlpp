@@ -48,7 +48,7 @@ public:
   }
 
   //: raw c api function
-  bool          eof () const {return mysql_eof(mysql_res);}
+  bool          eof () const {return mysql_eof(mysql_res) != 0;}
   //: raw c api function
   long unsigned int *fetch_lengths () const {return mysql_fetch_lengths(mysql_res);}
   //: raw c api function
@@ -170,15 +170,15 @@ public:
   }
 
   //: Raw c api function
-  int          num_rows() const {return mysql_num_rows(mysql_res);}
+  my_ulonglong  num_rows() const {return mysql_num_rows(mysql_res);}
   //: Raw c api function
   void         data_seek (uint offset) const 
     {mysql_data_seek(mysql_res, offset);}
   //: Raw c api function
 
-  size_type size() const {return num_rows();}
+  size_type size() const { return size_type(num_rows()); }
   //: Returns the number of rows
-  size_type rows() const {return num_rows();}
+  size_type rows() const { return size_type(num_rows()); }
   //: Returns the number of rows.
   const Row operator [] (size_type i) const {data_seek(i); return fetch_row();}
   //: Returns the row with an offset of i.
@@ -207,10 +207,10 @@ inline void swap (Result &x, Result &y) {
 //: don't return any results.
 class ResNSel {
 public:
-  bool     success;   
-  int      insert_id; //: 
-  int      rows;      //: Number of rows affected
-  std::string   info;      //: Additional info
+  bool success;   
+  my_ulonglong insert_id;	//: 
+  my_ulonglong rows;		//: Number of rows affected
+  std::string info;			//: Additional info
 
   ResNSel() : success(false) {};
   ResNSel (Connection *q);

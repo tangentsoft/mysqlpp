@@ -23,7 +23,13 @@ Patches for any of these thoughtfully considered!
 
 	o Why can Query objects not be reused?
 
-	o Get VC++ to build project without warnings on at least /W3.
-
 	o Documentation could probably use a thorough reworking.
 
+	o Overload SQLQuery::insert() to accept a pair of STL iterators
+	  for mass insertion of a range within a container.
+
+	o VC++ supports 64-bit ints, but not as "long long"s as GCC does.
+	  If someone needs 64-bit support, they need to undefine
+	  NO_LONG_LONGS in mysql++-windows.hh, use functions like strtoi64()
+	  instead of strtoll(), and use __int64 instead of long long.  To do
+	  this portably, it isn't a trivial conversion.

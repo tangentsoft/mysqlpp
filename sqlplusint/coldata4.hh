@@ -5,10 +5,14 @@
 
 #include "coldata3.hh"
 
+#include "string_util.hh"
+
 template <class Str> template<class Type> 
 Type mysql_ColData<Str>::conv (Type dummy) const {
-  size_t len = size();
-  const char *str = c_str();
+	string strbuf(buf);
+	strip_all_blanks(strbuf);
+  size_t len = strbuf.size();
+  const char *str = strbuf.c_str();
   const char *end = str;
   Type num = mysql_convert<Type>(str, end);
   if (*end == '.') {

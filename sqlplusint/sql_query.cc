@@ -1,5 +1,3 @@
-#include <mysql++-config.hh>
-
 #ifdef __WIN32__
 #include <Windows32/Base.h>
 #include <Windows32/Defines.h>
@@ -42,7 +40,7 @@ char * SQLQuery::preview_char() {
 #else
   uint length = pcount();
 #endif
-  char *s = new char[length]; 
+  char *s = new char[length+1]; 
   get(s, length, '\0'); 
   seekg (0,ios::beg);
   seekp (-1,ios::cur);
@@ -52,7 +50,7 @@ char * SQLQuery::preview_char() {
 SQLString * pprepare (char option, SQLString &S, bool replace = true) {
   if (S.processed) return &S;
   if (option == 'r' || (option == 'q' && S.is_string)) {
-    char *s = new char[S.size()*2];
+    char *s = new char[S.size()*2 + 1];
     mysql_escape_string(s,const_cast<char *>(S.c_str()),S.size());
     SQLString *ss = new SQLString("'");
     *ss += s;
@@ -102,10 +100,10 @@ string SQLQuery::str(const SQLQueryParms &p) const {
   *const_this << ends;
 #ifdef __USLC__
   strstreambuf *tmpbuf = const_this->rdbuf();
-  uint length = tmpbuf->pcount();
+  uint length = tmpbuf->pcount() + 1;
   char *s = new char[length]; 
 #else
-  uint length = const_this->pcount();
+  uint length = const_this->pcount() + 1;
   char s[length]; 
 #endif
   const_this->get(s, length, '\0'); 

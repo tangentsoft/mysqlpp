@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include "bad_query.hh"
 #include "defs"
 #include "define_short"
 #include "coldata1.hh"
@@ -223,31 +224,30 @@ public:
   virtual ~RowTemplate() {}
 };
 
-class MutableRes;
-template <class Res = ResUse> class MutableRow;
-
 //: This class handles the actual rows in an intelligent manner.
 class Row : public const_subscript_container<Row,ColData,const ColData>,
 	    public RowTemplate<Row, ResUse>
 {
-  friend MutableRow<ResUse>;
-  friend MutableRow<MutableRes>;
 private:
-//  MYSQL_ROW    data;
   vector <string> data;
+	vector <bool> is_nulls;
   const ResUse *res;
-  bool         throw_exceptions;
+  bool         throw_exceptions, initialized;
 
 public:
   Row() {}
   Row(MYSQL_ROW d, const ResUse *r, unsigned int *jj, bool te = false) 
-    : res(r), throw_exceptions(te) 
+    : res(r), throw_exceptions(te), initialized(false)
 		{
-		  if (!d) return;
-		  data.clear();
+		  if (!d || !r) {
+				if (throw_exceptions) throw BadQuery("ROW or RES is NULL");
+				else return;
+			}
+		  data.clear(); is_nulls.clear(); initialized=true;
 		  for (unsigned int i=0;i<size();i++) 
 			{
 			  data.insert(data.end(),(d[i]) ? string(d[i],jj[i]) : (string)"");
+				is_nulls.insert(is_nulls.end(),d[i] ? false : true);
 			}
 		}
   const Row& self() const {return *this;}
@@ -256,7 +256,13 @@ public:
   const ResUse&  parent() const {return *res;}
   inline size_type     size() const;
   //: Returns the number of columns.
-  const ColData   operator [] (int i) const {return operator[](size_type(i));}
+  const ColData   operator [] (int i) const {
+	  if (!initialized) {
+				if (throw_exceptions) throw BadQuery("Row not initialized");
+				else return ColData();
+			}
+		return operator[](size_type(i));
+	}
   inline const ColData   operator [] (size_type i) const;
   //: Returns the value of the field with the index of i.
   inline const ColData   operator [] (const char *) const;
@@ -270,72 +276,8 @@ public:
 
   operator bool() const {return (data.size()) ? true : false;}
   //: Returns true if there is data in the row.
-	~Row() {data.clear();}	
+	~Row() {data.clear(); is_nulls.clear(); initialized = false;}	
 }; 
-
-//! with_class = MutableRow
-
-//: This class handles the actual rows with the added benefit of being able to modify the data.
-template <class Res>
-class MutableRow_base : public vector<MutableColData>, 
-			public RowTemplate<MutableRow_base<Res>, Res>
-{
-private:
-  const Res *res;
-  typedef vector<MutableColData> parent_type;
-protected:
-  MutableRow_base& self() {return *this;}
-  const MutableRow_base& self() const {return *this;}
-  MutableRow_base() {}
-  MutableRow_base (const Res *r) : res(r) {}
-public:
-  const Res& parent() const {return *res;}
-
-  string& table() {return res->table();}
-  const string& table() const {return res->table();}
-
-  MutableColData&  operator [] (int i) 
-    {return parent_type::operator [](i);}
-  //: Returns the value of the field with the index of i.
-  MutableColData&  operator [] (unsigned int i) 
-    {return parent_type::operator [](i);}
-  const MutableColData&  operator [] (int i) const
-    {return parent_type::operator [](i);}
-  //: Returns the value of the field with the index of i.
-  const MutableColData&  operator [] (unsigned int i) const
-    {return parent_type::operator [](i);}
-
-  MutableColData&  operator [] (const char *);
-  MutableColData&  operator [] (const string &i);
-  //: Returns the value of the field with the field name of i.
-  // This method is not nearly as efficient as using the index number. Use sparingly. 
-
-  const MutableColData&  operator [] (const char *) const;
-  const MutableColData&  operator [] (const string &i) const;
-  //: Returns the value of the field with the field name of i.
-  // This method is not nearly as efficient as using the index number. Use sparingly. 
-
-  operator bool() const {return empty();}
-  //: Returns true if there is data in the row.
-};
-
-template <class Res> class MutableRow {};
-
-
-//:
-//!dummy: template <class Res = ResUse> class MutableRow : public MutableRow_base<Res> {};
-
-class MutableRow<ResUse> : public MutableRow_base<ResUse> {
-public:
-  MutableRow(const Row& row);
-  MutableRow(const ResUse &res);
-};
-
-class MutableRow<MutableRes> : public MutableRow_base<MutableRes> {
-public:
-  MutableRow(const Row& row, const MutableRes *_res); 
-  inline MutableRow(const MutableRes *_res);        
-};
 
 
 #endif

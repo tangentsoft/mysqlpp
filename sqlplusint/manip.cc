@@ -1,4 +1,3 @@
-#include <mysql++-config.hh>
 
 #include "manip3.hh"
 
@@ -18,7 +17,7 @@ SQLQueryParms& operator << (quote_type2 p, SQLString &in) {
       SQLString in2 = SQLString("'") + s + "'";
       in2.processed = true;
       *p.qparms << in2;
-      delete s;
+      delete[] s;
       return *p.qparms;
     }
   } else {
@@ -32,7 +31,7 @@ ostream& operator << (quote_type1 o, const string &in) {
   char* s = new char[in.size()*2+1];
   mysql_escape_string(s, const_cast<char *>(in.c_str()), in.size() );
   *o.ostr << "'" << s << "'";
-  delete s;
+  delete[] s;
   return *o.ostr;
 }
 
@@ -40,10 +39,10 @@ template <>
 ostream& operator << (quote_type1 o, const char* const &in) {
   unsigned int size;
   for (size=0; in[size]; size++);
-  char* s = new char[size*2];
+  char* s = new char[size*2+1];
   mysql_escape_string(s, const_cast<char *>(in), size);
   *o.ostr << "'" << s << "'";
-  delete s; 
+  delete[] s; 
   return *o.ostr;
 }
 
@@ -56,7 +55,7 @@ inline ostream& _manip (quote_type1 o, const mysql_ColData<Str>& in) {
       *o.ostr << "'" << s << "'";
     else
       *o.ostr << s;
-    delete s;
+    delete[] s;
   } else if (in.quote_q()) {
     *o.ostr << "'" << in << "'";
   } else {
@@ -84,7 +83,7 @@ ostream& operator << (ostream& o, const mysql_ColData<string>& in) {
       o << "'" << s << "'";
     else
       o << s;
-    delete s;
+    delete[] s;
   } else if (in.quote_q()) {
     o << "'" << in.get_string() << "'";
   } else {
@@ -103,7 +102,7 @@ ostream& operator << (ostream& o, const mysql_ColData<const_string>& in) {
       o << "'" << s << "'";
     else
       o << s;
-    delete s;
+    delete[] s;
   } else if (in.quote_q()) {
     o << "'" << in.get_string() << "'";
   } else {
@@ -121,7 +120,7 @@ SQLQuery& operator << (SQLQuery& o, const mysql_ColData<string>& in) {
       o << "'" << s << "'";
     else
       o << s;
-    delete s;
+    delete[] s;
   } else if (in.quote_q()) {
     o << "'" << in.get_string() << "'";
   } else {
@@ -140,7 +139,7 @@ SQLQuery& operator << (SQLQuery& o, const mysql_ColData<const_string>& in) {
       o << "'" << s << "'";
     else
       o << s;
-    delete s;
+    delete[] s;
   } else if (in.quote_q()) {
     o << "'" << in.get_string() << "'";
   } else {
@@ -229,7 +228,7 @@ SQLQueryParms & operator << (escape_type2 p, SQLString &in) {
       SQLString in2 = s;
       in2.processed = true;
       *p.qparms << in2;
-      delete s;
+      delete[] s;
       return *p.qparms;
     }
   } else {
@@ -243,7 +242,7 @@ ostream& operator << (escape_type1 o, const string &in) {
   char* s = new char[in.size()*2+1];
   mysql_escape_string(s, const_cast<char *>(in.c_str()), in.size());
   *o.ostr << s;
-  delete s;
+  delete[] s;
   return *o.ostr;
 }
 
@@ -251,10 +250,10 @@ template <>
 ostream& operator << (escape_type1 o, const char* const &in) {
   unsigned int size;
   for (size=0; in[size]; size++);
-  char* s = new char[size*2];
+  char* s = new char[size*2+1];
   mysql_escape_string(s, const_cast<char *>(in), size);
   *o.ostr << s;
-  delete s; 
+  delete[] s; 
   return *o.ostr;
 }
 
@@ -264,7 +263,7 @@ inline ostream& _manip (escape_type1 o, const mysql_ColData<Str>& in) {
   if (in.escape_q()) {
     char *s = new char[in.size()*2+1];
     mysql_escape_string(s, const_cast<char *>(in.c_str()), in.size() );
-    delete s;
+    delete[] s;
   } else {
     *o.ostr << in;
   }

@@ -1,22 +1,30 @@
-#include <mysql++-config.hh>
 
 #include "result3.hh"
 
 ResUse::ResUse (MYSQL_RES *result, Connection *m, bool te) 
-  : mysql(m), mysql_res(result), throw_exceptions(te), _fields(this)
+  : mysql(m), throw_exceptions(te), initialized(false), _fields(this)
 {
-  _table = fields(0).table;
+	if (!result) {
+		mysql_res=0; _types=0; _names=0; return;
+	}
 	mysql_res=result;
 	_names= new FieldNames(this);
-	_types= new FieldTypes(this);
+	if (_names)
+		_types= new FieldTypes(this);
+	_table = fields(0).table;
+	initialized = true;
 }
 
 ResUse::~ResUse () {
-  if (mysql) mysql->unlock(); 
-  purge(mysql_res);
+  if (mysql) mysql->unlock(); purge();
 }
 
 void ResUse::copy(const ResUse& other) {
+	if (!other.mysql_res) {
+		mysql_res=0; _types=0; _names=0; return;
+	}
+	if (initialized)
+		purge();
   throw_exceptions = other.throw_exceptions;
   mysql_res = other.mysql_res;
   _fields   = other._fields;
@@ -29,18 +37,5 @@ void ResUse::copy(const ResUse& other) {
   else
     _types     = NULL;
   mysql     = other.mysql;
+	initialized = true;
 }
-
-void MutableRes::populate(ResUse res) {
-  Row row = res.fetch_row();
-  _columns = row.size();
-  while (row) {
-    parent::push_back(MutableRow<MutableRes>(row, this));
-    row = res.fetch_row();
-  }
-}
-
-
-
-
-

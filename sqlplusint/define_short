@@ -24,7 +24,7 @@
 
 // row.h
 #define Row          MysqlRow
-#define MutableRow   MysqlMutableRow
+// #define MutableRow   MysqlMutableRow
 
 // field_names.h
 #define FieldNames  MysqlFieldNames

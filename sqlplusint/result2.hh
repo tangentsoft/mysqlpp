@@ -80,38 +80,10 @@ inline void              ResUse::reset_types() {reset_field_types();}
 
 //
 
-inline int MutableRes::field_num(const string &i) const {
-  return _names[i];
-}
-
-inline string& MutableRes::field_name(int i) {
-  return _names[i];
-}
-
-inline const string& MutableRes::field_name(int i) const {
-  return _names[i];
-}
-
-inline FieldNames& MutableRes::field_names() {
-  return _names;
-}
-
-inline const FieldNames& MutableRes::field_names() const {
-  return _names;
-}
-
-//
-
-inline int               MutableRes::names(const string& s) const {return field_num(s);}
-inline string&           MutableRes::names(int i) {return field_name(i);}
-inline const string&     MutableRes::names(int i) const {return field_name(i);}
-inline FieldNames&       MutableRes::names() {return field_names();}
-inline const FieldNames& MutableRes::names() const {return field_names();}
-
 //
 
 inline ResUse& ResUse::operator = (const ResUse &other) {
-  copy(other); other.mysql_res=NULL;
+  copy(other);  other.mysql_res=NULL;
   return *this;
 }
 

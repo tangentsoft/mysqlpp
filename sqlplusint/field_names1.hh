@@ -7,6 +7,7 @@
 #include "defs"
 #include "define_short"
 #include "coldata1.hh"
+#include "string_util.hh"
 
 //: A vector of the field names.
 class FieldNames : public vector<string> {
@@ -30,7 +31,10 @@ public:
   //: returns the field name of the field with that index number
 
   uint     operator [] (string i) const
-    {return find(begin(),end(), i) - begin();}
+  {
+	  string temp(i); str_to_lwr(temp);
+	  return find(begin(),end(), temp) - begin();
+	}
   //: returns the index number of the field with that name
 };
 

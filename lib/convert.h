@@ -64,23 +64,17 @@ template <class Type> class mysql_convert;
 #	pragma warning(default: 4244)
 #endif
 
-#ifndef NO_LONG_LONGS
-#ifdef strtoull
-#undef strtoull
-#endif
-#ifdef strtoll
-#undef strtoll
-#endif
-extern "C" {
-extern char *longlong2str(longlong val,char *dst,int radix);
-extern char *longlong10_to_str(longlong val,char *dst,int radix);
-extern longlong strtoll(const char *nptr,char **endptr,int base);
-extern ulonglong strtoull(const char *nptr,char **endptr,int base);
-}
+#if !defined(NO_LONG_LONGS)
+#if defined(__GNUC__)
 mysql__convert(longlong, strtoll)
 mysql__convert(ulonglong, strtoull)
-
+#elif defined(_MSC_VER)
+mysql__convert(longlong, _strtoi64)
+mysql__convert(ulonglong, _strtoui64)
+#else
+#error Fix me! I need the "string to 64-bit int" function for your platform!
 #endif
+#endif // !defined(NO_LONG_LONGS)
 
 }; // end namespace mysqlpp
 

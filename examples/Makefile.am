@@ -13,7 +13,7 @@ noinst_HEADERS = util.h
 simple1_SOURCES = simple1.cc util.cc
 simple1_DEPENDENCIES = $(MYSQLPP_LIB)
 
-dbinfo_SOURCES = dbinfo.cc
+dbinfo_SOURCES = dbinfo.cc util.cc
 dbinfo_DEPENDENCIES = $(MYSQLPP_LIB)
 
 cgi_image_SOURCES = cgi_image.cc

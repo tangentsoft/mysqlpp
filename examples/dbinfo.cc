@@ -1,3 +1,5 @@
+#include "util.h"
+
 #include <mysql++.h>
 
 #include <iomanip>
@@ -10,79 +12,118 @@ using namespace mysqlpp;
 
 vector<string> yy;
 
+static ostream&
+separator(ostream& os)
+{
+	os << endl << "---------------------------" << endl << endl;
+	return os;
+}
+
 int
-main()
+main(int argc, char* argv[])
 {
 	Connection con(use_exceptions);
 	try {
-		con.real_connect("", "localhost", "root", "", 3306, int(0), 60, 0);
+		connect_to_db(argc, argv, con, "");
 
-		cout << con.client_info() << endl << endl;
+		// Show MySQL version
+		cout << "MySQL version: " << con.client_info() << separator;
 		Query query = con.query();
 
+		// Show all the databases we can see
 		query << "show databases";
-
-		Result res = query.store();
-
 		cout << "Query: " << query.preview() << endl;
 
-		cout << "Records Found: " << res.size() << endl << endl;
+		Result res = query.store();
+		cout << "Databases found: " << res.size();
 
 		Row row;
 		cout.setf(ios::left);
-		cout << setw(17) << "Databases" << endl << endl;
-
 		Result::iterator i;
 		for (i = res.begin(); i != res.end(); ++i) {
 			row = *i;
-			cout << setw(17) << row[0] << endl;
+			cout << endl << '\t' << setw(17) << row[0];
 		}
-		char database[] = "mysql";
-		con.select_db(database);
+		cout << separator;
+		
+		// Show the tables in the mysql database
+		con.select_db("mysql");
 
+		query.reset();
 		query << "show tables";
-
-		res = query.store();
-
 		cout << "Query: " << query.preview() << endl;
 
-		cout << "Records Found: " << res.size() << endl << endl;
+		res = query.store();
+		cout << "Tables found: " << res.size();
 
 		cout.setf(ios::left);
-		cout << setw(17) << "Tables" << endl << endl;
-
 		for (i = res.begin(); i != res.end(); ++i) {
 			row = *i;
 			string xx(row[0]);
-			cout << setw(17) << row[0] << endl;
-			yy.insert(yy.end(), xx);
+			cout << endl << '\t' << setw(17) << row[0];
+			yy.push_back(xx);
 		}
+		cout << separator;
 
+		// Show information about each of the tables we found
 		for (unsigned int j = 0; j < yy.size(); ++j) {
+			query.reset();
 			query << "describe " << yy[j] << "";
-			cout << query.preview() << endl << endl;
+			cout << "Query: " << query.preview() << endl;
 			res = query.store();
 			unsigned int columns = res.num_fields(), counter;
-			cout << setw(15) << endl;
+			vector<int> widths;
 			for (counter = 0; counter < columns; counter++) {
-				cout << setw(15) << res.names(counter) << "  ";
+				string s = res.names(counter);
+				if (s.compare("field") == 0) {
+					widths.push_back(22);
+				}
+				else if (s.compare("type") == 0) {
+					widths.push_back(20);
+				}
+				else if (s.compare("null") == 0) {
+					widths.push_back(4);
+				}
+				else if (s.compare("key") == 0) {
+					widths.push_back(3);
+				}
+				else if (s.compare("extra") == 0) {
+					widths.push_back(0);
+				}
+				else {
+					widths.push_back(15);
+				}
+
+				if (widths[counter]) {
+					cout << '|' << setw(widths[counter]) <<
+							res.names(counter) << '|';
+				}
 			}
-			cout << endl << endl;
+			cout << endl;
+
 			for (i = res.begin(); i != res.end(); ++i) {
 				row = *i;
 				for (counter = 0; counter < columns; counter++) {
-					cout << row[counter] << "  ";
+					if (widths[counter]) {
+						cout << ' ' << setw(widths[counter]) <<
+								row[counter] << ' ';
+					}
 				}
 				cout << endl;
 			}
+
+			cout << separator;
 		}
 
-		query << "select * from user";
+		// Show the user table contents
+		query.reset();
+	 	query << "select * from user";
+		cout << "Query: " << query.preview() << endl << endl;
+
 		res = query.store();
 		int columns = res.num_fields();
-		cout << query.preview() << endl << endl;
-		cout << "fields = " << res.num_fields() << "rows = " << res.
-			size() << endl;
+		cout << "fields = " << res.num_fields() << ", rows = " <<
+				res.size() << endl;
 		volatile MYSQL_RES *ress = res.mysql_result();
 		if (!ress)
 			return -1;

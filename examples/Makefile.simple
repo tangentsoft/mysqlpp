@@ -26,7 +26,7 @@ CUSTOM2_OBJS=custom2.o util.o
 CUSTOM3_OBJS=custom3.o util.o
 CUSTOM4_OBJS=custom4.o util.o
 FIELDINF1_OBJS=fieldinf1.o util.o
-DBINFO_OBJS=dbinfo.o
+DBINFO_OBJS=dbinfo.o util.o
 CGI_IMAGE_OBJS=cgi_image.o
 LOAD_FILE_OBJS=load_file.o
 UPDEL_OBJS=updel.o
@@ -88,7 +88,7 @@ custom2.o: custom2.cc util.h
 custom3.o: custom3.cc util.h
 custom4.o: custom4.cc util.h
 fieldinf1.o: fieldinf1.cc util.h
-dbinfo.o: dbinfo.cc
+dbinfo.o: dbinfo.cc util.h
 cgi_image.o: cgi_image.cc
 load_file.o: load_file.cc
 updel.o: updel.cc

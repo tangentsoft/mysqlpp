@@ -23,7 +23,9 @@ main(int argc, char *argv[])
 {
 	try {
 		Connection con(use_exceptions);
-		connect_sample_db(argc, argv, con);
+		if (!connect_to_db(argc, argv, con)) {
+			return 1;
+		}
 
 		Query query = con.query();
 		query << "select * from stock where item = \"Hotdogs' Buns\" ";
@@ -31,32 +33,33 @@ main(int argc, char *argv[])
 		// Is the query was successful?  If not throw a bad query.
 		Result res = query.store();
 		if (res.empty()) {
-			throw BadQuery("Hotdogs' Buns not found in table, run reset-db");
+			throw BadQuery("Hotdogs' Buns not found in table, run resetdb");
 		}
 
-		// because there should only be one row in this query we don't
-		// need to use a vector.  Just store the first row directly in
-		// "row".  We can do this because one of the constructors for
-		// stock takes a Row as an parameter.
+		// Because there should only be one row in the result set, we
+		// don't need to use a vector.  Just store the first row
+		// directly in "row".  We can do this because one of the
+		// constructors for stock takes a Row as a parameter.
 		stock row = res[0];
 
-		// Now we need to create a copy so that the replace query knows
-		// what the original values are.
+		// Create a copy so that the replace query knows what the
+		// original values are.
 		stock row2 = row;
 
-		row.item = "Hotdog Buns";	// now change item
+		// Change item column, fixing the spelling.
+		row.item = "Hotdog Buns";
 
-		// form the query to replace the row
-		// the table name is the name of the struct by default
+		// Form the query to replace the row.  The table name is the
+		// name of the struct by default.
 		query.update(row2, row);
 
-		// show the query about to be executed
+		// Show the query about to be executed.
 		cout << "Query : " << query.preview() << endl;
 
-		// execute a query that does not return a result set
+		// Call execute(), since the query won't return a result set.
 		query.execute();
 
-		// now print the new table;
+		// Now print the new table
 		print_stock_table(query);
 	}
 	catch (BadQuery& er) {

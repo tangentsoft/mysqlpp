@@ -1,3 +1,57 @@
+1.7.23, 2004.11.20
+
+	o Query::reset() now empties the stored query string.  If you
+	  subsequently stored a longer query in the object, you'd overwrite
+	  the previous query, but otherwise the longer part of the previous
+	  one would stick out past the new query.
+
+	o We now look to the NO_LONG_LONGS macro only to decide whether to
+	  fake 64-bit integer support using 32-bit integers.
+
+	o 64-bit integer support under Visual C++ may be working now, using
+	  that platform's __int64_t type.  This has not been tested.
+
+	o Removed 64-bit integer support for Codewarrior on Mac OS 9 and
+	  earlier.  OS X uses GCC, so it requires no special support.
+
+	o Added MinGW detection in platform.h.
+	
+	o If you pass a flag (-X) to the examples that take the standard
+	  parameters (resetdb, simple1, etc.), it prints a usage message.
+	
+	o Better error handling in resetdb example, where errors are the
+	  most critical.  (If that one runs without errors, the others
+	  probably will, too, and you have to run that one first.)
+
+	o resetdb now reports success, rather than succeeding silently.
+
+	o Removed the code in sample1 example that duplicated util module's
+	  print_stock_table(), and called that function instead.
+
+	o Moved the preview() calls in the example programs to before the
+	  query execution calls, because execution modifies the query.
+
+	o All examples that take the standard command line parameters now 
+	  exit when connect_to_db() fails in one of the ways that don't
+	  throw an exception, rather than bulling onward until the next
+	  MySQL database call fails because the connection isn't up.
+
+	o dbinfo example now takes the standard command line parameters.
+
+	o Much better output formatting in dbinfo example.
+
+	o Calling reset() where appropriate in the various example programs.
+	  Before, the programs may have worked, but not for the right
+	  reason.  This lead some people to believe that calling reset()
+	  was not necessary.
+
+	o Fixed an incorrect use of row["string"] in complic1 example.
+
+	o Lots of code style improvements to the examples.
+
+	o Some VC++ type warnings squished.  Some remain.
+	
+
 1.7.22, 2004.11.17
 
 	o Applied patches by Zahroof Mohammed to allow it to build under GCC

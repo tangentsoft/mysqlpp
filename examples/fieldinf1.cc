@@ -13,13 +13,15 @@ main(int argc, char *argv[])
 {
 	try {
 		Connection con(use_exceptions);
-		connect_sample_db(argc, argv, con);
+		if (!connect_to_db(argc, argv, con)) {
+			return 1;
+		}
 
 		Query query = con.query();
 		query << "select * from stock";
-		Result res = query.store();
-
 		cout << "Query: " << query.preview() << endl;
+
+		Result res = query.store();
 		cout << "Records Found: " << res.size() << endl << endl;
 
 		cout << "Query Info:\n";

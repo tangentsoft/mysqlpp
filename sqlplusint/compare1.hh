@@ -46,7 +46,7 @@ struct cstr_equal_to : bin_char_pred {
 };
 struct cstr_not_equal_to : bin_char_pred {
   bool operator () (const char *x, const char *y) const
-    {return std::strcmp(x,y);}
+    {return std::strcmp(x,y) != 0;}
 };
 struct cstr_less : bin_char_pred {
   bool operator () (const char *x, const char *y) const

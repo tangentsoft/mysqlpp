@@ -12,7 +12,7 @@ int main (int argc, char *argv[]) {
     
     try {
       con.select_db("mysql_cpp_data");
-    } catch (BadQuery &er) {
+    } catch (BadQuery&) {
       // if it couldn't connect to the database assume that it doesn't exist
       // and try created it.  If that does not work exit with an error.
       con.create_db("mysql_cpp_data");
@@ -24,7 +24,7 @@ int main (int argc, char *argv[]) {
     try { // ignore any errors here
           // I hope to make this simpler soon
       query.execute("drop table stock");
-    } catch (BadQuery &er) {}
+    } catch (BadQuery&) {}
     
     query << "create table stock  (item char(20) not null, num bigint,"
 	  << "weight double, price double, sdate date)";

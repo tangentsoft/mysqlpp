@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 AC_INIT(sqlplusint/mysql++.hh)
 
 # Don't forget to change this in mysql++.spec, too!
-VERSION=1.7.15
+VERSION=1.7.16
 
 AM_INIT_AUTOMAKE(mysql++, $VERSION)
 

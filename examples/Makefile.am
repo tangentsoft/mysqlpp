@@ -3,7 +3,7 @@ include ../common.am
 LDFLAGS = 
 LDADD = $(SQLPLUSLIBS)
 
-EXTRA_DIST = *.vcproj *.bpf *.bpr *.bpg
+EXTRA_DIST = *.vcproj *.bpf *.bpr *.bpg dummy.cpp
 
 noinst_PROGRAMS = resetdb simple1 custom1 custom2 custom3 custom4 \
 		complic1 fieldinf1 dbinfo updel_ex load_file cgi_image

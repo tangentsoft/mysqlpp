@@ -19,8 +19,8 @@ private:
   Connection   *mysql;
   bool         throw_exceptions;
 
-  int     affected_rows() const;
-  int     insert_id ();
+  my_ulonglong affected_rows() const;
+  my_ulonglong insert_id ();
   std::string  info ();
   bool    lock();
   void    unlock();

@@ -44,7 +44,8 @@ SQLString * pprepare (char option, SQLString &S, bool replace = true) {
   if (S.processed) return &S;
   if (option == 'r' || (option == 'q' && S.is_string)) {
     char *s = new char[S.size()*2 + 1];
-    mysql_escape_string(s,const_cast<char *>(S.c_str()),S.size());
+    mysql_escape_string(s, const_cast<char *>(S.c_str()),
+			(unsigned long)S.size());
     SQLString *ss = new SQLString("'");
     *ss += s;
     *ss += "'";
@@ -110,7 +111,7 @@ std::string SQLQuery::str(const SQLQueryParms &p, query_reset r) {
 SQLQueryParms SQLQueryParms::operator + (const SQLQueryParms &other) const {
   if (other.size() <= size()) return *this;
   SQLQueryParms New = *this;
-  unsigned int i;
+  size_t i;
   for(i = size(); i < other.size(); i++) {
     New.push_back(other[i]);
   }
@@ -164,7 +165,7 @@ void SQLQuery::parse() {
 	  parsed_nums[name] = n;
 	}
 	    
-	parsed.push_back( SQLParseElement(str,option,n) );
+	parsed.push_back( SQLParseElement(str, option, char(n)) );
 	str = "";
 	name = "";
       } else {

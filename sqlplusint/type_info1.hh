@@ -33,7 +33,7 @@ private:
 
 struct type_info_cmp {
   bool operator() (const std::type_info *lhs, const std::type_info *rhs) const {
-    return lhs->before(*rhs);
+    return lhs->before(*rhs) != 0;
   }
 };
 
@@ -153,8 +153,11 @@ inline mysql_type_info::mysql_type_info(enum_field_types t,
 }
 
 inline mysql_type_info::mysql_type_info(const MYSQL_FIELD &f) {
-  num = type(f.type, (f.flags & UNSIGNED_FLAG), !(f.flags & NOT_NULL_FLAG));
-	_length = f.length; _max_length = f.max_length;
+  num = type(f.type,
+	  (f.flags & UNSIGNED_FLAG) != 0,
+	  (f.flags & NOT_NULL_FLAG) == 0);
+  _length = f.length;
+  _max_length = f.max_length;
 }
 
 inline bool operator == (const mysql_type_info& a, const mysql_type_info& b) {
@@ -164,6 +167,11 @@ inline bool operator == (const mysql_type_info& a, const mysql_type_info& b) {
 inline bool operator != (const mysql_type_info& a, const mysql_type_info& b) {
   return a.id() != b.id();
 }
+
+#if defined(__WIN32__) || defined(_WIN32)
+// Disable warning about converting int to bool in VC++...it's bogus.
+#pragma warning(disable: 4800)
+#endif
 
 inline bool operator == (const std::type_info &a, const mysql_type_info &b) {
   return a == b.c_type();
@@ -181,6 +189,9 @@ inline bool operator != (const mysql_type_info &a, const std::type_info &b) {
   return a.c_type() != b;
 }
 
+#if defined(__WIN32__) || defined(_WIN32)
+#pragma warning(default: 4800)
+#endif
 
 #endif
 

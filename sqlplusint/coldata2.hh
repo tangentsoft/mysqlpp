@@ -42,8 +42,10 @@ operator_binary_int(unsigned int, unsigned long int)
 operator_binary_int(unsigned short int, unsigned long int)
 operator_binary_int(unsigned long int, unsigned long int)
 
+#if !defined(NO_LONG_LONGS)
 operator_binary_int(longlong, longlong)
 operator_binary_int(ulonglong, ulonglong)
+#endif
 
 #endif // NO_BINARY_OPERS
 

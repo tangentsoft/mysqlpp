@@ -2,7 +2,7 @@
 
 
 void strip (std::string& s) {
-	int i,j = s.size() - 1;  if (!s.size()) return;
+	size_t i,j = s.size() - 1;  if (!s.size()) return;
 	for (i = 0; s[i] == ' ';i++);
 	if (i) s.erase(0,i); j = s.size(); if (!j) return; j--;
 	for (i=j;i && s[i] == ' ';i--);

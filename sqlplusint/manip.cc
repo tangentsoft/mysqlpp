@@ -14,7 +14,8 @@ SQLQueryParms& operator << (quote_type2 p, SQLString &in) {
       return *p.qparms << in2;
     } else {
       char* s = new char[in.size()*2+1];
-      mysql_escape_string(s, const_cast<char *>(in.c_str()), in.size() );
+      mysql_escape_string(s, const_cast<char *>(in.c_str()),
+			(unsigned long)in.size() );
       SQLString in2 = SQLString("'") + s + "'";
       in2.processed = true;
       *p.qparms << in2;
@@ -30,7 +31,8 @@ SQLQueryParms& operator << (quote_type2 p, SQLString &in) {
 template <>
 ostream& operator << (quote_type1 o, const string &in) {
   char* s = new char[in.size()*2+1];
-  mysql_escape_string(s, const_cast<char *>(in.c_str()), in.size() );
+  mysql_escape_string(s, const_cast<char *>(in.c_str()), 
+		(unsigned long)in.size() );
   *o.ostr << "'" << s << "'";
   delete[] s;
   return *o.ostr;
@@ -51,7 +53,8 @@ template <class Str>
 inline ostream& _manip (quote_type1 o, const mysql_ColData<Str>& in) {
   if (in.escape_q()) {
     char *s = new char[in.size()*2+1];
-    mysql_escape_string(s, const_cast<char *>(in.c_str()), in.size() );
+    mysql_escape_string(s, const_cast<char *>(in.c_str()),
+			(unsigned long)in.size() );
     if (in.quote_q())
       *o.ostr << "'" << s << "'";
     else
@@ -79,7 +82,8 @@ ostream& operator << (ostream& o, const mysql_ColData<string>& in) {
 	if (dont_quote_auto || (o.rdbuf() == cout.rdbuf()) || (o.rdbuf() == cerr.rdbuf())) return o << in.get_string();
   if (in.escape_q()) {
     char *s = new char[in.size()*2+1];
-    mysql_escape_string(s, const_cast<char *>(in.c_str()), in.size() );
+    mysql_escape_string(s, const_cast<char *>(in.c_str()), 
+			(unsigned long)in.size() );
     if (in.quote_q())
       o << "'" << s << "'";
     else
@@ -116,7 +120,8 @@ SQLQuery& operator << (SQLQuery& o, const mysql_ColData<string>& in) {
 	if (dont_quote_auto) {o << in.get_string(); return o;}
   if (in.escape_q()) {
     char *s = new char[in.size()*2+1];
-    mysql_escape_string(s, const_cast<char *>(in.c_str()), in.size() );
+    mysql_escape_string(s, const_cast<char *>(in.c_str()), 
+			(unsigned long)in.size() );
     if (in.quote_q())
       (ostream&)o << "'" << s << "'";
     else
@@ -225,7 +230,8 @@ SQLQueryParms & operator << (escape_type2 p, SQLString &in) {
       return *p.qparms << in;
     } else {
       char* s = new char[in.size()*2+1];
-      mysql_escape_string(s, const_cast<char *>(in.c_str()), in.size() );
+      mysql_escape_string(s, const_cast<char *>(in.c_str()), 
+			(unsigned long)in.size() );
       SQLString in2 = s;
       in2.processed = true;
       *p.qparms << in2;
@@ -241,7 +247,8 @@ SQLQueryParms & operator << (escape_type2 p, SQLString &in) {
 template <>
 ostream& operator << (escape_type1 o, const string &in) {
   char* s = new char[in.size()*2+1];
-  mysql_escape_string(s, const_cast<char *>(in.c_str()), in.size());
+  mysql_escape_string(s, const_cast<char *>(in.c_str()), 
+		(unsigned long)in.size());
   *o.ostr << s;
   delete[] s;
   return *o.ostr;
@@ -263,7 +270,8 @@ template <class Str>
 inline ostream& _manip (escape_type1 o, const mysql_ColData<Str>& in) {
   if (in.escape_q()) {
     char *s = new char[in.size()*2+1];
-    mysql_escape_string(s, const_cast<char *>(in.c_str()), in.size() );
+    mysql_escape_string(s, const_cast<char *>(in.c_str()), 
+			(unsigned long)in.size() );
     delete[] s;
   } else {
     *o.ostr << in;

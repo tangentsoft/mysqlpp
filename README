@@ -1,21 +1,23 @@
 This is C++ API  library for MySQL.
 
 Starting based of 1.2, this is now maintained by sinisa@cytanet.com.cy
-as kevinatk@home.com doesn't have time to support this library anymore. He has
-give TCX the full right to use this library as we wish. We will continue to
-keep this library under LGPL.
+as kevinatk@home.com doesn't have time to support this library anymore. 
 
---------
+He has made sinisa@cytanet.com.cy a new official maintainer, which will
+continue to keep mysql++ library under LGPL.
+
+
 Original information from kevinatk@home.com:
+---------------------------------------------------------------------
 
 After several people commented on how my quickie wrapper would be of
 little use I decided to go all out and create a full featured
 version.
 
-To my knolage this library requiures gcc 2.8 or egcc or better and of
+To my knowledge this library requiures gcc 2.8 or egcc or better and of
 course the mysql library.
 
-To compile the library and modify the file Configure apropretly
+To compile the library and modify the file Configure aproprietly
 and type make.
 
 I am working on trying to get this to compile into a library.
@@ -34,6 +36,8 @@ Be sure to let me know what you think.  I depend on your feedback.
 
 Thanks,
 I can be reached at kevinatk@home.com
+--------------------------------------------------------------------
+End of original README by Kevin Atkinson
 
 
 Since October 1999, all maintenance has been transferred to Sinisa
@@ -41,3 +45,29 @@ Milivojevic (sinisa@cytanet.com.cy) and Michael Widenius (monty@mysql.com).
 
 Send your feedback to any of these addresses, or even better to the
 mailing list mysql-plusplus@lists.mysql.com.
+
+Since versin 1.1, mysql++ has been prepared to be built with automake and
+autoconf. 
+
+This will make compilation and  installation much easier. 
+
+You should cd to the root of source directory and run ./configure.
+
+If you are running it several times, because you have problems, do delete 
+config.cache. In case of the problem config.log contains more info on
+it's whereabouts.
+
+After configure is run, config.h and Makefiles are generated. 
+
+If you wish to install mysql++ in a root directory other then /usr/local,
+you should run configure with --with-prefix=.....
+
+Configure contains description of other switches available.
+
+After running configure, run make and make install. Libs will be
+installed in prefix/lib and include files in prefix/include/mysql++.
+
+
+Since version 1.3, mysql++ is fully compliant with latest 2.95.xx series
+of compilers.
+

@@ -18,7 +18,7 @@ int main() {
     cout << "Query Info:\n";
     cout.setf(ios::left);
 
-    for (unsigned int i = 0; i < res.size(); i++) {
+    for (unsigned int i = 0; i < res.names().size(); i++) {
       cout << setw(2)  << i
 	   << setw(15) << res.names(i).c_str()
 	// this is the name of the field

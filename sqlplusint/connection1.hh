@@ -38,7 +38,7 @@ class Connection {
   
 private:
   set<MysqlChild*> children;
-  static pointer_tracker<MYSQL, Connection> others;
+//  static pointer_tracker<MYSQL, Connection> others;
   
   bool throw_exceptions;
   MYSQL mysql;
@@ -46,14 +46,14 @@ private:
   bool locked;
   bool Success;
 
-  int          affected_rows() const {return mysql_affected_rows(&mysql);}
+  int          affected_rows()  {return mysql_affected_rows((MYSQL*) &mysql);}
   int          insert_id () {return mysql_insert_id(&mysql);}
 
 public:
   Connection () : throw_exceptions(false), locked(false) //:
-    {others.insert(&mysql,this);}
+    {/* others.insert(&mysql,this);*/	mysql_init(&mysql);}
   Connection (bool te) : throw_exceptions(te), is_connected(false), locked(false), Success(false) //:
-    {others.insert(&mysql,this);}
+    {/*others.insert(&mysql,this);*/	mysql_init(&mysql);}
   Connection (const char *db, const char *host = "", const char *user = "", 
 	      const char *passwd = "", bool te = false); 
   Connection (const char *db, const char *host, const char *user, 
@@ -125,6 +125,8 @@ public:
   bool   reload(); //:
   bool   shutdown (); //:
 	string infoo (void) {return info ();}
+	st_mysql_options get_options (void) const {return mysql.options;}
+	int read_options(enum mysql_option option,const char *arg) {return  mysql_options(&mysql, option,arg);}
 
   template <class Sequence> void storein_sequence(Sequence &, const string &); //:
   template <class Set>      void storein_set(Set &, const string &);  //:

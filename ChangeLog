@@ -1,3 +1,19 @@
+1999-10-15 Sinisa Milivojevic <sinisa@cytanet.com.cy>
+           
+* Changed version to 1.2					 
+* First offical release. Version 1.0 and 1.1 were releases by Sinisa
+  before I (Kevin Atkinson) made him the offical maintainer,
+* Many manual fixes.
+* Changed README and Changelog
+* Changed source to be compilable by gcc 2.95.xx, tribute to Kevin
+  Atkinson <kevinatk@home.com>
+* Added methods in Connection class which are necessary for
+  fullfilling administrative functions with MySQL
+* Added many bug fixes in code pertaining to missing class
+  initializers , as notified by Michael Rendell <michael@cs.mun.ca>
+* Sinisa Milivojevic <sinisa@cytanet.com.cy> is now the offical
+  maintainer.
+
 
 1999-08-02  Sinisa Milivojevic <sinisa@cytanet.com.cy>
 

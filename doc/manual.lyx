@@ -1,4 +1,4 @@
-#This file was created by <Sinisa> Tue Sep 28 12:51:01 1999
+#This file was created by <Sinisa> Wed Nov 10 22:12:52 1999
 #LyX 0.12 (C) 1995-1998 Matthias Ettrich and the LyX Team
 \lyxformat 2.15
 \textclass book
@@ -55,7 +55,7 @@ Mysql++
 \newline 
 A C++ API for Mysql
 \newline 
-ver 1.2
+ver 1.3
 \layout Author
 
 Kevin Atkinson
@@ -12147,7 +12147,35 @@ appendix
 Changelog
 \layout Section*
 
-1.2 (Sep 28 1999) Sinisa Milivojevic <sinisa@cytanet.com.cy>
+1.3 (Nov 10 1999) Sinisa Milivojevic <sinisa@cytanet.com.cy>
+\layout Itemize
+
+Fixed several erronous definitions
+\layout Itemize
+
+Further changed source to be 2.95.2 compatible
+\layout Itemize
+
+Expunged unused statements, especially dubious ones, like use of pointer_tracker
+\layout Itemize
+
+Corrected bug in example file fieldinf1
+\layout Itemize
+
+Finally fixed mysql_init in Connection constructor, which provided much
+ greater stability !
+\layout Itemize
+
+Added read and get options, so that clients, like mysqlgui can use it
+\layout Itemize
+
+Changed Changelog and README
+\layout Itemize
+
+Many other bug fixes.
+\layout Section*
+
+1.2 (Oct 15 1999) Sinisa Milivojevic <sinisa@cytanet.com.cy>
 \layout Itemize
 
 First offical release.
@@ -12156,6 +12184,13 @@ First offical release.
 \layout Itemize
 
 Many manual fixes.
+\layout Itemize
+
+Changed README and Changelog
+\layout Itemize
+
+Changed source to be compilable by gcc 2.95.xx, tribute to Kevin Atkinson
+ <kevinatk@home.com>
 \layout Itemize
 
 Added methods in Connection class which are necessary for fullfilling administra

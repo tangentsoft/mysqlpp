@@ -33,7 +33,7 @@ protected:
   Fields                _fields;
   string                _table;       
 
-  static pointer_tracker<MYSQL_RES, ResUse> others;
+//  static pointer_tracker<MYSQL_RES, ResUse> others;
 
   void copy(const ResUse& other); 
 public:
@@ -48,7 +48,7 @@ public:
   //: raw c api function
   bool          eof () const {return mysql_eof(mysql_res);}
   //: raw c api function
-  unsigned int fetch_lengths () const {return *mysql_fetch_lengths(mysql_res);}
+  long unsigned int *fetch_lengths () const {return mysql_fetch_lengths(mysql_res);}
   //: raw c api function
   void         free_result() {mysql_free_result(mysql_res);}
   //: raw c api function

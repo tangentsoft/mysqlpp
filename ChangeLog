@@ -1,3 +1,30 @@
+1.7.19, 2004.10.25
+
+	o Fixed an infinite loop in the query mechanism resulting from the
+	  strstream change in the previous version.  There is an overloaded
+	  set of str() member functions that weren't a problem when query
+	  objects were based on strstream.
+	 
+	o Query mechanism had a bunch of const-incorrectness: there were
+	  several function parameters and functions that were const for
+	  the convenience of other parts of the code, but within these
+	  functions the constness was const_cast away!  This was evil
+	  and wrong; now there are fewer const promises, and only one is
+	  still quietly broken within the code.  (It's in the SQLQuery
+	  copy ctor implementation; it should be harmless.)
+
+	o Removed operator=() in Query and SQLQuery classes.  It cannot take
+	  a const argument for the same reason we have to cast away const
+	  in the SQLQuery copy ctor.  It's tolerable to do this in the copy
+	  ctor, but intolerable in an operator.  Since the copy ctor is good
+	  enough for all code within the library and within my own code, I'm
+	  removing the operator.
+
+	o Visual C++ projects now look for MySQL build files in c:\mysql,
+	  since that's the default install location.  (Previously, it was
+	  c:\program files\mysql.)
+
+
 1.7.18, 2004.10.01
 
 	o Changed all the strstream (and friends) stuff to stringstream type

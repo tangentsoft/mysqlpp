@@ -1,5 +1,5 @@
-EXTRA_DIST = bootstrap Configure doc devel LGPL mysql++.spec Wishlist \
-		*.vcproj *.sln README.*
+EXTRA_DIST = bootstrap common.am doc devel LGPL mysql++.spec \
+		Wishlist *.vcproj *.sln README.*
 
 #SUBDIRS = sqlplusint examples doc
 SUBDIRS = sqlplusint examples
@@ -13,3 +13,8 @@ rpm: rpm-setup
 
 srpm: rpm-setup
 	( cd /usr/src/redhat/SPECS ; rpmbuild -bs mysql++.spec )
+
+ebuild: dist
+	cp $(distdir).tar.gz /usr/portage/distfiles
+	cp mysql++.ebuild /usr/portage/dev-db/mysql++/$(distdir).ebuild
+	ebuild /usr/portage/dev-db/mysql++/$(distdir).ebuild digest

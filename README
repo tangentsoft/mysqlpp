@@ -2,30 +2,32 @@ This is the C++ API for MySQL.
 
 Starting with 1.7.10, this is maintained by Warren Young
 <mysqlpp@etr-usa.com>. It was maintained by Sinisa Milivojevic
-<sinisa@mysql.com> from version 1.2 to 1.7.9, and by kevinatk@home.com
-prior to that.
+<sinisa@mysql.com> from version 1.2 to 1.7.9, and by Kevin Atkinson
+<kevinatk@home.com> prior to that.
 
-Send feedback to the MySQL++ mailing list <plusplus@lists.mysql.com>.
+Send feedback to the MySQL++ mailing list.  Its web page is:
+http://lists.mysql.com/plusplus/
 
-Since version 1.1, mysql++ has been autoconfiscated.
-
-From within the source directory, you should just need to say:
+To build and install the library on Unixy systems, the minimum build
+commands are:
 	
 	$ ./configure
 	$ make
 	$ su
 	# make install
 
-to build and install the program.
+(If you're not on a Unixy system, see the other README files in this
+directory.)
 
-The configure script takes many options.  Say:
+The configure script takes several interesting options.  Say,
 
 	$ ./configure --help
 
-to get a list.  Because MySQL++ comes with a great many header files,
-I highly recommend you add '--includedir=/usr/local/include/mysql++' to
-the configure command, to segregate the header files in their own
-directory.
+to get a list.
+
+Because MySQL++ comes with a great many header files, I highly recommend
+you add '--includedir=/usr/local/include/mysql++' to the configure
+command.  This puts the MySQL++ header files in their own directory.
 
 If you wish to install mysql++ in a root directory other than /usr/local,
 run configure with --prefix=.....

@@ -17,7 +17,13 @@ Patches for any of these thoughtfully considered!
 	o Look through my own code for uses of custom SQL queries, and try
 	  to reduce them to API features.
 
-	o GCC 3.4 and 3.5 have yet more pedantry in them that dislikes
-	  MySQL++.  Fix!
+	o Does it build under GCC 3.4 yet?
+	
+	o One report says it still doesn't build under GCC 3.5.
 
 	o Why can Query objects not be reused?
+
+	o Get VC++ to build project without warnings on at least /W3.
+
+	o Documentation could probably use a thorough reworking.
+

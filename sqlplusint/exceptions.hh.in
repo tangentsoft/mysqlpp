@@ -62,10 +62,11 @@ public:
   virtual const char* what( void ) const throw () { return _what.c_str(); }
 };
 
-#else //origional, default exception style
+#else //original, default exception style
 
 struct BadQuery {
-  BadQuery(std::string er) : error(er) {}
+  BadQuery(const char* pc) : error(pc) {}
+  BadQuery(std::string& er) : error(er) {}
   std::string error; //: The error message
 };
 

@@ -1,4 +1,4 @@
-include $(top_srcdir)/Configure
+include $(top_srcdir)/common.am
 
 EXTRA_DIST = custom.pl *.bpf *.bpr *.bpg
 

@@ -1,3 +1,23 @@
+1.7.15, 2004.09.02
+
+	o Renamed Configure file to common.am, to avoid file name conflict
+	  with configure script on case-sensitive file systems.
+
+	o Added ebuild file and ebuild target to top-level Makefile for
+	  Gentoo systems.  Thanks to Chris Frey for this.
+
+	o Small efficiency improvements to BadQuery exception handling.
+	  Initial idea by Chris Frey, improvements by Warren Young.
+
+
+1.7.14, 2004.08.26
+
+	o Builds with Visual C++ 7.1.
+
+	o Fixed a bug in custom macro generation that caused problems with
+	  GCC 3.4.  (X_cus_value_list ctor definition was broken.)
+
+
 1.7.13, 2004.08.23
 
 	o Removed USL CC support.  (System V stock system compiler.)  Use

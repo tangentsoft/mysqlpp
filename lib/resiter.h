@@ -1,7 +1,7 @@
 #ifndef MYSQLPP_RESITER_H
 #define MYSQLPP_RESITER_H
 
-#include <defs.h>
+#include "defs.h"
 
 #include <iterator>
 
@@ -100,7 +100,7 @@ inline subscript_iterator<OnType,ReturnType,SizeType,DiffType> operator +
   return y + x;
 }
 
-}; // end namespace mysqlpp
+} // end namespace mysqlpp
 
 #endif
 

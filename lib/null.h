@@ -1,9 +1,9 @@
 #ifndef MYSQLPP_NULL_H
 #define MYSQLPP_NULL_H
 
-#include <exceptions.h>
+#include "exceptions.h"
 
-#include <ostream>
+#include <iostream>
 
 namespace mysqlpp {
 
@@ -84,7 +84,7 @@ inline std::ostream& operator << (std::ostream &o, const Null<Type,Behavior> &n)
   else return o << n.data;
 }
 
-}; // end namespace mysqlpp
+} // end namespace mysqlpp
 
 #endif
 

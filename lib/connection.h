@@ -1,10 +1,10 @@
 #ifndef MYSQLPP_CONNECTION_H
 #define MYSQLPP_CONNECTION_H
 
-#include <platform.h>
+#include "platform.h"
 
-#include <exceptions.h>
-#include <result.h>
+#include "exceptions.h"
+#include "result.h"
 
 #include <mysql.h>
 
@@ -188,7 +188,7 @@ void Connection::storein_set (Set &sett, const std::string &str) {
 	}
 }
 
-}; // end namespace mysqlpp
+} // end namespace mysqlpp
 
 #endif
 

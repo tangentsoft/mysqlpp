@@ -21,6 +21,9 @@ New Feature Requests
 Bug Fix/Maintenance Items
 -------------------------
 
+	o 64-bit integer support is not heavily tested.  It may yet have
+	  problems.
+
 	o is_connected() may not be returning the right value.
 	  <bayufa@bdg.centrin.net.id>
 

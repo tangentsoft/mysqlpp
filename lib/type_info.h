@@ -1,7 +1,7 @@
 #ifndef MYSQLPP_TYPE_INFO_H
 #define MYSQLPP_TYPE_INFO_H
 
-#include <defs.h>
+#include "defs.h"
 
 #include <mysql.h>
 
@@ -206,7 +206,7 @@ inline bool operator != (const mysql_type_info &a, const std::type_info &b)
   return a.c_type() != b;
 }
 
-}; // end namespace mysqlpp
+} // end namespace mysqlpp
 
 #endif
 

@@ -1,7 +1,7 @@
 #ifndef MYSQLPP_FIELDS_H
 #define MYSQLPP_FIELDS_H
 
-#include <resiter.h>
+#include "resiter.h"
 
 namespace mysqlpp {
 
@@ -21,7 +21,7 @@ public:
   const Field& operator [] (int i) const {return operator [](size_type(i));} 
 };
 
-}; // end namespace mysqlpp
+} // end namespace mysqlpp
 
 #endif
 

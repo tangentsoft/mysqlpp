@@ -1,7 +1,7 @@
 #ifndef MYSQLPP_FIELD_TYPES_H
 #define MYSQLPP_FIELD_TYPES_H
 
-#include <type_info.h>
+#include "type_info.h"
 
 #include <vector>
 
@@ -32,7 +32,7 @@ public:
   //: Returns the field type for the field with an offset of i.
 };
 
-}; // end namespace mysqlpp
+} // end namespace mysqlpp
 
 #endif
 

@@ -106,5 +106,5 @@ create_vector(const Row& c, std::vector<bool>& v, string s0,
 		string s6, string s7, string s8, string s9, string sa,
 		string sb, string sc);
 
-};								// end namespace mysqlpp
+} // end namespace mysqlpp
 

@@ -36,7 +36,7 @@ public:
   tiny_int operator >> (const tiny_int& i) const {return value >> i;}
 };
 
-}; // end namespace mysqlpp
+} // end namespace mysqlpp
 
 #endif
 

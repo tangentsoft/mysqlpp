@@ -1,12 +1,12 @@
 #ifndef MYSQLPP_MANIP_H
 #define MYSQLPP_MANIP_H
 
-#include <defs.h>
+#include "defs.h"
 
-#include <datetime.h>
-#include <myset.h>
-#include <sql_string.h>
-#include <sql_query.h>
+#include "datetime.h"
+#include "myset.h"
+#include "sql_string.h"
+#include "sql_query.h"
 
 #include <mysql.h>
 
@@ -316,7 +316,7 @@ inline SQLQueryParms & operator << (ignore_type2 p, SQLString &in) {
   return *p.qparms << in;
 }
 
-}; // end namespace mysqlpp
+} // end namespace mysqlpp
 
 #endif
 

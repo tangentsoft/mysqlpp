@@ -76,5 +76,5 @@ void ResUse::copy(const ResUse& other)
 	initialized = true;
 }
 
-};								// end namespace mysqlpp
+} // end namespace mysqlpp
 

@@ -31,9 +31,9 @@ CGI_IMAGE_OBJS=cgi_image.o
 LOAD_FILE_OBJS=load_file.o
 UPDEL_OBJS=updel.o
 
-.SUFFIXES: .cc
+.SUFFIXES: .cpp
 
-.cc.o:
+.cpp.o:
 	$(CXX) $(CXXFLAGS) -c $<
 
 
@@ -80,17 +80,17 @@ updel: $(UPDEL_OBJS)
 	$(LD) $(UPDEL_OBJS) -o $@ $(LDFLAGS)
 
 
-resetdb.o: resetdb.cc util.h
-simple1.o: simple1.cc util.h
-complic1.o: complic1.cc util.h
-custom1.o: custom1.cc util.h
-custom2.o: custom2.cc util.h
-custom3.o: custom3.cc util.h
-custom4.o: custom4.cc util.h
-fieldinf1.o: fieldinf1.cc util.h
-dbinfo.o: dbinfo.cc util.h
-cgi_image.o: cgi_image.cc
-load_file.o: load_file.cc
-updel.o: updel.cc
-util.o: util.cc util.h
+resetdb.o: resetdb.cpp util.h
+simple1.o: simple1.cpp util.h
+complic1.o: complic1.cpp util.h
+custom1.o: custom1.cpp util.h
+custom2.o: custom2.cpp util.h
+custom3.o: custom3.cpp util.h
+custom4.o: custom4.cpp util.h
+fieldinf1.o: fieldinf1.cpp util.h
+dbinfo.o: dbinfo.cpp util.h
+cgi_image.o: cgi_image.cpp
+load_file.o: load_file.cpp
+updel.o: updel.cpp
+util.o: util.cpp util.h
 

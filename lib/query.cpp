@@ -87,5 +87,5 @@ void Query::unlock()
 	mysql->unlock();
 }
 
-};								// end namespace mysqlpp
+} // end namespace mysqlpp
 

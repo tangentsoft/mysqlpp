@@ -1,7 +1,7 @@
 #ifndef MYSQLPP_VALLIST_H
 #define MYSQLPP_VALLIST_H
 
-#include <manip.h>
+#include "manip.h"
 
 #include <string>
 #include <vector>
@@ -285,7 +285,7 @@ equal_list(const Seq1 &s1, const Seq2 &s2, bool t0,
     (s1, s2, vb,"," ," = " ,do_nothing);
 }
 
-}; // end namespace mysqlpp
+} // end namespace mysqlpp
 
 #endif
 

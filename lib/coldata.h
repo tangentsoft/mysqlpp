@@ -1,15 +1,15 @@
 #ifndef MYSQLPP_COLDATA_H
 #define MYSQLPP_COLDATA_H
 
-#include <platform.h>
+#include "platform.h"
 
-#include <const_string.h>
-#include <convert.h>
-#include <defs.h>
-#include <exceptions.h>
-#include <null.h>
-#include <string_util.h>
-#include <type_info.h>
+#include "const_string.h"
+#include "convert.h"
+#include "defs.h"
+#include "exceptions.h"
+#include "null.h"
+#include "string_util.h"
+#include "type_info.h"
 
 #include <mysql.h>
 
@@ -183,7 +183,7 @@ Type ColData_Tmpl<Str>::conv (Type dummy) const {
   return num;
 }
 
-}; // end namespace mysqlpp
+} // end namespace mysqlpp
 
 #endif
 

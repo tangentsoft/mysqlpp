@@ -72,5 +72,5 @@ void escape_string(std::string & s)
 	}
 }
 
-};								// end namespace mysqlpp
+} // end namespace mysqlpp
 

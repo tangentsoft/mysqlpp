@@ -5,8 +5,8 @@
 #ifndef MYSQLPP_CUSTOM_H
 #define MYSQLPP_CUSTOM_H
 
-#include <defs.h>
-#include <tiny_int.h>
+#include "defs.h"
+#include "tiny_int.h"
 
 #include <string>
 
@@ -73,7 +73,7 @@ inline int sql_cmp(ulonglong a,ulonglong b) {
 
 #include "custom-macros.h"
 
-}; // end namespace mysqlpp
+} // end namespace mysqlpp
 
 #endif
 

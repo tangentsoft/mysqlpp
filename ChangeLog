@@ -1,3 +1,39 @@
+1.7.26, 2004.12.17
+
+	o Moved all of the SQLString definitions out of the header and into
+	  a new .cpp file, reformatted it all, and made the integer
+	  conversion functions use snprintf() or _snprintf() instead of
+	  sprintf().  Also, widened some of the buffers for 64-bit systems.
+
+	o Using quoted #include form for internal library headers, to avoid
+	  some problems with file name clashes.  (The headers should still
+	  be installed in their own separate directory for best results,
+	  however.)  Thanks to Chris Frey and Evan Wies for the patch and
+	  the discussion that lead to it.
+
+	o Removed unnecessary semicolons on namespace block closures.
+	  Thanks to Evan Wies for this patch.
+
+	o Fixed namespace handling in the legacy headers mysql++.hh and
+	  sqlplus.hh.  Thanks to Chris Frey for this patch.
+
+	o #including iostream instead of ostream in lib/null.h for
+	  broader C++ compatibility.  (This may allow MySQL++ to work on GCC
+	  2.95.2 again, but this is unconfirmed.)
+
+	o Detecting proper mysql_shutdown() argument handling automatically
+	  in platform.h for the Windows compiler case instead of making the
+	  user edit the file.  Thanks to Evan Wies for this patch.
+	
+	o Fixed examples/Makefile.simple to use new *.cpp file naming.
+
+	o Fix to Gentoo ebuild file's exception configure switch handling.
+	  Thanks to Chris Frey for this patch.
+
+	o Rebuilding lib/custom*.h intelligently now, to avoid unnecessary
+	  recompiles after running bootstrap script.
+
+
 1.7.25, 2004.12.09
 
 	o Yet more fixes to the --with-mysql-lib and --with-mysql-include

@@ -18,7 +18,7 @@ Strng stream2string(const T &object)
   return s;
 }
 
-}; // end namespace mysqlpp
+} // end namespace mysqlpp
 
 #endif
 

@@ -229,5 +229,5 @@ void SQLQuery::parse()
 	delete[] s0;
 }
 
-};								// end namespace mysqlpp
+} // end namespace mysqlpp
 

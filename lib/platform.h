@@ -8,9 +8,10 @@
 	// Borland C++ Builder, and MinGW GCC.
 #	include <winsock.h>
 
-	// Uncomment this if you are using MySQL 4.1.3 or higher, or 5.0.1
-	// or higher.
-//#	define HAVE_MYSQL_SHUTDOWN_LEVEL_ARG
+	// The shutdown_level argument was added in MySQL 4.1.3 and in 5.0.1.
+#	if ((MYSQL_VERSION_ID > 40103) && (MYSQL_VERSION_ID < 49999)) || (MYSQL_VERSION_ID > 50001)
+#		define HAVE_MYSQL_SHUTDOWN_LEVEL_ARG
+#	endif
 
 	// Stuff for Visual C++ only
 #	if defined(_MSC_VER)
@@ -18,6 +19,8 @@
 #		pragma warning(disable: 4355)
 		// Disable whining about implicit conversions to bool
 #		pragma warning(disable: 4800)
+		// Call _snprintf() for VC++ version of snprintf() function
+#		define snprintf _snprintf
 #	endif
 #else
 	// If not Windows, we assume some sort of Unixy build environment,

@@ -10,6 +10,7 @@ struct BadQuery {
   string error; //: The error message
 };
 
-}; // end namespace mysqlpp
+} // end namespace mysqlpp
 
 #endif
+

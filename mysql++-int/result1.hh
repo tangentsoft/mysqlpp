@@ -31,7 +31,7 @@ protected:
 
   void copy(const ResUse& other); 
 public:
-  ResUse () {}
+  ResUse () : mysql(0), mysql_res(0), throw_exceptions(false), _names(NULL), _types(NULL), _fields(this) {}
   ResUse (MYSQL_RES *result, Connection *m = NULL, bool te = false);
   ResUse (const ResUse &other) {copy(other);}
   inline ResUse& operator = (const ResUse &other);
@@ -59,7 +59,8 @@ public:
 
   void parent_leaving() {mysql = NULL;}
   
-  void purge(MYSQL_RES *r) {free_result(); delete _names; delete _types; }
+  void purge(MYSQL_RES *r)
+    { free_result(); delete _names; delete _types; _names=0; _types=0; }
   
   operator bool() const {if (mysql_res) return true; return false;} //:
   unsigned int columns() const {return num_fields();} //:

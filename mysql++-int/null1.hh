@@ -60,5 +60,22 @@ public:
   Null& operator = (const null_type &n) {is_null = true; return *this;}
   //:
 };
+
+//: OEP - Specialization for <void>
+template <> class Null<void> {
+public:
+  bool is_null;
+  typedef void value_type;
+public:
+  Null () : is_null(false) {} 
+  //: 
+  Null (const null_type &n) : is_null(true) {} 
+  //: Gives Null the null value
+  // Note: the global const *null* (not NULL) is of value null_type thus 
+  // you can say something like *Null<Type> x = null*.
+  //:
+  Null& operator = (const null_type &n) {is_null = true; return *this;}
+  //:
+};
  
 #endif

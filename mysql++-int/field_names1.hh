@@ -15,7 +15,7 @@ private:
 public:
   FieldNames () {}
   FieldNames (const ResUse *res) {init(res);}
-  FieldNames (int i) : vector(i) {}
+  FieldNames (int i) : vector<string>(i) {}
 
   FieldNames& operator = (const ResUse *res) {init(res); return *this;}  
   //: Creates a new list from the data in res.

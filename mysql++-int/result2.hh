@@ -3,6 +3,7 @@
 
 #include "connection2.hh"
 #include "result1.hh"
+#include "row2.hh"
 #include "fields2.hh"
 
 // field name info

@@ -4,7 +4,7 @@
 pointer_tracker<MYSQL_RES, ResUse> ResUse::others = 
                                   pointer_tracker<MYSQL_RES, ResUse>();
 
-ResUse::ResUse (MYSQL_RES *result, Connection *m = NULL, bool te=false) 
+ResUse::ResUse (MYSQL_RES *result, Connection *m, bool te) 
   : mysql(m), mysql_res(result), throw_exceptions(te), _names(NULL), _types(NULL), _fields(this)
 {
   _table = fields(0).table;

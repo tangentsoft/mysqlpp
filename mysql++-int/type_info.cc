@@ -86,7 +86,7 @@ mysql_ti_sql_type_info_lookup(const sql_type_info types[], const int size) {
 }
 
 unsigned char mysql_type_info::type(enum_field_types t, 
-			              bool _unsigned, bool _null = false) {
+			              bool _unsigned, bool _null) {
   if (_null) {
     if (_unsigned) {
       return unsigned_null_offset + t;

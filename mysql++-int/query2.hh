@@ -15,7 +15,7 @@ inline ResNSel Query::execute(const char* str) {
   return mysql->execute(str);
 }
 
-inline ResNSel Query::execute(parms &p, query_reset r = DONT_RESET)
+inline ResNSel Query::execute(parms &p, query_reset r)
 {
   return mysql->execute(str(p,r));
 }
@@ -24,7 +24,7 @@ inline ResUse Query::use(const char* str) {
   return mysql->use(str);
 }
 
-inline ResUse Query::use(parms &p, query_reset r = DONT_RESET) {
+inline ResUse Query::use(parms &p, query_reset r) {
   return mysql->use(str(p,r));
 }
 
@@ -32,7 +32,7 @@ inline Result Query::store(const char* str) {
   return mysql->store(str);
 }
 
-inline Result Query::store(parms &p, query_reset r = DONT_RESET) {
+inline Result Query::store(parms &p, query_reset r) {
   return mysql->store(str(p,r));
 }
 

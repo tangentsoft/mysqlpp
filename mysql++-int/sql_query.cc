@@ -27,7 +27,12 @@ void SQLQuery::reset() {
 
 char * SQLQuery::preview_char() {
   *this << ends;
+#ifdef __USLC__
+  strstreambuf *tmpbuf = rdbuf();
+  uint length = tmpbuf->pcount();
+#else
   uint length = pcount();
+#endif
   char *s = new char[length]; 
   get(s, length, '\0'); 
   seekg (0,ios::beg);
@@ -86,8 +91,14 @@ string SQLQuery::str(const SQLQueryParms &p) const {
   SQLQuery *const_this = const_cast<SQLQuery *>(this);
   if (!parsed.empty()) const_this->proc(const_cast<SQLQueryParms&>(p));
   *const_this << ends;
+#ifdef __USLC__
+  strstreambuf *tmpbuf = const_this->rdbuf();
+  uint length = tmpbuf->pcount();
+  char *s = new char[length]; 
+#else
   uint length = const_this->pcount();
   char s[length]; 
+#endif
   const_this->get(s, length, '\0'); 
   const_this->seekg (0,ios::beg);
   const_this->seekp (-1,ios::cur);

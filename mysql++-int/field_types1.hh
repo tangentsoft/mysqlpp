@@ -13,7 +13,7 @@ private:
 public:
   FieldTypes () {}
   FieldTypes (const ResUse *res) {init(res);}
-  FieldTypes (int i) : vector(i) {}
+  FieldTypes (int i) : vector<mysql_type_info>(i) {}
 
   FieldTypes& operator = (const ResUse *res) {init(res); return *this;}
   //: Creates a new list based on the info in res

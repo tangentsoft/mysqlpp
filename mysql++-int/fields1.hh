@@ -14,9 +14,9 @@ public:
   Fields() {}
   Fields(ResUse *r) : res(r) {}
   size_type size() const; //: the number of fields.
-  const Field& operator [] (int i) {return operator [](size_type(i));} 
   //: Returns the field with an offset of i;
   const Field& operator [] (size_type i) const;
+  const Field& operator [] (int i) const {return operator [](size_type(i));} 
 };
 
 #endif

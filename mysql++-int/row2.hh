@@ -21,7 +21,8 @@ inline const ColData Row::operator[] (const char *i) const {
 
 // MutableRow
 
-inline MutableRow<MutableRes>::MutableRow(const MutableRes *_res) : MutableRow_base(_res)
+inline MutableRow<MutableRes>::MutableRow(const MutableRes *_res)
+  : MutableRow_base(_res)
 {
   insert(begin(), _res->columns(), "");
 }

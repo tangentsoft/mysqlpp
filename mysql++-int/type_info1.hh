@@ -5,6 +5,10 @@
 #include <typeinfo>
 #include <map>
 
+#ifdef __USLC__
+using namespace std;
+#endif
+
 class mysql_type_info;
 class mysql_ti_sql_type_info_lookup;
 
@@ -19,11 +23,12 @@ private:
   mysql_ti_sql_type_info (const mysql_ti_sql_type_info &b);           // can't do
   mysql_ti_sql_type_info& operator=(const mysql_ti_sql_type_info &b); //  "    "
   mysql_ti_sql_type_info () {} 
+  // OEP - didn't init _base_type and _default mysql_ti_sql_type_info () {} 
   // all private, only mysql_type_info can
-  // create becuase they *must* be only one copy
+  // create because there *must* be only one copy
   // of each.
   mysql_ti_sql_type_info (const char *s, const type_info &t, 
-			  const unsigned char bt, const bool d = false)
+			  const unsigned char bt = 0, const bool d = false)
     : _sql_name(s), _c_type(&t), _base_type(bt), _default(d) {}
 };
 
@@ -75,7 +80,7 @@ public:
   mysql_type_info() {} //:
   mysql_type_info(unsigned char n) : num(n) {} //:
   inline mysql_type_info(enum_field_types t,
-			 bool _unsigned, bool _null = false);
+			 bool _unsigned, bool _null);
   //:
   inline mysql_type_info(const MYSQL_FIELD &f);
   //:
@@ -134,7 +139,7 @@ inline const mysql_type_info mysql_type_info::base_type() const
 }
 
 inline mysql_type_info::mysql_type_info(enum_field_types t,
-					bool _unsigned, bool _null = false) {
+					bool _unsigned, bool _null) {
   num = type(t,_unsigned,_null);
 }
 

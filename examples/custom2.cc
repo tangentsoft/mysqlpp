@@ -23,7 +23,9 @@ main(int argc, char *argv[])
 {
 	try {
 		Connection con(use_exceptions);
-		connect_sample_db(argc, argv, con);
+		if (!connect_to_db(argc, argv, con)) {
+			return 1;
+		}
 
 		Query query = con.query();
 

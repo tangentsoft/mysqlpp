@@ -49,11 +49,6 @@ inline int sql_cmp($type a,$type b) {
 ---
 }	
 
-print OUT0 << "---";
-
-#ifndef NO_LONG_LONGS
----
-
 @types = ("longlong", "ulonglong");
 foreach $type (@types) {
     print OUT0 << "---";
@@ -67,8 +62,6 @@ inline int sql_cmp($type a,$type b) {
 }	
 
 print OUT0 << "---";
-
-#endif // NO_LONG_LONGS
 
 #include "custom-macros.h"
 

@@ -93,10 +93,8 @@ public:
   operator  unsigned short int() const {return conv((unsigned short int)0);}
   operator  long int() const {return conv((long int)0);}
   operator  unsigned long int() const {return conv((unsigned long int)0);}
-#ifndef NO_LONG_LONGS
   operator  longlong() const {return conv((longlong)0);}
   operator  ulonglong() const {return conv((ulonglong)0);}
-#endif
   operator  float() const {return conv((float)0);}
   operator  double() const {return conv((double)0);}
 
@@ -152,10 +150,8 @@ operator_binary_int(unsigned int, unsigned long int)
 operator_binary_int(unsigned short int, unsigned long int)
 operator_binary_int(unsigned long int, unsigned long int)
 
-#if !defined(NO_LONG_LONGS)
 operator_binary_int(longlong, longlong)
 operator_binary_int(ulonglong, ulonglong)
-#endif
 
 #endif // NO_BINARY_OPERS
 

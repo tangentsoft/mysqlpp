@@ -59,8 +59,6 @@ inline int sql_cmp(float a,float b) {
   return 1;
 }
 
-#ifndef NO_LONG_LONGS
-
 inline int sql_cmp(longlong a,longlong b) {
   if (a == b) return 0;
   if (a <  b) return -1;
@@ -72,8 +70,6 @@ inline int sql_cmp(ulonglong a,ulonglong b) {
   if (a <  b) return -1;
   return 1;
 }
-
-#endif // NO_LONG_LONGS
 
 #include "custom-macros.h"
 

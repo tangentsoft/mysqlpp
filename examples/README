@@ -40,7 +40,8 @@ General Instructions
 	The following examples use the database set up by resetdb,
 	and have the same command line format as resetdb:
 
-		simple1: Basic database access. Try this one if nothing else.
+		simple1: Gets all records in the table resetdb set up and
+			displays them.  Try this one if you do nothing else.
 
 		complic1: Similar to simple1, only more complicated. :)
 
@@ -49,10 +50,8 @@ General Instructions
 
 		custom1-4: Demonstrates the SQLSS features.  (See the docs.)
 
-
-	One of the examples is more of a utility program:
-
-		dbinfo: Dumps a bunch of information about the local database.
+		dbinfo: Dumps a bunch of information about the database
+			server and the tables in its 'mysql' database.
 
 
 	The following are kind of oddballs.  You will have to change

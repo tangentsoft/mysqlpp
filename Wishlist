@@ -36,3 +36,12 @@ Bug Fix/Maintenance Items
 	  C++ library classes were not designed to be subclassed.
 
 	o Rename *.cc to *.cpp.
+
+	o Visual C++ project files should build a DLL version of the library
+	  only, for LGPL reasons.
+
+	o MinGW can't build a DLL for MySQL++.  It has to do with the file
+	  reorganization in 1.7.20: if you move everything from row.cc to
+	  a new row2.h file and include it in a few strategic locations, it
+	  works.  But, this is a bogus fix.  Find the right one.
+

@@ -19,10 +19,13 @@ def(q.def)
 
 
 void SQLQuery::reset() {
-  seekg (0L,std::ios::beg);
-  seekp (0L,std::ios::beg);
-  parsed.erase(parsed.begin(), parsed.end());
-  def.clear(); clear();
+  seekg(0);
+  seekp(0);
+  clear();
+  stringstream::str("");
+
+  parsed.clear();
+  def.clear();
 }
 
 char * SQLQuery::preview_char() {

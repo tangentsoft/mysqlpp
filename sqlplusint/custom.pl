@@ -321,7 +321,7 @@ $enums
 
   template <class Manip>
   class NAME##_value_list { 
-  /*friend ostream& operator << <> (ostream&, const NAME##_value_list&); */
+  /*friend std::ostream& operator << <> (std::ostream&, const NAME##_value_list&); */
   public: 
     const NAME *obj;
     cchar *delem;
@@ -333,7 +333,7 @@ $enums
 
   template <class Manip>
   class NAME##_##field_list {
-  /* friend ostream& operator << <> (ostream&, const NAME##_field_list&); */
+  /* friend std::ostream& operator << <> (std::ostream&, const NAME##_field_list&); */
   public: 
     const NAME *obj; 
     cchar *delem;
@@ -345,7 +345,7 @@ $enums
 
   template <class Manip>
   class NAME##_equal_list { 
-  /* friend ostream& operator << <> (ostream&, const NAME##_equal_list&); */
+  /* friend std::ostream& operator << <> (std::ostream&, const NAME##_equal_list&); */
   public: 
     const NAME *obj;
     cchar *delem;
@@ -358,47 +358,47 @@ $enums
 
   template <class Manip>
   class NAME##_cus_value_list {
-  /* friend ostream& operator << <> (ostream&, 
+  /* friend std::ostream& operator << <> (std::ostream&, 
   				  const NAME##_cus_value_list<Manip>&); */
   public:
     const NAME *obj;
     cchar *delem;
     Manip manip;
-    vector<bool> *include;
+    std::vector<bool> *include;
     bool del_vector;
   public: 
     ~NAME##_cus_value_list () {if (del_vector) delete include;} 
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, $cusparms11);
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, $cusparms22); 
-    NAME##_cus_value_list (const NAME *o, cchar *d, Manip m ,vector<bool>)
+    NAME##_cus_value_list (const NAME *o, cchar *d, Manip m ,std::vector<bool>* i)
       : obj(o), include(i), del_vector(false), delem(d), manip(m) {}
   };
 
   template <class Manip>
   class NAME##_cus_field_list { 
-  /* friend ostream& operator << <> (ostream&, 
+  /* friend std::ostream& operator << <> (std::ostream&, 
      				  const NAME##_cus_field_list<Manip>&); */
   public:
     const NAME *obj; 
     cchar *delem;
     Manip manip;
-    vector<bool> *include; 
+    std::vector<bool> *include; 
     bool del_vector; 
   public: 
     ~NAME##_cus_field_list () {if (del_vector) delete include;} 
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, $cusparms11); 
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, $cusparms22); 
-    NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, vector<bool> *i) 
+    NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, std::vector<bool> *i) 
       : obj(o), include(i), del_vector(false), delem(d), manip(m) {}
   };
 
  template <class Manip>
  class NAME##_cus_equal_list {
- /* friend ostream& operator << <> (ostream&, 
+ /* friend std::ostream& operator << <> (std::ostream&, 
 				  const NAME##_cus_equal_list<Manip>&); */
   public:
     const NAME *obj;
-    vector<bool> *include;
+    std::vector<bool> *include;
     bool del_vector;
     cchar *delem;
     cchar *comp;
@@ -407,7 +407,7 @@ $enums
     ~NAME##_##cus_equal_list () {if (del_vector) delete include;}
     NAME##_##cus_equal_list (const NAME *o, cchar *d, cchar *c, Manip m, $cusparms11); 
     NAME##_##cus_equal_list (const NAME *o, cchar *d, cchar *c, Manip m, $cusparms22); 
-    NAME##_##cus_equal_list (const NAME *o, cchar *d, cchar *c, Manip m, vector<bool> *i) 
+    NAME##_##cus_equal_list (const NAME *o, cchar *d, cchar *c, Manip m, std::vector<bool> *i) 
       : obj(o), include(i), del_vector(false), delem(d), comp(c), manip(m) {}
   };
 
@@ -452,7 +452,7 @@ $defs
     NAME##_cus_value_list<quote_type0> value_list($cusparms2) const {
       return value_list(",", mysql_quote, $cusparmsv);
     }
-    NAME##_cus_value_list<quote_type0> value_list(vector<bool> *i) const {
+    NAME##_cus_value_list<quote_type0> value_list(std::vector<bool> *i) const {
       return value_list(",", mysql_quote, i);
     }
     NAME##_cus_value_list<quote_type0> value_list(sql_cmp_type sc) const {
@@ -466,7 +466,7 @@ $defs
       return value_list(d, mysql_quote, $cusparmsv);
     }
     NAME##_cus_value_list<quote_type0> value_list(cchar *d, 
-						vector<bool> *i) const {
+						std::vector<bool> *i) const {
       return value_list(d, mysql_quote, i);
     }
     NAME##_cus_value_list<quote_type0> value_list(cchar *d, 
@@ -482,7 +482,7 @@ $defs
 					  $cusparms2) const; 
     template <class Manip>
     NAME##_cus_value_list<Manip> value_list(cchar *d, Manip m, 
-					  vector<bool> *i) const;
+					  std::vector<bool> *i) const;
     template <class Manip>
     NAME##_cus_value_list<Manip> value_list(cchar *d, Manip m, 
 					  sql_cmp_type sc) const;
@@ -494,7 +494,7 @@ $defs
     NAME##_cus_field_list<do_nothing_type0> field_list($cusparms2) const {
       return field_list(",", mysql_do_nothing, $cusparmsv);
     }
-    NAME##_cus_field_list<do_nothing_type0> field_list(vector<bool> *i) const {
+    NAME##_cus_field_list<do_nothing_type0> field_list(std::vector<bool> *i) const {
       return field_list(",", mysql_do_nothing, i);
     }
     NAME##_cus_field_list<do_nothing_type0> field_list(sql_cmp_type sc) const
@@ -511,7 +511,7 @@ $defs
       return field_list(d, mysql_do_nothing, $cusparmsv);
     }
     NAME##_cus_field_list<do_nothing_type0> field_list(cchar *d, 
-						vector<bool> *i) const {
+						std::vector<bool> *i) const {
       return field_list(d, mysql_do_nothing, i);
     }
     NAME##_cus_field_list<do_nothing_type0> field_list(cchar *d, 
@@ -527,7 +527,7 @@ $defs
 					    $cusparms2) const; 
     template <class Manip>
     NAME##_cus_field_list<Manip> field_list(cchar *d, Manip m,
-					    vector<bool> *i) const;
+					    std::vector<bool> *i) const;
     template <class Manip>
     NAME##_cus_field_list<Manip> field_list(cchar *d, Manip m, 
 					    sql_cmp_type sc) const;
@@ -540,7 +540,7 @@ $defs
     NAME##_cus_equal_list<quote_type0> equal_list($cusparms2) const {
       return equal_list(",", " = ", mysql_quote, $cusparmsv);
     }
-    NAME##_cus_equal_list<quote_type0> equal_list(vector<bool> *i) const {
+    NAME##_cus_equal_list<quote_type0> equal_list(std::vector<bool> *i) const {
       return equal_list(",", " = ", mysql_quote, i);
     }
     NAME##_cus_equal_list<quote_type0> equal_list(sql_cmp_type sc) const {
@@ -554,7 +554,7 @@ $defs
       return equal_list(d, " = ", mysql_quote, $cusparmsv);
     }
     NAME##_cus_equal_list<quote_type0> equal_list(cchar *d, 
-						vector<bool> *i) const {
+						std::vector<bool> *i) const {
       return equal_list(d, " = ", mysql_quote, i);
     }
     NAME##_cus_equal_list<quote_type0> equal_list(cchar *d, 
@@ -571,7 +571,7 @@ $defs
       return equal_list(d, c, mysql_quote, $cusparmsv);
     }
     NAME##_cus_equal_list<quote_type0> equal_list(cchar *d, cchar *c,
-						vector<bool> *i) const {
+						std::vector<bool> *i) const {
       return equal_list(d, c, mysql_quote, i);
     }
     NAME##_cus_equal_list<quote_type0> equal_list(cchar *d, cchar *c,
@@ -587,7 +587,7 @@ $defs
 					    $cusparms2) const; 
     template <class Manip>
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, 
-					    vector<bool> *i) const;
+					    std::vector<bool> *i) const;
     template <class Manip>
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, 
 					    sql_cmp_type sc) const;
@@ -606,7 +606,7 @@ $names
     manip = m;
     del_vector = true;
     obj = o; 
-    include = new vector<bool>($i, false);
+    include = new std::vector<bool>($i, false);
 $create_bool 
   } 
 
@@ -617,7 +617,7 @@ $create_bool
     manip = m;
     del_vector = true; 
     obj = o; 
-    include = new vector<bool>($i, false); 
+    include = new std::vector<bool>($i, false); 
 $create_list 
   }
 
@@ -628,7 +628,7 @@ $create_list
     manip = m;
     del_vector = true; 
     obj = o; 
-    include = new vector<bool>($i, false); 
+    include = new std::vector<bool>($i, false); 
 $create_bool 
   } 
 
@@ -639,7 +639,7 @@ $create_bool
     manip = m;
     del_vector = true; 
     obj = o; 
-    include = new vector<bool>($i, false); 
+    include = new std::vector<bool>($i, false); 
 $create_list 
   }
 
@@ -651,7 +651,7 @@ $create_list
     manip = m;
     del_vector = true; 
     obj = o; 
-    include = new vector<bool>($i, false); 
+    include = new std::vector<bool>($i, false); 
 $create_bool 
   } 
 
@@ -663,44 +663,44 @@ $create_bool
     manip = m;
     del_vector = true; 
     obj = o; 
-    include = new vector<bool>($i, false); 
+    include = new std::vector<bool>($i, false); 
 $create_list 
   }
 
   template <class Manip>
-  ostream& operator << (ostream& s, const NAME##_value_list<Manip>& obj) { 
+  std::ostream& operator << (std::ostream& s, const NAME##_value_list<Manip>& obj) { 
 $value_list; 
     return s; 
   } 
 
   template <class Manip>
-  ostream& operator << (ostream& s, const NAME##_field_list<Manip>& obj) { 
+  std::ostream& operator << (std::ostream& s, const NAME##_field_list<Manip>& obj) { 
 $field_list; 
     return s; 
   } 
 
   template <class Manip>
-  ostream& operator << (ostream& s, const NAME##_equal_list<Manip>& obj) { 
+  std::ostream& operator << (std::ostream& s, const NAME##_equal_list<Manip>& obj) { 
 $equal_list; 
     return s; 
   } 
 
   template <class Manip>
-  ostream& operator << (ostream& s, const NAME##_cus_value_list<Manip>& obj) { 
+  std::ostream& operator << (std::ostream& s, const NAME##_cus_value_list<Manip>& obj) { 
     bool before = false; 
 $value_list_cus 
     return s; 
   } 
 
   template <class Manip>
-  ostream& operator << (ostream& s, const NAME##_cus_field_list<Manip>& obj) { 
+  std::ostream& operator << (std::ostream& s, const NAME##_cus_field_list<Manip>& obj) { 
     bool before = false; 
 $cus_field_list 
     return s; 
   } 
 
   template <class Manip>
-  ostream& operator << (ostream& s, const NAME##_cus_equal_list<Manip>& obj) { 
+  std::ostream& operator << (std::ostream& s, const NAME##_cus_equal_list<Manip>& obj) { 
     bool before = false; 
 $cus_equal_list 
     return s; 

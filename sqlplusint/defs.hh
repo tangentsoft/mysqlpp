@@ -1,14 +1,15 @@
-
 #ifndef __mysql_defs_h_
 #define __mysql_defs_h_
-#include "define_short.hh"
-#include <mysql.h>
 
+#include <define_short.hh>
+
+#include <mysql++-windows.hh>
+#include <mysql.h>
 
 #if defined(NO_LONG_LONGS)
 typedef unsigned long ulonglong;
 typedef long longlong;
-#elif defined (__WIN32__) && !defined(_WIN32)
+#elif defined (__WIN32__) || defined(_WIN32)
 typedef unsigned __int64 ulonglong;
 typedef __int64 longlong;
 #else

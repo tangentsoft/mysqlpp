@@ -1,6 +1,6 @@
 include $(top_srcdir)/Configure
 
-EXTRA_DIST = custom.pl
+EXTRA_DIST = custom.pl *.bpf *.bpr *.bpg
 
 lib_LTLIBRARIES=libmysqlpp.la
 
@@ -31,7 +31,7 @@ include_HEADERS = \
 	field_types1.hh field_types2.hh field_types3.hh \
 	fields1.hh fields2.hh \
 	manip1.hh manip2.hh manip3.hh \
-	mysql++.hh \
+	mysql++.hh mysql++-windows.hh \
 	null1.hh null2.hh null3.hh \
 	query1.hh query2.hh query3.hh \
 	resiter1.hh \

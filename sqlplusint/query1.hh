@@ -1,13 +1,13 @@
 #ifndef __query1_hh__
 #define __query1_hh__
-#ifdef __WIN32__
-#include <winsock.h>
-#endif
+
+#include <connection1.hh>
+#include <define_short.hh>
+#include <mysql++-windows.hh>
+#include <result1.hh>
+#include <sql_query1.hh>
+
 #include <mysql.h>
-#include "define_short.hh"
-#include "sql_query1.hh"
-#include "result1.hh"
-#include "connection1.hh"
 
 
 //: A Query class suitable for executing queries.  

@@ -1,23 +1,21 @@
 #ifndef __result1_hh__
 #define __result1_hh__
 
-#ifdef __WIN32__
-#include <winsock.h>
-#endif
+#include <row1.hh>
+#include <resiter1.hh>
+
+#include <define_short.hh>
+#include <exceptions.hh>
+#include <field_names1.hh>
+#include <field_types1.hh>
+#include <fields1.hh>
+#include <mysql++-windows.hh>
 
 #include <mysql.h>
 
 #include <map>
 #include <set>
 #include <string>
-
-#include "define_short.hh"
-#include "field_names1.hh"
-#include "row1.hh"
-#include "resiter1.hh"
-#include "field_types1.hh"
-#include "fields1.hh"
-#include "exceptions.hh"
 
 //:
 class ResUse  {
@@ -207,7 +205,8 @@ inline void swap (Result &x, Result &y) {
 
 //: This structure holds the information on the success of queries that
 //: don't return any results.
-struct ResNSel {
+class ResNSel {
+public:
   bool     success;   
   int      insert_id; //: 
   int      rows;      //: Number of rows affected

@@ -1,16 +1,13 @@
 #ifndef __set1_hh__
 #define __set1_hh__
 
-#ifdef __WIN32__
-#include <winsock.h>
-#endif
+#include <coldata1.hh>
+#include <define_short.hh>
+#include <mysql++-windows.hh>
 
 #include <iostream>
 #include <set>
 #include <vector>
-
-#include "define_short.hh"
-#include "coldata1.hh"
 
 template <class T, class value_type = typename T::value_type>
 class MysqlListInsert {

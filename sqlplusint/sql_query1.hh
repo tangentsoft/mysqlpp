@@ -124,9 +124,14 @@ protected:
   void     proc(parms &p);
 
 public:
-  SQLQuery(): Success(false), errmsg(NULL), def(this) {parsed.empty(); parsed_names.empty(); parsed_nums.empty();} //:
-  SQLQuery(const SQLQuery &q); //:
-  SQLQuery& operator = (const SQLQuery &q); //:
+  SQLQuery() :
+  std::stringstream(),
+  Success(false),
+  errmsg(0),
+  def(this)
+  {
+  }
+  SQLQuery(const SQLQuery &q);
 
   SQLQueryParms def; //: The default template parameters set. 
 
@@ -186,7 +191,12 @@ public:
     return *this;
   } //:
 
-  mysql_query_define_const1(std::string,str)
+  std::string str() { return str(def); }
+  std::string str(query_reset r) { return str(def,r); }
+  std::string str(parms &p);
+  std::string str(parms &p, query_reset r);
+
+  mysql_query_define0(std::string, str);
 };  
 
 #endif

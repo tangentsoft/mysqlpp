@@ -33,3 +33,12 @@ Patches for any of these thoughtfully considered!
 
 	o Factor tests out of configure.in into individual files in a config
 	  subdir.
+
+	o Cannot use config.h directly anywhere, because it breaks
+	  non-autotools based systems.  (Primarily, Windows with non-GCC
+	  toolchains.)  Figure out some way to use config.h on autotools
+	  based systems, and still have the necessary defines on other
+	  systems.  Perhaps put them in mysql++-windows.hh, and make editing
+	  that a necessary step in building the library?
+
+	o Fix: "coldata4.hh:11: warning: unused parameter `int dummy'".

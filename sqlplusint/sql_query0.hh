@@ -28,14 +28,6 @@
 		       ss l)\
     {return FUNC (parms() <<a <<b <<c <<d <<e <<f <<g <<h <<i <<j <<k <<l);}\
 
-#define mysql_query_define_const1(RETURN, FUNC) \
-  RETURN FUNC () const {return FUNC (def);} \
-  RETURN FUNC (query_reset r) {return FUNC (def,r);} \
-  RETURN FUNC (const char* str) const; \
-  RETURN FUNC (const parms &p) const; \
-  RETURN FUNC (const parms &p, query_reset r);\
-  mysql_query_define0(RETURN,FUNC) \
-
 #define mysql_query_define1(RETURN, FUNC) \
   RETURN FUNC (query_reset r = RESET_QUERY) {return FUNC (def,r);} \
   RETURN FUNC (const char* str); \

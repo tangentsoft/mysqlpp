@@ -26,11 +26,16 @@ private:
   void    unlock();
 
 public:
-  Query(Connection *m, bool te = false) 
-    {mysql = m;errmsg=NULL;Success = true;throw_exceptions=te;} 
+  Query(Connection *m, bool te = false) :
+  SQLQuery(),
+  mysql(m),
+  throw_exceptions(te)
+  {
+	  Success = true;
+  }
+
   //: Create a new query object attached to a connection.
-  Query(const Query &q); //:
-  Query& operator = (const Query &q); //:
+  Query(const Query &q);
 
   std::string   error ();  //: The error message if the query was not successful.
   bool     success(); //: Displays the string currently in the buffer.

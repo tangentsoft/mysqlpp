@@ -1,7 +1,7 @@
 #include "vallist3.hh"
 #include "row2.hh"
-
-void create_vector(int size, vector<bool>& v, bool t0, 
+using std::string;
+void create_vector(int size, std::vector<bool>& v, bool t0,
 		   bool t1, bool t2, bool t3, bool t4,
 		   bool t5, bool t6, bool t7, bool t8,
 		   bool t9, bool ta, bool tb, bool tc)
@@ -23,7 +23,7 @@ void create_vector(int size, vector<bool>& v, bool t0,
 }
 
 template <class Container>
-void create_vector(const Container&c, vector<bool>&v, string s0, string s1, 
+void create_vector(const Container&c, std::vector<bool>&v, string s0, string s1,
 		   string s2, string s3, string s4, string s5, string s6,
 		   string s7, string s8, string s9, string sa, string sb,
 		   string sc)
@@ -44,7 +44,7 @@ void create_vector(const Container&c, vector<bool>&v, string s0, string s1,
   v[c.parent().field_num(sc)] = true;
 }
 
-template void create_vector (const Row &c, vector<bool>&v, string s0, string s1, 
+template void create_vector (const Row &c, std::vector<bool>&v, string s0, string s1,
 		   string s2, string s3, string s4, string s5, string s6,
 		   string s7, string s8, string s9, string sa, string sb,
 		   string sc);

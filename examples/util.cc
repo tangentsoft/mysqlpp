@@ -2,6 +2,8 @@
 #include <iomanip>
 #include "util.hh"
 
+using namespace std;
+
 void print_stock_table(Query& query) {
   query.reset();
   query << "select * from stock";
@@ -31,7 +33,7 @@ void print_stock_table(Query& query) {
     row = *i; 
     cout << setw(20) << row[0].c_str()
 	 << setw(9)  << row[1].c_str()
-	 << setw(9)  << row["weight"].c_str()
+	 << setw(9)  << row.lookup_by_name("weight").c_str()
       // you can use either the index number or column name when
       // retrieving the colume data as demonstrated above.
 	 << setw(9)  << row[3].c_str()

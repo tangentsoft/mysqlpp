@@ -1,11 +1,12 @@
 #ifndef __compare1_hh__
 #define __compare1_hh__
 
-#include <function.h>
+#include <functional>
+#include <cstring>
 #include "row1.hh"
 
 template <class BinaryPred, class CmpType>
-class MysqlCmp : public unary_function<const MysqlRow&, bool>
+class MysqlCmp : public std::unary_function<const MysqlRow&, bool>
 {
 protected:
   unsigned int index;
@@ -36,31 +37,31 @@ mysql_cmp(uint i, const BinaryPred &func, const CmpType &cmp2)
   return MysqlCmp<BinaryPred, CmpType>(i, func, cmp2);
 }
 
-typedef binary_function<const char*, const char*, bool> bin_char_pred;
+typedef std::binary_function<const char*, const char*, bool> bin_char_pred;
 
 struct cstr_equal_to : bin_char_pred {
   bool operator () (const char *x, const char *y) const
-    {return !strcmp(x,y);}
+    {return !std::strcmp(x,y);}
 };
 struct cstr_not_equal_to : bin_char_pred {
   bool operator () (const char *x, const char *y) const
-    {return strcmp(x,y);}
+    {return std::strcmp(x,y);}
 };
 struct cstr_less : bin_char_pred {
   bool operator () (const char *x, const char *y) const
-    {return strcmp(x,y) > 0; }
+    {return std::strcmp(x,y) > 0; }
 };
 struct cstr_less_equal : bin_char_pred {
   bool operator () (const char *x, const char *y) const
-    {return strcmp(x,y) >= 0; }
+    {return std::strcmp(x,y) >= 0; }
 };
 struct cstr_greater : bin_char_pred {
   bool operator () (const char *x, const char *y) const
-    {return strcmp(x,y) < 0; }
+    {return std::strcmp(x,y) < 0; }
 };
 struct cstr_greater_equal : bin_char_pred {
   bool operator () (const char *x, const char *y) const
-    {return strcmp(x,y) <= 0; }
+    {return std::strcmp(x,y) <= 0; }
 };
 
 //:A special function for using in find_if fucntion where i is the field index

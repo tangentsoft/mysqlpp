@@ -9,8 +9,8 @@
 #define __datetime1_hh__
 
 #include <string>
-#include <strstream.h>
-#include <iostream.h>
+#include <strstream>
+#include <iostream>
 #include "defs"
 #include "define_short"
 #include "coldata1.hh"
@@ -18,9 +18,9 @@
 #include "tiny_int1.hh"
 
 struct mysql_dt_base {
-  virtual ostream& out_stream(ostream&) const = 0;
+  virtual std::ostream& out_stream(std::ostream&) const = 0;
 
-  operator string ();
+  operator std::string ();
 };
 
 template <class T>
@@ -40,7 +40,7 @@ struct mysql_date : virtual public mysql_dt_base {
   tiny_int  month;
   tiny_int  day;
 
-  ostream& out_stream(ostream&) const;
+  std::ostream& out_stream(std::ostream&) const;
   cchar* convert (cchar*);
 protected:
   short int compare(const mysql_date *other) const;
@@ -71,13 +71,13 @@ struct Date : public mysql_date, public MysqlDTbase<Date>
   Date () {};
   Date (cchar* str) {convert(str);}
   Date (const ColData &str);
-  Date (const string &str);
+  Date (const std::string &str);
 
   short int compare(const Date& other) const 
     {return mysql_date::compare(&other);}
 };
 
-inline ostream& operator << (ostream& s, const Date& d) 
+inline std::ostream& operator << (std::ostream& s, const Date& d)
                                                   {return d.out_stream(s);}
 
 struct mysql_time : virtual public mysql_dt_base {
@@ -85,7 +85,7 @@ struct mysql_time : virtual public mysql_dt_base {
   tiny_int minute;  
   tiny_int second;
 
-  ostream& out_stream(ostream&) const;
+  std::ostream& out_stream(std::ostream&) const;
   cchar* convert (cchar*);
 protected:
   short int compare(const mysql_time *other) const;
@@ -116,14 +116,14 @@ struct Time : public mysql_time, public MysqlDTbase<Time>
   Time () {};
   Time (cchar* str) {convert(str);}
   Time (const ColData &str);
-  Time (const string &str);
+  Time (const std::string &str);
 
   short int compare(const Time& other) const 
     {return mysql_time::compare(&other);}
 };
 
 
-inline ostream& operator << (ostream& s, const Time& d)
+inline std::ostream& operator << (std::ostream& s, const Time& d)
                                                  {return d.out_stream(s);}
 
 //: A combinate of Date and Time for holding mysql DateTime's
@@ -135,15 +135,15 @@ struct DateTime : public mysql_date, public mysql_time,
   DateTime () {}
   DateTime (cchar* str) {convert(str);}
   DateTime (const ColData &str);
-  DateTime (const string &str);
+  DateTime (const std::string &str);
 
   short int compare(const DateTime& other) const;
 
-  ostream& out_stream(ostream&) const;
+  std::ostream& out_stream(std::ostream&) const;
   cchar* convert (cchar*);
 };
 
-inline ostream& operator << (ostream& s, const DateTime& d)
+inline std::ostream& operator << (std::ostream& s, const DateTime& d)
                                                    {return d.out_stream(s);}
 
 #endif

@@ -20,9 +20,9 @@ Connection::Connection (const char *db, const char *host, const char *user,
 }
 
 Connection::Connection (const char *db, const char *host, const char *user, 
-			const char *passwd, uint port, my_bool compress = 0,
-			unsigned int connect_timeout = 60, bool te = true,
-			const char *socket_name = "", unsigned client_flag = 0)
+			const char *passwd, uint port, my_bool compress,
+			unsigned int connect_timeout, bool te,
+			const char *socket_name, unsigned client_flag)
   : throw_exceptions(te), locked(false)
 {
 	mysql_init(&mysql);
@@ -39,9 +39,9 @@ Connection::Connection (const char *db, const char *host, const char *user,
 }
 
 bool Connection::real_connect (cchar *db, cchar *host, cchar *user,
-			       cchar *passwd, uint port, my_bool compress = 0,
-			       unsigned int connect_timeout = 60,
-			       const char *socket_name = "", unsigned int client_flag = 0)
+			       cchar *passwd, uint port, my_bool compress,
+			       unsigned int connect_timeout,
+			       const char *socket_name, unsigned int client_flag)
 {
   mysql.options.compress = compress;
   mysql.options.connect_timeout=connect_timeout;
@@ -108,15 +108,15 @@ bool Connection::connect (cchar *db, cchar *host, cchar *user, cchar *passwd) {
   return Success;
 }
 
-string Connection::info () {
-  char *i = mysql_info(&mysql);
+std::string Connection::info () {
+  const char *i = mysql_info(&mysql);
   if (!i)
-    return string();
+    return std::string();
   else
-    return string(i);
+    return std::string(i);
 }
 
-ResNSel Connection::execute(const string &str, bool throw_excptns) {
+ResNSel Connection::execute(const std::string &str, bool throw_excptns) {
   Success = false;
   if (lock()) 
     if (throw_excptns) throw BadQuery(error());
@@ -129,13 +129,13 @@ ResNSel Connection::execute(const string &str, bool throw_excptns) {
   return ResNSel(this);
 }
 
-bool Connection::exec(const string &str) {
+bool Connection::exec(const std::string &str) {
 	Success = !mysql_query(&mysql,str.c_str());
 	if (!Success && throw_exceptions) throw BadQuery(error());
 	return Success;
 }
 
-Result Connection::store(const string &str, bool throw_excptns) {
+Result Connection::store(const std::string &str, bool throw_excptns) {
   Success = false;
   if (lock()) 
     if (throw_excptns) throw BadQuery(error());
@@ -148,7 +148,7 @@ Result Connection::store(const string &str, bool throw_excptns) {
   return Result(mysql_store_result(&mysql));
 }
   
-ResUse Connection::use(const string &str, bool throw_excptns) {
+ResUse Connection::use(const std::string &str, bool throw_excptns) {
   Success = false;
   if (lock()) 
     if (throw_excptns) throw BadQuery(error());

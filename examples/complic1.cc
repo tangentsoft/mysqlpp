@@ -3,6 +3,8 @@
 #include <iomanip>
 #include <sqlplus.hh>
 
+using namespace std;
+
 int main() {
   try { // its in one big try block
 
@@ -45,7 +47,7 @@ int main() {
 	// cache below).  To test it try changing the 2 in row[2]
 	// to row[0]
 	   << setw(7) << (double)row[3];
-      Date date = row["SDATE"]; 
+      Date date = row.lookup_by_name("SDATE");
       // The ColData is implicitly converted to a date here.
       cout.setf(ios::right);
       cout.fill('0');

@@ -1,9 +1,12 @@
 #include <vector>
 #include <string>
-vector<string> yy;
 #include <iostream>
 #include <iomanip>
 #include <sqlplus.hh>
+
+using namespace std;
+
+vector<string> yy;
 
 int main() {
   Connection con(use_exceptions);

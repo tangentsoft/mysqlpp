@@ -9,7 +9,7 @@
 
 template <class Str> template<class Type> 
 Type mysql_ColData<Str>::conv (Type dummy) const {
-	string strbuf(buf);
+	std::string strbuf = buf;
 	strip_all_blanks(strbuf);
   size_t len = strbuf.size();
   const char *str = strbuf.c_str();

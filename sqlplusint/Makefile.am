@@ -2,13 +2,18 @@ include $(top_srcdir)/Configure
 
 EXTRA_DIST = custom.pl
 
-lib_LTLIBRARIES = libsqlplus.la
+lib_LTLIBRARIES=libmysqlpp.la
 
-libsqlplus_la_SOURCES = coldata.cc connection.cc datetime.cc field_names.cc \
+# Interface version, bug fix revision, and 'age' -- number of previous
+# interfaces supported.  Bump the last only if explicit
+# backwards-compatibility is added -- like two different versions of a
+# single function exist.  'age' must be less than the current interface
+# version.
+libmysqlpp_la_LDFLAGS=-version-info 1:0:0
+
+libmysqlpp_la_SOURCES = coldata.cc connection.cc datetime.cc field_names.cc \
 	field_types.cc manip.cc query.cc result.cc  set.cc sql_query.cc \
 	type_info.cc vallist.cc string_util.cc
-
-libsqlplus_la_LDFLAGS = -version-info $(SQLPLUS_MAJOR_VERSION):$(SQLPLUS_MINOR_VERSION):$(SQLPLUS_MICRO_VERSION)
 
 include_HEADERS = sqlplus.hh coldata1.hh coldata2.hh coldata3.hh coldata4.hh \
 	compare1.hh compare2.hh compare3.hh connection0.hh connection1.hh \

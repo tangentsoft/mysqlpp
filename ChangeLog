@@ -1,0 +1,15 @@
+1.7.10, 2004.08.16
+
+	o Applied omnibus GCC 3.3 patch.  See
+	  http://lists.mysql.com/plusplus/3326 for details.
+
+	o Got autoconf/automake build system working with current versions
+	  of those tools again.  Removed the generated autotools files from
+	  CVS.
+
+	o Renamed library file from libsqlplus to libmysqlpp.
+
+
+1.7.9, 2001.05.19
+
+	o Previous version prior to Warren Young taking over maintenance.

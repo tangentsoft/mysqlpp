@@ -4,6 +4,11 @@
 #include <sqlplus.hh>
 #include <custom.hh>
 #include "util.hh"
+
+#include <string>
+
+using namespace std;
+
 // util.hh/cc contains the print_stock_table function
 
 sql_create_5(stock, 1, 5, string, item, longlong, num, 

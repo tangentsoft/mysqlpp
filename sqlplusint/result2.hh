@@ -8,17 +8,17 @@
 
 // field name info
 
-inline int ResUse::field_num(const string &i) const {
+inline int ResUse::field_num(const std::string &i) const {
   if (!_names) _names = new FieldNames(this);
   return (*_names)[i];
 }
 
-inline string& ResUse::field_name(int i) {
+inline std::string& ResUse::field_name(int i) {
   if (!_names) _names = new FieldNames(this);
   return (*_names)[i];
 }
 
-inline const string& ResUse::field_name(int i) const {
+inline const std::string& ResUse::field_name(int i) const {
   if (!_names) _names = new FieldNames(this);
   return (*_names)[i];
 }
@@ -65,9 +65,9 @@ inline void ResUse::reset_field_types() {
   _types = new FieldTypes(this);
 }
 
-inline int               ResUse::names(const string& s) const {return field_num(s);}
-inline string&           ResUse::names(int i) {return field_name(i);}
-inline const string&     ResUse::names(int i) const {return field_name(i);}
+inline int               ResUse::names(const std::string& s) const {return field_num(s);}
+inline std::string&           ResUse::names(int i) {return field_name(i);}
+inline const std::string&     ResUse::names(int i) const {return field_name(i);}
 inline FieldNames&       ResUse::names() {return field_names();}
 inline const FieldNames& ResUse::names() const {return field_names();}
 inline void              ResUse::reset_names() {reset_field_names();}

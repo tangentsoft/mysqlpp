@@ -22,9 +22,9 @@
 
 //: The main database handle
 class Connection {
-  friend ResNSel;
-  friend ResUse;
-  friend Query;
+  friend class ResNSel;
+  friend class ResUse;
+  friend class Query;
   
 private:
   bool throw_exceptions;
@@ -52,7 +52,7 @@ public:
 				
   ~Connection (); //:
   void         close() {mysql_close(&mysql);}	 //:
-  string       info ();	//:
+  std::string       info ();	//:
 
   bool   connected() const {return is_connected;}
   //: returns true if a successful connection was made
@@ -74,59 +74,61 @@ public:
   //:
 
   operator bool () {return success();}                  //: returns success()
-  string error () {return string(mysql_error(&mysql));} //: last error message()
+  std::string error () {return mysql_error(&mysql);} //: last error message()
 	int errnum () {return mysql_errno(&mysql);}
 	int   refresh (unsigned int refresh_options){ return mysql_refresh (&mysql,refresh_options); }
 	int ping (void) { return mysql_ping(&mysql);}
 	int kill (unsigned long pid) { return mysql_kill (&mysql,pid);}
-  string client_info () {return string(mysql_get_client_info());} //:
+  std::string client_info () {return std::string(mysql_get_client_info());} //:
   
-  string host_info () {return string(mysql_get_host_info(&mysql));} //:
+  std::string host_info () {return std::string(mysql_get_host_info(&mysql));} //:
   
   int    proto_info () {return mysql_get_proto_info(&mysql);} //:
   
-  string server_info () {return string(mysql_get_server_info(&mysql));} //:
+  std::string server_info () {return std::string(mysql_get_server_info(&mysql));} //:
  
-  string stat() {return string(mysql_stat(&mysql));} //:
+  std::string stat() {return std::string(mysql_stat(&mysql));} //:
  
-  Result  store(const string &str) {return store(str, throw_exceptions);} //:
-  ResUse  use(const string &str)   {return use(str, throw_exceptions);} //:
-  ResNSel execute(const string &str) {return execute(str, throw_exceptions);} //:
-	bool exec (const string &str);
-  Result  store(const string &str, bool te); //:
-  ResUse  use(const string &str, bool te); //:
-  ResNSel execute(const string &str, bool te); //:
+  Result  store(const std::string &str) {return store(str, throw_exceptions);} //:
+  ResUse  use(const std::string &str)   {return use(str, throw_exceptions);} //:
+  ResNSel execute(const std::string &str) {return execute(str, throw_exceptions);} //:
+	bool exec (const std::string &str);
+  Result  store(const std::string &str, bool te); //:
+  ResUse  use(const std::string &str, bool te); //:
+  ResNSel execute(const std::string &str, bool te); //:
  
-  bool   create_db (string db) {return !(execute( "CREATE DATABASE " + db ));} //:
-  bool   drop_db (string db) {return !(execute( "DROP DATABASE " + db ));} //:
-  bool   select_db (string db) {return select_db(db.c_str());} //:
+  bool   create_db (std::string db) {return !(execute( "CREATE DATABASE " + db ));} //:
+  bool   drop_db (std::string db) {return !(execute( "DROP DATABASE " + db ));} //:
+  bool   select_db (std::string db) {return select_db(db.c_str());} //:
   bool   select_db (const char *db); //:
   bool   reload(); //:
   bool   shutdown (); //:
-	string infoo (void) {return info ();}
+	std::string infoo (void) {return info ();}
 	st_mysql_options get_options (void) const {return mysql.options;}
 	int read_options(enum mysql_option option,const char *arg) {return  mysql_options(&mysql, option,arg);}
   int          affected_rows()  {return mysql_affected_rows((MYSQL*) &mysql);}
   int          insert_id () {return mysql_insert_id(&mysql);}
 
-  template <class Sequence> void storein_sequence(Sequence &, const string &); //:
-  template <class Set>      void storein_set(Set &, const string &);  //:
+  template <class Sequence> void storein_sequence(Sequence &, const std::string &); //:
+  template <class Set>      void storein_set(Set &, const std::string &);  //:
 
   //!dummy: void storein(TYPE &con, const string &s);
   //: Stores the results in TYPE.  
   // Stores the result in TYPE. TYPE must be some sort of STL container.  
 
-  template <class T>        void storein(vector<T> &con, const string &s)
+  template <class T>        void storein(std::vector<T> &con, const std::string &s)
     {storein_sequence(con,s);}
-  template <class T>        void storein(deque<T> &con, const string &s)
+  template <class T>        void storein(std::deque<T> &con, const std::string &s)
      {storein_sequence(con,s);}
-  template <class T>        void storein(list<T> &con, const string &s)
+  template <class T>        void storein(std::list<T> &con, const std::string &s)
     {storein_sequence(con,s);}
-  template <class T>        void storein(slist<T> &con, const string &s)
+#ifdef HAVE_STD_SLIST
+  template <class T>        void storein(std::slist<T> &con, const std::string &s)
     {storein_sequence(con,s);}
-  template <class T>        void storein(set<T> &con, const string &s)
+#endif
+  template <class T>        void storein(std::set<T> &con, const std::string &s)
     {storein_set(con,s);}
-  template <class T>        void storein(multiset<T> &con, const string &s)
+  template <class T>        void storein(std::multiset<T> &con, const std::string &s)
     {storein_set(con,s);}
 };
 

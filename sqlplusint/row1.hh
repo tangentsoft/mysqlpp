@@ -35,17 +35,17 @@ public:
 
   template <class Manip>  
   value_list_b<ThisType,Manip> 
-  value_list(const char *d, Manip m, const vector<bool> &vb) const {
+  value_list(const char *d, Manip m, const std::vector<bool> &vb) const {
     return value_list_b<ThisType,Manip> (self(), vb, d, m);
   }
 
   value_list_b<ThisType,quote_type0> 
-  value_list(const char *d, const vector<bool> &vb) const {
+  value_list(const char *d, const std::vector<bool> &vb) const {
     return value_list_b<ThisType,quote_type0> (self(), vb, d, quote);
   }
 
   value_list_b<ThisType,quote_type0> 
-  value_list(const vector<bool> &vb) const {
+  value_list(const std::vector<bool> &vb) const {
     return value_list_b<ThisType,quote_type0> (self(), vb, ",", quote);
   }
 
@@ -55,7 +55,7 @@ public:
 	     bool t1=false, bool t2=false, bool t3=false, bool t4=false,
 	     bool t5=false, bool t6=false, bool t7=false, bool t8=false,
 	     bool t9=false, bool ta=false, bool tb=false, bool tc=false) const {
-    vector<bool> vb;
+    std::vector<bool> vb;
     create_vector(self().size(), vb, t0,t1,t2,t3,t4,t5,t6,t7,t8,t9,ta,tb,tc);
     return value_list_b<ThisType, Manip>(self(), vb, d, m);
   }
@@ -65,7 +65,7 @@ public:
 	     bool t1=false, bool t2=false, bool t3=false, bool t4=false,
 	     bool t5=false, bool t6=false, bool t7=false, bool t8=false,
 	     bool t9=false, bool ta=false, bool tb=false, bool tc=false) const {
-    vector<bool> vb;
+    std::vector<bool> vb;
     create_vector(self().size(), vb, t0,t1,t2,t3,t4,t5,t6,t7,t8,t9,ta,tb,tc);
     return value_list_b<ThisType, quote_type0>(self(), vb, d, quote);
   }
@@ -75,38 +75,38 @@ public:
 	     bool t1=false, bool t2=false, bool t3=false, bool t4=false,
 	     bool t5=false, bool t6=false, bool t7=false, bool t8=false,
 	     bool t9=false, bool ta=false, bool tb=false, bool tc=false) const {
-    vector<bool> vb;
+    std::vector<bool> vb;
     create_vector(self().size(), vb, t0,t1,t2,t3,t4,t5,t6,t7,t8,t9,ta,tb,tc);
     return value_list_b<ThisType, quote_type0>(self(), vb, ",", quote);
   }
 
   template <class Manip>
   value_list_b<ThisType,Manip> 
-  value_list(const char *d, Manip m, string s0,
-	     string s1="", string s2="", string s3="", string s4="",
-	     string s5="", string s6="", string s7="", string s8="",
-	     string s9="", string sa="", string sb="", string sc="") const {
-    vector<bool> vb;
+  value_list(const char *d, Manip m, std::string s0,
+	     std::string s1="", std::string s2="", std::string s3="", std::string s4="",
+	     std::string s5="", std::string s6="", std::string s7="", std::string s8="",
+	     std::string s9="", std::string sa="", std::string sb="", std::string sc="") const {
+    std::vector<bool> vb;
     create_vector(self(), vb, s0,s1,s2,s3,s4,s5,s6,s7,s8,s9,sa,sb,sc);
     return value_list_b<ThisType, Manip>(self(), vb, d, m);
   }
 
   value_list_b<ThisType,quote_type0> 
-  value_list(const char *d, string s0,
-	     string s1="", string s2="", string s3="", string s4="",
-	     string s5="", string s6="", string s7="", string s8="",
-	     string s9="", string sa="", string sb="", string sc="") const {
-    vector<bool> vb;
+  value_list(const char *d, std::string s0,
+	     std::string s1="", std::string s2="", std::string s3="", std::string s4="",
+	     std::string s5="", std::string s6="", std::string s7="", std::string s8="",
+	     std::string s9="", std::string sa="", std::string sb="", std::string sc="") const {
+    std::vector<bool> vb;
     create_vector(self(), vb, s0,s1,s2,s3,s4,s5,s6,s7,s8,s9,sa,sb,sc);
     return value_list_b<ThisType, quote_type0>(self(), vb, d, quote);
   }
 
   value_list_b<ThisType,quote_type0> 
-  value_list(string s0,
-	     string s1="", string s2="", string s3="", string s4="",
-	     string s5="", string s6="", string s7="", string s8="",
-	     string s9="", string sa="", string sb="", string sc="") const {
-    vector<bool> vb;
+  value_list(std::string s0,
+	     std::string s1="", std::string s2="", std::string s3="", std::string s4="",
+	     std::string s5="", std::string s6="", std::string s7="", std::string s8="",
+	     std::string s9="", std::string sa="", std::string sb="", std::string sc="") const {
+    std::vector<bool> vb;
     create_vector(self(), vb, s0,s1,s2,s3,s4,s5,s6,s7,s8,s9,sa,sb,sc);
     return value_list_b<ThisType, quote_type0>(self(), vb, ",", quote);
   }
@@ -129,17 +129,17 @@ public:
 
   template <class Manip>  
   value_list_b<FieldNames,Manip> 
-  field_list(const char *d, Manip m, const vector<bool> &vb) const {
+  field_list(const char *d, Manip m, const std::vector<bool> &vb) const {
     return value_list_b<FieldNames,Manip> (parent().names(), vb, d, m);
   }
 
   value_list_b<FieldNames,quote_type0> 
-  field_list(const char *d, const vector<bool> &vb) const {
+  field_list(const char *d, const std::vector<bool> &vb) const {
     return value_list_b<FieldNames,quote_type0> (parent().names(), vb, d, quote);
   }
 
   value_list_b<FieldNames,quote_type0> 
-  field_list(const vector<bool> &vb) const {
+  field_list(const std::vector<bool> &vb) const {
     return value_list_b<FieldNames,quote_type0> (parent().names(), vb, ",", quote);
   }
 
@@ -149,7 +149,7 @@ public:
 	     bool t1=false, bool t2=false, bool t3=false, bool t4=false,
 	     bool t5=false, bool t6=false, bool t7=false, bool t8=false,
 	     bool t9=false, bool ta=false, bool tb=false, bool tc=false) const {
-    vector<bool> vb;
+    std::vector<bool> vb;
     create_vector(parent().names().size(), vb, t0,t1,t2,t3,t4,t5,t6,t7,t8,t9,ta,tb,tc);
     return value_list_b<FieldNames, Manip>(parent().names(), vb, d, m);
   }
@@ -159,7 +159,7 @@ public:
 	     bool t1=false, bool t2=false, bool t3=false, bool t4=false,
 	     bool t5=false, bool t6=false, bool t7=false, bool t8=false,
 	     bool t9=false, bool ta=false, bool tb=false, bool tc=false) const {
-    vector<bool> vb;
+    std::vector<bool> vb;
     create_vector(parent().names().size(), vb, t0,t1,t2,t3,t4,t5,t6,t7,t8,t9,ta,tb,tc);
     return value_list_b<FieldNames, quote_type0>(parent().names(), vb, d, quote);
   }
@@ -169,38 +169,38 @@ public:
 	     bool t1=false, bool t2=false, bool t3=false, bool t4=false,
 	     bool t5=false, bool t6=false, bool t7=false, bool t8=false,
 	     bool t9=false, bool ta=false, bool tb=false, bool tc=false) const {
-    vector<bool> vb;
+    std::vector<bool> vb;
     create_vector(parent().names().size(), vb, t0,t1,t2,t3,t4,t5,t6,t7,t8,t9,ta,tb,tc);
     return value_list_b<FieldNames, quote_type0>(parent().names(), vb, ",", quote);
   }
 
   template <class Manip>
   value_list_b<FieldNames,Manip> 
-  field_list(const char *d, Manip m, string s0,
-	     string s1="", string s2="", string s3="", string s4="",
-	     string s5="", string s6="", string s7="", string s8="",
-	     string s9="", string sa="", string sb="", string sc="") const {
-    vector<bool> vb;
+  field_list(const char *d, Manip m, std::string s0,
+	     std::string s1="", std::string s2="", std::string s3="", std::string s4="",
+	     std::string s5="", std::string s6="", std::string s7="", std::string s8="",
+	     std::string s9="", std::string sa="", std::string sb="", std::string sc="") const {
+    std::vector<bool> vb;
     create_vector(parent().names(), vb, s0,s1,s2,s3,s4,s5,s6,s7,s8,s9,sa,sb,sc);
     return value_list_b<FieldNames, Manip>(parent().names(), vb, d, m);
   }
 
   value_list_b<FieldNames,quote_type0> 
-  field_list(const char *d, string s0,
-	     string s1="", string s2="", string s3="", string s4="",
-	     string s5="", string s6="", string s7="", string s8="",
-	     string s9="", string sa="", string sb="", string sc="") const {
-    vector<bool> vb;
+  field_list(const char *d, std::string s0,
+	     std::string s1="", std::string s2="", std::string s3="", std::string s4="",
+	     std::string s5="", std::string s6="", std::string s7="", std::string s8="",
+	     std::string s9="", std::string sa="", std::string sb="", std::string sc="") const {
+    std::vector<bool> vb;
     create_vector(parent().names(), vb, s0,s1,s2,s3,s4,s5,s6,s7,s8,s9,sa,sb,sc);
     return value_list_b<FieldNames, quote_type0>(parent().names(), vb, d, quote);
   }
 
   value_list_b<FieldNames,quote_type0> 
-  field_list(string s0,
-	     string s1="", string s2="", string s3="", string s4="",
-	     string s5="", string s6="", string s7="", string s8="",
-	     string s9="", string sa="", string sb="", string sc="") const {
-    vector<bool> vb;
+  field_list(std::string s0,
+	     std::string s1="", std::string s2="", std::string s3="", std::string s4="",
+	     std::string s5="", std::string s6="", std::string s7="", std::string s8="",
+	     std::string s9="", std::string sa="", std::string sb="", std::string sc="") const {
+    std::vector<bool> vb;
     create_vector(parent().names(), vb, s0,s1,s2,s3,s4,s5,s6,s7,s8,s9,sa,sb,sc);
     return value_list_b<FieldNames, quote_type0>(parent().names(), vb, ",", quote);
   }
@@ -229,8 +229,8 @@ class Row : public const_subscript_container<Row,ColData,const ColData>,
 	    public RowTemplate<Row, ResUse>
 {
 private:
-  vector <string> data;
-	vector <bool> is_nulls;
+  std::vector <std::string> data;
+	std::vector <bool> is_nulls;
   const ResUse *res;
   bool         throw_exceptions, initialized;
 
@@ -246,7 +246,7 @@ public:
 		  data.clear(); is_nulls.clear(); initialized=true;
 		  for (unsigned int i=0;i<size();i++) 
 			{
-			  data.insert(data.end(),(d[i]) ? string(d[i],jj[i]) : (string)"NULL");
+			  data.insert(data.end(),(d[i]) ? std::string(d[i],jj[i]) : (std::string)"NULL");
 				is_nulls.insert(is_nulls.end(),d[i] ? false : true);
 			}
 		}
@@ -256,21 +256,10 @@ public:
   const ResUse&  parent() const {return *res;}
   inline size_type     size() const;
   //: Returns the number of columns.
-  const ColData   operator [] (int i) const {
-	  if (!initialized) {
-				if (throw_exceptions) throw BadQuery("Row not initialized");
-				else return ColData();
-			}
-		return operator[](size_type(i));
-	}
   inline const ColData   operator [] (size_type i) const;
   //: Returns the value of the field with the index of i.
-  inline const ColData   operator [] (const char *) const;
-  //: Returns the value of the field with the field name of i.
-  // This method is not nearly as efficient as using the index number. Use sparingly. 
-  inline const ColData   operator [] (const string &i) const;
-  //: Returns the value of the field with the field name of i.
-  // This method is not nearly as effecent as using the index number. Use sparingly. 
+
+  inline const ColData lookup_by_name(const char*) const;
 
   const char *raw_data(int i) const {return data[i].data();}
 

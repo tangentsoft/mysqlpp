@@ -1,20 +1,20 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(sqlplusint/sqlplus.hh)
 
-VERSION=1.7.0
+VERSION=1.7.10
 SQLPLUS_MAJOR_VERSION=[`expr $VERSION : '\([0-9][0-9]*\)'`]
 AC_SUBST(SQLPLUS_MAJOR_VERSION)
 SQLPLUS_MINOR_VERSION=[`expr $VERSION : '[0-9][0-9]*\.\([0-9][0-9]*\)'`]
 AC_SUBST(SQLPLUS_MINOR_VERSION)
 SQLPLUS_MICRO_VERSION=[`expr $VERSION : '[0-9][0-9]*\.[0-9][0-9]*\.\([0-9][0-9]*\)'`]
 AC_SUBST(SQLPLUS_MICRO_VERSION)
-AM_INIT_AUTOMAKE(sqlplus, $VERSION)
+AM_INIT_AUTOMAKE(mysql++, $VERSION)
 
 AM_CONFIG_HEADER(config.h sqlplusint/exceptions.hh)
 
 AC_PROG_MAKE_SET
 
-AM_PROG_LIBTOOL
+AC_PROG_LIBTOOL
 
 dnl Initialize maintainer mode
 AM_MAINTAINER_MODE
@@ -23,7 +23,7 @@ dnl Should the standard C++ exception class be used as a base for our exceptions
 AC_ARG_ENABLE(exception,
 [  --enable-exception      use standard C++ exception class as the base class
                           for mysql++ exceptions],
-    [if test $enable_exception = yes; then AC_DEFINE(USE_STANDARD_EXCEPTION,1) fi])
+    [if test $enable_exception = yes; then AC_DEFINE(USE_STANDARD_EXCEPTION, 1, [Define if using Standard C++ exception classes]) fi])
 
 #
 # Location of MySQL installation

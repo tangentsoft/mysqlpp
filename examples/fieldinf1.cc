@@ -3,6 +3,8 @@
 #include <iomanip>
 #include <sqlplus.hh>
 
+using namespace std;
+
 int main() {
   try { // its in one big try block
 

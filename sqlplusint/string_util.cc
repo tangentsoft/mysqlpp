@@ -1,7 +1,7 @@
 #include <string>
 
 
-void strip (string& s) {
+void strip (std::string& s) {
 	int i,j = s.size() - 1;  if (!s.size()) return;
 	for (i = 0; s[i] == ' ';i++);
 	if (i) s.erase(0,i); j = s.size(); if (!j) return; j--;
@@ -9,7 +9,7 @@ void strip (string& s) {
 	if (i != j) s.erase(i+1,(size_t)-1);
 }
 
-void escape_string (string& s) {
+void escape_string (std::string& s) {
 	if (!s.size()) return;
 	for (unsigned int i = 0;i<s.size();i++)
 	{

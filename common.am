@@ -1,0 +1,4 @@
+INCLUDES = -I$(top_srcdir)/sqlplusint
+LIBS = -lz -lmysqlclient
+
+SQLPLUSLIBS = $(top_builddir)/sqlplusint/libmysqlpp.la

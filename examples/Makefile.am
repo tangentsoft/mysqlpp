@@ -1,4 +1,4 @@
-include ../Configure
+include ../common.am
 
 LDFLAGS = 
 LDADD = $(SQLPLUSLIBS)

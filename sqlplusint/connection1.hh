@@ -77,7 +77,7 @@ public:
   //:
 
   operator bool () {return success();}                  //: returns success()
-  std::string error () {return mysql_error(&mysql);} //: last error message()
+  const char* error () {return mysql_error(&mysql);} //: last error message()
 	int errnum () {return mysql_errno(&mysql);}
 	int   refresh (unsigned int refresh_options){ return mysql_refresh (&mysql,refresh_options); }
 	int ping (void) { return mysql_ping(&mysql);}

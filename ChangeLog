@@ -1,3 +1,19 @@
+2000-01-06  Dale Hawkins  <dhawkins@cdrgts.com>
+
+	* acconfig.h: New file.  Lets me define the library versioning.
+
+	* autogen.sh: Boilerplate configuration jump-start script.
+
+2000-01-04  Dale Hawkins  <dhawkins@cdrgts.com>
+
+	* sqlplus.spec.in (Packager): Created new spec.in file to work
+	with autoconf/automake and libtool for easier releases of
+	RPMs. (Yes, I am a Linux bigot and I think the world should
+	revolve around RPMs).
+	
+	* configure.in: Reworked this file to work with spec.in and
+	support libtool type versioning.
+	
 1999-10-15 Sinisa Milivojevic <sinisa@cytanet.com.cy>
            
 * Changed version to 1.2					 

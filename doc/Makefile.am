@@ -1,4 +1,15 @@
-# this is a makefile for making a manual
+# This file should cause the manual to be a generated source (i.e., so
+# that it is build at distribution time since its creation is
+# non-standard) 
+
+# This file still needs a lot of work...
+
+# SUBDIRS = man-html man-text
+
+EXTRA_DIST = \
+  doc.tex.tmpl html.sty manual.aux manual.dvi manual.log manual.lyx \
+  manual.ps manual.tex pretty.pl sql++pretty doc-fix.pl doc-trim.pl \
+  examples-proc.pl html2txt.pl insert-classref.pl
 
 default: manual
 

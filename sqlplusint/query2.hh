@@ -17,6 +17,7 @@ inline ResNSel Query::execute(const char* str) {
 
 inline ResNSel Query::execute(parms &p, query_reset r)
 {
+  r = (parsed.size()) ? DONT_RESET : RESET_QUERY;
   return mysql->execute(str(p,r));
 }
 
@@ -25,6 +26,7 @@ inline ResUse Query::use(const char* str) {
 }
 
 inline ResUse Query::use(parms &p, query_reset r) {
+  r = (parsed.size()) ? DONT_RESET: RESET_QUERY;
   return mysql->use(str(p,r));
 }
 
@@ -33,6 +35,7 @@ inline Result Query::store(const char* str) {
 }
 
 inline Result Query::store(parms &p, query_reset r) {
+  r = (parsed.size()) ? DONT_RESET: RESET_QUERY;
   return mysql->store(str(p,r));
 }
 
@@ -59,11 +62,13 @@ inline void Query::unlock() {
 
 template <class Seq>
 inline void Query::storein_sequence (Seq &seq,parms &p, query_reset r) {
+  r = (parsed.size()) ? DONT_RESET : RESET_QUERY;
   mysql->storein_sequence (seq, str(p,r));
 }
 
 template <class Set>
 inline void Query::storein_set (Set &sett, parms &p, query_reset r) {
+  r = (parsed.size()) ? DONT_RESET : RESET_QUERY;
   mysql->storein_set (sett, str(p,r));
 }
 
@@ -79,6 +84,7 @@ inline void Query::storein_set (Set &sett, const char * s) {
 
 template <class T>
 inline void Query::storein (T &con, parms &p, query_reset r) {
+  r = (parsed.size()) ? DONT_RESET : RESET_QUERY;
   mysql->storein (con, str(p,r));
 }
 

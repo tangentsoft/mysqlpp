@@ -1,5 +1,3 @@
-include $(top_srcdir)/Configure
-
 EXTRA_DIST = custom.pl
 
 lib_LTLIBRARIES = libsqlplus.la
@@ -8,11 +6,16 @@ libsqlplus_la_SOURCES = coldata.cc connection.cc datetime.cc field_names.cc \
 	field_types.cc manip.cc query.cc result.cc row.cc set.cc sql_query.cc \
 	type_info.cc vallist.cc
 
-libsqlplus_la_LDFLAGS = -version-info $(SQLPLUS_MAJOR_VERSION):$(SQLPLUS_MINOR_VERSION):$(SQLPLUS_MICRO_VERSION)
+libsqlplus_la_LDFLAGS = \
+	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
+	-release $(LT_RELEASE)
 
 noinst_HEADERS = magic.h tracker.h
 
-include_HEADERS = sqlplus.hh coldata1.hh coldata2.hh coldata3.hh coldata4.hh \
+# a little automake magic here; puts the headers in
+# $(prefix)/include/$(package) good for projects such as this.  Let
+# mysql++-config sort things out...
+pkginclude_HEADERS = sqlplus.hh coldata1.hh coldata2.hh coldata3.hh coldata4.hh \
 	compare1.hh compare2.hh compare3.hh connection0.hh connection1.hh \
 	connection2.hh connection3.hh const_string1.hh const_string2.hh const_string3.hh \
 	convert1.hh convert2.hh convert3.hh custom-macros.hh custom.hh datetime1.hh \
@@ -24,12 +27,16 @@ include_HEADERS = sqlplus.hh coldata1.hh coldata2.hh coldata3.hh coldata4.hh \
 	sql_query3.hh sql_string1.hh sql_string2.hh sql_string3.hh stream2string1.hh \
 	stream2string2.hh stream2string3.hh tiny_int1.hh tiny_int2.hh tiny_int3.hh \
 	type_info1.hh type_info2.hh type_info3.hh vallist1.hh vallist2.hh vallist3.hh \
-	define_short defs
+	define_short defs undef_short
 
-all-local: custom.hh custom-macros.hh
+BUILT_SOURCES = custom.hh custom-macros.hh
 
 custom.hh custom-macros.hh: custom.pl
-	perl custom.pl
+	@PERL@ custom.pl
 
-distclean-local:
-	rm -f custom.hh custom-macros.hh
+# These files should be removed by invoking maintainer-clean
+
+# all-local: custom.hh custom-macros.hh
+
+# distclean-local:
+# 	rm -f custom.hh custom-macros.hh

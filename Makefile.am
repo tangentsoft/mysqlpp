@@ -1,4 +1,4 @@
-EXTRA_DIST = bootstrap Configure doc devel LGPL mysql++.spec
+EXTRA_DIST = bootstrap Configure doc devel LGPL mysql++.spec Wishlist
 
 #SUBDIRS = sqlplusint examples doc
 SUBDIRS = sqlplusint examples

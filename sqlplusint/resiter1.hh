@@ -3,7 +3,8 @@
 
 #include "defs.hh"
 #include "row1.hh"
-#include <iterator.h>
+
+#include <iterator>
 
 template <class OnType, class ReturnType, class SizeType, class DiffType>
 class subscript_iterator;
@@ -22,8 +23,8 @@ public:
   typedef subscript_iterator<const this_type, ReturnType, SizeType, DiffType> 
                                                  iterator;   //:
   typedef iterator                               const_iterator; //:
-  typedef const ::reverse_iterator<iterator>       reverse_iterator; //:
-  typedef const ::reverse_iterator<const_iterator> const_reverse_iterator; //:
+  typedef const std::reverse_iterator<iterator>       reverse_iterator; //:
+  typedef const std::reverse_iterator<const_iterator> const_reverse_iterator; //:
   
   typedef ValueType   value_type; //:
   typedef value_type& reference;  //:
@@ -49,7 +50,7 @@ public:
 
 //:
 template <class OnType, class ReturnType, class SizeType, class DiffType>
-class subscript_iterator : public random_access_iterator<ReturnType, SizeType>
+class subscript_iterator : public std::iterator<ReturnType, SizeType>
 {
 private:
   SizeType    i;

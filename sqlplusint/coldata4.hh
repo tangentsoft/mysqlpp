@@ -20,7 +20,7 @@ Type mysql_ColData<Str>::conv (Type dummy) const {
     for (;*end == '0'; end++);
   }
   if (*end != '\0' && end != NULL ) {
-    throw BadConversion (typeid(Type).name(), c_str(), end - str, len);
+    throw BadConversion (typeid(Type).name(), Str::c_str(), end - str, len);
   }
   return num;
 }

@@ -1,5 +1,6 @@
 #ifndef __set1_hh__
 #define __set1_hh__
+
 #ifdef __WIN32__
 #include <Windows32/Base.h>
 #include <Windows32/Defines.h>
@@ -7,9 +8,11 @@
 #include <winsock.h>
 #define errno WSAGetLastError()
 #endif
+
+#include <iostream>
 #include <set>
 #include <vector>
-#include <iostream.h>
+
 #include "define_short.hh"
 #include "coldata1.hh"
 

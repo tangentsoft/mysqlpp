@@ -8,7 +8,7 @@
 inline Row::size_type Row::size() const {return res->num_fields();}
 
 inline const ColData Row::operator [] (size_type i) const {
-  return ColData(data[i], res->types(i));
+  return ColData(data[i].c_str(), res->types(i));
 }
 
 inline const ColData Row::operator[] (const string &i) const {

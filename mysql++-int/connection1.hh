@@ -42,8 +42,7 @@ private:
 
   int          affected_rows() const {return mysql_affected_rows(&mysql);}
   int          insert_id () {return mysql_insert_id(&mysql);}
-  string       info ();
-  void         close() {mysql_close(&mysql);}
+//  void         close() {mysql_close(&mysql);}
 
 public:
   Connection () : throw_exceptions(false), locked(false) //:
@@ -51,7 +50,15 @@ public:
   Connection (bool te) : throw_exceptions(te), locked(false) //:
     {others.insert(&mysql,this);}
   Connection (const char *db, const char *host = "", const char *user = "", 
-	      const char *passwd = "", bool te = false); //:
+	      const char *passwd = "", bool te = false); 
+	Connection (const char *db, const char *host, const char *user, 
+	      const char *passwd = "", uint port = 3306, int compress = 0, 
+				unsigned int connect_timeout = 5, bool te = false,  cchar *socket_name = ""); //:
+
+  bool   real_connect (cchar *db = "", cchar *host = "",   
+	                     cchar *user = "", cchar *passwd = "", uint port = 3306, 
+											 int compress = 0, unsigned int connect_timeout = 60, cchar *socket_name= "");
+				
   ~Connection (); //:
 
   bool   connected() const {return is_connected;}
@@ -66,6 +73,7 @@ public:
 
   bool   lock() {if (locked) return true; locked = true; return false;}
   void   unlock() {locked = false;}
+  void         close() {mysql_close(&mysql);}	
 
   void purge (MYSQL *m) {mysql_close(&mysql); }
   //:
@@ -81,6 +89,7 @@ public:
 
   operator bool () {return success();}                  //: returns success()
   string error () {return string(mysql_error(&mysql));} //: last error message()
+	int errnum () {return mysql_errno(&mysql);}
 
   string clinet_info () {return string(mysql_get_client_info());} //:
   
@@ -105,6 +114,7 @@ public:
   bool   select_db (const char *db); //:
   bool   reload(); //:
   bool   shutdown (); //:
+  string       info ();	
 
   template <class Sequence> void storein_sequence(Sequence &, const string &); //:
   template <class Set>      void storein_set(Set &, const string &);  //:

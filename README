@@ -1,4 +1,12 @@
-This is version .64.1 a of my mysql-c++ wrapper library.
+This is c++ wrapper library for MySQL.
+
+Starting based of .64.1.1b, this is now maintained by monty@mysql.com
+as kevina@clark.net doesn't have time to support this library anymore. He has
+give TCX the full right to use this library as we wish. We will continue to
+keep this library under LGPL.
+
+--------
+Original information from kevina@clark.net:
 
 After several people commented on how my quickie wrapper would be of
 little use I decided to go all out and create a full featured

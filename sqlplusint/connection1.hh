@@ -79,7 +79,7 @@ public:
 	int   refresh (unsigned int refresh_options){ return mysql_refresh (&mysql,refresh_options); }
 	int ping (void) { return mysql_ping(&mysql);}
 	int kill (unsigned long pid) { return mysql_kill (&mysql,pid);}
-  string clinet_info () {return string(mysql_get_client_info());} //:
+  string client_info () {return string(mysql_get_client_info());} //:
   
   string host_info () {return string(mysql_get_host_info(&mysql));} //:
   

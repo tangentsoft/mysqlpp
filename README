@@ -56,6 +56,15 @@ flawlessly with a following version of gcc on Solaris:
 gcc version 2.95 19990728 (release)
 
 
+Also gcc 2.96 and 2.95.3 have too many problems that they could be used with
+MySQL++. 2.95.3 has problems with C++ exceptions, but this has yet to be
+fully tested.
+
+There are separate versions of MySQL++ for Borland C++ 5.*, VC 6.0 and for
+Compaq compilers versions 6.2 and 6.3.
+
+Integration of the above versions is in progress.
+
 
 Recommended building of library and examples is the following one:
 automake

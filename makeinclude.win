@@ -1,19 +1,18 @@
 ####### Compiler, tools and options
 
 CC	=	g++
-CFLAGS	= -DWINDOZE -D_WIN32 -O0 -mno-cygwin -D__cplusplus
--fstrength-reduce -D__WIN32__ -I/cygnus/cygwin-b20/include/g++ -I/cygnus/cygwin-b20/include/g++ -I/my/mysql_src/mysql-3.22.13-beta/include -L/my/mysql_src/mysql-3.22.13-beta/client/.libs -L../sqlplusint  -mno-cygwin
+CXXFLAGS	= -DWINDOZE -D_WIN32 -O3  -mcygwin -D__cplusplus -fstrength-reduce -D__WIN32__ -I/cygnus/cygwin-b20/include/g++-3  -I../sqlplusint -L../sqlplusint  -mcygwin
 #CFLAGS +=	-fkeep-inline-functions
 # If you have problems when with undefined refrences try uncommenting
 # the above line when compiling the library.  But then recommenting 
 # it when you compile the examples.  
 FPIC    =#	-fPIC
-INCPATH	=	 -I/cygnus/cygwin-b20/include/g++ -I/my/mysql_src/mysql-3.22.13-beta/include # make sure you can find mysql.h
+#INCPATH	=	 -I/cygnus/cygwin-b20/include/g++ # make sure you can find mysql.h
 LINK	=	g++
-LFLAGS  = -mno-cygwin			# make sure you can find mysqlclinet
+LFLAGS  = -mcygwin			# make sure you can find mysqlclinet
 NLFLAGS =       -lmysql++       # this is for the static lib test
 SLFLAGS	=	-lmysql++       # this is for shared lib test
-LIBS	=	-lmysqlclient -mno-cygwin
+LIBS	= -L/cygnus/cygwin-b20/H-i586-cygwin32/i586-pc-cygwin32/lib	-lmysqlclient -mcygwin -lwsock32
 SOLLIBS = 	-lnsl -lsocket	# extra lib that Solaris needs 
 ARC	=	ar rc
 CP_R    =       cp -a
@@ -26,7 +25,7 @@ INSTHEAD =	/usr/include
 INSTBIN  =      /usr/bin
 PERLPATH =      /usr/bin/perl
 
-#CFLAGS  +=	-D NO_LONG_LONGS
+##CFLAGS  +=	-D NO_LONG_LONGS
 
 #TYPE    =	objs
 TYPE	 =	static
@@ -88,11 +87,17 @@ HEADSINT = mysql++ defs \
 
 .SUFFIXES:
 
+#%.o: %.cc
+#	$(CC) -c $(CXXFLAGS) $(INCPATH) -o $@ $<
+#
+#%.o: %.c
+#	$(CC) -c $(CXXFLAGS) $(INCPATH) -o $@ $<
+
 %.o: %.cc
-	$(CC) -c $(CFLAGS) $(INCPATH) -o $@ $<
+	$(CC)  $(CXXFLAGS) $(INCPATH) -c  $<
 
 %.o: %.c
-	$(CC) -c $(CFLAGS) $(INCPATH) -o $@ $<
+	$(CC) -c $(CXXFLAGS) $(INCPATH) -c  $<
 
 %: %.o
 ifeq ($(TYPE), objs)

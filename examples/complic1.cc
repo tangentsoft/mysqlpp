@@ -72,9 +72,11 @@ int main() {
 	 << er.type_name << "\"." << endl;
 #endif
     return -1;
+#ifdef USE_STANDARD_EXCEPTION		
   } catch (exception &er) {
     cerr << "Error: " << er.what() << endl;
     return -1;
+#endif		
   }
 }
 

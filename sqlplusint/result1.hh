@@ -29,11 +29,11 @@ protected:
   mutable FieldTypes    *_types;
   Fields                _fields;
   string                _table;       
-  void copy(const ResUse& other); 
+  void copy(const ResUse& other);  //: not to be used on the self. self - copy is not allowed
 public:
   ResUse () : mysql(0), mysql_res(0), throw_exceptions(false),initialized(false), _names(NULL), _types(NULL), _fields(this) {}
   ResUse (MYSQL_RES *result, Connection *m = NULL, bool te = false);
-  ResUse (const ResUse &other) {copy(other);}
+  ResUse (const ResUse &other) : initialized(false) {copy(other);}
   inline ResUse& operator = (const ResUse &other);
   MYSQL_RES *mysql_result (void) {return mysql_res;}
   /* raw mysql c api functions */

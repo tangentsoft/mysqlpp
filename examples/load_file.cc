@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
 			if (stat (argv[1],&for_len) == -1) return -1;
 			unsigned int blen = for_len.st_size;  if (!blen) return -1;
 			char  *read_buffer = new char[blen];	In.read(read_buffer,blen); string fill(read_buffer,blen);
-			strbuf  << "INSERT INTO " << MY_TABLE << " (" << MY_FIELD << ") VALUES(\""  << escape << fill  << "\")";
+			strbuf  << "INSERT INTO " << MY_TABLE << " (" << MY_FIELD << ") VALUES(\""  << escape << fill  << "\")" << ends;
       query.exec(strbuf.str());
 			delete[] read_buffer;
 		}
@@ -49,8 +49,10 @@ int main(int argc, char *argv[]) {
          << er.type_name << "\"." << endl;
 #endif
     return -1;
+#ifdef USE_STANDARD_EXCEPTION		
   } catch (exception &er) {
     cerr << "Error: " << er.what() << endl;
     return -1;
+#endif		
   }
 }

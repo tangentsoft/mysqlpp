@@ -27,11 +27,3 @@ name.cc: These contain the actual functions and methods coresponding
   that the nessary instances will all be instantiated by the end of
   the .cc file
 
-The name1.hh, name2.hh, and name3.hh are all garentied to exists if
-atleast one of them exists so that I don't have to worry about
-checking if they exists.  They files may contain nothing but 
-  #include"name<prev number.hh" 
-however.
-
-I chose this format to miminze interdependencies and to help better
-orginaize my code.

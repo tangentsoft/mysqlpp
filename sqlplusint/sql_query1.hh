@@ -122,7 +122,7 @@ protected:
   void     proc(parms &p);
 
 public:
-  SQLQuery(): Success(false), errmsg(NULL), def(this) {} //:
+  SQLQuery(): Success(false), errmsg(NULL), def(this) {parsed.empty(); parsed_names.empty(); parsed_nums.empty();} //:
   SQLQuery(const SQLQuery &q); //:
   SQLQuery& operator = (const SQLQuery &q); //:
 

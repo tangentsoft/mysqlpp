@@ -85,7 +85,7 @@ EXTRA_DIST = custom.pl
 
 lib_LTLIBRARIES = libsqlplus.la
 
-libsqlplus_la_SOURCES = coldata.cc connection.cc datetime.cc field_names.cc field_types.cc manip.cc query.cc result.cc row.cc set.cc sql_query.cc type_info.cc vallist.cc string_util.cc
+libsqlplus_la_SOURCES = coldata.cc connection.cc datetime.cc field_names.cc field_types.cc manip.cc query.cc result.cc  set.cc sql_query.cc type_info.cc vallist.cc string_util.cc
 
 
 libsqlplus_la_LDFLAGS = -version-info $(SQLPLUS_MAJOR_VERSION):$(SQLPLUS_MINOR_VERSION):$(SQLPLUS_MICRO_VERSION)
@@ -107,7 +107,7 @@ DEFS = -DHAVE_CONFIG_H
 #LIBS = -lnsl 
 libsqlplus_la_LIBADD = 
 libsqlplus_la_OBJECTS =  coldata.lo connection.lo datetime.lo \
-field_names.lo field_types.lo manip.lo query.lo result.lo row.lo set.lo \
+field_names.lo field_types.lo manip.lo query.lo result.lo  set.lo \
 sql_query.lo type_info.lo vallist.lo string_util.lo
 #CXXFLAGS = -O
 CXXCOMPILE = $(CXX) $(DEFS) $(INCPATH) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)

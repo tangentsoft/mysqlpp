@@ -1,0 +1,5 @@
+1999-06-09  Michael Widenius  <monty@monty.pp.sci.fi>
+
+* Changed version to 1.0
+* Added patches from Orion Poplawski <orion@bvt.com> to support the
+  UnixWare 7.0 compiler

@@ -3,7 +3,11 @@
 
 ostream& mysql_date::out_stream (ostream& s) const {
   char fill = s.fill('0');
+#ifdef __USLC__
+  long flags = s.setf(ios::right);
+#else
   ios::fmtflags flags = s.setf(ios::right);
+#endif
   s << setw(4) << year << '-' 
     << setw(2) << month << '-'
     << setw(2) << day;
@@ -14,7 +18,11 @@ ostream& mysql_date::out_stream (ostream& s) const {
 
 ostream& mysql_time::out_stream (ostream& s) const {
   char fill = s.fill('0');
+#ifdef __USLC__
+  long flags = s.setf(ios::right);
+#else
   ios::fmtflags flags = s.setf(ios::right);
+#endif
   s << setw(2) << hour << ':' 
     << setw(2) << minute << ':'
     << setw(2) << second;

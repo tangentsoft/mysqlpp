@@ -2,9 +2,9 @@
 #include "row2.hh"
 
 void create_vector(int size, vector<bool>& v, bool t0, 
-		   bool t1=false, bool t2=false, bool t3=false, bool t4=false,
-		   bool t5=false, bool t6=false, bool t7=false, bool t8=false,
-		   bool t9=false, bool ta=false, bool tb=false, bool tc=false)
+		   bool t1, bool t2, bool t3, bool t4,
+		   bool t5, bool t6, bool t7, bool t8,
+		   bool t9, bool ta, bool tb, bool tc)
 {
   v.reserve(size);
   v.push_back(t0); if (size == 1) return;

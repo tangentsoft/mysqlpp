@@ -42,7 +42,8 @@ private:
 
   int          affected_rows() const {return mysql_affected_rows(&mysql);}
   int          insert_id () {return mysql_insert_id(&mysql);}
-//  void         close() {mysql_close(&mysql);}
+  string       info ();
+  void         close() {mysql_close(&mysql);}
 
 public:
   Connection () : throw_exceptions(false), locked(false) //:
@@ -51,13 +52,15 @@ public:
     {others.insert(&mysql,this);}
   Connection (const char *db, const char *host = "", const char *user = "", 
 	      const char *passwd = "", bool te = false); 
-	Connection (const char *db, const char *host, const char *user, 
-	      const char *passwd = "", uint port = 3306, int compress = 0, 
-				unsigned int connect_timeout = 5, bool te = false,  cchar *socket_name = ""); //:
+  Connection (const char *db, const char *host, const char *user, 
+	      const char *passwd = "", uint port = 3306, my_bool compress = 1,
+	      unsigned int connect_timeout = 5, bool te = false,
+	      cchar *socket_name = "");
 
-  bool   real_connect (cchar *db = "", cchar *host = "",   
-	                     cchar *user = "", cchar *passwd = "", uint port = 3306, 
-											 int compress = 0, unsigned int connect_timeout = 60, cchar *socket_name= "");
+  bool   real_connect (cchar *db = "", cchar *host = "", 
+		       cchar *user = "", cchar *passwd = "", uint port = 0,
+		       my_bool compress = 0, unsigned int connect_timeout = 60,
+		       cchar *socket_name= "");
 				
   ~Connection (); //:
 
@@ -73,7 +76,6 @@ public:
 
   bool   lock() {if (locked) return true; locked = true; return false;}
   void   unlock() {locked = false;}
-  void         close() {mysql_close(&mysql);}	
 
   void purge (MYSQL *m) {mysql_close(&mysql); }
   //:
@@ -114,7 +116,7 @@ public:
   bool   select_db (const char *db); //:
   bool   reload(); //:
   bool   shutdown (); //:
-  string       info ();	
+	string infoo (void) {return info ();}
 
   template <class Sequence> void storein_sequence(Sequence &, const string &); //:
   template <class Set>      void storein_set(Set &, const string &);  //:

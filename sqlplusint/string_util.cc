@@ -1,4 +1,6 @@
-#include <string>
+#include "string_util.h"
+
+using namespace mysqlpp;
 
 
 void strip (std::string& s) {

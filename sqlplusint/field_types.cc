@@ -1,11 +1,14 @@
-#ifdef __WIN32__
-#include <winsock.h>
-#endif
+#define MYSQLPP_NOT_HEADER
+#include "platform.h"
 
-#include "field_types3.hh"
-#include "result2.hh"
+#include "field_types.h"
 
-void FieldTypes::init(const ResUse *res) {
+#include "result.h"
+
+using namespace mysqlpp;
+
+void FieldTypes::init(const ResUse *res)
+{
   int num = res->num_fields();
   reserve(num);
   for (int i = 0; i < num; i++) {

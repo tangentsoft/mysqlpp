@@ -1,5 +1,18 @@
+#include "result.h"
 
-#include "result3.hh"
+#include "connection.h"
+
+using namespace mysqlpp;
+
+
+ResNSel::ResNSel (Connection *q) :
+success(q->success()),
+insert_id(q->insert_id()),
+rows(q->affected_rows()),
+info(q->info())
+{
+}
+
 
 ResUse::ResUse (MYSQL_RES *result, Connection *m, bool te) 
   : mysql(m), throw_exceptions(te), initialized(false), _fields(this)

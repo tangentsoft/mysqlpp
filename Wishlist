@@ -6,11 +6,6 @@ Patches for any of these thoughtfully considered!
 	o is_connected() may not be returning the right value.
 	  <bayufa@bdg.centrin.net.id>
 
-	o All the redefinitions in define_short.hh are bad code style.
-	  We should use the Mysql* ones only, and drop the #defines.
-
-	o Fix the "cascading include files from hell".
-
 	o Look through my own code for uses of custom SQL queries, and try
 	  to reduce them to API features.
 
@@ -18,27 +13,29 @@ Patches for any of these thoughtfully considered!
 	
 	o One report says it doesn't build under what will become GCC 4.0.
 
-	o Why can Query objects not be reused?
+	o A report says Query objects cannot be reused.  Verify.
 
-	o Documentation could probably use a thorough reworking.
+	o Documentation needs a thorough reworking.
 
 	o Overload SQLQuery::insert() to accept a pair of STL iterators
 	  for mass insertion of a range within a container.
 
 	o VC++ supports 64-bit ints, but not as "long long"s as GCC does.
-	  If someone needs 64-bit support, they need to undefine
-	  NO_LONG_LONGS in mysql++-windows.hh, use functions like strtoi64()
-	  instead of strtoll(), and use __int64 instead of long long.  To do
-	  this portably, it isn't a trivial conversion.
+	  Is the stuff in defs.h sufficient to fix up this difference?
 
 	o Factor tests out of configure.in into individual files in a config
 	  subdir.
 
-	o Cannot use config.h directly anywhere, because it breaks
-	  non-autotools based systems.  (Primarily, Windows with non-GCC
-	  toolchains.)  Figure out some way to use config.h on autotools
-	  based systems, and still have the necessary defines on other
-	  systems.  Perhaps put them in mysql++-windows.hh, and make editing
-	  that a necessary step in building the library?
-
 	o Fix: "coldata4.hh:11: warning: unused parameter `int dummy'".
+
+	o SQLQuery shouldn't derive from std::stringstream.  It should
+	  have a private std::stringstream member, and add the function
+	  definitions it needs to look like a stringstream.  The Standard
+	  C++ library classes were not designed to be subclassed.
+
+	o Split RPM into lib, devel and examples sections.  For the latter,
+	  make a simple non-autotools Makefile that looks in the same
+	  directory as the lib and devel RPMs unpack into for the library
+	  and headers.
+
+	o Rename *.cc to *.cpp.

@@ -1,6 +1,9 @@
-#include <string>
-#include "const_string3.hh"
-#include "coldata4.hh"
+#include "coldata.h"
+#include "const_string.h"
 
-template class mysql_ColData<std::string>;
-template class mysql_ColData<const_string>;
+#include <string>
+
+using namespace mysqlpp;
+
+template class ColData_Tmpl<std::string>;
+template class ColData_Tmpl<const_string>;

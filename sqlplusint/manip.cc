@@ -1,6 +1,10 @@
-#include "manip3.hh"
+#include "manip.h"
 
 using namespace std;
+
+// Manipulator stuff is _always_ in namespace mysqlpp.
+namespace mysqlpp {
+	extern bool dont_quote_auto;
 
 // quote manipulator
 
@@ -50,7 +54,7 @@ ostream& operator << (quote_type1 o, const char* const &in) {
 }
 
 template <class Str>
-inline ostream& _manip (quote_type1 o, const mysql_ColData<Str>& in) {
+inline ostream& _manip (quote_type1 o, const ColData_Tmpl<Str>& in) {
   if (in.escape_q()) {
     char *s = new char[in.size()*2+1];
     mysql_escape_string(s, const_cast<char *>(in.c_str()),
@@ -69,16 +73,16 @@ inline ostream& _manip (quote_type1 o, const mysql_ColData<Str>& in) {
 }
 
 template <>
-ostream& operator << (quote_type1 o, const mysql_ColData<string>& in) {
+ostream& operator << (quote_type1 o, const ColData_Tmpl<string>& in) {
   return _manip(o,in);
 }
 
 template <>
-ostream& operator << (quote_type1 o, const mysql_ColData<const_string>& in) {
+ostream& operator << (quote_type1 o, const ColData_Tmpl<const_string>& in) {
   return _manip(o,in);
 }
 
-ostream& operator << (ostream& o, const mysql_ColData<string>& in) {
+ostream& operator << (ostream& o, const ColData_Tmpl<string>& in) {
 	if (dont_quote_auto || (o.rdbuf() == cout.rdbuf()) || (o.rdbuf() == cerr.rdbuf())) return o << in.get_string();
   if (in.escape_q()) {
     char *s = new char[in.size()*2+1];
@@ -98,7 +102,7 @@ ostream& operator << (ostream& o, const mysql_ColData<string>& in) {
 }
 
 
-ostream& operator << (ostream& o, const mysql_ColData<const_string>& in) {
+ostream& operator << (ostream& o, const ColData_Tmpl<const_string>& in) {
 	if (dont_quote_auto || (o.rdbuf() == cout.rdbuf()) || (o.rdbuf() == cerr.rdbuf())) return o << in.get_string();
   if (in.escape_q()) {
     char *s = new char[in.size()*2+1];
@@ -116,7 +120,7 @@ ostream& operator << (ostream& o, const mysql_ColData<const_string>& in) {
   return o;
 }
 
-SQLQuery& operator << (SQLQuery& o, const mysql_ColData<string>& in) {
+SQLQuery& operator << (SQLQuery& o, const ColData_Tmpl<string>& in) {
 	if (dont_quote_auto) {o << in.get_string(); return o;}
   if (in.escape_q()) {
     char *s = new char[in.size()*2+1];
@@ -136,7 +140,7 @@ SQLQuery& operator << (SQLQuery& o, const mysql_ColData<string>& in) {
 }
 
 
-SQLQuery& operator << (SQLQuery& o, const mysql_ColData<const_string>& in) {
+SQLQuery& operator << (SQLQuery& o, const ColData_Tmpl<const_string>& in) {
 	if (dont_quote_auto) {o << in.get_string(); return o;}
   if (in.escape_q()) {
     char *s = new char[in.size()*2+1];
@@ -168,7 +172,7 @@ SQLQueryParms & operator << (quote_only_type2 p, SQLString &in) {
 }
 
 template <>
-ostream& operator << (quote_only_type1 o, const mysql_ColData<string>& in) {
+ostream& operator << (quote_only_type1 o, const ColData_Tmpl<string>& in) {
   if (in.quote_q()) {
     *o.ostr << "'" << in << "'";
   } else {
@@ -178,7 +182,7 @@ ostream& operator << (quote_only_type1 o, const mysql_ColData<string>& in) {
 }
 
 template <>
-ostream& operator << (quote_only_type1 o, const mysql_ColData<const_string>& in) {
+ostream& operator << (quote_only_type1 o, const ColData_Tmpl<const_string>& in) {
   if (in.quote_q()) {
     *o.ostr << "'" << in << "'";
   } else {
@@ -202,7 +206,7 @@ SQLQueryParms & operator << (quote_double_only_type2 p, SQLString &in) {
 
 
 template <>
-ostream& operator << (quote_double_only_type1 o, const mysql_ColData<string>& in) {
+ostream& operator << (quote_double_only_type1 o, const ColData_Tmpl<string>& in) {
   if (in.quote_q()) {
     *o.ostr << "'" << in << "'";
   } else {
@@ -212,7 +216,7 @@ ostream& operator << (quote_double_only_type1 o, const mysql_ColData<string>& in
 }
 
 template <>
-ostream& operator << (quote_double_only_type1 o, const mysql_ColData<const_string>& in) {
+ostream& operator << (quote_double_only_type1 o, const ColData_Tmpl<const_string>& in) {
   if (in.quote_q()) {
     *o.ostr << "'" << in << "'";
   } else {
@@ -267,7 +271,7 @@ ostream& operator << (escape_type1 o, const char* const &in) {
 
 
 template <class Str>
-inline ostream& _manip (escape_type1 o, const mysql_ColData<Str>& in) {
+inline ostream& _manip (escape_type1 o, const ColData_Tmpl<Str>& in) {
   if (in.escape_q()) {
     char *s = new char[in.size()*2+1];
     mysql_escape_string(s, const_cast<char *>(in.c_str()), 
@@ -280,15 +284,16 @@ inline ostream& _manip (escape_type1 o, const mysql_ColData<Str>& in) {
 }
 
 template <>
-ostream& operator << (escape_type1 o, const mysql_ColData<string>& in) {
+ostream& operator << (escape_type1 o, const ColData_Tmpl<string>& in) {
   return _manip(o,in);
 }
 
 template <>
-ostream& operator << (escape_type1 o, const mysql_ColData<const_string>& in) {
+ostream& operator << (escape_type1 o, const ColData_Tmpl<const_string>& in) {
   return _manip(o,in);
 }
 
 
+}; // end namespace mysqlpp
 
 

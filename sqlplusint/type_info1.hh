@@ -34,7 +34,7 @@ private:
   // create because there *must* be only one copy
   // of each.
   mysql_ti_sql_type_info (const char *s, const type_info &t, 
-			  const unsigned char bt = 0, const bool d = false)
+			  const unsigned char bt = 0,  const bool d = false )
     : _sql_name(s), _c_type(&t), _base_type(bt), _default(d) {}
 };
 
@@ -79,6 +79,8 @@ public:
   static const unsigned char string_type = 20;
 private:
   unsigned char num;
+	unsigned int _length;
+	unsigned int _max_length;
   inline const sql_type_info& deref() const;
 public:
   //!dummy: static const unsigned char string_type;
@@ -109,6 +111,8 @@ public:
   inline const char*           sql_name()  const;
   //: Returns the name for the sql type.
   inline const type_info&      c_type()    const;
+	inline const unsigned int length() const;
+	inline const unsigned int max_length() const;
   //: Returns the type_info for the C++ type associated with the sql type.
   inline const mysql_type_info base_type() const;
   //: Returns the type_info for the C++ type inside of the Null type.
@@ -136,6 +140,12 @@ inline const char*           mysql_type_info::name()      const {
 inline const char*           mysql_type_info::sql_name()  const {
   return deref()._sql_name;
 }
+inline const unsigned int    mysql_type_info::length()  const {
+  return _length;
+}
+inline const unsigned int    mysql_type_info::max_length()  const {
+  return _max_length;
+}
 inline const type_info&      mysql_type_info::c_type()    const {
   return *deref()._c_type;
 }
@@ -151,6 +161,7 @@ inline mysql_type_info::mysql_type_info(enum_field_types t,
 
 inline mysql_type_info::mysql_type_info(const MYSQL_FIELD &f) {
   num = type(f.type, (f.flags & UNSIGNED_FLAG), !(f.flags & NOT_NULL_FLAG));
+	_length = f.length; _max_length = f.max_length;
 }
 
 inline bool operator == (const mysql_type_info& a, const mysql_type_info& b) {

@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4a from Makefile.am
+# Makefile.in generated automatically by automake 1.4 from Makefile.am
 
 # Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
@@ -9,7 +9,6 @@
 # but WITHOUT ANY WARRANTY, to the extent permitted by law; without
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
-
 
 
 SHELL = @SHELL@
@@ -31,7 +30,7 @@ libdir = @libdir@
 infodir = @infodir@
 mandir = @mandir@
 includedir = @includedir@
-oldincludedir = /usr/local/include/
+oldincludedir = /usr/include
 
 DESTDIR =
 
@@ -47,10 +46,9 @@ AUTOMAKE = @AUTOMAKE@
 AUTOHEADER = @AUTOHEADER@
 
 INSTALL = @INSTALL@
-INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
-INSTALL_STRIP_FLAG =
 transform = @program_transform_name@
 
 NORMAL_INSTALL = :
@@ -64,25 +62,28 @@ host_triplet = @host@
 AS = @AS@
 CC = @CC@
 CXX = @CXX@
+CXXCPP = @CXXCPP@
 DLLTOOL = @DLLTOOL@
 LD = @LD@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
+LT_AGE = @LT_AGE@
+LT_CURRENT = @LT_CURRENT@
+LT_RELEASE = @LT_RELEASE@
+LT_REVISION = @LT_REVISION@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
-MYSQL_HOME = @MYSQL_HOME@
 NM = @NM@
 OBJDUMP = @OBJDUMP@
 PACKAGE = @PACKAGE@
+PERL = @PERL@
 RANLIB = @RANLIB@
+SQLPLUS_BINARY_AGE = @SQLPLUS_BINARY_AGE@
+SQLPLUS_INTERFACE_AGE = @SQLPLUS_INTERFACE_AGE@
 SQLPLUS_MAJOR_VERSION = @SQLPLUS_MAJOR_VERSION@
 SQLPLUS_MICRO_VERSION = @SQLPLUS_MICRO_VERSION@
 SQLPLUS_MINOR_VERSION = @SQLPLUS_MINOR_VERSION@
 VERSION = @VERSION@
-
-INCLUDES = -Wall -I$(top_srcdir)/sqlplusint
-
-SQLPLUSLIBS = $(top_builddir)/sqlplusint/libsqlplus.la
 
 EXTRA_DIST = custom.pl
 
@@ -91,12 +92,18 @@ lib_LTLIBRARIES = libsqlplus.la
 libsqlplus_la_SOURCES = coldata.cc connection.cc datetime.cc field_names.cc 	field_types.cc manip.cc query.cc result.cc row.cc set.cc sql_query.cc 	type_info.cc vallist.cc
 
 
-libsqlplus_la_LDFLAGS = -version-info $(SQLPLUS_MAJOR_VERSION):$(SQLPLUS_MINOR_VERSION):$(SQLPLUS_MICRO_VERSION)
+libsqlplus_la_LDFLAGS =  	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) 	-release $(LT_RELEASE)
+
 
 noinst_HEADERS = magic.h tracker.h
 
-include_HEADERS = sqlplus.hh coldata1.hh coldata2.hh coldata3.hh coldata4.hh 	compare1.hh compare2.hh compare3.hh connection0.hh connection1.hh 	connection2.hh connection3.hh const_string1.hh const_string2.hh const_string3.hh 	convert1.hh convert2.hh convert3.hh custom-macros.hh custom.hh datetime1.hh 	datetime2.hh datetime3.hh field_names1.hh field_names2.hh field_names3.hh 	field_types1.hh field_types2.hh field_types3.hh fields1.hh fields2.hh 	manip1.hh manip2.hh manip3.hh null1.hh null2.hh null3.hh query1.hh query2.hh 	query3.hh resiter1.hh result1.hh result2.hh result3.hh row1.hh row2.hh 	row3.hh set1.hh set2.hh set3.hh sql_query0.hh sql_query1.hh sql_query2.hh 	sql_query3.hh sql_string1.hh sql_string2.hh sql_string3.hh stream2string1.hh 	stream2string2.hh stream2string3.hh tiny_int1.hh tiny_int2.hh tiny_int3.hh 	type_info1.hh type_info2.hh type_info3.hh vallist1.hh vallist2.hh vallist3.hh 	define_short defs
+# a little automake magic here; puts the headers in
+# $(prefix)/include/$(package) good for projects such as this.  Let
+# mysql++-config sort things out...
+pkginclude_HEADERS = sqlplus.hh coldata1.hh coldata2.hh coldata3.hh coldata4.hh 	compare1.hh compare2.hh compare3.hh connection0.hh connection1.hh 	connection2.hh connection3.hh const_string1.hh const_string2.hh const_string3.hh 	convert1.hh convert2.hh convert3.hh custom-macros.hh custom.hh datetime1.hh 	datetime2.hh datetime3.hh field_names1.hh field_names2.hh field_names3.hh 	field_types1.hh field_types2.hh field_types3.hh fields1.hh fields2.hh 	manip1.hh manip2.hh manip3.hh null1.hh null2.hh null3.hh query1.hh query2.hh 	query3.hh resiter1.hh result1.hh result2.hh result3.hh row1.hh row2.hh 	row3.hh set1.hh set2.hh set3.hh sql_query0.hh sql_query1.hh sql_query2.hh 	sql_query3.hh sql_string1.hh sql_string2.hh sql_string3.hh stream2string1.hh 	stream2string2.hh stream2string3.hh tiny_int1.hh tiny_int2.hh tiny_int3.hh 	type_info1.hh type_info2.hh type_info3.hh vallist1.hh vallist2.hh vallist3.hh 	define_short defs undef_short
 
+
+BUILT_SOURCES = custom.hh custom-macros.hh
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -116,7 +123,12 @@ CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@
-HEADERS =  $(include_HEADERS) $(noinst_HEADERS)
+CFLAGS = @CFLAGS@
+COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CCLD = $(CC)
+LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
+HEADERS =  $(noinst_HEADERS) $(pkginclude_HEADERS)
 
 DIST_COMMON =  README Makefile.am Makefile.in
 
@@ -125,16 +137,20 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = gtar
 GZIP_ENV = --best
+DEP_FILES =  .deps/coldata.P .deps/connection.P .deps/datetime.P \
+.deps/field_names.P .deps/field_types.P .deps/manip.P .deps/query.P \
+.deps/result.P .deps/row.P .deps/set.P .deps/sql_query.P \
+.deps/type_info.P .deps/vallist.P
 SOURCES = $(libsqlplus_la_SOURCES)
 OBJECTS = $(libsqlplus_la_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
 .SUFFIXES: .S .c .cc .lo .o .s
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) $(top_srcdir)/Configure
-	cd $(top_srcdir) && $(AUTOMAKE) --foreign --include-deps sqlplusint/Makefile
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu sqlplusint/Makefile
 
-Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
 	cd $(top_builddir) \
 	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
@@ -164,9 +180,6 @@ uninstall-libLTLIBRARIES:
 	  $(LIBTOOL)  --mode=uninstall rm -f $(DESTDIR)$(libdir)/$$p; \
 	done
 
-.c.o:
-	$(COMPILE) -c $<
-
 .s.o:
 	$(COMPILE) -c $<
 
@@ -182,9 +195,6 @@ distclean-compile:
 	-rm -f *.tab.c
 
 maintainer-clean-compile:
-
-.c.lo:
-	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
 
 .s.lo:
 	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
@@ -209,19 +219,19 @@ libsqlplus.la: $(libsqlplus_la_OBJECTS) $(libsqlplus_la_DEPENDENCIES)
 .cc.lo:
 	$(LTCXXCOMPILE) -c $<
 
-install-includeHEADERS: $(include_HEADERS)
+install-pkgincludeHEADERS: $(pkginclude_HEADERS)
 	@$(NORMAL_INSTALL)
-	$(mkinstalldirs) $(DESTDIR)$(includedir)
-	@list='$(include_HEADERS)'; for p in $$list; do \
+	$(mkinstalldirs) $(DESTDIR)$(pkgincludedir)
+	@list='$(pkginclude_HEADERS)'; for p in $$list; do \
 	  if test -f "$$p"; then d= ; else d="$(srcdir)/"; fi; \
-	  echo " $(INSTALL_DATA) $$d$$p $(DESTDIR)$(includedir)/$$p"; \
-	  $(INSTALL_DATA) $$d$$p $(DESTDIR)$(includedir)/$$p; \
+	  echo " $(INSTALL_DATA) $$d$$p $(DESTDIR)$(pkgincludedir)/$$p"; \
+	  $(INSTALL_DATA) $$d$$p $(DESTDIR)$(pkgincludedir)/$$p; \
 	done
 
-uninstall-includeHEADERS:
+uninstall-pkgincludeHEADERS:
 	@$(NORMAL_UNINSTALL)
-	list='$(include_HEADERS)'; for p in $$list; do \
-	  rm -f $(DESTDIR)$(includedir)/$$p; \
+	list='$(pkginclude_HEADERS)'; for p in $$list; do \
+	  rm -f $(DESTDIR)$(pkgincludedir)/$$p; \
 	done
 
 tags: TAGS
@@ -258,10 +268,15 @@ distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
 subdir = sqlplusint
 
 distdir: $(DISTFILES)
+	here=`cd $(top_builddir) && pwd`; \
+	top_distdir=`cd $(top_distdir) && pwd`; \
+	distdir=`cd $(distdir) && pwd`; \
+	cd $(top_srcdir) \
+	  && $(AUTOMAKE) --include-deps --build-dir=$$here --srcdir-name=$(top_srcdir) --output-dir=$$top_distdir --gnu sqlplusint/Makefile
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$d/$$file $(distdir)/$$file; \
+	    cp -pr $$/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
@@ -269,6 +284,56 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 
+DEPS_MAGIC := $(shell mkdir .deps > /dev/null 2>&1 || :)
+
+-include $(DEP_FILES)
+
+mostlyclean-depend:
+
+clean-depend:
+
+distclean-depend:
+	-rm -rf .deps
+
+maintainer-clean-depend:
+
+%.o: %.c
+	@echo '$(COMPILE) -c $<'; \
+	$(COMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-cp .deps/$(*F).pp .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm .deps/$(*F).pp
+
+%.lo: %.c
+	@echo '$(LTCOMPILE) -c $<'; \
+	$(LTCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-sed -e 's/^\([^:]*\)\.o[ 	]*:/\1.lo \1.o :/' \
+	  < .deps/$(*F).pp > .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm -f .deps/$(*F).pp
+
+%.o: %.cc
+	@echo '$(CXXCOMPILE) -c $<'; \
+	$(CXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-cp .deps/$(*F).pp .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm .deps/$(*F).pp
+
+%.lo: %.cc
+	@echo '$(LTCXXCOMPILE) -c $<'; \
+	$(LTCXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-sed -e 's/^\([^:]*\)\.o[ 	]*:/\1.lo \1.o :/' \
+	  < .deps/$(*F).pp > .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm -f .deps/$(*F).pp
 info-am:
 info: info-am
 dvi-am:
@@ -280,20 +345,20 @@ installcheck: installcheck-am
 install-exec-am: install-libLTLIBRARIES
 install-exec: install-exec-am
 
-install-data-am: install-includeHEADERS
+install-data-am: install-pkgincludeHEADERS
 install-data: install-data-am
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
 install: install-am
-uninstall-am: uninstall-libLTLIBRARIES uninstall-includeHEADERS
+uninstall-am: uninstall-libLTLIBRARIES uninstall-pkgincludeHEADERS
 uninstall: uninstall-am
-all-am: Makefile $(LTLIBRARIES) $(HEADERS) all-local
+all-am: Makefile $(LTLIBRARIES) $(HEADERS)
 all-redirect: all-am
 install-strip:
-	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
+	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
 installdirs:
-	$(mkinstalldirs)  $(DESTDIR)$(libdir) $(DESTDIR)$(includedir)
+	$(mkinstalldirs)  $(DESTDIR)$(libdir) $(DESTDIR)$(pkgincludedir)
 
 
 mostlyclean-generic:
@@ -305,28 +370,29 @@ distclean-generic:
 	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
 
 maintainer-clean-generic:
+	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 mostlyclean-am:  mostlyclean-libLTLIBRARIES mostlyclean-compile \
-		mostlyclean-libtool mostlyclean-tags \
+		mostlyclean-libtool mostlyclean-tags mostlyclean-depend \
 		mostlyclean-generic
 
 mostlyclean: mostlyclean-am
 
 clean-am:  clean-libLTLIBRARIES clean-compile clean-libtool clean-tags \
-		clean-generic mostlyclean-am
+		clean-depend clean-generic mostlyclean-am
 
 clean: clean-am
 
 distclean-am:  distclean-libLTLIBRARIES distclean-compile \
-		distclean-libtool distclean-tags distclean-generic \
-		clean-am distclean-local
+		distclean-libtool distclean-tags distclean-depend \
+		distclean-generic clean-am
 	-rm -f libtool
 
 distclean: distclean-am
 
 maintainer-clean-am:  maintainer-clean-libLTLIBRARIES \
 		maintainer-clean-compile maintainer-clean-libtool \
-		maintainer-clean-tags maintainer-clean-generic \
-		distclean-am
+		maintainer-clean-tags maintainer-clean-depend \
+		maintainer-clean-generic distclean-am
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
 
@@ -337,30 +403,26 @@ clean-libLTLIBRARIES maintainer-clean-libLTLIBRARIES \
 uninstall-libLTLIBRARIES install-libLTLIBRARIES mostlyclean-compile \
 distclean-compile clean-compile maintainer-clean-compile \
 mostlyclean-libtool distclean-libtool clean-libtool \
-maintainer-clean-libtool uninstall-includeHEADERS \
-install-includeHEADERS tags mostlyclean-tags distclean-tags clean-tags \
-maintainer-clean-tags distdir info-am info dvi-am dvi check check-am \
-installcheck-am installcheck install-exec-am install-exec \
-install-data-am install-data install-am install uninstall-am uninstall \
-all-local all-redirect all-am all installdirs mostlyclean-generic \
-distclean-generic clean-generic maintainer-clean-generic clean \
-mostlyclean distclean maintainer-clean
+maintainer-clean-libtool uninstall-pkgincludeHEADERS \
+install-pkgincludeHEADERS tags mostlyclean-tags distclean-tags \
+clean-tags maintainer-clean-tags distdir mostlyclean-depend \
+distclean-depend clean-depend maintainer-clean-depend info-am info \
+dvi-am dvi check check-am installcheck-am installcheck install-exec-am \
+install-exec install-data-am install-data install-am install \
+uninstall-am uninstall all-redirect all-am all installdirs \
+mostlyclean-generic distclean-generic clean-generic \
+maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
-
-all-local: custom.hh custom-macros.hh
 
 custom.hh custom-macros.hh: custom.pl
-	perl custom.pl
+	@PERL@ custom.pl
 
-perlclean: 
-	-rm -f custom-macros.hh custom.hh
+# These files should be removed by invoking maintainer-clean
 
-distclean-local:
-	rm -f custom.hh custom-macros.hh
-	
-classref: *1.hh
-	-rm -f .perceps doc.sgml
-	perceps -N *1.hh
+# all-local: custom.hh custom-macros.hh
+
+# distclean-local:
+# 	rm -f custom.hh custom-macros.hh
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

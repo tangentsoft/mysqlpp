@@ -1,0 +1,103 @@
+# -*- Mode:rpm-spec -*-
+# mysql++.spec.in
+Summary: C++ interface to MySQL database
+%define rel 2
+
+%define version @VERSION@
+%define pkgname @PACKAGE@
+%define prefix /usr
+
+%define lt_release @LT_RELEASE@
+%define lt_version @LT_CURRENT@.@LT_REVISION@.@LT_AGE@
+
+Name: %{pkgname}
+Version: %{version}
+Release: %{rel}
+
+Copyright: LGPL
+Group: Applications/Databases
+Source: %{pkgname}-%{version}.tar.gz
+Requires: MySQL-server
+Buildroot: /tmp/%{pkgname}-root
+URL: http://mysql.com
+Prefix: %{prefix}
+Packager: Dale K. Hawkins <dhawkins@cdrgts.com>
+
+%description
+A C++ interface to the MySQL API.
+
+%changelog
+* Tue Jan  4 2000 Dale Hawkins <dhawkins@cdrgts.com>
+
+- Added a spec.in file to work with autoconf and to support libtool's release mechanism
+
+%prep
+%setup
+#%patch
+
+%build
+%GNUconfigure
+# This is why we copy the CFLAGS to the CXXFLAGS in configure.in
+# CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix}
+make
+
+%install
+# To make things work with BUILDROOT
+if [ "$RPM_BUILD_ROOT" != "/tmp/%{pkgname}-root" ]
+then
+  echo
+  echo @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  echo @								    @
+  echo @  RPM_BUILD_ROOT is not what I expected.  Please clean it yourself. @
+  echo @								    @
+  echo @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  echo
+else
+  echo Cleaning RPM_BUILD_ROOT: "$RPM_BUILD_ROOT"
+  rm -rf "$RPM_BUILD_ROOT"
+fi
+make DESTDIR="$RPM_BUILD_ROOT" install
+
+%clean
+# Call me paranoid, but I do not want to be responsible for nuking
+# someone's harddrive!
+if [ "$RPM_BUILD_ROOT" != "/tmp/%{pkgname}-root" ]
+then
+  echo
+  echo @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  echo @								    @
+  echo @  RPM_BUILD_ROOT is not what I expected.  Please clean it yourself. @
+  echo @								    @
+  echo @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  echo
+else
+  echo Cleaning RPM_BUILD_ROOT: "$RPM_BUILD_ROOT"
+  rm -rf "$RPM_BUILD_ROOT"
+fi
+
+%files
+%defattr(-, root, root)
+%{prefix}/lib/libsqlplus*.so*
+%doc COPYRIGHT ChangeLog README AUTHORS NEWS
+%doc doc/*
+
+%post -p /sbin/ldconfig
+
+%postun -p /sbin/ldconfig
+
+%package devel
+Summary: Development files for %{pkgname}
+Group: Applications/Databases
+%description devel
+Development files for %{pkgname}.
+
+%files devel
+%defattr(-, root, root)
+%{prefix}/lib/lib*.so
+%{prefix}/lib/*a
+%defattr(0775, root, root)
+%{prefix}/bin/%{pkgname}-config
+%dir %{prefix}/include/%{pkgname}
+# IMHO, the examples should be installed as well
+%doc examples/*.cc
+%doc examples/*.hh

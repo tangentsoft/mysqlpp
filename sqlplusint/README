@@ -1,37 +1,42 @@
-All of the header files in this dir (sqlplusint) are internal.  This
-means that you should never include any of these directly in your
-programs as they are subject to change from one relese to another.
+All of the header files in this directory (sqlplusint) are internal.
+This means that you should never include any of these directly in your
+programs as they are subject to change from one releases to another.
 
 For those interesting in improving the code the files are laid out in
 the following fashion:
 
-name0.hh: Header files ending in a 0.hh generally cantains macro
-  defantions and other messy stuff.
+name0.hh: Header files ending in a 0.hh generally contains macro
+  definitions and other messy stuff.
+
 name1.hh: Header files ending in 1.hh contain just the class as
-  functions declartions and really simple inline functions.  A 1.hh
+  functions declarations and really simple inline functions.  A 1.hh
   header file should never include anything but other 1.hh header
-  files.
-name2.hh: Header files ending in 2.hh contain inline functions and 
+  files. 
+
+name2.hh: Header files ending in 2.hh contain inline functions and
   methods.  They should generally only include other 1.hh or 2.hh
   header files however they may also include 3.hh and 4.hh header
-  files if, for example, they want to instantiate the nessary template
-  functions.
-name3.hh: Header files ending in 3.hh contain non-inline template 
+  files if, for example, they want to instantiate the necessary
+  template functions.
+
+name3.hh: Header files ending in 3.hh contain non-inline template
   functions and methods.
+
 name4.hh: Header files ending in 4.hh contain template functions in
-  which are the nessary instances should already be instanstaed.  Thus
-  these should never be included in the end users program.  Only
-  within other 4.hh or .cc files in this directory.
-name.cc: These contain the actual functions and methods coresponding
-  the the appreate header file.  They may include templates procided
-  that the nessary instances will all be instantiated by the end of
-  the .cc file
+  which are the necessary instances should already be
+  instantiated. Thus these should never be included in the end users
+  program.  Only within other 4.hh or .cc files in this directory.
 
-The name1.hh, name2.hh, and name3.hh are all garentied to exists if
-atleast one of them exists so that I don't have to worry about
-checking if they exists.  They files may contain nothing but 
+name.cc: These contain the actual functions and methods corresponding
+  the the appropriate header file.  They may include templates
+  provided that the necessary instances will all be instantiated by
+  the end of the .cc file
+
+The name1.hh, name2.hh, and name3.hh are all guaranteed to exists if
+at least one of them exists so that I don't have to worry about
+checking if they exists.  However, they files may contain nothing but
+
   #include"name<prev number.hh" 
-however.
 
-I chose this format to miminze interdependencies and to help better
-orginaize my code.
+I chose this format to minimize interdependencies and to help better
+organize my code.

@@ -1,4 +1,4 @@
-#This file was created by <Sinisa> Thu Nov 25 16:06:21 1999
+#This file was created by <Sinisa> Thu Dec  2 15:59:50 1999
 #LyX 0.12 (C) 1995-1998 Matthias Ettrich and the LyX Team
 \lyxformat 2.15
 \textclass book
@@ -55,7 +55,7 @@ Mysql++
 \newline 
 A C++ API for Mysql
 \newline 
-ver 1.4
+ver 1.5
 \layout Author
 
 Kevin Atkinson
@@ -103,14 +103,16 @@ Getting Mysql++
 \layout Standard
 
 The latest version of Mysql++ can be found at the mysql++ web site at http://www.
-mysql.com/mysql++.
+mysql.com/download_mysql++.html
 \layout Section
 
 Mysql++ Mailing List
 \layout Standard
 
 Instructions for joining the mailing list (and an archive of the mailing
- list) can be found off the Mysql++ home page at http://www.mysql.com/mysql++
+ list) can be found off the Mysql++ home page at http://www.mysql.com/download_mys
+ql++.html.
+ If you just wish to ask questions, you can mail to mysql-plusplus@lists.mysql.com.
 \layout Chapter
 
 Overview
@@ -355,6 +357,10 @@ beware !,
  Declare it in the lowest blocks always !!
 \layout Itemize
 
+MySQL++ now runs with gcc 2.95.1 and 2.
+ Keeping objects local is no more necessary.
+\layout Itemize
+
 The 
 \begin_inset Quotes eld
 \end_inset 
@@ -376,10 +382,14 @@ Connection::connect
 Mysql
 \series default 
 ) has changed so that the data base name is the first paremeter.
+ The same is valid for connect method.
 \layout Itemize
 
 All new client feature implemented in 3.22.xx as various options on connect
  are mplemented in a new constructor and real_connect method
+\layout Itemize
+
+Also new configuration constructs in 3.23.xx are strictly followed
 \layout Itemize
 
 Mysql++ now can be compiled on Win32 with use of Cygwin compiler from Cygnus
@@ -399,10 +409,6 @@ Changed all of the functions that return zero (false) on success and non-zero
  This means that you now need to negate your expressions that test the output
  of these functions.
  
-\layout Itemize
-
-Corrected bugs in sql_query.cc regarding delete versus delete[] and string
- length in manip.cc
 \layout Itemize
 
 Almost all methods that returned MysqlString now return a normal string.
@@ -12145,6 +12151,27 @@ appendix
 \layout Chapter
 
 Changelog
+\layout Section*
+
+1.5 (Dec 1 1999) Sinisa Milivojevic <sinisa@cytanet.com.cy>
+\layout Itemize
+
+Fixed bug in template queries, introduced in 1.4 (!)
+\layout Itemize
+
+Fixed connect bug
+\layout Itemize
+
+Fixed several bug in type_info classes
+\layout Itemize
+
+Added additional robustness in classes
+\layout Itemize
+
+Added additional methods for SQL type info
+\layout Itemize
+
+Changed Changelog and README
 \layout Section*
 
 1.4 (Nov 25 1999) Sinisa Milivojevic <sinisa@cytanet.com.cy>

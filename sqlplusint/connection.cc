@@ -9,7 +9,17 @@ Connection::Connection (const char *db, const char *host, const char *user,
   : throw_exceptions(te), locked(false)
 {
 	mysql_init(&mysql);
-  connect (db, host, user, passwd);
+  if (connect (db, host, user, passwd))
+	{
+    locked = false;
+    Success = is_connected = true;
+  }
+  else
+  {
+    locked = false; Success = is_connected = false;
+    if (throw_exceptions) throw BadQuery(error());
+  }
+
 //  others.insert(&mysql,this);
 }
 
@@ -20,8 +30,16 @@ Connection::Connection (const char *db, const char *host, const char *user,
   : throw_exceptions(te), locked(false)
 {
 	mysql_init(&mysql);
-  real_connect (db, host, user, passwd, port, compress,
-		connect_timeout,socket_name);
+  if (real_connect (db, host, user, passwd, port, compress,		connect_timeout,socket_name))
+  {
+    locked = false;
+    Success = is_connected = true;
+  }
+  else
+  {
+    locked = false; Success = is_connected = false;
+    if (throw_exceptions) throw BadQuery(error());
+  }
 //  others.insert(&mysql,this);
 }
 

@@ -1,7 +1,7 @@
 #ifndef __convert1_hh__
 #define __convert1_hh__
 
-#include <defs>
+#include <defs.hh>
 
 template <class Type> class mysql_convert;
 

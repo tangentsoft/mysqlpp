@@ -3,8 +3,8 @@
 
 #include <stdio.h>
 #include <string>
-#include "defs"
-#include "define_short"
+#include "defs.hh"
+#include "define_short.hh"
 
 //: A special string that will convert from anything.
 // A class subclassed from string that has the additional ability to

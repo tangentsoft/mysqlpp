@@ -1,4 +1,4 @@
-#include <sqlplus.hh>
+#include <mysql++.hh>
 #include <string>
 
 using namespace std;

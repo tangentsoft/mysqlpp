@@ -1,6 +1,6 @@
 
 #include <iostream>
-#include <sqlplus.hh>
+#include <mysql++.hh>
 
 using namespace std;
 

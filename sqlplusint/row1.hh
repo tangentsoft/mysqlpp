@@ -4,8 +4,8 @@
 #include <vector>
 #include <string>
 #include "exceptions.hh"
-#include "defs"
-#include "define_short"
+#include "defs.hh"
+#include "define_short.hh"
 #include "coldata1.hh"
 #include "resiter1.hh"
 #include "vallist1.hh"

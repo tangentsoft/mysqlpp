@@ -9,7 +9,7 @@
 #endif
 #include <mysql.h>
 #include <iostream>
-#include "define_short"
+#include "define_short.hh"
 #include "sql_string1.hh"
 #include "sql_query1.hh"
 #include "datetime1.hh"

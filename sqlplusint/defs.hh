@@ -1,7 +1,7 @@
 
 #ifndef __mysql_defs_h_
 #define __mysql_defs_h_
-#include "define_short"
+#include "define_short.hh"
 #include <mysql.h>
 
 

@@ -4,8 +4,8 @@
 
 #include <vector.h>
 #include <algo.h>
-#include "defs"
-#include "define_short"
+#include "defs.hh"
+#include "define_short.hh"
 #include "coldata1.hh"
 #include "string_util.hh"
 

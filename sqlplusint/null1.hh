@@ -3,7 +3,7 @@
 
 #include <ostream>
 #include "exceptions.hh"
-#include "define_short"
+#include "define_short.hh"
 
 //! with_class = Null
 

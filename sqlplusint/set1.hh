@@ -10,7 +10,7 @@
 #include <set>
 #include <vector>
 #include <iostream.h>
-#include "define_short"
+#include "define_short.hh"
 #include "coldata1.hh"
 
 template <class T, class value_type = typename T::value_type>

@@ -3,7 +3,7 @@
 
 #include <typeinfo>
 #include <string>
-#include "defs"
+#include "defs.hh"
 #include "exceptions.hh"
 #include "type_info1.hh"
 #include "const_string1.hh"

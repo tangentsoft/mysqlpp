@@ -1,5 +1,3 @@
-#include <mysql++-config.hh>
-
 #ifdef __WIN32__
 #include <Windows32/Base.h>
 #include <Windows32/Defines.h>
@@ -15,7 +13,8 @@ void FieldNames::init(const ResUse *res) {
   int num = res->num_fields();
   reserve(num);
   for (int i = 0; i < num; i++) {
-    push_back(res->fields()[i].name);
+		string p(res->fields()[i].name); str_to_lwr(p);   push_back(p);
   }
+	
 }
 

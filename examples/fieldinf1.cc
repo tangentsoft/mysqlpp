@@ -41,12 +41,12 @@ int main() {
     // this is demonstrating how a mysql_type_info can be compared with a c++
     // type_info.
 
-    if (res.types(1) == typeid(short int))
+    if (res.types(1) == typeid(longlong))
       cout << "Field 'num' is of an sql type which most closely resembles a\n"
-	   << "the c++ short int type\n";
-    else if (res.types(1).base_type() == typeid(short int))
+	   << "the c++ long long int type\n";
+    else if (res.types(1).base_type() == typeid(longlong))
       cout << "Field 'num' base type is of an sql type which most closely \n"
-	   << "resembles a the c++ short int type\n";
+	   << "resembles a the c++ long long int type\n";
     // However you have to be careful as if it can be null the actual type is 
     // Null<TYPE> not TYPE.  So you should always use the base_type method
     // to get at the underlying type.  If the type is not null than this base

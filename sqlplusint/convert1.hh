@@ -1,7 +1,7 @@
 #ifndef __convert1_hh__
 #define __convert1_hh__
 
-#include <stdlib.h>
+#include <defs>
 
 template <class Type> class mysql_convert;
 
@@ -15,6 +15,8 @@ template <class Type> class mysql_convert;
       num = FUNC(str, const_cast<char **>(&end));}\
     operator TYPE () {return num;}\
   };\
+
+extern double strtod (const char *, char **);
 
 mysql__convert(float, strtod)
 mysql__convert(double, strtod)
@@ -31,6 +33,9 @@ mysql__convert(double, strtod)
     operator TYPE () {return num;}\
   };\
 
+extern long strtol(const char *str, char **ptr, int base);
+extern unsigned long strtoul(const char *str, char **ptr, int base);
+
 mysql__convert(char, strtol)
 mysql__convert(signed char, strtol)
 mysql__convert(int, strtol)
@@ -42,9 +47,23 @@ mysql__convert(unsigned int, strtoul)
 mysql__convert(unsigned short int, strtoul)
 mysql__convert(unsigned long int, strtoul)
 
+
 #ifndef NO_LONG_LONGS
-mysql__convert(long long int, strtoll)
-mysql__convert(unsigned long long int, strtoull)
+#ifdef strtoull
+#undef strtoull
+#endif
+#ifdef strtoll
+#undef strtoll
+#endif
+extern "C" {
+extern char *longlong2str(longlong val,char *dst,int radix);
+extern char *longlong10_to_str(longlong val,char *dst,int radix);
+extern longlong strtoll(const char *nptr,char **endptr,int base);
+extern ulonglong strtoull(const char *nptr,char **endptr,int base);
+}
+mysql__convert(longlong, strtoll)
+mysql__convert(ulonglong, strtoull)
+
 #endif
 
 #endif

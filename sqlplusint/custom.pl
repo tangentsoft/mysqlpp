@@ -46,7 +46,7 @@ print OUT0 << "---";
 #ifndef NO_LONG_LONGS
 ---
 
-@types = ("long long", "unsigned long long");
+@types = ("longlong", "ulonglong");
 foreach $type (@types) {
     print OUT0 << "---";
 

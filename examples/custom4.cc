@@ -14,11 +14,11 @@ sql_create_5(stock,
 	     5, // this number should generally be the same as the number of
 	        // elements in the list unless you have a good reason not to.
 
-	     string,item,  int,num,  double,weight,  double,price,  Date,sdate)
+	     string,item,  longlong,num,  double,weight,  double,price,  Date,sdate)
 
 int main() {
   try { // its in one big try block
-
+		
     Connection con(use_exceptions);
     con.connect("mysql_cpp_data");
     Query query = con.query();
@@ -50,8 +50,8 @@ int main() {
 	   << i->sdate
 	   << endl;
     }
-
-    i = res.find(stock("Hamburger Buns"));
+    
+		i = res.find(stock("Hamburger Buns"));
     if (i != res.end())
       cout << "Hamburger Buns found.  Currently " << i->num << " in stock.\n";
     else

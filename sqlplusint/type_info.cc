@@ -1,16 +1,3 @@
-#include <mysql++-config.hh>
-
-#include "config.h"
-
-/* these are declared in defs so that the rest of the source files can
-   "see" them and so that applications can see them as well.  Their
-   values are set here so that they can be set from config.h which
-   should not be included by "user" header files */
-
-unsigned int sqlplus_major_version = MYSQLPLUS_MAJOR_VERSION;
-unsigned int sqlplus_minor_version = MYSQLPLUS_MINOR_VERSION;
-unsigned int sqlplus_micro_version = MYSQLPLUS_MICRO_VERSION;
-
 #ifdef __WIN32__
 #include <Windows32/Base.h>
 #include <Windows32/Defines.h>
@@ -34,7 +21,7 @@ const mysql_type_info::sql_type_info mysql_type_info::types[62] = {
   sql_type_info("DOUBLE NOT NULL", typeid(double), 5, true),
   sql_type_info("NULL NOT NULL", typeid(void), 6),
   sql_type_info("TIMESTAMP NOT NULL", typeid(Time), 7),
-  sql_type_info("BIGINT NOT NULL", typeid(long long int), 8, true),
+  sql_type_info("BIGINT NOT NULL", typeid(longlong), 8, true),
   sql_type_info("MEDIUMINT NOT NULL", typeid(int), 9),
   sql_type_info("DATE NOT NULL", typeid(Date), 10, true),
   sql_type_info("TIME NOT NULL", typeid(Time), 11, true),
@@ -55,7 +42,7 @@ const mysql_type_info::sql_type_info mysql_type_info::types[62] = {
   sql_type_info("INT UNSIGNED NOT NULL", typeid(unsigned int), 26, true),
   sql_type_info("INT UNSIGNED NOT NULL", typeid(unsigned int), 27, true),
   sql_type_info("INT UNSIGNED NOT NULL", typeid(unsigned int), 28, true),
-  sql_type_info("BIGINT UNSIGNED NOT NULL", typeid(unsigned long long int), 29, true),
+  sql_type_info("BIGINT UNSIGNED NOT NULL", typeid(ulonglong), 29, true),
   sql_type_info("MEDIUMINT UNSIGNED NOT NULL", typeid(unsigned int), 30),
 
   sql_type_info("DECIMAL NULL", typeid(Null<double>), 0),
@@ -66,7 +53,7 @@ const mysql_type_info::sql_type_info mysql_type_info::types[62] = {
   sql_type_info("DOUBLE NULL", typeid(Null<double>), 5, true),
   sql_type_info("NULL NULL", typeid(Null<void>), 6),
   sql_type_info("TIMESTAMP NULL", typeid(Null<Time>), 7),
-  sql_type_info("BIGINT NULL", typeid(Null<long long int>), 8, true),
+  sql_type_info("BIGINT NULL", typeid(Null<longlong>), 8, true),
   sql_type_info("MEDIUMINT NULL", typeid(Null<int>), 9), 
   sql_type_info("DATE NULL", typeid(Null<Date>), 10, true),
   sql_type_info("TIME NULL", typeid(Null<Time>), 11, true),
@@ -87,7 +74,7 @@ const mysql_type_info::sql_type_info mysql_type_info::types[62] = {
   sql_type_info("INT UNSIGNED NULL", typeid(Null<unsigned int>), 26, true),
   sql_type_info("INT UNSIGNED NULL", typeid(Null<unsigned int>), 27, true),
   sql_type_info("INT UNSIGNED NULL", typeid(Null<unsigned int>), 28, true),
-  sql_type_info("BIGINT UNSIGNED NULL", typeid(Null<unsigned long long int>),29, true),
+  sql_type_info("BIGINT UNSIGNED NULL", typeid(Null<ulonglong>),29, true),
   sql_type_info("MEDIUMINT UNSIGNED NULL", typeid(Null<unsigned int>), 30),
 };
 

@@ -1,5 +1,3 @@
-#include <mysql++-config.hh>
-
 #include "vallist3.hh"
 #include "row2.hh"
 
@@ -51,38 +49,3 @@ template void create_vector (const Row &c, vector<bool>&v, string s0, string s1,
 		   string s7, string s8, string s9, string sa, string sb,
 		   string sc);
 
-template void create_vector (const MutableRow<ResUse> &c, vector<bool>&v, string s0, string s1, 
-		   string s2, string s3, string s4, string s5, string s6,
-		   string s7, string s8, string s9, string sa, string sb,
-		   string sc);
-
-template void create_vector (const MutableRow<MutableRes> &c, vector<bool>&v, string s0, string s1, 
-		   string s2, string s3, string s4, string s5, string s6,
-		   string s7, string s8, string s9, string sa, string sb,
-		   string sc);
-
-/*
-int main() {
-  const char *x[8] = {"12","11","This is a", "9","7","6","5","4"};
-  cout << "Compile Good\n";
-  simp_list_b<const char **> X(x,x+8);
-  cout << *X.begin() << endl;
-  cout << value_list(X) << endl;
-  cout << value_list(X,";") << endl;
-  vector<char *> xx;
-  xx.push_back("testing");
-  xx.push_back("I want you now");
-  xx.push_back("Whats the deal man");
-  cout << value_list(xx,",",quote) << endl;
-  cout << value_list(xx,";") << endl;
-  vector<const char *> xy;
-  xy.push_back("test");
-  xy.push_back("want");
-  xy.push_back("deal");
-  cout << "V1: " << value_list(xy,",",quote,true,false,true) << endl;
-  cout << "V2: " << value_list(xy,",",quote,true,true,true) << endl;
-  cout << "V3: " << value_list(xy,";") << endl;
-  cout << "EL: " << equal_list(xy,xx) << endl;
-  cout << "EL: " << equal_list(xy,xx, " AND ", " > ", quote,true,false,true) << endl;
-}
-*/

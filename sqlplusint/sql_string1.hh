@@ -39,9 +39,9 @@ public:
     {char s[11]; sprintf(s,"%d",i); *this=s;}
   SQLString (unsigned int i) : is_string(false), processed(false)
     {char s[11]; sprintf(s,"%u",i); *this=s;}
-/*SQLString (long long int i) : is_string(false), processed(false)
+/*SQLString (longlong i) : is_string(false), processed(false)
     {char s[22]; sprintf(s,"%dL",i); *this=s;}
-  SQLString (unsigned long long int i) : is_string(false), processed(false) 
+  SQLString (ulonglong i) : is_string(false), processed(false) 
     {char s[22]; sprintf(s,"%uL",i); *this=s;}
 */
   SQLString (float i) : is_string(false), processed(false)

@@ -1,4 +1,3 @@
-#include <mysql++-config.hh>
 
 #include "connection3.hh"
 #include "result3.hh"
@@ -158,8 +157,5 @@ ResUse Connection::use(const string &str, bool throw_excptns) {
   return ResUse(mysql_use_result(&mysql), this);
 }
 
-void Connection::storein(MutableRes& con, const string &s) {
-  con = use(s);
-}
 
 

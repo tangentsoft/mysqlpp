@@ -1,4 +1,4 @@
-#This file was created by <Sinisa> Wed Feb  2 22:49:57 2000
+#This file was created by <Sinisa> Tue May 16 17:06:26 2000
 #LyX 0.12 (C) 1995-1998 Matthias Ettrich and the LyX Team
 \lyxformat 2.15
 \textclass book
@@ -55,7 +55,7 @@ Mysql++
 \newline 
 A C++ API for Mysql
 \newline 
-ver 1.6
+ver 1.7
 \layout Author
 
 Kevin Atkinson
@@ -301,6 +301,36 @@ To aid in the creating of queries using these specialized structures, the
  dramatic result sets.
  This includes methods for returning a comma separated list of the data,
  a comma separated list of the field names, and an equal list.
+\layout Subsection*
+
+The Dynamic Fully Mutable Sets
+\layout Standard
+
+This result set will be implemented when server-side cursors are implemented
+ in MySQL.
+ But, based on so far acquired knowledge and experience, from designing
+ and implementing both MySQL++ and MySQLGUI, a preliminiary layout and design
+ of the most advanced result set so far has been achieved.
+ It's implementation is postponed, however, from the above reasons.
+ This result set will be fully dynamic and dramatic.
+ This result set is fully dynamic in a sense that entire result set is stored
+ in a dynamic C++ container.
+ This container will be only a cache , a dynamic cache, to the entire result
+ set, and will have a default size.
+ This dynamic container will be a window of M rows into an entire result
+ set of N rows, where N is limited by MySQL server , Operating System and
+ File System only.
+ This result set will also be fully dramatic in a sense that the names of
+ the columns and the type of information of the columns will not need to
+ be determined at compile time.
+ But all existing functionality of static , mutable sets will be available
+ in this set too.
+ However as this set will be dramatic, no advance information on result
+ set structure will be necessary, which will thus aleviate need for the
+ usage of specialized macros for the construction of classes.
+ This set will also have methods for updating, deleting and inserting rows
+ in a manner that will be almost identical for use as methods for the existing
+ fully mutable sets.
 \layout Section*
 
 In addition
@@ -312,15 +342,15 @@ In addition to the material mentioned there are also many generic classes
  adapter that will make a random access container out of a class with nothing
  but the size() method and the subscript ([]) operator defined and a generic
  SQL query class that can be used any SQL C or C++ API.
+\layout Standard
+
+As from version 1.7, there is a new addtion to the libraries.
+ Several very usefull functions for STL strings can be added, which can
+ be used in any C++ aplication, MySQL++ related or not.
+ Those functions are contained in source files string_util.hh and string_util.cc.
 \layout Chapter
 
 Important Changes 
-\layout Standard
-
-I will try to keep the changes that will break old code to a minimal however
- when  we do  we will document them here.
- Once this library goes into alpha testing this section will no longer exist
- as  we will try very hard not to make changes that will break old code.
 \layout Section
 
 Current Changes
@@ -337,21 +367,21 @@ equal_list (cchar *, cchar *, Manip)
 .
 \layout Itemize
 
-Mysql++ now runs with egcs.
- But 
-\noun on 
-beware !,
-\noun toggle 
- do not yet use -O6 -mpentium options are still unsafe for g++, with a heavy
- use of constant and static initializers, and especially with C++ exceptions
- .
- Also, please try to keep all objects as local as possible.
- Declare it in the lowest blocks always !!
+Since version 1.3 of mysql++, it can no longer be compiled and built by GNU
+ compilers older then 2.95.
+ Since version 1.3, mysql++ has been changed to accomodate changes in 2.95
+ on various aspects of C++.
+ This prevents it's building with earlier versions of GNU , like 2.7.xx, 2.8.xx.
+ Also building by egcs compilers 1.x.x is not supported any more.
+ Although with some changes in code mysql++ could be built with earlier
+ compilers, running of such programs would result in their crashing.
 \layout Itemize
 
-MySQL++ now runs with gcc 2.95.1 and 2.
- Keeping objects local is no more necessary.
- Also, optimisation can be used at will.
+It was also noted that on certain SPARC Solaris installation, C++ exceptions
+ did not work with gcc 2.95.2.
+ This case was tested and it is established that mysql++ builds and runs
+ flawlessly with a following version of gcc on Solaris: gcc version 2.95
+ 19990728 (release)
 \layout Itemize
 
 The 
@@ -459,6 +489,15 @@ Mysql++ can now work with binary data
 \layout Section
 
 Future Changes
+\layout Itemize
+
+To move properly all 64 int handling to libmysqlclient 
+\layout Itemize
+
+To implement fully mutable result sets 
+\layout Itemize
+
+To improve configure for better detection of mysql includes and libs
 \layout Itemize
 
 The behavior of MysqlString when used with binary operators is going to
@@ -14079,6 +14118,81 @@ appendix
 Changelog
 \layout Section*
 
+1.7 (May17 2000) Sinisa Milivojevic <sinisa@mysql.com>
+\layout Itemize
+
+This is mainly a release dealing with bug fixes, consistency improvements
+ and easier configure on some platforms
+\layout Itemize
+
+A bug in fetch_row() method of ResUse class has been fixed.
+ Beside changes that existed in a distributed patch, some additional error
+ checking has been introduced
+\layout Itemize
+
+A bug in escape manipulator has been fixed that could cause an error if
+ all characters had to be escaped
+\layout Itemize
+
+An inconsistency in column indexing has been fixed.
+ Before this version, column names in row indexing with strings, i.e.
+ row[<string>] , has been case sensitive, which was inconsistent with MySQL
+ server handling of column names
+\layout Itemize
+
+An inconsistency in conversion from strings to integers or floats has been
+ fixed.
+ In prior version a space found in data would cause a BadConversion exception.
+ This has been fixed, but 100% consistency with MySQL server has not been
+ targeted, so that other non-numeric characters in data will still cause
+ BadConversion exception or error.
+ As this API is used in applications, users should provide feedback if full
+ compatibility with MySQL server is desired, in which case BadConversion
+ exception or error would be abolished in some of future versions
+\layout Itemize
+
+A new method in ColData class has been introduced.
+ is_null() method returns a boolean to denote if a column in a row is NULL.
+ Finally, as of this release, testing for NULL values is possible.
+ Those are columns with empty strings for which is_null() returns true.
+\layout Itemize
+
+Some SPARC Solaris installations had C++ exception problems with g++ 2.95.2
+ This was a bug that was fixed in GNU gcc, as from release 2.95 19990728.
+ This version was thoroughly tested and is fully functional on SPARC Solaris
+ 2.6 with the above version of gcc.
+\layout Itemize
+
+A 'virtual destructor ' warning for Result class has been fixed
+\layout Itemize
+
+Several new functions for STL strings have been added.
+ Those functions (see string_util.hh) add some of the functionality missing
+ in existing STL libraries
+\layout Itemize
+
+Conversion for 64 bit integers on FreeBSD systems has been added.
+ On those systems _FIX_FOR_BSD_ should be defined in CXXFLAGS prior to configuri
+ng.
+ Complete conversion to the usage of functions for integer conversion found
+ in mysqlclient library is planned for one of the next releases
+\layout Itemize
+
+A completely new, fully dynamic, dramatic and fully mutable result set has
+ been designed and will be implemented in some of 2.x releases
+\layout Itemize
+
+Several smaller fixes and improvements, including defaulting exceptions
+ to true, instead of false, as of this version
+\layout Itemize
+
+An up-to-date and complete Postscript version of documentation is included
+ in this distribution
+\layout Itemize
+
+Large chunks of this manual are changed, as well as README and TODO files.
+\layout Section*
+
 1.6 (Feb 3 2000) Sinisa Milivojevic <sinisa@mysql.com>
 \layout Itemize
 
@@ -14106,7 +14220,7 @@ Made some major changes in code, so that now execute method should be used
  It is also faster.
 \layout Itemize
 
-New method get_string is inroduced for easier handling / castig ColData
+New method get_string is inroduced for easier handling / casting ColData
  into C++ strings.
 \layout Itemize
 
@@ -14485,6 +14599,15 @@ Improve the runtime type identification system for the sql types which will
  be needed for the mutable results sets and the binary operators in particular.
 \layout Itemize
 
+To move properly all 64 int handling to libmysqlclient 
+\layout Itemize
+
+To implement dynamic, fully mutable result sets 
+\layout Itemize
+
+To improve configure for better detection of mysql includes and libs
+\layout Itemize
+
 Improve the mutable results sets so that they can be assigned types that
  are not strings setting the sql type aproprestly.
  Also allow the SQLtype to be fixed so that when the programmer assigned
@@ -14516,13 +14639,6 @@ Better handling of the destruction of the Mysql class.
 Create a container to hold Mysql enums and sets as a bit set as opposed
  to a list of STL set.
  
-\layout Itemize
-
-Have a more intelligent MysqlRes that can reexecute to refresh the data.
- 
-\layout Itemize
-
-Create full fledged client side cursors
 \layout Standard
 
 If you have anything else you want to see let us know at sinisa@mysql.com
@@ -14537,7 +14653,7 @@ The following is an informal list of programs and people I would like to
  thank.
 \layout Itemize
 
-egcs - for the great compiler (egcs.cygnus.com)
+Cygnus - for the great compiler (egcs.cygnus.com)
 \layout Itemize
 
 Perl - for making my life in general a lot easier (www.perl.com)
@@ -14598,9 +14714,6 @@ Sinisa Milivojevic - For becoming the new offical maintainer.
 D.
  Hawkins and E.
  Loic for their autoconf + automake contribution.
-\layout Standard
-
-If you fell that I forgot something please let me know.
 \layout Chapter
 
 Copyright

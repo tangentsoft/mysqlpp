@@ -17,33 +17,41 @@
 #include "resiter1.hh"
 #include "field_types1.hh"
 #include "fields1.hh"
+#include "bad_query.hh"
 //:
 class ResUse  {
   friend Connection;
 protected:
   Connection            *mysql;
   mutable MYSQL_RES     *mysql_res;
-  bool                  throw_exceptions;
+  bool                  throw_exceptions, initialized;
   mutable FieldNames    *_names;
   mutable FieldTypes    *_types;
   Fields                _fields;
   string                _table;       
   void copy(const ResUse& other); 
 public:
-  ResUse () : mysql(0), mysql_res(0), throw_exceptions(false), _names(NULL), _types(NULL), _fields(this) {}
+  ResUse () : mysql(0), mysql_res(0), throw_exceptions(false),initialized(false), _names(NULL), _types(NULL), _fields(this) {}
   ResUse (MYSQL_RES *result, Connection *m = NULL, bool te = false);
   ResUse (const ResUse &other) {copy(other);}
   inline ResUse& operator = (const ResUse &other);
   MYSQL_RES *mysql_result (void) {return mysql_res;}
   /* raw mysql c api functions */
   Row fetch_row()
-    {return Row(mysql_fetch_row(mysql_res), this, (unsigned int *)mysql_fetch_lengths(mysql_res), throw_exceptions);}
+  {
+	  if (!mysql_res) {  if (throw_exceptions) throw BadQuery("Results not fetched");
+    else return Row();}
+    MYSQL_ROW row = mysql_fetch_row(mysql_res);
+    unsigned int* length = (unsigned int*) mysql_fetch_lengths(mysql_res);
+	  if (!row || !length) {  if (throw_exceptions) throw BadQuery("Bad row");
+    else return Row();}
+    return Row(row, this, length, throw_exceptions);
+  }
+
   //: raw c api function
   bool          eof () const {return mysql_eof(mysql_res);}
   //: raw c api function
   long unsigned int *fetch_lengths () const {return mysql_fetch_lengths(mysql_res);}
-  //: raw c api function
-  void         free_result() {mysql_free_result(mysql_res);}
   //: raw c api function
 
   /* raw mysql c api fields functions */
@@ -58,7 +66,7 @@ public:
 
   void parent_leaving() {mysql = NULL;}
   
-  void purge(MYSQL_RES *r)
+  void purge(void)
     { if (mysql_res) mysql_free_result(mysql_res); mysql_res=0; if (_names) delete _names; if (_types) delete _types; _names=0; _types=0; _table.erase(); }
   
   operator bool() const {if (mysql_res) return true; return false;} //:
@@ -140,7 +148,6 @@ public:
 // return a Random Access Iterator or a reverse Random Access Iterator
 // yet.
 //
-// See MutableRes for a result set that can be modified.
 class Result : public ResUse, 
 	       public const_subscript_container<Result,Row,const Row>
 {
@@ -150,10 +157,19 @@ public:
   Result (MYSQL_RES *result, bool te = false) 
     : ResUse(result, NULL, te) {mysql = NULL;} //:
   Result (const Result &other) : ResUse(other) {mysql = NULL;} //:
-  
+  virtual ~Result() {}  
   // raw mysql c api functions
-  const Row    fetch_row() const
-    {return Row(mysql_fetch_row(mysql_res), this, (unsigned int *) mysql_fetch_lengths(mysql_res), throw_exceptions);}  
+  const Row fetch_row() const
+  {
+	  if (!mysql_res) {  if (throw_exceptions) throw BadQuery("Results not fetched");
+    else return Row();}
+    MYSQL_ROW row = mysql_fetch_row(mysql_res);
+    unsigned int* length = (unsigned int*) mysql_fetch_lengths(mysql_res);
+	  if (!row || !length) {  if (throw_exceptions) throw BadQuery("Bad row");
+    else return Row();}
+    return Row(row, this, length, throw_exceptions);
+  }
+
   //: Raw c api function
   int          num_rows() const {return mysql_num_rows(mysql_res);}
   //: Raw c api function
@@ -162,79 +178,13 @@ public:
   //: Raw c api function
 
   size_type size() const {return num_rows();}
-  //: Returns the number of columns.
+  //: Returns the number of rows
   size_type rows() const {return num_rows();}
   //: Returns the number of rows.
   const Row operator [] (size_type i) const {data_seek(i); return fetch_row();}
   //: Returns the row with an offset of i.
 };
 
-class MutabelRes;
-
-//: This class handles the result set. 
-// It is also a Random Access Container that is not LessThanComparable
-// but is Assignable. Being a Random Access Container it can
-// return a Random Access Iterator or a reverse Random Access Iterator
-// yet.
-//
-class MutableRes : public vector<MutableRow<MutableRes> > {
-private:
-  size_type  _columns;
-  FieldNames _names;
-  void populate(ResUse res);
-
-  typedef vector<MutableRow<MutableRes> >  parent;
-public:
-  MutableRes() {}  //:
-  MutableRes(ResUse res) : _names(&res) {populate(res);} //:
-  MutableRes(size_type i) : _columns(i), _names (i) {} 
-  //: Creates a new mutable result set with i columns.
-
-  MutableRes& operator = (ResUse res) {
-    _names=&res; populate(res); return *this;
-  } //: 
-  MutableRes& operator = (size_type i) {
-    _columns = i; _names = i; return *this;
-  } //:
-
-  size_type rows() const {return size();}
-  //: Returns the number of rows.
-  size_type columns() const {return _columns;}
-  //: Returns the number of columns.
-
-  /* methodes for inserting elements as the standart insert functions
-     won't work that well as MutableRow needs to be constructed in a
-     special way */
-
-  iterator insert(iterator pos) {return parent::insert(pos, value_type(this));} 
-  void insert(iterator pos, size_type n) {parent::insert(pos, n, value_type(this));}
-  void push_back() {parent::push_back(value_type(this));}
-
-  /* methods for working with field names */
-
-  inline int               field_num(const string& str) const;
-  //: Returns the offset of the filed which equals str.
-  inline string&           field_name(int i);
-  //: Returns the field with an offset of i.
-  inline const string&     field_name(int i) const;
-  //: Returns the field with an offset of i.
-  inline FieldNames&       field_names();
-  //: Returns a reference to the underlying FieldNames class.
-  inline const FieldNames& field_names() const;
-  //: Returns a const reference to the underlying FieldNames class.
-
-  // short names for the above methods
-  inline int               names(const string& s) const;
-  //: Returns the offset of the filed which equals str.
-  inline string&           names(int i);
-  //: Returns the field with an offset of i.
-  inline const string&     names(int i) const;
-  //: Returns the field with an offset of i.
-  inline FieldNames&       names();
-  //: Returns a reference to the underlying FieldNames class.
-  inline const FieldNames& names() const;
-  //: Returns a const reference to the underlying FieldNames class.
-};
 
 //! with_class = ResUSe
 

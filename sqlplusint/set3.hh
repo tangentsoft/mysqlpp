@@ -6,7 +6,7 @@
 
 template <class Insert>
 void set2container (const char *str, Insert insert) {
-  MutableColData s;
+  MutableColData s(false);
   while (1) {
     s = "";
     while (*str != ',' && *str) {

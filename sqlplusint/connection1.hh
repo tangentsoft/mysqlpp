@@ -16,16 +16,9 @@
 #include <map.h>
 #include <multiset.h>
 #include "define_short"
+#include "bad_query.hh"
 #include "query1.hh"
 #include "result1.hh"
-
-//: Exception thrown when a BadQuery is encountered
-struct BadQuery {
-  BadQuery(string er) : error(er) {}
-  string error; //: The error message
-};
-
-class MutableRes;
 
 //: The main database handle
 class Connection {
@@ -77,7 +70,7 @@ public:
   bool   lock() {if (locked) return true; locked = true; return false;}
   void   unlock() {locked = false;}
 
-  void purge (MYSQL *m) {mysql_close(&mysql); }
+  void purge (void) {mysql_close(&mysql); }
   //:
 
   inline Query query();
@@ -124,7 +117,6 @@ public:
   //: Stores the results in TYPE.  
   // Stores the result in TYPE. TYPE must be some sort of STL container.  
 
-                            void storein(MutableRes &con, const string &s);
   template <class T>        void storein(vector<T> &con, const string &s)
     {storein_sequence(con,s);}
   template <class T>        void storein(deque<T> &con, const string &s)

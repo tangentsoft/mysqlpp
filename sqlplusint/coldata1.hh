@@ -50,13 +50,14 @@ class mysql_ColData : public Str {
 private:
   mysql_type_info _type;
 	string buf;
+	bool _null;
 public:
-  mysql_ColData (mysql_type_info t = mysql_type_info::string_type) 
-    : _type(t) {}
+  mysql_ColData (bool n, mysql_type_info t = mysql_type_info::string_type) 
+    : _type(t), _null(n) {}
   mysql_ColData (const char *str, 
-		 mysql_type_info t = mysql_type_info::string_type)
-    : Str(str), _type(t) {buf=(string)str;}
-
+		 mysql_type_info t = mysql_type_info::string_type, bool n = false)
+    : Str(str), _type(t), _null(n) {buf=(string)str;}
+  mysql_ColData () {}
   mysql_type_info type() {return _type;}
   //: Returns the current mysql type of current item
 
@@ -78,6 +79,8 @@ public:
   // TYPE is defined for all the build in types.
   //
   // (Note, This is not an actual template)
+  void it_is_null (void) {_null=true;}
+	inline const bool is_null(void) const {return _null;}
 	inline const string&  get_string(void) const {return buf;}
   operator cchar*() const {return buf.c_str();}
   operator  signed char() const {return conv((signed char)0);}
@@ -89,8 +92,8 @@ public:
   operator  long int() const {return conv((long int)0);}
   operator  unsigned long int() const {return conv((unsigned long int)0);}
 #ifndef NO_LONG_LONGS
-  operator  long long int() const {return conv((long long int)0);}
-  operator  unsigned long long int() const {return conv((unsigned long long int)0);}
+  operator  longlong() const {return conv((longlong)0);}
+  operator  ulonglong() const {return conv((ulonglong)0);}
 #endif
   operator  float() const {return conv((float)0);}
   operator  double() const {return conv((double)0);}

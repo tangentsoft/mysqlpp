@@ -35,7 +35,7 @@ int main() {
     cout.precision(3);
     for (i = res.begin(); i != res.end(); i++) {
       row = *i;
-      cout << setw(17) << row["item"] << "," << setw(4) << row[1] 
+      cout << setw(17) << row["ITEM"] << "," << setw(4) << row[1] 
 	   << setw(7)  << (double) row[2]
 	// This is converting the row to a double so that we
 	// can set the precision of it.  
@@ -45,7 +45,7 @@ int main() {
 	// cache below).  To test it try changing the 2 in row[2]
 	// to row[0]
 	   << setw(7) << (double)row[3];
-      Date date = row["sdate"]; 
+      Date date = row["SDATE"]; 
       // The ColData is implicitly converted to a date here.
       cout.setf(ios::right);
       cout.fill('0');

@@ -1,5 +1,3 @@
-#include <mysql++-config.hh>
-
 #ifdef __WIN32__
 #include <Windows32/Base.h>
 #include <Windows32/Defines.h>

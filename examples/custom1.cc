@@ -8,7 +8,7 @@
 sql_create_5 (stock,		// struct name, 
 	      1, 5,		// I'll explain these latter
 	      string, item,	// type, id
-	      int, num,
+	      longlong, num,
 	      double, weight,
 	      double, price,
 	      Date, sdate)

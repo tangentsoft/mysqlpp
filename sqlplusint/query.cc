@@ -1,4 +1,3 @@
-#include <mysql++-config.hh>
 
 #include "query3.hh"
 

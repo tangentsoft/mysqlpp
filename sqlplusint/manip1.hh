@@ -17,6 +17,8 @@
 
 //quote manipulaor
 
+extern bool dont_quote_auto;
+
 class SQLQueryParms;
 
 enum quote_type0 {mysql_quote};
@@ -45,6 +47,14 @@ template <class T>
 inline ostream& operator << (quote_type1 o, const T &in) {
   return *o.ostr << in;
 }
+
+ostream& operator << (ostream& o,const mysql_ColData<string>& in);
+
+ostream& operator << (ostream& o, const mysql_ColData<const_string>& in);
+
+SQLQuery& operator << (SQLQuery& o, const mysql_ColData<string>& in);
+
+SQLQuery& operator << (SQLQuery& o, const mysql_ColData<const_string>& in);
 
 template <>
 ostream& operator << (quote_type1 o, const string &in);

@@ -1,4 +1,81 @@
+2000-02-06  Dale Hawkins  <dhawkins@cdrgts.com>
+
+	* macros/mysql.m4: Fixed problems with brute force flags.
+	Added "." to the executable search path
+
+	* configure.in: Changed version to 1.6.0.
+	Conditionally chmod mysql-config (if found in current dir)
+	
+
+2000-01-21  Dale Hawkins  <dhawkins@cdrgts.com>
+	
+	* configure.in: Added generation of mysql++-config.hh.
+	Changes to use mysql++ and mysqlplus vs. sqlplus.
+	Changes to use new, version sensitive AM_PATH_MYSQL macro.
+
+	* autogen.sh: Added rules to search in ./macros if mysql.m4 and
+	rpm.m4 are not already installed (need to do more research on how
+	best to override installed autoconf macros...)
+
+2000-01-08  Dale Hawkins  <dhawkins@cdrgts.com>
+
+	* examples/Makefile.am (check_PROGRAMS): Only compile the example
+	programs when doing "make check".
+
+	* sqlplus.spec.in (configure_args): Re-configure the package with
+	the same options as the original configuration (might break with
+	certain options)
+
+	* macros/rpm.m4: Output the configure command-line that rpm can
+	use the same configure options.
+
+	* Makefile.am (EXTRA_DIST): Moved .m4 files to their own Makefile.am
+
+	* macros/Makefile.am: New file.  Directories should have their own
+	Makefile.am files.
+
+	* sqlplus.spec.in (__aclocal): Redefined to include the macros
+	directory.
+
+	* sqlplusint/defs: Added sqlplus_XXXX_version for better
+	integration with autoconf.
+
+	* sqlplusint/type_info.cc: Added sqlplus_XXXX_version for better
+	integration with autoconf.
+
+	* mysql-config.in (lib_mysql): Always output lib_mysql when
+	invoked with --libs.
+
+	* sqlplus-config.in (lib_sqlplus): Always output lib_sqlplus when
+	invoked with --libs.
+
+	* macros/sqlplus.m4: Bug fixes.
+
+	* macros/mysql.m4: Bug fixes.
+
+	* macros/rpm.m4: New file.  Generates Makefile rules for creating
+	rpms.
+
+	* Makefile.am (EXTRA_DIST): Moved .m4 files to macros directory
+	(EXTRA_DIST): Added rpm.m4
+	(@RPM_TARGET@): New target for creating rpms.  Now as easy as
+	invoking "make rpm"
+
+2000-01-07  Dale Hawkins  <dhawkins@cdrgts.com>
+
+	* mysql.m4: Temporarily added this file.
+
+	* mysql-config.in: Temporarily added this file.
+
+	* sqlplus.m4: New file; has autoconf macros for sqlplus
+
+	* Makefile.am (EXTRA_DIST): Added sqlplus.m4
+	(EXTRA_DIST): Added mysql-config.in, mysql-config, and mysql.m4
+	until these become of the mysql distribution (this would be nice)
+
 2000-01-06  Dale Hawkins  <dhawkins@cdrgts.com>
+
+	* sqlplusint/README: Fixed various spelling errors
 
 	* acconfig.h: New file.  Lets me define the library versioning.
 

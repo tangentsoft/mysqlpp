@@ -1,3 +1,4 @@
+#include <mysql++-config.hh>
 
 #include "query3.hh"
 
@@ -13,7 +14,7 @@ MysqlQuery& MysqlQuery::operator = (const MysqlQuery &q) {
   return *this;
 }
 
-
+bool MysqlQuery::exec (const string& str) { return mysql->exec(str);}
 
 
 

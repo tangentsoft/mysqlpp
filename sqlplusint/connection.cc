@@ -1,8 +1,7 @@
+#include <mysql++-config.hh>
 
 #include "connection3.hh"
 #include "result3.hh"
-
-// pointer_tracker<MYSQL,Connection>  Connection::others = pointer_tracker<MYSQL, Connection>();
 
 Connection::Connection (const char *db, const char *host, const char *user, 
 			const char *passwd, bool te) 
@@ -19,8 +18,6 @@ Connection::Connection (const char *db, const char *host, const char *user,
     locked = false; Success = is_connected = false;
     if (throw_exceptions) throw BadQuery(error());
   }
-
-//  others.insert(&mysql,this);
 }
 
 Connection::Connection (const char *db, const char *host, const char *user, 
@@ -40,7 +37,6 @@ Connection::Connection (const char *db, const char *host, const char *user,
     locked = false; Success = is_connected = false;
     if (throw_exceptions) throw BadQuery(error());
   }
-//  others.insert(&mysql,this);
 }
 
 bool Connection::real_connect (cchar *db, cchar *host, cchar *user,
@@ -73,14 +69,7 @@ bool Connection::real_connect (cchar *db, cchar *host, cchar *user,
 }
 
 Connection::~Connection () {
-  for (set<MysqlChild*>::iterator i = children.begin(); 
-       i != children.end();
-       i++) 
-    {
-      (*i)->parent_leaving();
-    }
 	mysql_close(&mysql);
-//  others.remove(&mysql,this); 
 }
 
 bool Connection::select_db (const char *db) {
@@ -136,6 +125,12 @@ ResNSel Connection::execute(const string &str, bool throw_excptns) {
     if (throw_excptns) throw BadQuery(error());
     else return ResNSel();
   return ResNSel(this);
+}
+
+bool Connection::exec(const string &str) {
+	Success = !mysql_query(&mysql,str.c_str());
+	if (!Success && throw_exceptions) throw BadQuery(error());
+	return Success;
 }
 
 Result Connection::store(const string &str, bool throw_excptns) {

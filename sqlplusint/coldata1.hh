@@ -78,7 +78,7 @@ public:
   // TYPE is defined for all the build in types.
   //
   // (Note, This is not an actual template)
-
+	inline const string&  get_string(void) const {return buf;}
   operator cchar*() const {return buf.c_str();}
   operator  signed char() const {return conv((signed char)0);}
   operator  unsigned char() const {return conv((unsigned char)0);}

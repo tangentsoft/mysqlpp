@@ -1,6 +1,6 @@
 All of the header files in this directory (sqlplusint) are internal.
 This means that you should never include any of these directly in your
-programs as they are subject to change from one releases to another.
+programs as they are subject to change from one release to another.
 
 For those interesting in improving the code the files are laid out in
 the following fashion:

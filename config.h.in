@@ -21,11 +21,11 @@
 /* Define if you have the ANSI C header files.  */
 #undef STDC_HEADERS
 
-#undef SQLPLUS_MAJOR_VERSION
-#undef SQLPLUS_MINOR_VERSION
-#undef SQLPLUS_MICRO_VERSION
-#undef SQLPLUS_INTERFACE_AGE
-#undef SQLPLUS_BINARY_AGE
+#undef MYSQLPLUS_MAJOR_VERSION
+#undef MYSQLPLUS_MINOR_VERSION
+#undef MYSQLPLUS_MICRO_VERSION
+#undef MYSQLPLUS_INTERFACE_AGE
+#undef MYSQLPLUS_BINARY_AGE
 
 /* Define if you have the strtol function.  */
 #undef HAVE_STRTOL

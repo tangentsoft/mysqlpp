@@ -1,3 +1,5 @@
+#include <mysql++-config.hh>
+
 #include <string>
 #include "const_string3.hh"
 #include "coldata4.hh"

@@ -77,10 +77,10 @@ private:
 			      bool _unsigned, bool _null = false);
 public:
   static const unsigned char string_type = 20;
-private:
-  unsigned char num;
 	unsigned int _length;
 	unsigned int _max_length;
+private:
+  unsigned char num;
   inline const sql_type_info& deref() const;
 public:
   //!dummy: static const unsigned char string_type;

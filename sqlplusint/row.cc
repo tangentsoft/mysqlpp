@@ -1,3 +1,4 @@
+#include <mysql++-config.hh>
 
 #include "result1.hh"
 #include "row3.hh"

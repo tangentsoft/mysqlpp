@@ -15,7 +15,7 @@ Options:
 	[--libs]
 	[--cxxflags]
 Libraries:
-	sqlplus
+	mysql
 EOF
 	exit $1
 }
@@ -23,6 +23,8 @@ EOF
 if test $# -eq 0; then
 	usage 1 1>&2
 fi
+
+lib_mysql=yes
 
 while test $# -gt 0; do
   case "$1" in
@@ -48,7 +50,7 @@ while test $# -gt 0; do
       echo_exec_prefix=yes
       ;;
     --version)
-      echo @SQLPLUS_VERSION@
+      echo @MYSQL_VERSION@
       exit 0
       ;;
     --cxxflags)
@@ -62,8 +64,8 @@ while test $# -gt 0; do
     --libs)
       echo_libs=yes
       ;;
-    sqlplus)
-      lib_sqlplus=yes
+    mysql)
+      lib_mysql=yes
       ;;
     *)
       usage 1 1>&2
@@ -88,8 +90,12 @@ fi
 if test "$echo_libs" = "yes"; then
 	libsp=""
 	libsa=""
-	if test "$lib_sqlplus" = "yes"; then
-		libsp="$libsp --lsqlplus"
+	if test "$lib_mysql" = "yes"; then
+		libsp="$libsp -lmysqlclient"
 	fi
-	echo -L@libdir@ $libsp $libsa
+	if test "@libdir@" != /usr/lib ; then
+	    echo -L@libdir@ $libsp $libsa
+	else
+	    echo $libsp $libsa
+	fi
 fi

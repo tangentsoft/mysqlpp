@@ -35,8 +35,8 @@ int main() {
     cout.precision(3);
     for (i = res.begin(); i != res.end(); i++) {
       row = *i;
-      cout << setw(17) << row["item"] << setw(4) << row[1] 
-	   << setw(7)  << (double)row[2]
+      cout << setw(17) << row["item"] << "," << setw(4) << row[1] 
+	   << setw(7)  << (double) row[2]
 	// This is converting the row to a double so that we
 	// can set the precision of it.  
 	// ColData has the nice feature that it will convert to

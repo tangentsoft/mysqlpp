@@ -1,3 +1,16 @@
+#include <mysql++-config.hh>
+
+#include "config.h"
+
+/* these are declared in defs so that the rest of the source files can
+   "see" them and so that applications can see them as well.  Their
+   values are set here so that they can be set from config.h which
+   should not be included by "user" header files */
+
+unsigned int sqlplus_major_version = MYSQLPLUS_MAJOR_VERSION;
+unsigned int sqlplus_minor_version = MYSQLPLUS_MINOR_VERSION;
+unsigned int sqlplus_micro_version = MYSQLPLUS_MICRO_VERSION;
+
 #ifdef __WIN32__
 #include <Windows32/Base.h>
 #include <Windows32/Defines.h>

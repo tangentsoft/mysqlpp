@@ -1,4 +1,4 @@
-#This file was created by <Sinisa> Thu Dec  2 15:59:50 1999
+#This file was created by <Sinisa> Wed Feb  2 22:49:57 2000
 #LyX 0.12 (C) 1995-1998 Matthias Ettrich and the LyX Team
 \lyxformat 2.15
 \textclass book
@@ -55,28 +55,20 @@ Mysql++
 \newline 
 A C++ API for Mysql
 \newline 
-ver 1.5
+ver 1.6
 \layout Author
 
 Kevin Atkinson
 \newline 
-(kevinatk@home.com)
+<kevinatk@home.com>
 \newline 
- Sinisa Milivojevic
+Sinisa Milivojevic
 \newline 
-(sinisa@cytanet.com.cy)
+<sinisa@mysql.com>
 \newline 
 Michael Widenius
 \newline 
-(monty@mysql.com)
-\layout Standard
-
-
-\begin_inset LatexCommand \tableofcontents
-
-\end_inset 
-
-
+<monty@mysql.com>
 \layout Part*
 
 Introductory Material
@@ -127,7 +119,7 @@ The Mysql++ API has developed into a very complex and powerful being.
  With many different ways to accomplish the same task.
  Unfortunately this means that figuring out how to perform a simple task
  can be frustrating for new users of my library.
- In this section I will attempt to provide an overview of the many different
+ In this section we will attempt to provide an overview of the many different
  components of the library.
 \layout Standard
 
@@ -275,8 +267,8 @@ Mutable result sets can be created with out an actual query so that you
 The Static Result Sets
 \layout Standard
 
-The results from an query can also be stored statically in what I call a
- specialized SQL structure.
+The results from an query can also be stored statically in what  we call
+ a specialized SQL structure.
  These structures are then stored in some STL container such a vector or
  list, or even a set or multi-set as the the specialized structures can
  also be made less-than-comparable.
@@ -326,9 +318,9 @@ Important Changes
 \layout Standard
 
 I will try to keep the changes that will break old code to a minimal however
- when I do I will document them here.
+ when  we do  we will document them here.
  Once this library goes into alpha testing this section will no longer exist
- as I will try very hard not to make changes that will break old code.
+ as  we will try very hard not to make changes that will break old code.
 \layout Section
 
 Current Changes
@@ -359,6 +351,7 @@ beware !,
 
 MySQL++ now runs with gcc 2.95.1 and 2.
  Keeping objects local is no more necessary.
+ Also, optimisation can be used at will.
 \layout Itemize
 
 The 
@@ -437,21 +430,39 @@ MysqlString
 \series bold 
 MysqlColData
 \series default 
-) is now subclassed from a special string class that I wrote to handle working
- with a const string in a much more efficient way (ie it doesn't copy it).
+) is now subclassed from a special string class that  we wrote to handle
+ working with a const string in a much more efficient way (ie it doesn't
+ copy it).
  Unfortunitlly this data type is also more limited see the section on "const_str
 ing" for more info.
 \layout Itemize
 
 All necessary methods pertaining to the administration funcitons have been
  added
+\layout Itemize
+
+Mysql++ now quotes and escapes objects automatically, if column data is
+ used with '<<' operator
+\layout Itemize
+
+Mysql++ now has much more secure execution of INSERT, UPDATE and DELETE
+ with a new exec() method
+\layout Itemize
+
+Mysql++ now has much better configuration
+\layout Itemize
+
+There is a new method of fetching strings
+\layout Itemize
+
+Mysql++ can now work with binary data
 \layout Section
 
 Future Changes
 \layout Itemize
 
 The behavior of MysqlString when used with binary operators is going to
- change in a future version (if I can figure out how to pull it off) Instead
+ change in a future version (if  we can figure out how to pull it off) Instead
  of converting to the type on the other side of the operator the MysqlString
  will it convert to the type the Mysql server said it originally was.
  This will be a lot safer and more predictable.
@@ -889,7 +900,7 @@ int main() {
 \layout Standard
 
 Everything here should be fairly obvious.
- Take particular notice of how I used an iterator with the result set.
+ Take particular notice of how  we used an iterator with the result set.
 \layout Subsection
 
 A slightly more complicated example
@@ -954,7 +965,7 @@ int main() {
 \protected_separator 
 
 \protected_separator 
- // Here I broke making the connection into two calls.
+ // Here  we broke making the connection into two calls.
 \newline 
 
 \protected_separator 
@@ -1328,7 +1339,7 @@ int main() {
 \protected_separator 
 
 \protected_separator 
-// in the conversion it will throw an exception (which I 
+// in the conversion it will throw an exception (which  we 
 \newline 
 
 \protected_separator 
@@ -3017,7 +3028,7 @@ int main () {
 \protected_separator 
 
 \protected_separator 
-// modifers so I have to convert it to a conat char *.
+// modifers so  we have to convert it to a conat char *.
 \newline 
 
 \protected_separator 
@@ -4886,6 +4897,1892 @@ n";
  }
 \newline 
 }
+\layout Section
+
+Let us be usefull
+\layout Standard
+
+Beginning with MySQl++ 1.6 we have introduced three new examples, whose aim
+ is to demonstrate some of the strongest features of MySQL++, whose primary
+ objective is not just to demonstrate power and ease of use of MySQL++,
+ but also to provide a solution to some of the most frequent problems presented
+ by MySQL users.
+ These examples exemplify a superiority of C++ over other existing languages.
+ Those examples take very few effective MySQL++ / C++ commands to produce
+ highly efficient code, such that each of those examples resovles some very
+ common problems that face MySQL users, especially beginners.
+ 
+\layout Standard
+
+As these examples are meant to tbe applied, and are applied by many MySQL
+ users, constants that can differ from one case to another have been grouped
+ in order to simplify editing.
+ Also , all of this examples contain full error checking code.
+ This is one of the areaa where C++ exception handling, fully applied in
+ MySQL++, truly shines.
+ 
+\layout Subsection
+
+Loading binary file in a BLOB column
+\layout Standard
+
+This function is solved in MySQL version 3.23 , but as of this writing many
+ users are still using older versions.
+ Beside that this examples demonstrates several features of MySQL++.
+ This program requires one argument, which is a full path of the binary
+ file.
+ 
+\layout Comment
+
+example: load_file.cc
+\layout LyX-Code-Sans
+
+#include <sys/stat.h>
+\newline 
+ #include <fstream>
+\newline 
+ #include <mysql++>
+\newline 
+ extern int errno;
+\newline 
+ const char
+\protected_separator 
+ MY_DATABASE[]="telcent";
+\newline 
+ const char
+\protected_separator 
+ MY_TABLE[]="fax";
+\newline 
+ const char
+\protected_separator 
+ MY_HOST[]="localhost";
+\newline 
+ const char
+\protected_separator 
+ MY_USER[]="root";
+\newline 
+ const char
+\protected_separator 
+ MY_PASSWORD[]="";
+\newline 
+ const char
+\protected_separator 
+ MY_FIELD[]="fax"; // BLOB field
+\newline 
+ int main(int argc, char *argv[]) {
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+if (argc < 2) {
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+cerr << "Usage : load_file full_file_path" << endl << endl;
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+return -1;
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+}
+\newline 
+ 
+\protected_separator 
+ Connection con(use_exceptions);
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+try {
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+con.real_connect (MY_DATABASE,MY_HOST,MY_USER,MY_PASSWORD,3306,(int)0,60,NULL);
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+Query query = con.query(); ostrstream strbuf;
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ifstream In (argv[1],ios::in | ios::binary); struct stat for_len;
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+if ((In.rdbuf())->is_open()) {
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+if (stat (argv[1],&for_len) == -1) return -1;
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+unsigned int blen = for_len.st_size;
+\protected_separator 
+ if (!blen) return -1;
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+char
+\protected_separator 
+ *read_buffer = new char[blen];
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+In.read(read_buffer,blen); string fill(read_buffer,blen);
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+strbuf
+\protected_separator 
+ << "INSERT INTO " << MY_TABLE << " (" << MY_FIELD << ") VALUES(
+\backslash 
+""
+\protected_separator 
+ << escape << fill
+\protected_separator 
+ << "
+\backslash 
+")";
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ query.exec(strbuf.str());
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+delete[] read_buffer;
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+}
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+else 
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+cerr << "Your binary file " << argv[1] << "could not be open, errno = "
+ << errno;
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+return 0;
+\newline 
+ 
+\protected_separator 
+ } catch (BadQuery er) { 
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cerr << "Error: " << er.error << " " << con.errnum() << endl;
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ return -1;
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+}
+\newline 
+ 
+\protected_separator 
+}
+\newline 
+
+\layout Standard
+
+One of the features that is displayed in this example is escape manipulator.
+ Although automatic quoting and escaping is introduced in version 1.6, it
+ is applicable to ColData classes only, as they contain info on data type.
+ We could also make quoting and escaping on general data type string, but
+ it would require to scan entire string to find out if quoting and escaping
+ is applicable.
+ As this feature would slow down code, we 
+\noun on 
+definitely need user's feedback 
+\noun toggle 
+on this matter.
+\layout Subsection*
+
+4.6.1 Displaying images in HTML from BLOB column
+\layout Standard
+
+This example is also very short one, considering a function that it performs.
+ Although since 3.23.3, there is a command that dumps data from BLOB column
+ in a binary file, this program can be used not only by users still utilizing
+ older versions, but by users that do not wish to have this middle step
+ of saving image to disk.
+ 
+\layout Comment
+
+example: cgi_image.cc
+\layout LyX-Code-Sans
+
+#include <sqlplus.hh>
+\newline 
+#define MY_DATABASE
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+"telcent"
+\newline 
+ #define MY_TABLE
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+"fax"
+\newline 
+ #define MY_HOST
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ "localhost"
+\newline 
+ #define MY_USER
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ "root"
+\newline 
+ #define MY_PASSWORD ""
+\newline 
+ #define MY_FIELD
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ "fax" // BLOB field
+\newline 
+ #define MY_KEY
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ "datet"
+\protected_separator 
+ // PRIMARY KEY
+\newline 
+ 
+\protected_separator 
+int
+\protected_separator 
+ main (int argc, char *argv[]) {
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+if (argc < 2) {
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+cerr << "Usage : cgi_image primary_key_value" << endl << endl;
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+return -1;
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+}
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+cout << "Content-type: image/jpeg" << endl;
+\newline 
+ 
+\protected_separator 
+ Connection con(use_exceptions);
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+try {
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+con.real_connect (MY_DATABASE,MY_HOST,MY_USER,MY_PASSWORD,3306,(int)0,60,NULL);
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+Query query = con.query();
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+query << "SELECT " << MY_FIELD << " FROM " << MY_TABLE << " WHERE " << MY_KEY
+ << " = " << argv[1];
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ResUse res = query.use(); Row row=res.fetch_row(); long unsigned int *jj =
+ res.fetch_lengths();
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+cout << "Content-length: " << *jj << endl << endl; 
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+fwrite(row.raw_data(0),1,*jj,stdout);
+\protected_separator 
+return 0;
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+} catch (BadQuery er) { 
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cerr << "Error: " << er.error << " " << con.errnum() << endl;
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ return -1;
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+}
+\newline 
+ }
+\newline 
+
+\layout Standard
+
+This example demonstrates MySQL++ handling of binary data, which was introduced
+ in version 1.6.
+ Flexible usage of streams enables utilization of this program in many applicati
+ons.
+ 
+\layout Subsection*
+
+4.6.2 Delete or Update from Select
+\layout Standard
+
+This feature is asked for by many users, but until it is done, this program
+ can be used instead.
+ it is a small program, which also demonstrates few MySQL++ features.
+\layout Comment
+
+example: updel_x_.cc
+\layout LyX-Code-Sans
+
+#include <sqlplus.hh>
+\newline 
+ #define MY_DATABASE
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+"telcent"
+\newline 
+ #define MY_TABLE
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+"nazivi"
+\newline 
+ #define MY_HOST
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ "localhost"
+\newline 
+ #define MY_USER
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ "root"
+\newline 
+ #define MY_PASSWORD ""
+\newline 
+ #define MY_FIELD
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ "naziv"
+\newline 
+ #define MY_QUERY
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ "SELECT URL from my_table as t1, my_table as t2 where t1.field = t2.field"
+\newline 
+ int
+\protected_separator 
+ main (void) {
+\newline 
+ 
+\protected_separator 
+ Connection con(use_exceptions);
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+try {
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ostrstream strbuf; unsigned int i=0; 
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+con.real_connect (MY_DATABASE,MY_HOST,MY_USER,MY_PASSWORD,3306,(int)0,60,NULL);
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+Query query = con.query(); query << MY_QUERY; 
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ResUse res = query.use(); Row row; 
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+strbuf << "delete from " << MY_TABLE << " where " << MY_FIELD << " in (";
+\newline 
+ //
+\protected_separator 
+ for UPDATE just replace the above DELETE FROM with UPDATE statement
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+for(;row=res.fetch_row();i++) strbuf <<
+\protected_separator 
+ row[0] << ",";
+\protected_separator 
+if (!i) return 0; 
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+string output(strbuf.str()); output.erase(output.size()-1,1); output += ")";
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+query.exec((const string&)output); // cout << output << endl;
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+return 0;
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+} catch (BadQuery er) { 
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cerr << "Error: " << er.error << " " << con.errnum() << endl;
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ return -1;
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+}
+\newline 
+ }
+\newline 
+
+\layout Standard
+
+Please do notify that in query construction command field MY_FIELD list
+ of values is inserted unquoted and unescaped.
+ This way a new feature, introduced in MySQL++ since version 1.6, is exemplified.
+ Namely field values will be quoted or not depending on it's type.
+ Users should not explicitely quote or quote + escape, as this will result
+ in error.
+ This way some more burden is taken from a programmer.
+ Programmer may disable this feature by setting a corresponding global veriable
+ to false.
+ 
+\begin_inset LatexCommand \ref{manip}
+
+\end_inset 
+
+This example is written to perform DELETE.
+ UPDATE requires some changes.
+\layout Standard
+
+All users of this examples should beware that one more check is required
+ in order to run this query safely.
+ Namely, in some extreme cases, size of query might grow larger then max_allowed
+ packet.
+ Thterefore this check should be added.
 \layout Subsection
 
 And There's More
@@ -4907,7 +6804,7 @@ Another powerful feature of Mysql++ is being able to set up template queries.
  The following example demonstrates how to use them.
  This code is the actual code used to set up and/or reset the sample database.
  It can be found under reset-db.cc.
- I hope to come up with some better examples soon.
+  we hope to come up with some better examples soon.
 \layout Comment
 
 example:reset-db.cc
@@ -5129,7 +7026,7 @@ int main (int argc, char *argv[]) {
 \protected_separator 
 
 \protected_separator 
- // I hope to make this simpler soon
+ //  we hope to make this simpler soon
 \newline 
 
 \protected_separator 
@@ -5253,7 +7150,7 @@ int main (int argc, char *argv[]) {
 \protected_separator 
 
 \protected_separator 
- // set up the template query I will use to insert the data.
+ // set up the template query  we will use to insert the data.
 \protected_separator 
  The
 \newline 
@@ -5434,6 +7331,11 @@ End Class Ref
 \layout Section
 
 Manipulators 
+\begin_inset LatexCommand \label{manip}
+
+\end_inset 
+
+
 \layout Standard
 
 The following manipulators modify only the next item to the right of it
@@ -5521,6 +7423,30 @@ do_nothing
  however this one will not override formatting set by the template query,
  thus it is ignored.
  
+\layout Standard
+
+Since version 1.6, automatic quoting and escaping has been added to manipulators.
+ This mechanism is applied to mysql_ColData only, iso epse to the class
+ very frequentrly uitlized as a return object of Row[] index.
+ Automatic quoting or escaping is used with 
+\emph on 
+\noun on 
+<< 
+\emph toggle 
+\noun toggle 
+operator only, and on all stream derived classes and objects, including
+ strstream, query objects, but excepting cout, cerr and clog.
+ This has been designed so intentionally, as streaming out values to those
+ objects does not require quoting or escaping.
+ But this feature comes handy when you construct query's by streaming values
+ to query object or to strstream class object.
+\layout Standard
+
+This feature can be glibally turned of by setting value
+\emph on 
+ dont_quote_auto
+\emph toggle 
+ in your code to true.
 \layout Chapter
 
 Template Queries
@@ -5663,9 +7589,9 @@ with the template query provided in section
 select (item, price) from stock where item = "Dinner Roles"
 \layout Standard
 
-The reason for why I 
+The reason for why 
 \emph on 
-didn't
+ we didn't
 \emph default 
  make the template the more logical:
 \layout LyX-Code
@@ -11771,8 +13697,8 @@ Where everything is the same as in  sql_create_c_order General Format and
 Changing the table name 
 \layout Standard
 
-In order to avoid having even more forms I decided not to allow you to specify
- a different table name in the actual macro call.
+In order to avoid having even more forms  we decided not to allow you to
+ specify a different table name in the actual macro call.
  The table name is used by 
 \series bold 
 SQLQuery::insert
@@ -12153,7 +14079,65 @@ appendix
 Changelog
 \layout Section*
 
-1.5 (Dec 1 1999) Sinisa Milivojevic <sinisa@cytanet.com.cy>
+1.6 (Feb 3 2000) Sinisa Milivojevic <sinisa@mysql.com>
+\layout Itemize
+
+This is a major release as it includes new features and major rewrites
+\layout Itemize
+
+Automatic quoting and escaping with streams.
+ It works automatically , depending on the column type.
+ It will work with 
+\emph on 
+<< 
+\emph toggle 
+on all ostream derived types.
+ it is paricularly handy with query objects and strstreams.
+ Automatic quoting and escaping on cout, cerr and clog stream objects is
+ intentionally left out, as quoting / escaping on those stream objects is
+ not necessary.
+ This feature can be turned of by setting global boolean dont_quote_auto
+ to true.
+\layout Itemize
+
+Made some major changes in code, so that now execute method should be used
+ only with SSQL and template queries, while for all other query execution
+ of UPDATE's, INSERT's, DELETE's, new method exec() should be used.
+ It is also faster.
+\layout Itemize
+
+New method get_string is inroduced for easier handling / castig ColData
+ into C++ strings.
+\layout Itemize
+
+Major rewrite of entire code, which led to it's reduction and speed improvement.
+ This also led to removal of several source files.
+ 
+\layout Itemize
+
+Handling of binary data is introduced.
+ No application program changes are required.
+ One of new example programs demonstrates handling of binary data
+\layout Itemize
+
+Three new example programs have been written and thoroughly tested.
+ Their intention is to solve some problems addressed by MySQL users.
+\layout Itemize
+
+Thorough changes is Makefile system has been made
+\layout Itemize
+
+Better configuration scripts are written, thanks to D.Hawkins <dhawkins@cdrgts.com
+>
+\layout Itemize
+
+Added several bug fixes
+\layout Itemize
+
+Changed Manual and Changelog
+\layout Section*
+
+1.5 (Dec 1 1999) Sinisa Milivojevic <sinisa@mysql.com>
 \layout Itemize
 
 Fixed bug in template queries, introduced in 1.4 (!)
@@ -12174,7 +14158,7 @@ Added additional methods for SQL type info
 Changed Changelog and README
 \layout Section*
 
-1.4 (Nov 25 1999) Sinisa Milivojevic <sinisa@cytanet.com.cy>
+1.4 (Nov 25 1999) Sinisa Milivojevic <sinisa@mysql.com>
 \layout Itemize
 
 Fixed bug in store and storein methods
@@ -12199,7 +14183,7 @@ Changed Changelog and README
 Few other bug fixes and small improvements and speed-ups
 \layout Section*
 
-1.3 (Nov 10 1999) Sinisa Milivojevic <sinisa@cytanet.com.cy>
+1.3 (Nov 10 1999) Sinisa Milivojevic <sinisa@mysql.com>
 \layout Itemize
 
 Fixed several erronous definitions
@@ -12227,7 +14211,7 @@ Changed Changelog and README
 Many other bug fixes.
 \layout Section*
 
-1.2 (Oct 15 1999) Sinisa Milivojevic <sinisa@cytanet.com.cy>
+1.2 (Oct 15 1999) Sinisa Milivojevic <sinisa@mysql.com>
 \layout Itemize
 
 First offical release.
@@ -12253,10 +14237,10 @@ Added many bug fixes in code pertaining to missing class initializers ,
  as notified by Michael Rendell <michael@cs.mun.ca>
 \layout Itemize
 
-Sinisa Milivojevic <sinisa@cytanet.com.cy> is now the offical maintainer.
+Sinisa Milivojevic <sinisa@mysql.com> is now the offical maintainer.
 \layout Section*
 
-1.1 (Aug 2 1999) Sinisa Milivojevic <sinisa@cytanet.com.cy>
+1.1 (Aug 2 1999) Sinisa Milivojevic <sinisa@mysql.com>
 \layout Itemize
 
 Added several bug fixes
@@ -12541,7 +14525,7 @@ Have a more intelligent MysqlRes that can reexecute to refresh the data.
 Create full fledged client side cursors
 \layout Standard
 
-If you have anything else you want to see let us know at sinisa@cytanet.com.cy
+If you have anything else you want to see let us know at sinisa@mysql.com
  or monty@mysql.com.
  
 \layout Chapter
@@ -12609,6 +14593,11 @@ ed, the suggestion to throw exceptions on bad queries, and the idea of having
 \layout Itemize
 
 Sinisa Milivojevic - For becoming the new offical maintainer.
+\layout Itemize
+
+D.
+ Hawkins and E.
+ Loic for their autoconf + automake contribution.
 \layout Standard
 
 If you fell that I forgot something please let me know.
@@ -13230,7 +15219,7 @@ Feedback
 \layout Standard
 
 Since October 1999, all maintenance has been transferred to Sinisa Milivojevic
- (sinisa@cytanet.com.cy) and Michael Widenius (monty@mysql.com).
+ (sinisa@mysql.com) and Michael Widenius (monty@mysql.com).
 \layout Standard
 
 Send your feedback to any of these addresses, or even better to the mailing

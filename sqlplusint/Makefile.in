@@ -64,6 +64,7 @@ CC = @CC@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 DLLTOOL = @DLLTOOL@
+INSTALLED_CONFIG_HEADER = @INSTALLED_CONFIG_HEADER@
 LD = @LD@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
@@ -73,34 +74,51 @@ LT_RELEASE = @LT_RELEASE@
 LT_REVISION = @LT_REVISION@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MYSQLPLUS_BINARY_AGE = @MYSQLPLUS_BINARY_AGE@
+MYSQLPLUS_INTERFACE_AGE = @MYSQLPLUS_INTERFACE_AGE@
+MYSQLPLUS_MAJOR_VERSION = @MYSQLPLUS_MAJOR_VERSION@
+MYSQLPLUS_MICRO_VERSION = @MYSQLPLUS_MICRO_VERSION@
+MYSQLPLUS_MINOR_VERSION = @MYSQLPLUS_MINOR_VERSION@
+MYSQLPLUS_VERSION = @MYSQLPLUS_VERSION@
+MYSQL_CFLAGS = @MYSQL_CFLAGS@
+MYSQL_CONFIG = @MYSQL_CONFIG@
+MYSQL_LIBS = @MYSQL_LIBS@
 NM = @NM@
 OBJDUMP = @OBJDUMP@
 PACKAGE = @PACKAGE@
 PERL = @PERL@
 RANLIB = @RANLIB@
-SQLPLUS_BINARY_AGE = @SQLPLUS_BINARY_AGE@
-SQLPLUS_INTERFACE_AGE = @SQLPLUS_INTERFACE_AGE@
-SQLPLUS_MAJOR_VERSION = @SQLPLUS_MAJOR_VERSION@
-SQLPLUS_MICRO_VERSION = @SQLPLUS_MICRO_VERSION@
-SQLPLUS_MINOR_VERSION = @SQLPLUS_MINOR_VERSION@
+RPM_ARGS = @RPM_ARGS@
+RPM_CONFIGURE_ARGS = @RPM_CONFIGURE_ARGS@
+RPM_DIR = @RPM_DIR@
+RPM_PROG = @RPM_PROG@
+RPM_RELEASE = @RPM_RELEASE@
+RPM_TARBALL = @RPM_TARBALL@
+RPM_TARGET = @RPM_TARGET@
 VERSION = @VERSION@
 
 EXTRA_DIST = custom.pl
 
-lib_LTLIBRARIES = libsqlplus.la
+lib_LTLIBRARIES = libmysql++.la
 
-libsqlplus_la_SOURCES = coldata.cc connection.cc datetime.cc field_names.cc 	field_types.cc manip.cc query.cc result.cc row.cc set.cc sql_query.cc 	type_info.cc vallist.cc
-
-
-libsqlplus_la_LDFLAGS =  	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) 	-release $(LT_RELEASE)
+libmysql___la_SOURCES = coldata.cc connection.cc datetime.cc field_names.cc 	field_types.cc manip.cc query.cc result.cc row.cc set.cc sql_query.cc 	type_info.cc vallist.cc
 
 
-noinst_HEADERS = magic.h tracker.h
+libmysql___la_LDFLAGS =  	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) 	-release $(LT_RELEASE)
+
+
+# DKH -- tracker _does_ need to be installed since it appears in one
+# of the header files (actually, two header files, but it is not used
+# in connection1.hh, only referenced).
+# noinst_HEADERS = magic.h tracker.h
+
+# LDADD = @MYSQL_LIBS@
+INCLUDES = -I$(top_srcdir)/sqlplusint @MYSQL_CFLAGS@
 
 # a little automake magic here; puts the headers in
 # $(prefix)/include/$(package) good for projects such as this.  Let
-# mysql++-config sort things out...
-pkginclude_HEADERS = sqlplus.hh coldata1.hh coldata2.hh coldata3.hh coldata4.hh 	compare1.hh compare2.hh compare3.hh connection0.hh connection1.hh 	connection2.hh connection3.hh const_string1.hh const_string2.hh const_string3.hh 	convert1.hh convert2.hh convert3.hh custom-macros.hh custom.hh datetime1.hh 	datetime2.hh datetime3.hh field_names1.hh field_names2.hh field_names3.hh 	field_types1.hh field_types2.hh field_types3.hh fields1.hh fields2.hh 	manip1.hh manip2.hh manip3.hh null1.hh null2.hh null3.hh query1.hh query2.hh 	query3.hh resiter1.hh result1.hh result2.hh result3.hh row1.hh row2.hh 	row3.hh set1.hh set2.hh set3.hh sql_query0.hh sql_query1.hh sql_query2.hh 	sql_query3.hh sql_string1.hh sql_string2.hh sql_string3.hh stream2string1.hh 	stream2string2.hh stream2string3.hh tiny_int1.hh tiny_int2.hh tiny_int3.hh 	type_info1.hh type_info2.hh type_info3.hh vallist1.hh vallist2.hh vallist3.hh 	define_short defs undef_short
+# sqlplus-config sort things out...
+pkginclude_HEADERS = sqlplus.hh coldata1.hh coldata2.hh coldata3.hh coldata4.hh 	compare1.hh compare2.hh compare3.hh connection0.hh connection1.hh 	connection2.hh connection3.hh const_string1.hh const_string2.hh const_string3.hh 	convert1.hh convert2.hh convert3.hh custom-macros.hh custom.hh datetime1.hh 	datetime2.hh datetime3.hh field_names1.hh field_names2.hh field_names3.hh 	field_types1.hh field_types2.hh field_types3.hh fields1.hh fields2.hh 	manip1.hh manip2.hh manip3.hh null1.hh null2.hh null3.hh query1.hh query2.hh 	query3.hh resiter1.hh result1.hh result2.hh result3.hh row1.hh row2.hh 	row3.hh set1.hh set2.hh set3.hh sql_query0.hh sql_query1.hh sql_query2.hh 	sql_query3.hh sql_string1.hh sql_string2.hh sql_string3.hh stream2string1.hh 	stream2string2.hh stream2string3.hh tiny_int1.hh tiny_int2.hh tiny_int3.hh 	type_info1.hh type_info2.hh type_info3.hh vallist1.hh vallist2.hh vallist3.hh 	define_short defs undef_short 	mysql++
 
 
 BUILT_SOURCES = custom.hh custom-macros.hh
@@ -114,8 +132,8 @@ DEFS = @DEFS@ -I. -I$(srcdir) -I..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-libsqlplus_la_LIBADD = 
-libsqlplus_la_OBJECTS =  coldata.lo connection.lo datetime.lo \
+libmysql___la_LIBADD = 
+libmysql___la_OBJECTS =  coldata.lo connection.lo datetime.lo \
 field_names.lo field_types.lo manip.lo query.lo result.lo row.lo set.lo \
 sql_query.lo type_info.lo vallist.lo
 CXXFLAGS = @CXXFLAGS@
@@ -128,7 +146,7 @@ COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CF
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
-HEADERS =  $(noinst_HEADERS) $(pkginclude_HEADERS)
+HEADERS =  $(pkginclude_HEADERS)
 
 DIST_COMMON =  README Makefile.am Makefile.in
 
@@ -137,20 +155,16 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = gtar
 GZIP_ENV = --best
-DEP_FILES =  .deps/coldata.P .deps/connection.P .deps/datetime.P \
-.deps/field_names.P .deps/field_types.P .deps/manip.P .deps/query.P \
-.deps/result.P .deps/row.P .deps/set.P .deps/sql_query.P \
-.deps/type_info.P .deps/vallist.P
-SOURCES = $(libsqlplus_la_SOURCES)
-OBJECTS = $(libsqlplus_la_OBJECTS)
+SOURCES = $(libmysql___la_SOURCES)
+OBJECTS = $(libmysql___la_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
 .SUFFIXES: .S .c .cc .lo .o .s
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
-	cd $(top_srcdir) && $(AUTOMAKE) --gnu sqlplusint/Makefile
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu --include-deps sqlplusint/Makefile
 
-Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) \
 	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
@@ -180,6 +194,9 @@ uninstall-libLTLIBRARIES:
 	  $(LIBTOOL)  --mode=uninstall rm -f $(DESTDIR)$(libdir)/$$p; \
 	done
 
+.c.o:
+	$(COMPILE) -c $<
+
 .s.o:
 	$(COMPILE) -c $<
 
@@ -195,6 +212,9 @@ distclean-compile:
 	-rm -f *.tab.c
 
 maintainer-clean-compile:
+
+.c.lo:
+	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
 
 .s.lo:
 	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
@@ -212,8 +232,8 @@ distclean-libtool:
 
 maintainer-clean-libtool:
 
-libsqlplus.la: $(libsqlplus_la_OBJECTS) $(libsqlplus_la_DEPENDENCIES)
-	$(CXXLINK) -rpath $(libdir) $(libsqlplus_la_LDFLAGS) $(libsqlplus_la_OBJECTS) $(libsqlplus_la_LIBADD) $(LIBS)
+libmysql++.la: $(libmysql___la_OBJECTS) $(libmysql___la_DEPENDENCIES)
+	$(CXXLINK) -rpath $(libdir) $(libmysql___la_LDFLAGS) $(libmysql___la_OBJECTS) $(libmysql___la_LIBADD) $(LIBS)
 .cc.o:
 	$(CXXCOMPILE) -c $<
 .cc.lo:
@@ -268,11 +288,6 @@ distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
 subdir = sqlplusint
 
 distdir: $(DISTFILES)
-	here=`cd $(top_builddir) && pwd`; \
-	top_distdir=`cd $(top_distdir) && pwd`; \
-	distdir=`cd $(distdir) && pwd`; \
-	cd $(top_srcdir) \
-	  && $(AUTOMAKE) --include-deps --build-dir=$$here --srcdir-name=$(top_srcdir) --output-dir=$$top_distdir --gnu sqlplusint/Makefile
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
@@ -284,56 +299,6 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 
-DEPS_MAGIC := $(shell mkdir .deps > /dev/null 2>&1 || :)
-
--include $(DEP_FILES)
-
-mostlyclean-depend:
-
-clean-depend:
-
-distclean-depend:
-	-rm -rf .deps
-
-maintainer-clean-depend:
-
-%.o: %.c
-	@echo '$(COMPILE) -c $<'; \
-	$(COMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
-	@-cp .deps/$(*F).pp .deps/$(*F).P; \
-	tr ' ' '\012' < .deps/$(*F).pp \
-	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
-	    >> .deps/$(*F).P; \
-	rm .deps/$(*F).pp
-
-%.lo: %.c
-	@echo '$(LTCOMPILE) -c $<'; \
-	$(LTCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
-	@-sed -e 's/^\([^:]*\)\.o[ 	]*:/\1.lo \1.o :/' \
-	  < .deps/$(*F).pp > .deps/$(*F).P; \
-	tr ' ' '\012' < .deps/$(*F).pp \
-	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
-	    >> .deps/$(*F).P; \
-	rm -f .deps/$(*F).pp
-
-%.o: %.cc
-	@echo '$(CXXCOMPILE) -c $<'; \
-	$(CXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
-	@-cp .deps/$(*F).pp .deps/$(*F).P; \
-	tr ' ' '\012' < .deps/$(*F).pp \
-	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
-	    >> .deps/$(*F).P; \
-	rm .deps/$(*F).pp
-
-%.lo: %.cc
-	@echo '$(LTCXXCOMPILE) -c $<'; \
-	$(LTCXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
-	@-sed -e 's/^\([^:]*\)\.o[ 	]*:/\1.lo \1.o :/' \
-	  < .deps/$(*F).pp > .deps/$(*F).P; \
-	tr ' ' '\012' < .deps/$(*F).pp \
-	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
-	    >> .deps/$(*F).P; \
-	rm -f .deps/$(*F).pp
 info-am:
 info: info-am
 dvi-am:
@@ -372,27 +337,27 @@ distclean-generic:
 maintainer-clean-generic:
 	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 mostlyclean-am:  mostlyclean-libLTLIBRARIES mostlyclean-compile \
-		mostlyclean-libtool mostlyclean-tags mostlyclean-depend \
+		mostlyclean-libtool mostlyclean-tags \
 		mostlyclean-generic
 
 mostlyclean: mostlyclean-am
 
 clean-am:  clean-libLTLIBRARIES clean-compile clean-libtool clean-tags \
-		clean-depend clean-generic mostlyclean-am
+		clean-generic mostlyclean-am
 
 clean: clean-am
 
 distclean-am:  distclean-libLTLIBRARIES distclean-compile \
-		distclean-libtool distclean-tags distclean-depend \
-		distclean-generic clean-am
+		distclean-libtool distclean-tags distclean-generic \
+		clean-am
 	-rm -f libtool
 
 distclean: distclean-am
 
 maintainer-clean-am:  maintainer-clean-libLTLIBRARIES \
 		maintainer-clean-compile maintainer-clean-libtool \
-		maintainer-clean-tags maintainer-clean-depend \
-		maintainer-clean-generic distclean-am
+		maintainer-clean-tags maintainer-clean-generic \
+		distclean-am
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
 
@@ -405,13 +370,12 @@ distclean-compile clean-compile maintainer-clean-compile \
 mostlyclean-libtool distclean-libtool clean-libtool \
 maintainer-clean-libtool uninstall-pkgincludeHEADERS \
 install-pkgincludeHEADERS tags mostlyclean-tags distclean-tags \
-clean-tags maintainer-clean-tags distdir mostlyclean-depend \
-distclean-depend clean-depend maintainer-clean-depend info-am info \
-dvi-am dvi check check-am installcheck-am installcheck install-exec-am \
-install-exec install-data-am install-data install-am install \
-uninstall-am uninstall all-redirect all-am all installdirs \
-mostlyclean-generic distclean-generic clean-generic \
-maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+clean-tags maintainer-clean-tags distdir info-am info dvi-am dvi check \
+check-am installcheck-am installcheck install-exec-am install-exec \
+install-data-am install-data install-am install uninstall-am uninstall \
+all-redirect all-am all installdirs mostlyclean-generic \
+distclean-generic clean-generic maintainer-clean-generic clean \
+mostlyclean distclean maintainer-clean
 
 
 custom.hh custom-macros.hh: custom.pl

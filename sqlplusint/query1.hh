@@ -42,7 +42,7 @@ public:
 
   string   preview () {return str(def);}       //:
   string   preview (parms &p) {return str(p);} //:
-
+	bool     exec (const string &str);
   //!dummy: MysqlResNSel execute (...);
   //: Executes the query in the string buffer.
   // Executes the query in the string buffer and returns a structure

@@ -17,7 +17,7 @@ Building the Library and Example Programs
 	library include and library paths.
 
 	You should look through the Windows-specific section of
-	sqlplusint\platform.h to see if there are any #defines that you need
+	lib\platform.h to see if there are any #defines that you need
 	to uncomment on your system.
 
 
@@ -36,7 +36,7 @@ Making a New MySQL++-Using Solution
 		  Managed Extensions" to "No"
 
 		o Under C/C++::General add to "Additional Include
-		  Directories": c:\mysql++\sqlplusint, c:\mysql\include
+		  Directories": c:\mysql++\lib, c:\mysql\include
 
 		o Under C/C++::Code Generation change "Runtime Library" to
 		  "Multi-threaded Debug DLL (/MDd)" [change the /MTd

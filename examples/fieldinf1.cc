@@ -1,4 +1,4 @@
-#include "util.hh"
+#include "util.h"
 
 #include <mysql++.h>
 

@@ -1,3 +1,22 @@
+1.7.21, 2004.11.05
+
+	o Generating a main mysql++ RPM containing just the library files
+	  and basic documentation, and the -devel package containing
+	  everything else.
+
+	o Devel package contains examples now, along with a new Makefile
+	  that uses the system include and library files, rather than the
+	  automake-based Makefile.am we currently have which uses the files
+	  in the mysql++ source directory.
+
+	o Renamed sqlplusint subdirectory in the package to lib.
+
+	o Removed the obsolete lib/README file.
+
+	o lib/sql_query.h no longer #includes custom.h, simplifying
+	  build-time dependencies and shortening compile times.
+
+
 1.7.20, 2004.11.03
 
 	o Collapsed all numbered *.hh headers into a single *.h file.  For

@@ -1,10 +1,11 @@
-#include <iostream>
-#include <iomanip>
-#include <vector>
+#include "util.h"
+
 #include <mysql++.h>
 #include <custom.h>
 
-#include "util.hh"
+#include <iostream>
+#include <iomanip>
+#include <vector>
 
 using namespace std;
 using namespace mysqlpp;

@@ -1,8 +1,8 @@
 EXTRA_DIST = bootstrap common.am doc devel LGPL *.spec *.ebuild \
 		Wishlist *.vcproj *.sln README.*
 
-#SUBDIRS = sqlplusint examples doc
-SUBDIRS = sqlplusint examples
+#SUBDIRS = lib examples doc
+SUBDIRS = lib examples
 
 rpm-setup: dist
 	cp $(distdir).tar.gz /usr/src/redhat/SOURCES

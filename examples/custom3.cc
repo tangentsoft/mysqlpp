@@ -14,11 +14,11 @@ using namespace std;
 sql_create_5(stock, 1, 5, string, item, longlong, num, 
 	     double, weight, double, price, Date, sdate)
 
-int main() {
+int main(int argc, char *argv[]) {
   try { // its in one big try block
+	Connection con(use_exceptions);
+	connect_sample_db(argc, argv, con);
 
-    Connection con(use_exceptions);
-    con.connect("mysql_cpp_data");
     Query query = con.query();
 
     query << "select * from stock where item = \"Hotdogs' Buns\" ";

@@ -246,8 +246,10 @@ public:
 		  data.clear(); is_nulls.clear(); initialized=true;
 		  for (unsigned int i=0;i<size();i++) 
 			{
-			  data.insert(data.end(),(d[i]) ? std::string(d[i],jj[i]) : (std::string)"NULL");
-				is_nulls.insert(is_nulls.end(),d[i] ? false : true);
+			  data.insert(data.end(), d[i] ?
+			  		std::string(d[i], jj[i]) :
+					std::string("NULL"));
+			  is_nulls.insert(is_nulls.end(),d[i] ? false : true);
 			}
 		}
   const Row& self() const {return *this;}

@@ -1,14 +1,9 @@
 #ifdef __WIN32__
-#include <Windows32/Base.h>
-#include <Windows32/Defines.h>
-#include <Windows32/Structures.h>
 #include <winsock.h>
-#define errno WSAGetLastError()
 #endif
 
 #include "sql_query3.hh"
 #include "exceptions.hh"
-//#include "result3.hh"
 
 SQLQuery::SQLQuery(const SQLQuery &q) {
   *this << q.str();
@@ -35,13 +30,8 @@ void SQLQuery::reset() {
 
 char * SQLQuery::preview_char() {
   *this << std::ends;
-#ifdef __USLC__
-  strstreambuf *tmpbuf = rdbuf();
-  uint length = tmpbuf->pcount();
-#else
   uint length = pcount();
-#endif
-  char *s = new char[length+1]; 
+  char *s = new char[length + 1];
   get(s, length, '\0'); 
   seekg (0,std::ios::beg);
   seekp (-1,std::ios::cur);
@@ -99,14 +89,8 @@ std::string SQLQuery::str(const SQLQueryParms &p) const {
   SQLQuery *const_this = const_cast<SQLQuery *>(this);
   if (!parsed.empty()) const_this->proc(const_cast<SQLQueryParms&>(p));
   *const_this << std::ends;
-#ifdef __USLC__
-  strstreambuf *tmpbuf = const_this->rdbuf();
-  uint length = tmpbuf->pcount() + 1;
-  char *s = new char[length]; 
-#else
   uint length = const_this->pcount() + 1;
   char s[length]; 
-#endif
   const_this->get(s, length, '\0'); 
   const_this->seekg (0,std::ios::beg);
   const_this->seekp (-1,std::ios::cur);

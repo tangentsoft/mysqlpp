@@ -3,6 +3,8 @@
 
 #include <defs.hh>
 
+#include <stdlib.h>
+
 template <class Type> class mysql_convert;
 
 #define mysql__convert(TYPE, FUNC) \

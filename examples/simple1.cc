@@ -2,9 +2,11 @@
 #include <iomanip>
 #include <mysql++.hh>
 
+#include "util.hh"
+
 using namespace std;
 
-int main() {
+int main (int argc, char *argv[]) {
   // The full format for the Connection constructor is
   // Connection(cchar *db, cchar *host="", 
   //            cchar *user="", cchar *passwd="") 
@@ -12,7 +14,9 @@ int main() {
   // the local machine or you database username is not the same as your
   // login name, etc..
   try {
-		Connection con("mysql_cpp_data");
+		Connection con(use_exceptions);
+		connect_sample_db(argc, argv, con);
+
 		Query query = con.query();
 		// This creates a query object that is bound to con.
 

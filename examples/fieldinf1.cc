@@ -1,15 +1,17 @@
+#include "util.hh"
+
+#include <mysql++.hh>
 
 #include <iostream>
 #include <iomanip>
-#include <mysql++.hh>
 
 using namespace std;
 
-int main() {
+int main(int argc, char *argv[]) {
   try { // its in one big try block
+	Connection con(use_exceptions);
+	connect_sample_db(argc, argv, con);
 
-    Connection con(use_exceptions);
-    con.connect("mysql_cpp_data");
     Query query = con.query();
     query << "select * from stock";
     Result res = query.store();

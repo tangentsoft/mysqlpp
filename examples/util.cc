@@ -40,3 +40,14 @@ void print_stock_table(Query& query) {
 	 << row[4] << endl;
   }
 }
+
+
+void connect_sample_db(int argc, char *argv[], Connection& con,
+		const char* kdb)
+{
+	if (argc == 1) con.connect(kdb);
+	else if (argc == 2) con.connect(kdb ,argv[1]);
+	else if (argc == 3) con.connect(kdb, argv[1], argv[2]);
+	else if (argc >= 4) con.connect(kdb, argv[1], argv[2], argv[3]);
+}
+

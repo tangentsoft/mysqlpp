@@ -1,19 +1,11 @@
 #ifndef __type_info1_hh__
 #define __type_info1_hh__
 #ifdef __WIN32__
-#include <Windows32/Base.h>
-#include <Windows32/Defines.h>
-#include <Windows32/Structures.h>
 #include <winsock.h>
-#define errno WSAGetLastError()
 #endif
 #include <mysql.h>
 #include <typeinfo>
 #include <map>
-
-#ifdef __USLC__
-using namespace std;
-#endif
 
 class mysql_type_info;
 class mysql_ti_sql_type_info_lookup;

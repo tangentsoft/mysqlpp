@@ -7,6 +7,8 @@
 #include "define_short.hh"
 #include "sql_query0.hh"
 #include "sql_string1.hh"
+#include "tiny_int1.hh"
+#include "custom.hh"
 
 class Query;
 class SQLQuery;

@@ -33,7 +33,7 @@ protected:
   Fields                _fields;
   string                _table;       
 
-//  static pointer_tracker<MYSQL_RES, ResUse> others;
+  static pointer_tracker<MYSQL_RES, ResUse> others;
 
   void copy(const ResUse& other); 
 public:
@@ -66,7 +66,7 @@ public:
   void parent_leaving() {mysql = NULL;}
   
   void purge(MYSQL_RES *r)
-    { free_result(); delete _names; delete _types; _names=0; _types=0; }
+    { if (mysql_res) mysql_free_result(mysql_res); mysql_res=0; if (_names) delete _names; if (_types) delete _types; _names=0; _types=0; _table.erase(); }
   
   operator bool() const {if (mysql_res) return true; return false;} //:
   unsigned int columns() const {return num_fields();} //:

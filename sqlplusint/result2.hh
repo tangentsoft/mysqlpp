@@ -111,7 +111,7 @@ inline const FieldNames& MutableRes::names() const {return field_names();}
 //
 
 inline ResUse& ResUse::operator = (const ResUse &other) {
-//  others.remove(mysql_res,this);
+  others.remove(mysql_res,this);
   copy(other);
   return *this;
 }

@@ -32,7 +32,6 @@ int main() {
   }
 	char database [] = "mysql";
   con.select_db (database);
-  query = con.query();
 
   query << "show tables";
 
@@ -52,7 +51,6 @@ int main() {
 		yy.insert(yy.end(),xx);
   }
 	for (unsigned int j = 0; j < yy.size();j++) {
-		query = con.query();
 		query << "describe " << yy[j] << "";
 		cout << query.preview() << endl << endl;
 		res = query.store();
@@ -65,13 +63,11 @@ int main() {
 		for (i = res.begin(); i!=res.end();i++) {
 			row = *i;
 			for (counter = 0; counter < columns; counter++)  {
-//				s = row[counter].c_str();
 				cout << row[counter] << "  ";
 			}
 			cout << endl;
 		}
 	}
-		query = con.query();
 		query << "select * from user";
 		res  =  query.store(); int columns =  res.num_fields();
 		cout << query.preview() << endl << endl;
@@ -79,7 +75,6 @@ int main() {
 		for (i = res.begin(); i!=res.end();i++) {
 			row = *i;
 			for (int counter = 0; counter < columns; counter++)  {
-//				s = row[counter].c_str();
 				cout << row[counter] << "  ";
 			}
 			cout << endl;

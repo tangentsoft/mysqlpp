@@ -244,9 +244,13 @@ public:
   Row(MYSQL_ROW d, const ResUse *r, bool te = false) 
     : res(r), throw_exceptions(te) 
 		{
-		  for (unsigned int i=0;i<size();i++) data.insert(data.end(),(d[i]) ? (string)d[i] : (string)"");
+		  if (!d) return;
+		  data.clear();
+		  for (unsigned int i=0;i<size();i++) 
+			{
+			  data.insert(data.end(),(d[i]) ? (string)d[i] : (string)"");
+			}
 		}
-  ~Row() {data.clear();}
   const Row& self() const {return *this;}
   Row& self() {return *this;}
 
@@ -265,8 +269,9 @@ public:
 
   const char * raw_data(int i) const {return data[i].c_str();}
 
-  operator bool() const {if (data.size()) return true; else return false;}
+  operator bool() const {return (data.size()) ? true : false;}
   //: Returns true if there is data in the row.
+	~Row() {data.clear();}	
 }; 
 
 //! with_class = MutableRow

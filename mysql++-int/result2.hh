@@ -1,0 +1,125 @@
+#ifndef __result2_hh__
+#define __result2_hh__
+
+#include "connection2.hh"
+#include "result1.hh"
+#include "fields2.hh"
+
+// field name info
+
+inline int ResUse::field_num(const string &i) const {
+  if (!_names) _names = new FieldNames(this);
+  return (*_names)[i];
+}
+
+inline string& ResUse::field_name(int i) {
+  if (!_names) _names = new FieldNames(this);
+  return (*_names)[i];
+}
+
+inline const string& ResUse::field_name(int i) const {
+  if (!_names) _names = new FieldNames(this);
+  return (*_names)[i];
+}
+
+inline FieldNames& ResUse::field_names() {
+  if (!_names) _names = new FieldNames(this);
+  return *_names;
+}
+
+inline const FieldNames& ResUse::field_names() const {
+  if (!_names) _names = new FieldNames(this);
+  return *_names;
+}
+
+inline void ResUse::reset_field_names() {
+  delete _names;
+  _names = new FieldNames(this);
+}
+
+// field type info
+
+inline mysql_type_info& ResUse::field_type(int i) {
+  if (!_types) _types = new FieldTypes(this);
+  return (*_types)[i];
+}
+
+inline const mysql_type_info& ResUse::field_type(int i) const {
+  if (!_types) _types = new FieldTypes(this);
+  return (*_types)[i];
+}
+
+inline FieldTypes& ResUse::field_types() {
+  if (!_types) _types = new FieldTypes(this);
+  return *_types;
+}
+
+inline const FieldTypes& ResUse::field_types() const {
+  if (!_types) _types = new FieldTypes(this);
+  return *_types;
+}
+
+inline void ResUse::reset_field_types() {
+  delete _types;
+  _types = new FieldTypes(this);
+}
+
+inline int               ResUse::names(const string& s) const {return field_num(s);}
+inline string&           ResUse::names(int i) {return field_name(i);}
+inline const string&     ResUse::names(int i) const {return field_name(i);}
+inline FieldNames&       ResUse::names() {return field_names();}
+inline const FieldNames& ResUse::names() const {return field_names();}
+inline void              ResUse::reset_names() {reset_field_names();}
+
+inline mysql_type_info&  ResUse::types(int i) {return field_type(i);}
+inline const mysql_type_info& ResUse::types(int i) const {return field_type(i);}
+inline FieldTypes&       ResUse::types() {return field_types();}
+inline const FieldTypes& ResUse::types() const {return field_types();}
+inline void              ResUse::reset_types() {reset_field_types();}
+
+//
+
+inline int MutableRes::field_num(const string &i) const {
+  return _names[i];
+}
+
+inline string& MutableRes::field_name(int i) {
+  return _names[i];
+}
+
+inline const string& MutableRes::field_name(int i) const {
+  return _names[i];
+}
+
+inline FieldNames& MutableRes::field_names() {
+  return _names;
+}
+
+inline const FieldNames& MutableRes::field_names() const {
+  return _names;
+}
+
+//
+
+inline int               MutableRes::names(const string& s) const {return field_num(s);}
+inline string&           MutableRes::names(int i) {return field_name(i);}
+inline const string&     MutableRes::names(int i) const {return field_name(i);}
+inline FieldNames&       MutableRes::names() {return field_names();}
+inline const FieldNames& MutableRes::names() const {return field_names();}
+
+//
+
+inline ResUse& ResUse::operator = (const ResUse &other) {
+  others.remove(mysql_res,this);
+  copy(other);
+  return *this;
+}
+
+inline ResNSel::ResNSel (Connection *q) 
+  : success   (q->success()),         insert_id (q->insert_id()),
+    rows      (q->affected_rows()),   info      (q->info())        {}
+
+#endif
+
+
+

@@ -1,0 +1,8404 @@
+#This file was created by <kevina> Sun Sep 27 17:23:13 1998
+#LyX 0.12 (C) 1995-1998 Matthias Ettrich and the LyX Team
+\lyxformat 2.15
+\textclass book
+\begin_preamble
+\usepackage{html}
+
+\begin{htmlonly}
+
+\renewenvironment{lyxcode}
+  {\begin{list}{}{
+    \setlength{\rightmargin}{\leftmargin}
+    \raggedright
+    \setlength{\itemsep}{0pt}
+    \setlength{\parsep}{0pt}
+    \ttfamily}%
+   \item[] 
+   \begin{ttfamily}}
+   {\end{ttfamily}
+    \end{list} }
+
+\newenvironment{LyXParagraphIndent}[1]%
+{\begin{quote}}
+{\end{quote}}
+
+\end{htmlonly}
+\end_preamble
+\language default
+\inputencoding default
+\fontscheme default
+\graphics default
+\float_placement h
+\paperfontsize 11
+\spacing single 
+\papersize Default
+\paperpackage a4
+\use_geometry 1
+\use_amsmath 0
+\paperorientation portrait
+\leftmargin 1in
+\rightmargin 1in
+\secnumdepth 2
+\tocdepth 2
+\paragraph_separation skip
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+
+\layout Title
+
+Mysql++ 
+\newline 
+A C++ API for Mysql
+\newline 
+ver .64.1.1 pre-alpha
+\layout Author
+
+Kevin Atkinson
+\newline 
+(kevina@clark.net)
+\layout Date
+
+September 27, 1998
+\layout Standard
+
+
+\begin_inset LatexCommand \tableofcontents
+
+\end_inset 
+
+
+\layout Part*
+
+Introductory Material
+\layout Chapter
+
+Introduction
+\layout Section
+
+What is Mysql++
+\layout Standard
+
+Mysql++ is a complex C++ API for Mysql (And other SQL Databases Soon).
+ The goal of this API is too make working with Queries as easy as working
+ with other STL Containers.
+ See the Overview chapter (
+\begin_inset LatexCommand \ref{Overview}
+
+\end_inset 
+
+) for the components that make up Mysql++.
+\layout Section
+
+Getting Mysql++
+\layout Standard
+
+The latest version of Mysql++ can be found at the mysql++ web site at http://sun
+site.unc.edu/kevina/mysql++.
+\layout Section
+
+Mysql++ Mailing List
+\layout Standard
+
+Instructions for joining the mailing list (and an archive of the mailing
+ list) can be found off the Mysql++ home page at http://sunsite.unc.edu/kevina/mys
+ql++
+\layout Chapter
+
+Overview
+\layout Standard
+
+
+\begin_inset LatexCommand \label{Overview}
+
+\end_inset 
+
+The Mysql++ API has developed into a very complex and powerful being.
+ With many different ways to accomplish the same task.
+ Unfortunately this means that figuring out how to perform a simple task
+ can be frustrating for new users of my library.
+ In this section I will attempt to provide an overview of the many different
+ components of the library.
+\layout Standard
+
+Like working with most other SQL API the process for executing queries is
+ the same.
+ 1) You open the connection, 2) You form and execute the queries, 3) You
+ iterate through the result set.
+ It not much different in my C++ API.
+ However there is a lot of extra functionality along each step of the way.
+\layout Section*
+
+The Main Database Handle
+\layout Standard
+
+This is a class that handles the connection to the Mysql server.
+ You always need at least one of these objects to do anything.
+ It can either create a separate queries object or directly execute queries.
+ The separate query object is the recommended way as it gives you far more
+ power.
+\layout Section*
+
+The Query Object
+\layout Standard
+
+This object is the recommended way of executing queries.
+ It is subclassed from strstream which means you can write to it like any
+ other stream to aid in the formation of queries.
+\layout Standard
+
+You can also set up Template queries with this class.
+ Template queries are a way of setting up queries with replaceable parameters
+ that you can change throughout your program.
+\layout Standard
+
+You can also use specialized structures and even the dramatic result sets
+ to aid in creating queries however more on that latter.
+\layout Standard
+
+The Query object returns an object with information about the success of
+ a query for non-select queries (queries that don't return a result set).
+\layout Section*
+
+The Result Sets
+\layout Standard
+
+For queries that return a result set you have essentially two different
+ ways of handling the results: in a dramatic result set, or in a static
+ one.
+\layout Subsection*
+
+The Dramatic Result Set
+\layout Standard
+
+The Dramatic Result set is a result set in which the names of the columns
+ and the type of information of the columns does not need to be determined
+ at compile time.
+ The result set can be completely constant in which the data is returned
+ to you in a constant string link class, semi-constant in which you can
+ modify the data one row at a time, or a truly mutable in which in you can
+ modify the data in any way you like.
+\layout Standard
+
+The constant result set is a result set that is closely bound to the result
+ set in the C API and is the one that provides the most functionality.
+ With this result set you can find out detailed information about the type
+ of information stored in each of the columns.
+ This is also the fastest because the data does not need to be copied at
+ all.
+\layout Standard
+
+The semi-constant result set is like the constant result set except you
+ can modify the data one row at a time.
+ The data you modify is actually a copy of the data returned by the server.
+ This means that modifying the data does not change the actual result set
+ at all.
+\layout Standard
+
+The semi-constant result set is actually the same thing as the constant
+ result set.
+ The only difference is that when you request a row from the result set
+ you specifically declare the row as a mutable one.
+ This means that you can get some rows back as constant rows and others
+ as mutable ones.
+\layout Standard
+
+The truly mutable result set is a result set similar to the constant one
+ except that the data is truly mutable in the sense that you can change
+ the data in the actual result set.
+ However unlike the first one this result set is not bound to the C API
+ result set.
+ Instead it containers a copy of the data returned by the C API in a two-dimensi
+onal vector.
+ Because of this the detailed information about each of the columns is not
+ currently available, only the column names and the C++ type that most closely
+ matches the original SQL type.
+ Also, because it makes a copy of the data returned from the C API, there
+ is a little bit of performance penalty to using this one.
+\layout Standard
+
+The rows in all the dramatic result sets are very close to an Standard Template
+ Library (STL) random access container.
+ This means that they have an iterator which can be used for STL algorithms.
+ There is even couple of specialized utility function to aid in the use
+ of the result sets in STL algorithms.
+\layout Standard
+
+The columns in all the dramatic result are also very close to an STL random
+ access container.
+ However, in addition to accessing the columns by there index number you
+ can also access the columns via there field names.
+\layout Standard
+
+In addition, because both the rows and the columns are STL like containers,
+ you can also treat the result set as a two- dimensional array.
+ For example you can get the 5th item on the 2nd row by simply saying result[2][
+5].
+ Because you can also use the field names you can substitute the column
+ number by a field name and say result[2]["price"] to get "price" of the
+ item on the 2nd row, for example.
+\layout Standard
+
+The actual data that all the dramatic result sets return is stored in a
+ special string like class that has some additional magic too it.
+ The magic is that the column data will automatically convert itself into
+ all of the basic data types as well as some additional types types that
+ are designed to handle mysql types which includes types for handling dates,
+ times, sets, and types with a null value.
+ If there is a problem in the conversion it will either set a warning flag
+ or throw an exception depending on how it is configured.
+\layout Standard
+
+The drastic result sets can even be used to help form queries with the help
+ of some additional method.
+ There is a method for returns: 1) A comma separated list of the data (for
+ example: 1.5, 10, "Dog, "Brown"), 2) A comma separated list of the field
+ names (for example: age, weight, what, color), and 3) An equal list (for
+ example: age = 1.5 AND weight = 10 AND what = "Dog" AND color = "Brown").
+\layout Standard
+
+Mutable result sets can be created with out an actual query so that you
+ can take advantage of these methods to aid in inserting data into the database
+ with out having to first create an unnecessary query.
+\layout Subsection*
+
+The Static Result Sets
+\layout Standard
+
+The results from an query can also be stored statically in what I call a
+ specialized SQL structure.
+ These structures are then stored in some STL container such a vector or
+ list, or even a set or multi-set as the the specialized structures can
+ also be made less-than-comparable.
+ Unlike the dramatic result sets it is assumed that the programmer knows
+ what the result set is going to look like.
+ Because of this all the information about the columns, including the names,
+ are lost.
+\layout Standard
+
+These Specialized Structures are exactly that C++ `structs'.
+ Each member item is stored with a unique name within the structure.
+ You can in no way use STL algorithms or anything else STL to work with
+ the individual elements of the structures.
+ However naturally because these structures are then stored in STL containers
+ you can use STL algorithms on the containers of these structures.
+ The containers represent the rows, and the individual elements of the structure
+ represent the columns.
+ For example you can access the item named "price" on the second row by
+ saying result[2].price.
+ With the dramatic result set you would have probably needed to say result[2]["p
+rice"] to accomplish the same result.
+\layout Standard
+
+If there is a problem in converting from the result set returned by the
+ server to the specialized structures an exception is thrown.
+\layout Standard
+
+To aid in the creating of queries using these specialized structures, the
+ same query aiding methods are available to use that are available for the
+ dramatic result sets.
+ This includes methods for returning a comma separated list of the data,
+ a comma separated list of the field names, and an equal list.
+\layout Section*
+
+In addition
+\layout Standard
+
+In addition to the material mentioned there are also many generic classes
+ that can be used with other programs.
+ Examples of this include a special const string class, a const random access
+ adapter that will make a random access container out of a class with nothing
+ but the size() method and the subscript ([]) operator defined and a generic
+ SQL query class that can be used any SQL C or C++ API.
+\layout Chapter
+
+Important Changes 
+\layout Standard
+
+I will try to keep the changes that will break old code to a minimal however
+ when I do I will document them here.
+ Once this library goes into alpha testing this section will no longer exist
+ as I will try very hard not to make changes that will break old code.
+\layout Section
+
+Current Changes
+\layout Itemize
+
+Changed the syntax of equal_list for SSQLS from 
+\series bold 
+equal_list (cchar *, Manip, cchar *)
+\series default 
+ to 
+\series bold 
+equal_list (cchar *, cchar *, Manip)
+\series default 
+.
+\layout Itemize
+
+The 
+\begin_inset Quotes eld
+\end_inset 
+
+connection
+\begin_inset Quotes erd
+\end_inset 
+
+ constructors for 
+\series bold 
+Connection
+\series default 
+ and 
+\series bold 
+Connection::connect
+\series default 
+ (formally known as 
+\series bold 
+Mysql
+\series default 
+) has changed so that the data base name is the first paremeter.
+\layout Itemize
+
+The Specialized SQL Structures (formally known as Custom Mysql Structures)
+ changed from mysql_ to sql_.
+\layout Itemize
+
+Changed all of the functions that return zero (false) on success and non-zero
+ (true) other wise to bool.
+ This means that they now return true on success and false on faillier.
+ This means that you now need to negate your expressions that test the output
+ of these functions.
+ 
+\layout Itemize
+
+Almost all methods that returned MysqlString now return a normal string.
+ Because 
+\series bold 
+MysqlString
+\series default 
+ objects will convert them selves into string when needed there should not
+ be a problem with: 
+\begin_deeper 
+\layout LyX-Code
+
+MysqlString s = mysql.host_info
+\end_deeper 
+\layout Itemize
+
+The data type 
+\series bold 
+MysqlRow
+\series default 
+ now returns (
+\series bold 
+MysqlString
+\series default 
+ or 
+\series bold 
+MysqlColData
+\series default 
+) is now subclassed from a special string class that I wrote to handle working
+ with a const string in a much more efficient way (ie it doesn't copy it).
+ Unfortunitlly this data type is also more limited see the section on "const_str
+ing" for more info.
+\layout Section
+
+Future Changes
+\layout Itemize
+
+The behavior of MysqlString when used with binary operators is going to
+ change in a future version (if I can figure out how to pull it off) Instead
+ of converting to the type on the other side of the operator the MysqlString
+ will it convert to the type the Mysql server said it originally was.
+ This will be a lot safer and more predictable.
+\layout Itemize
+
+As soon as a stable egcc comes out that supports namespaces comes out I
+ intend to use it.
+\layout Part*
+
+Usage
+\layout Chapter
+
+Tutorial by Example
+\layout Section
+
+Introduction
+\layout Standard
+
+This tutorial is meant to give you a jump start into using my API.
+ My Mysql++ API is a very complicated being with a lot of advance features
+ that you can due without if all you want to do is execute simple queries.
+\layout Section
+
+Assumptions
+\layout Standard
+
+This tutorial assumes you know C++ fairly well, inparticuler it assumes
+ you know about the Standard Template Library (STL) and exceptions.
+\layout Section
+
+Running the Examples
+\layout Standard
+
+All of the example code form complete running programs.
+ However in order to use them you need to first compile them my switching
+ to the examples directory and typing in 
+\family typewriter 
+make
+\family default 
+.
+ Then you need to set up the database by running reset-db.
+ The usage of the reset-db program is as follows.
+\layout LyX-Code
+
+reset-db [host [user [password]]]
+\layout Standard
+
+If you leave off host localhost is assumed.
+ If you leave off user your current username is assumed.
+ If you leave of the password it is assumed that you don't need one.
+\layout Standard
+
+When you first run the program you need to give it an account with permission
+ to create databases.
+ Once the database is created you can use any account that has permission
+ full permission to the database mysql_cpp_data.
+ 
+\layout Standard
+
+You should also run the reset-db program between examples that modify the
+ data or else things might not work right.
+\layout Section
+
+The Basics
+\layout Subsection
+
+A Simple Example
+\layout Standard
+
+The following example demonstrates how to open a connection, execute a simple
+ query, and display the results.
+ The code can be found in the file 
+\family typewriter 
+simple1.cc
+\family default 
+ which is located in the examples directory.
+\layout Comment
+
+example:simple1.cc
+\layout Standard
+
+Everything here should be fairly obvious.
+ Take particular notice of how I used an iterator with the result set.
+\layout Subsection
+
+A slightly more complicated example
+\layout Standard
+
+This example is almost like the previous one however it uses exceptions
+ and the automatic conversion feature of 
+\series bold 
+ColData
+\series default 
+.
+ Pay particular notice to how exceptions are used.
+ This file for this code is named 
+\family typewriter 
+complic1.cc
+\family default 
+.
+\layout Comment
+
+example:complic1.cc
+\layout Standard
+
+Everything should be fairly obvious.
+ A few notes about exceptions, however:
+\layout Enumerate
+
+When the 
+\series bold 
+use_exceptions
+\series default 
+ flag is set for a parent object it is also set for all of its children
+ the it created after the flag is set.
+ For example when the 
+\series bold 
+use_exceptions
+\series default 
+ flag is set for the 
+\family typewriter 
+con
+\family default 
+ object, it is also set for the 
+\family typewriter 
+query
+\family default 
+ object.
+ Please note that the 
+\series bold 
+use_exceptions
+\series default 
+ flag is not linked, it is copied.
+ This means that when you change the 
+\series bold 
+use_exceptions
+\series default 
+ flag only its new children are affected, 
+\emph on 
+not
+\emph default 
+ the ones it already created.
+\layout Enumerate
+
+
+\series bold 
+ColData
+\series default 
+ will always throw an exception when it encounters a bad conversion.
+ A bad conversion is defined as a conversion in which: a) All the charters
+ from the string are not read in and b) The remaining characters are something
+ other than whitespace, zeros (0), or periods (.).
+ This means that when ``1.25'' is converted into an int an exception will
+ be thrown however not when ``1.00'' is converted into an int as the remaining
+ characters are the period and the zero.
+ 
+\layout Standard
+
+To see how the exception work try creating an error.
+ Some good things to try would be misspelling the table name or changing
+ the double to an int.
+\layout Subsection
+
+Getting Info about the Fields
+\layout Standard
+
+The following example demonstrates how to get some basic information about
+ the fields, including the name of the field and the SQL type.
+ The file is called fieldinfo1.cc.
+\layout Comment
+
+example:fieldinf1.cc
+\layout Section
+
+Specialized SQL Structures
+\layout Subsection
+
+Retrieving Data
+\layout Standard
+
+The next example demonstrates a fairly interesting concept known as Specialized
+ SQL Structures (SSQLS).
+ The file name for this code is 
+\family typewriter 
+custom1.cc
+\family default 
+.
+\layout Comment
+
+example:custom1.cc
+\layout Standard
+
+As you can see.
+ SSQLS are very powerful things.
+\layout Subsection
+
+Adding Data 
+\layout Standard
+
+SSQLS can also be used to add data to a table.
+ The file name for this code is custom2.cc
+\layout Comment
+
+example:custom2.cc
+\layout Standard
+
+That's all there is to it.
+ Because this example modifies the data you should run 
+\family typewriter 
+reset-db
+\family default 
+ after running the example code.
+\layout Subsection
+
+Modifying Data 
+\layout Standard
+
+And it almost as easy to modify data with SSQLS.
+ The file name is custom3.cc.
+\layout Comment
+
+example:custom3.cc
+\layout Standard
+
+When you run the example you will notice that in the where clause only the
+ 
+\emph on 
+item 
+\emph default 
+field is checked for.
+ This is because SSQLS also also less-than-comparable.
+\layout Standard
+
+Don't forget to run 
+\family typewriter 
+reset-db
+\family default 
+ after running the example.
+\layout Subsection
+
+Less-Than-Comparable
+\layout Standard
+
+SSQLS are can also be made less-than-comparable.
+ This means that they can be sorted and stored in sets as demonstrated in
+ the next example.
+ The file name is custom4.cc
+\layout Comment
+
+example:custom4.cc
+\layout Subsection
+
+And There's More
+\layout Standard
+
+This is only scratching the surface of what SSQLS can do for more information
+ see the chapter on them (
+\begin_inset LatexCommand \ref{SSQLS}
+
+\end_inset 
+
+).
+\layout Section
+
+Template Queries
+\layout Standard
+
+Another powerful feature of Mysql++ is being able to set up template queries.
+ The following example demonstrates how to use them.
+ This code is the actual code used to set up and/or reset the sample database.
+ It can be found under reset-db.cc.
+ I hope to come up with some better examples soon.
+\layout Comment
+
+example:reset-db.cc
+\layout Chapter
+
+Class Reference 
+\layout Standard
+
+This chapter documents all of the classes that are meant to be used.
+ If it is not documented here 
+\series bold 
+don't use it
+\series default 
+ because it is a internal method or class meant to only be used by other
+ related classes.
+\layout Comment
+
+Begin Class Ref
+\layout Standard
+
+
+\begin_inset LatexCommand \label{SQLQuery}
+
+\end_inset 
+
+
+\begin_inset LatexCommand \label{SQLQueryParms}
+
+\end_inset 
+
+
+\layout Comment
+
+End Class Ref
+\layout Section
+
+Manipulators 
+\layout Standard
+
+The following manipulators modify only the next item to the right of it
+ in an 
+\family typewriter 
+<<
+\family default 
+ chain.
+ They can be used with any ostream (which includes 
+\series bold 
+SQLQuery
+\series default 
+ and 
+\series bold 
+Query
+\series default 
+ because they are also ostreams) or 
+\series bold 
+SQLQueryParms
+\series default 
+.
+ When used with 
+\series bold 
+SQLQueryParms
+\series default 
+ they will override any settings set by the Template Query for that particular
+ item.
+\layout Description
+
+quote Quote and escape the next item.
+ Can be used with 
+\series bold 
+ostream
+\series default 
+ or 
+\series bold 
+SQLQueryParms
+\series default 
+.
+ 
+\layout Description
+
+quote_only Quote but don't escape the next item.
+ Can be used with 
+\series bold 
+ostream
+\series default 
+ or 
+\series bold 
+SQLQueryParms
+\series default 
+.
+ 
+\layout Description
+
+quote_only_double Quote, but don't escape the next item, with `` instead
+ of '.
+ 
+\layout Description
+
+escape Escape the next item.
+ 
+\layout Description
+
+do_nothing Does exactly what it says nothing.
+ Used as a dummy manipulator when you are required to use some manipulator.
+ When used with 
+\series bold 
+SQLQueryParms
+\series default 
+ it will make sure that it does not get formatted in any way overriding
+ any setting set by the template query.
+ 
+\layout Description
+
+ignore Only valid when used with 
+\series bold 
+SQLQueryParms
+\series default 
+.
+ Like 
+\series bold 
+do_nothing
+\series default 
+ however this one will not override formatting set by the template query,
+ thus it is ignored.
+ 
+\layout Chapter
+
+Template Queries
+\layout Standard
+
+The idea of template queries is too provide a query with replaceable parameters
+ that can be changed between query calls with out having to reform the queries.
+\layout Section
+
+Setting Them Up
+\layout Standard
+
+To set up a template query simply enter the query like it is a normal query.
+ For example:
+\layout LyX-Code
+
+query << "select (%2:field1, %3:field2) from stock where %1:wheref = %q0:what"
+\layout Standard
+
+And then execute the Query::parse() method.
+ For example:
+\layout LyX-Code
+
+query.parse()
+\layout Section
+
+Template Format
+\begin_inset LatexCommand \label{template format}
+
+\end_inset 
+
+
+\layout Standard
+
+An example template looks like this 
+\layout LyX-Code
+
+select (%2:field1, %3:field2) from stock where %1:wheref = %q0:what
+\layout Standard
+
+The numbers represent the element number in 
+\series bold 
+SQLQueryParms
+\series default 
+ (see the next section).
+ 
+\layout Standard
+
+The format of the substation parameter is: 
+\layout LyX-Code
+
+%(modifier)##(:name)(:)
+\layout Standard
+
+Where Modifier can be any one of the following:
+\layout Description
+
+% Print an actual "%" 
+\layout Description
+
+"" "" means nothing.
+ Don't quote or escape no matter what.
+ 
+\layout Description
+
+q This will quote and escape it using mysql_escape_string if it is a string
+ or char *, or another Mysql specific types that needs to be quoted.
+ 
+\layout Description
+
+Q Quote but don't escape based on the same rules.
+ This can save a bit of time if you know the strings will never need quoting
+ 
+\layout Description
+
+r Always quote and escape even if it is a number.
+ 
+\layout Description
+
+R Always quote but don't escape even if it is a number.
+ 
+\layout Standard
+
+## represents a number up to two digits 
+\layout Standard
+
+``:name'' is for an optional name which aids in filling SQLQueryParms.
+ Name can contain any alpha-numeric characters or the underscore.
+ If you use name it must be proceeded by non-alpha-numeric charter.
+ If this is not the case add a column after the name.
+ If you need to represent an actual colon after the name follow the name
+ by two-columns.
+ The first one will end the name and the second one won't be processed.
+ 
+\layout Section
+
+Setting the Parameters
+\layout Standard
+
+The parameters can either be set when the query is executed or ahead of
+ time by using default parameters.
+\layout Subsection
+
+At Execution Time
+\layout Standard
+
+To specify the parameters when you want to execute a query simply use 
+\series bold 
+Query::store(const SQLString &parm0, [..., const SQLString &parm11])
+\series default 
+ (or 
+\series bold 
+Query::use
+\series default 
+ or 
+\series bold 
+Query::execute
+\series default 
+).
+ Where 
+\series bold 
+parm0
+\series default 
+ corresponds to parameter number 0, etc.
+ You may specify from 1 to 12 different parameters.
+ For example:
+\layout LyX-Code
+
+Result res = query.store("Dinner Roles", "item", "item", "price")
+\layout Standard
+
+with the template query provided in section 
+\begin_inset LatexCommand \ref{template format}
+
+\end_inset 
+
+ would produce:
+\layout LyX-Code
+
+select (item, price) from stock where item = "Dinner Roles"
+\layout Standard
+
+The reason for why I 
+\emph on 
+didn't
+\emph default 
+ make the template the more logical:
+\layout LyX-Code
+
+select (%0:field1, %1:field2) from stock where %2:wheref = %q3:what
+\layout Standard
+
+will become apparent shortly.
+\layout Subsection
+
+Using Defaults
+\layout Standard
+
+You can also set the parameters one at a time by means of the public data
+ member 
+\series bold 
+def
+\series default 
+.
+ To change the values of the 
+\series bold 
+def
+\series default 
+ simply use the subscript operator.
+ You can refer to the parameters either by number or by name.
+ For example:
+\layout LyX-Code
+
+query.def[0] = "Dinner Roles";
+\newline 
+query.def[1] = "item";
+\newline 
+query.def[2] = "item";
+\newline 
+query.def[3] = "price";
+\layout Standard
+
+and
+\layout LyX-Code
+
+query.def["what"] = "Dinner Roles";
+\newline 
+query.def["wheref"] = "item";
+\newline 
+query.def["field1"] = "item";
+\newline 
+query.def["field2"] = "price";
+\layout Standard
+
+would both have the same effect.
+\layout Standard
+
+Once all the parameters are set simply execute as you would have executed
+ the query before you knew about template queries.
+ For example:
+\layout LyX-Code
+
+Result res = query.store()
+\layout Subsection
+
+Combining the Two
+\layout Standard
+
+You can also combine the use of setting the parameters at execution time
+ and setting them by use of the 
+\series bold 
+def
+\series default 
+ object by simply using the extended form of 
+\series bold 
+Query::store
+\series default 
+ (or 
+\series bold 
+use
+\series default 
+ or 
+\series bold 
+execute
+\series default 
+) without all of necessary parameters specified.
+ For example:
+\layout LyX-Code
+
+query.def["field1"] = "item";
+\newline 
+query.def["field2"] = "price";
+\newline 
+Result res1 = query.store("Hamburger Buns", "item");
+\newline 
+Result res2 = query.store(1.25, "price");
+\layout Standard
+
+Would store the query:
+\layout LyX-Code
+
+select (item, price) from stock where item = "Hamburger Buns"
+\layout Standard
+
+for
+\family typewriter 
+ res1 
+\family default 
+and 
+\layout LyX-Code
+
+select (item, price) from stock where price = 1.25
+\layout Standard
+
+for 
+\family typewriter 
+res2
+\family default 
+.
+\layout Standard
+
+Because the extended form of 
+\series bold 
+Query::store
+\series default 
+ can only effect the beginning (by number not by location) parameters the
+ more logical template query:
+\layout LyX-Code
+
+select (%0:field1, %1:field2) from stock where %2:wheref = %q3:what
+\layout Standard
+
+would 
+\emph on 
+not 
+\emph default 
+of worked in this case.
+ Thus the more twisted ordering of
+\layout LyX-Code
+
+select (%2:field1, %3:field2) from stock where %1:wheref = %q0:what
+\layout Standard
+
+was needed so that we can specify 
+\series bold 
+wheref
+\series default 
+ and 
+\series bold 
+what
+\series default 
+ each time.
+\layout Standard
+
+One thing to watch out for, however, is that 
+\series bold 
+Query::store(const char* q)
+\series default 
+ is also defined for executing the query 
+\family typewriter 
+q
+\family default 
+.
+ For this reason when you use the 
+\series bold 
+Query::store
+\series default 
+ (or 
+\series bold 
+use
+\series default 
+, or 
+\series bold 
+execute
+\series default 
+) with only one item and that item is a 
+\series bold 
+const char*
+\series default 
+ you need to explicitly convert it into a SQLString.
+ For example:
+\layout LyX-Code
+
+Result res = query.store(SQLString("Hamburger Buns")).
+\layout Subsection
+
+Error Handling
+\layout Standard
+
+If for some reason you did not specify all the parameters when executing
+ the query 
+\emph on 
+and
+\emph default 
+ the remaining parameters do not have there values set via 
+\family typewriter 
+def
+\family default 
+ the query object will throw a 
+\series bold 
+SQLQueryNEParms
+\series default 
+ object.
+ In which case you you can find out what happened by checking the value
+ of 
+\series bold 
+SQLQueryNEParms::string
+\series default 
+.
+ 
+\layout Standard
+
+For example:
+\layout LyX-Code
+
+query.def["field1"] = "item";
+\newline 
+query.def["field2"] = "price";
+\newline 
+Result res = query.store(1.25);
+\layout Standard
+
+would throw 
+\series bold 
+SQLQueryNEParms
+\series default 
+ because the 
+\family typewriter 
+wheref
+\family default 
+ is not specified.
+\layout Standard
+
+In theory this exception should never be thrown.
+ If the exception is thrown it probably a logic error on you part.
+ (Like in the above example)
+\layout Subsection
+
+More Advanced Stuff
+\layout Standard
+
+To be written.
+ However, for now see the class 
+\series bold 
+SQLQuery
+\series default 
+ (
+\begin_inset LatexCommand \ref{SQLQuery}
+
+\end_inset 
+
+) and 
+\series bold 
+SQLQueryParms
+\series default 
+ (
+\begin_inset LatexCommand \ref{SQLQueryParms}
+
+\end_inset 
+
+) for more information.
+\layout Chapter
+
+Specialized SQL Structures
+\begin_inset LatexCommand \label{SSQLS}
+
+\end_inset 
+
+
+\layout Standard
+
+The Specialized SQL Structures (SSQLS) allows you create structures to hold
+ data for mysql queries with extra functionality to make your life easier.
+ These structures are in no way related to any Standard Template Library
+ (STL) type of containers.
+ These structures are exactly that 
+\series bold 
+structs
+\series default 
+.
+  Each member item is stored  with a unique name within the structure.
+  You can in no way use STL algorithms are anything else STL to work with
+ the individual structures.
+ However you CAN use these structures as the 
+\series bold 
+value_type
+\series default 
+ for STL containers.
+ (They would be pretty useless if you couldn't.) 
+\layout Section
+
+sql_create_basic 
+\layout Standard
+
+The following command will create a basic mysql query for use with the 
+ sample database.
+ 
+\layout LyX-Code
+
+sql_create_basic_5(stock,
+\protected_separator 
+0,
+\protected_separator 
+0,
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+string,
+\protected_separator 
+item,
+\protected_separator 
+//
+\protected_separator 
+type,
+\protected_separator 
+id,
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+int,
+\protected_separator 
+num,
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+double,
+\protected_separator 
+weight,
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+double,
+\protected_separator 
+price,
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+MysqlDate,
+\protected_separator 
+date)
+\protected_separator 
+
+\layout Standard
+
+This will set up the following structure: 
+\layout LyX-Code
+
+struct
+\protected_separator 
+stock
+\protected_separator 
+{
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+stock
+\protected_separator 
+()
+\protected_separator 
+{}
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+stock
+\protected_separator 
+(const MysqlRow
+\protected_separator 
+&row);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+set (const MysqlRow &row);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+string
+\protected_separator 
+item;
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+int
+\protected_separator 
+num;
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+double
+\protected_separator 
+weight;
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+double
+\protected_separator 
+price;
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+MysqlDate
+\protected_separator 
+date;
+\protected_separator 
+
+\newline 
+};
+\protected_separator 
+
+\layout Standard
+
+As you can see this is nothing fancy.
+  The main advantage of this simple structure is the 
+\series bold 
+stock (MysqlRow &row)
+\series default 
+ constructor which allows you to easily populate a vector of stocks like
+ so: 
+\layout LyX-Code
+
+vector<stock>
+\protected_separator 
+result;
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+query.storein(result);
+\protected_separator 
+
+\layout Standard
+
+That's all there is two it.
+ The requirements are that the query returns elements in the same order
+ as you specified them in the custom structure.
+ 
+\layout Standard
+
+The general format is: 
+\layout LyX-Code
+
+sql_create_basic_#(NAME,
+\protected_separator 
+0,
+\protected_separator 
+0,
+\protected_separator 
+TYPE1,
+\protected_separator 
+ITEM1,
+\protected_separator 
+...
+\protected_separator 
+TYPE#,
+\protected_separator 
+ITEM#)
+\protected_separator 
+
+\protected_separator 
+
+\layout Standard
+
+Where # is the number of valuables in the vector, NAME is the name of the
+ structure you wish to create, and TYPE1 is the type name for first item
+ and ITEM1 is the valuables name for the first item etc..
+ 
+\layout Section
+
+sql_create_basic with compare 
+\layout Standard
+
+You can also make the structure comparable by changing the first 0 in the
+ previous example to a non zero number.
+  This number, lets call it n, will tell c++ that if the first n number
+ or the same then the two structures are the same.
+ 
+\layout Standard
+
+For example: 
+\layout LyX-Code
+
+sql_create_basic_5(stock,
+\protected_separator 
+1,
+\protected_separator 
+0,
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+string,
+\protected_separator 
+item,
+\protected_separator 
+//
+\protected_separator 
+type,
+\protected_separator 
+id,
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+int,
+\protected_separator 
+num,
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+double,
+\protected_separator 
+weight,
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+double,
+\protected_separator 
+price,
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+MysqlDate,
+\protected_separator 
+date)
+\protected_separator 
+
+\layout Standard
+
+will create a structure where only the item valuable is checked to see if
+ two different stocks are the same.
+  It also allows you to compare one structure to another based on the value
+ of item.
+ (If n is greater than one it will compare the structures in a Lexicographic
+ order.
+  For example if it was 2 it would first compare 
+\family typewriter 
+item
+\family default 
+ and if item was the same it would  then compare 
+\family typewriter 
+num
+\family default 
+.
+  If num was the same it would declare the two structures the same.) 
+\layout Standard
+
+In addition what the previous example defines it also defines the following:
+ 
+\layout LyX-Code
+
+struct
+\protected_separator 
+stock
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+...
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+stock
+\protected_separator 
+(const
+\protected_separator 
+string
+\protected_separator 
+&p1);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+set (const string &p1);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+bool
+\protected_separator 
+operator
+\protected_separator 
+==
+\protected_separator 
+(const
+\protected_separator 
+stock
+\protected_separator 
+&other)
+\protected_separator 
+const;
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+bool
+\protected_separator 
+operator
+\protected_separator 
+!=
+\protected_separator 
+(const
+\protected_separator 
+stock
+\protected_separator 
+&other)
+\protected_separator 
+const;
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+bool
+\protected_separator 
+operator
+\protected_separator 
+>
+\protected_separator 
+(const
+\protected_separator 
+stock
+\protected_separator 
+&other)
+\protected_separator 
+const;
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+bool
+\protected_separator 
+operator
+\protected_separator 
+<
+\protected_separator 
+(const
+\protected_separator 
+stock
+\protected_separator 
+&other)
+\protected_separator 
+const;
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+bool
+\protected_separator 
+operator
+\protected_separator 
+>=
+\protected_separator 
+(const
+\protected_separator 
+stock
+\protected_separator 
+&other)
+\protected_separator 
+const;
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+bool
+\protected_separator 
+operator
+\protected_separator 
+<=
+\protected_separator 
+(const
+\protected_separator 
+stock
+\protected_separator 
+&other)
+\protected_separator 
+const;
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+int
+\protected_separator 
+cmp
+\protected_separator 
+(const
+\protected_separator 
+stock
+\protected_separator 
+&other)
+\protected_separator 
+const;
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+int
+\protected_separator 
+compare
+\protected_separator 
+(const
+\protected_separator 
+stock
+\protected_separator 
+&other)
+\protected_separator 
+const;
+\protected_separator 
+
+\newline 
+}
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\newline 
+int
+\protected_separator 
+compare
+\protected_separator 
+(const
+\protected_separator 
+stock
+\protected_separator 
+&x,
+\protected_separator 
+const
+\protected_separator 
+stock
+\protected_separator 
+&y);
+\protected_separator 
+
+\layout Standard
+
+int compare (const stock &x, const stock &y) compares x to y and return
+ <0 if  x < y, 0 if x = y, and >0 if x > y.
+  stock::cmp and stock::compare are the same thing as compare(*this, other).
+ 
+\layout Standard
+
+stock::stock is a constructor that will set item to p1 and leave the other
+ variables undefined.
+  This is useful for creating temporary objects to use for comparisons like
+ x <= stock("Hotdog").
+   
+\layout Standard
+
+Because 
+\series bold 
+stock
+\series default 
+ is now less-then-comparable you can store the query results in a set: 
+\layout LyX-Code
+
+set<stock>
+\protected_separator 
+result;
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+query.storein(result);
+\protected_separator 
+
+\layout Standard
+
+And you can now use it like any other set, for example: 
+\layout LyX-Code
+
+cout
+\protected_separator 
+<<
+\protected_separator 
+result.lower_bound(stock("Hamburger"))->item
+\protected_separator 
+<<
+\protected_separator 
+endl;
+\protected_separator 
+
+\protected_separator 
+
+\layout Standard
+
+will return the first item that begins with Hamburger.
+ 
+\layout Standard
+
+You can also now use it will any STL algorithm that require the values to
+ be less-then-comparable.
+ 
+\layout Standard
+
+The general format so far is: 
+\layout LyX-Code
+
+sql_create_base_#(NAME,
+\protected_separator 
+CMP,
+\protected_separator 
+0,
+\protected_separator 
+TYPE1,
+\protected_separator 
+ITEM1,
+\protected_separator 
+...
+\protected_separator 
+TYPE#,
+\protected_separator 
+ITEM#)
+\protected_separator 
+
+\protected_separator 
+
+\layout Standard
+
+where CMP is that the number that tells c++ that if the first cmp variables
+ are the same then the two structures are the same.
+ 
+\layout Section
+
+sql_create_basic with Additional Constructor 
+\layout Standard
+
+The last zero in the last example if for creating another constructor.
+ Let this zero be m then it will create a constructor which will populate
+ the first n variables.
+  For example: 
+\layout LyX-Code
+
+sql_create_basic_5(stock,
+\protected_separator 
+1,
+\protected_separator 
+5,
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+string,
+\protected_separator 
+item,
+\protected_separator 
+//
+\protected_separator 
+type,
+\protected_separator 
+id,
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+int,
+\protected_separator 
+num,
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+double,
+\protected_separator 
+weight,
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+double,
+\protected_separator 
+price,
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+MysqlDate,
+\protected_separator 
+date)
+\protected_separator 
+
+\layout Standard
+
+will also define: 
+\layout LyX-Code
+
+struct
+\protected_separator 
+stock
+\protected_separator 
+{
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+...
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+stock(const
+\protected_separator 
+string&,
+\protected_separator 
+const
+\protected_separator 
+int&,
+\protected_separator 
+const
+\protected_separator 
+double&,
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+const
+\protected_separator 
+double&,
+\protected_separator 
+const
+\protected_separator 
+MysqlDate&);
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+set(const
+\protected_separator 
+string&,
+\protected_separator 
+const
+\protected_separator 
+int&,
+\protected_separator 
+const
+\protected_separator 
+double&,
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+const
+\protected_separator 
+double&,
+\protected_separator 
+const
+\protected_separator 
+MysqlDate&);
+\protected_separator 
+
+\newline 
+}
+\protected_separator 
+
+\layout Section
+
+sql_create_basic General Format 
+\layout Standard
+
+Thus the general format for sql_create_basic is 
+\layout LyX-Code
+
+sql_create_basic_#(NAME,
+\protected_separator 
+CMP,
+\protected_separator 
+CNST,
+\protected_separator 
+TYPE1,
+\protected_separator 
+ITEM1,
+\protected_separator 
+...,
+\protected_separator 
+TYPE#,
+\protected_separator 
+ITEM#)
+\protected_separator 
+
+\protected_separator 
+
+\layout Standard
+
+Where: 
+\layout Itemize
+
+# is the number of valuables in the vector 
+\layout Itemize
+
+NAME is the name of the structure you wish to create 
+\layout Itemize
+
+CMP is the number that tells c++, if not set to 0, that if the first cmp
+ variables are the same then the two structures are the same.
+ 
+\layout Itemize
+
+CNST is the number, if not set to 0, that will create a constructor which
+ will populate the first n variables.
+ 
+\layout Itemize
+
+TYPE1 is the type name for first item and ITEM1 is the valuables name for
+ the first item etc..
+ 
+\layout Section
+
+sql_create_basic_c_order 
+\layout Standard
+
+You can also specify an alternate order for when mysql populates the  structure.
+ For example: 
+\layout LyX-Code
+
+sql_create_basic_c_order_5(stock,
+\protected_separator 
+2,
+\protected_separator 
+5,
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+MysqlDate,
+\protected_separator 
+date,
+\protected_separator 
+5,
+\protected_separator 
+//
+\protected_separator 
+type,
+\protected_separator 
+id,
+\protected_separator 
+order
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+double,
+\protected_separator 
+price,
+\protected_separator 
+4,
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+string,
+\protected_separator 
+item,
+\protected_separator 
+1,
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+
+\protected_separator 
+int,
+\protected_separator 
+num,
+\protected_separator 
+2,
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+double,
+\protected_separator 
+weight,
+\protected_separator 
+3)
+\protected_separator 
+
+\layout Standard
+
+This will create a similar structure as in the previous example except that
+ that the order of the data items will be different and c++ will use the
+ first two items to compare with (date, price).
+  However because a custom order is specified you can use the same query
+ to populate the set.
+ It will fill 
+\family typewriter 
+date
+\family default 
+ with the first 5th item of the query result set, 
+\family typewriter 
+price
+\family default 
+ with the 4th, etc...
+ 
+\layout Section
+
+sql_create_basic_c_order General Format 
+\layout Standard
+
+Thus the general format for sql_create_basic is 
+\layout LyX-Code
+
+sql_create_basic_c_order_#
+\protected_separator 
+(NAME,
+\protected_separator 
+CMP,
+\protected_separator 
+CNST,
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+TYPE1,
+\protected_separator 
+ITEM1,
+\protected_separator 
+ORDER1,
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+...
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+TYPE#,
+\protected_separator 
+ITEM#,
+\protected_separator 
+ORDER#)
+\protected_separator 
+
+\layout Standard
+
+Where: 
+\layout Itemize
+
+# is the number of valuables in the vector 
+\layout Itemize
+
+NAME is the name of the structure you wish to create 
+\layout Itemize
+
+CMP is the number that tells c++, if not set to 0, that if the first cmp
+ variables are the same then the two structures are the same.
+ 
+\layout Itemize
+
+CNST is the number, if not set to 0, that will create a constructor which
+ will populate the first n variables.
+ 
+\layout Itemize
+
+TYPE1 is the type name for first item, ITEM1 is the valuable name for the
+ first item, ORDER1 is the order number for the first item ...etc...
+ 
+\layout Section
+
+sql_create 
+\layout Standard
+
+In addition to the basic structures you can set up enhanced structures that
+  also have methods defined to aid in the creation of queries and in the
+ insertion of data in tables.
+ 
+\layout Standard
+
+For example: 
+\layout LyX-Code
+
+sql_create_5(stock,
+\protected_separator 
+1,
+\protected_separator 
+5,
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+string,
+\protected_separator 
+item,
+\protected_separator 
+//
+\protected_separator 
+type,
+\protected_separator 
+id,
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+int,
+\protected_separator 
+num,
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+double,
+\protected_separator 
+weight,
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+double,
+\protected_separator 
+price,
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+MysqlDate,
+\protected_separator 
+date)
+\protected_separator 
+
+\layout Standard
+
+which will, in addition to that which is defined in sql_create_basic with
+ Additional Constructor, define the equivalent to: 
+\layout LyX-Code
+
+struct
+\protected_separator 
+stock
+\protected_separator 
+{
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+...
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+static
+\protected_separator 
+char
+\protected_separator 
+*names[];
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+static
+\protected_separator 
+char
+\protected_separator 
+*table;
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+template
+\protected_separator 
+<class
+\protected_separator 
+Manip>
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+stock_value_list<Manip>
+\protected_separator 
+value_list(cchar
+\protected_separator 
+*d
+\protected_separator 
+=
+\protected_separator 
+",",
+\protected_separator 
+
+\protected_separator 
+//
+\protected_separator 
+basic
+\protected_separator 
+form
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+Manip
+\protected_separator 
+m
+\protected_separator 
+=
+\protected_separator 
+mysql_quote)
+\protected_separator 
+const;
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+template
+\protected_separator 
+<class
+\protected_separator 
+Manip>
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+stock_field_list<Manip>
+\protected_separator 
+field_list(cchar
+\protected_separator 
+*d
+\protected_separator 
+=
+\protected_separator 
+",",
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+Manip
+\protected_separator 
+m
+\protected_separator 
+=
+\protected_separator 
+mysql_do_nothing)
+\protected_separator 
+const;
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+template
+\protected_separator 
+<class
+\protected_separator 
+Manip>
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+stock_equal_list<Manip>
+\protected_separator 
+equal_list(cchar
+\protected_separator 
+*d
+\protected_separator 
+=
+\protected_separator 
+",",
+\layout LyX-Code
+
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+cchar *e = " = ",
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+Manip
+\protected_separator 
+m
+\protected_separator 
+=
+\protected_separator 
+mysql_quote,
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+)
+\protected_separator 
+const;
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+template
+\protected_separator 
+<class
+\protected_separator 
+Manip>
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+//
+\protected_separator 
+bool
+\protected_separator 
+form
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+stock_cus_value_list<Manip>
+\protected_separator 
+value_list([cchar
+\protected_separator 
+*d,
+\protected_separator 
+[Manip
+\protected_separator 
+m,]
+\protected_separator 
+]
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+bool
+\protected_separator 
+i1,
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+bool
+\protected_separator 
+i2
+\protected_separator 
+=
+\protected_separator 
+false,
+\protected_separator 
+...
+\protected_separator 
+,
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+bool
+\protected_separator 
+i5
+\protected_separator 
+=
+\protected_separator 
+false)
+\protected_separator 
+const;
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+template
+\protected_separator 
+<class
+\protected_separator 
+Manip>
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+//
+\protected_separator 
+list
+\protected_separator 
+form
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+stock_cus_value_list<Manip>
+\protected_separator 
+value_list([cchar
+\protected_separator 
+*d,
+\protected_separator 
+[Manip
+\protected_separator 
+m,]
+\protected_separator 
+]
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+stock_enum
+\protected_separator 
+i1,
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+stock_enum
+\protected_separator 
+i2
+\protected_separator 
+=
+\protected_separator 
+stock_NULL,
+\protected_separator 
+...,
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+stock_enum
+\protected_separator 
+i5
+\protected_separator 
+=
+\protected_separator 
+stock_NULL)
+\protected_separator 
+const;
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+template
+\protected_separator 
+<class
+\protected_separator 
+Manip>
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+//
+\protected_separator 
+vector
+\protected_separator 
+form
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+stock_cus_value_list<Manip>
+\protected_separator 
+value_list([cchar
+\protected_separator 
+*d,
+\protected_separator 
+[Manip
+\protected_separator 
+m,]
+\protected_separator 
+]
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+vector<bool>
+\protected_separator 
+*i)
+\protected_separator 
+const;
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+...(The
+\protected_separator 
+logical
+\protected_separator 
+equivalent
+\protected_separator 
+for
+\protected_separator 
+field_list
+\protected_separator 
+and
+\protected_separator 
+equal_list)...
+\protected_separator 
+
+\newline 
+};
+\protected_separator 
+
+\layout Standard
+
+
+\series bold 
+value_list()
+\series default 
+ returns a special class that when used with the << operator with an ostream
+ on the left will return a comma separated list with values properly quoted
+ and escaped when needed.
+ 
+\layout Standard
+
+
+\series bold 
+field_list()
+\series default 
+ return a special class than does the same thing but returns  a list of
+ fields that the structure holds which in this case is the same thing as
+ the valuable names.
+  The field names are not escaped or quoted 
+\layout Standard
+
+
+\series bold 
+equal_list()
+\series default 
+ returns a comma separated list with the format  
+\series bold 
+field name = value
+\series default 
+.
+ The field name is not quoted or escaped and value is escaped or quoted
+ as needed.
+ 
+\layout Standard
+
+For example: 
+\layout LyX-Code
+
+stock
+\protected_separator 
+s("Dinner
+\protected_separator 
+Roles",75,0.95,0.97,"1998-05-25");
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+cout
+\protected_separator 
+<<
+\protected_separator 
+"Value
+\protected_separator 
+List:
+\protected_separator 
+"
+\protected_separator 
+<<
+\protected_separator 
+s.comma_list()
+\protected_separator 
+<<
+\protected_separator 
+endl;
+\protected_separator 
+
+\newline 
+cout
+\protected_separator 
+<<
+\protected_separator 
+"Field
+\protected_separator 
+List:
+\protected_separator 
+"
+\protected_separator 
+<<
+\protected_separator 
+s.field_list()
+\protected_separator 
+<<
+\protected_separator 
+endl;
+\protected_separator 
+
+\newline 
+cout
+\protected_separator 
+<<
+\protected_separator 
+"Equal
+\protected_separator 
+List:
+\protected_separator 
+"
+\protected_separator 
+<<
+\protected_separator 
+s.equal_list()
+\protected_separator 
+<<
+\protected_separator 
+endl;
+\protected_separator 
+
+\layout Standard
+
+Would return something like (with a little extra hand formating): 
+\layout LyX-Code
+
+Value
+\protected_separator 
+List:
+\protected_separator 
+'Dinner
+\protected_separator 
+Roles',75,0.95,0.97,'1998-05-25'
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+Field
+\protected_separator 
+List:
+\protected_separator 
+item,num,weight,price,date
+\protected_separator 
+
+\newline 
+Equal
+\protected_separator 
+List:
+\protected_separator 
+item
+\protected_separator 
+=
+\protected_separator 
+'Dinner
+\protected_separator 
+Roles',num
+\protected_separator 
+=
+\protected_separator 
+75,weight
+\protected_separator 
+=
+\protected_separator 
+0.95,
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+price
+\protected_separator 
+=
+\protected_separator 
+0.97,date
+\protected_separator 
+=
+\protected_separator 
+'1998-05-25'
+\protected_separator 
+
+\layout Standard
+
+A combination of the field and value list can be used for insert or replace
+ queries.
+  For example: 
+\layout LyX-Code
+
+query
+\protected_separator 
+<<
+\protected_separator 
+"insert
+\protected_separator 
+into
+\protected_separator 
+stock
+\protected_separator 
+("
+\protected_separator 
+<<
+\protected_separator 
+s.field_list()
+\protected_separator 
+")
+\protected_separator 
+values
+\protected_separator 
+"
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+<<
+\protected_separator 
+s.value_list();
+\protected_separator 
+
+\layout Standard
+
+will insert 
+\family typewriter 
+s
+\family default 
+ into table stock.
+ 
+\layout Standard
+
+You can also use SQLQuery::insert or SQLQuery::replace (and thus Query::insert
+ or Query::replace) as a short cut to accomplish the same task like so:
+ 
+\layout LyX-Code
+
+query.insert(s);
+\layout Standard
+
+It will use s.table for the table name which defaults to the name of the
+ structure.
+ 
+\layout Standard
+
+You can also specify an different delimiter "d".
+  If none is specified it defaults to ",".
+  With this you can use the delimiter " AND " for equal_list to aid in update
+ and select queries.
+  For example: 
+\layout LyX-Code
+
+stock
+\protected_separator 
+s2
+\protected_separator 
+=
+\protected_separator 
+s;
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+s2.item
+\protected_separator 
+=
+\protected_separator 
+"6
+\protected_separator 
+Dinner
+\protected_separator 
+Roles";
+\protected_separator 
+
+\newline 
+query
+\protected_separator 
+<<
+\protected_separator 
+"UPDATE
+\protected_separator 
+TABLE
+\protected_separator 
+stock
+\protected_separator 
+SET
+\protected_separator 
+"
+\protected_separator 
+<<
+\protected_separator 
+s2.equal_list()
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+<<
+\protected_separator 
+"
+\protected_separator 
+WHERE
+\protected_separator 
+"
+\protected_separator 
+<<
+\protected_separator 
+s.equal_list("
+\protected_separator 
+AND
+\protected_separator 
+");
+\protected_separator 
+
+\layout Standard
+
+would produce the query: 
+\layout LyX-Code
+
+UPDATE
+\protected_separator 
+TABLE
+\protected_separator 
+stock
+\protected_separator 
+SET
+\protected_separator 
+item
+\protected_separator 
+=
+\protected_separator 
+'6
+\protected_separator 
+Dinner
+\protected_separator 
+Roles',num
+\protected_separator 
+=
+\protected_separator 
+75,weight
+\protected_separator 
+=
+\protected_separator 
+0.95,
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+price
+\protected_separator 
+=
+\protected_separator 
+0.97,date
+\protected_separator 
+=
+\protected_separator 
+'1998-05-25'
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+WHERE
+\protected_separator 
+item
+\protected_separator 
+=
+\protected_separator 
+'Dinner
+\protected_separator 
+Roles'
+\protected_separator 
+AND
+\protected_separator 
+num
+\protected_separator 
+=
+\protected_separator 
+75
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+AND
+\protected_separator 
+weight
+\protected_separator 
+=
+\protected_separator 
+0.95
+\protected_separator 
+AND
+\protected_separator 
+price
+\protected_separator 
+=
+\protected_separator 
+0.97
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+AND
+\protected_separator 
+date
+\protected_separator 
+=
+\protected_separator 
+'1998-05-25'
+\protected_separator 
+
+\layout Standard
+
+which will change the entree in the table so that item is now "6 Dinner
+ Roles" instead of "Dinner Roles" 
+\layout Standard
+
+You can use 
+\series bold 
+SQLQuery::update
+\series default 
+ (and thus 
+\series bold 
+Query::update
+\series default 
+) as a short cut to accomplishing the same task like so: 
+\layout LyX-Code
+
+stock
+\protected_separator 
+s2
+\protected_separator 
+=
+\protected_separator 
+s;
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+s2.item
+\protected_separator 
+=
+\protected_separator 
+"6
+\protected_separator 
+Dinner
+\protected_separator 
+Roles";
+\protected_separator 
+
+\newline 
+query.update(s,s2);
+\protected_separator 
+
+\layout Standard
+
+Like 
+\series bold 
+SQLQuery::insert
+\series default 
+, it will use s.table for the table name which defaults to the name of the
+ structure.
+ 
+\layout Standard
+
+You can also specify an different manipulator which will effect the way
+ c++ quotes or escapes the values.
+  This may be any valid stream manipulator that only effects the item to
+ the right of manipulator.
+ 
+\series bold 
+value_list
+\series default 
+ and 
+\series bold 
+equal_list
+\series default 
+ defaults to 
+\series bold 
+escape
+\series default 
+ and 
+\series bold 
+field_list
+\series default 
+ defaults to 
+\series bold 
+do_nothing
+\series default 
+.
+  For 
+\series bold 
+equal_list
+\series default 
+ the manipulator only effects the 
+\series bold 
+value
+\series default 
+ part and not the 
+\series bold 
+field name
+\series default 
+ part.
+ 
+\layout Standard
+
+This can be useful creating exporting to a file where you don't want quotes
+ around strings for example.
+ 
+\layout LyX-Code
+
+table_out
+\protected_separator 
+<<
+\protected_separator 
+q.value_list("
+\backslash 
+
+\protected_separator 
+t",
+\protected_separator 
+mysql_escape)
+\protected_separator 
+<<
+\protected_separator 
+endl;
+\layout Standard
+
+will append data to the file handle table_out.
+ 
+\layout Standard
+
+The three non-basic forms allow you to specify which items are returned.
+ For example: 
+\layout LyX-Code
+
+cout
+\protected_separator 
+<<
+\protected_separator 
+q.value_list(false,false,true,true,false)
+\protected_separator 
+<<
+\protected_separator 
+endl;
+\protected_separator 
+//bool
+\protected_separator 
+form
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+cout
+\protected_separator 
+<<
+\protected_separator 
+q.value_list(stock_weight,
+\protected_separator 
+stock_price)
+\protected_separator 
+<<
+\protected_separator 
+endl;
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+//list
+\protected_separator 
+form
+\protected_separator 
+
+\layout Standard
+
+will both return: 
+\layout LyX-Code
+
+0.95,0.97
+\protected_separator 
+
+\protected_separator 
+
+\layout Standard
+
+The 
+\shape italic 
+bool form
+\shape default 
+ excepts boolean arguments where each true/false represents an wether to
+ show a valuable.
+  False means not to show it while true means  to show it.
+ If you leave of some they are assumed to be false.
+  For example: 
+\layout LyX-Code
+
+cout
+\protected_separator 
+<<
+\protected_separator 
+q.value_list(false,false,true,true)
+\protected_separator 
+<<
+\protected_separator 
+endl;
+\protected_separator 
+
+\protected_separator 
+
+\layout Standard
+
+is the same as the above example.
+   
+\layout Standard
+
+The 
+\shape italic 
+list form
+\shape default 
+ allows you to specify which items to show.
+  An enum values are created for each valuable with the name of struct plus
+ the underscore character prefixed before it.
+  For example:  item becomes stock_item.
+ 
+\layout Standard
+
+These forms can be useful is select queries.
+  For example: 
+\layout LyX-Code
+
+query
+\protected_separator 
+<<
+\protected_separator 
+"SELECT
+\protected_separator 
+*
+\protected_separator 
+FROM
+\protected_separator 
+stock
+\protected_separator 
+WHERE
+\protected_separator 
+"
+\protected_separator 
+
+\layout LyX-Code
+
+
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ <<
+\protected_separator 
+q.equal_list("
+\protected_separator 
+AND
+\protected_separator 
+",stock_weight,stock_price);
+\protected_separator 
+
+\layout Standard
+
+would produce the query: 
+\layout LyX-Code
+
+SELECT
+\protected_separator 
+*
+\protected_separator 
+FROM
+\protected_separator 
+stock
+\protected_separator 
+WHERE
+\protected_separator 
+weight=0.95
+\protected_separator 
+AND
+\protected_separator 
+price=0.97
+\protected_separator 
+
+\protected_separator 
+
+\layout Standard
+
+which will select all rows from stock which have the same weight and price
+ as 
+\shape italic 
+q
+\shape default 
+.
+ 
+\layout Standard
+
+The 
+\shape italic 
+vector form
+\shape default 
+ (not shown above) allows you to pass a boolean vector which is a time saver
+ if you use the some pattern more than once as it avoids having to create
+ the vector from the arguments each time.
+  If 
+\family typewriter 
+a
+\family default 
+ is a boolean vector then 
+\family typewriter 
+a[0]
+\family default 
+ will hold wether to include the first variable 
+\family typewriter 
+a[1]
+\family default 
+ the second etc...
+  For example: 
+\layout LyX-Code
+
+vector<bool>
+\protected_separator 
+a;
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+a[0]
+\protected_separator 
+=
+\protected_separator 
+false;
+\protected_separator 
+a[1]
+\protected_separator 
+=
+\protected_separator 
+false;
+\protected_separator 
+a[2]
+\protected_separator 
+=
+\protected_separator 
+true;
+\protected_separator 
+a[3]
+\protected_separator 
+=
+\protected_separator 
+true;
+\protected_separator 
+a[4]
+\protected_separator 
+=
+\protected_separator 
+false;
+\protected_separator 
+
+\newline 
+query
+\protected_separator 
+<<
+\protected_separator 
+"SELECT
+\protected_separator 
+*
+\protected_separator 
+FROM
+\protected_separator 
+stock
+\protected_separator 
+WHERE
+\protected_separator 
+"
+\protected_separator 
+<<
+\protected_separator 
+q.equal_list("
+\protected_separator 
+AND
+\protected_separator 
+",
+\protected_separator 
+a);
+\protected_separator 
+
+\layout Standard
+
+will produce the same query as in the above example.
+ 
+\layout Section
+
+sql_create_c_names 
+\layout Standard
+
+You can also specify alternate field names like so: 
+\layout LyX-Code
+
+sql_create_c_names_5(stock,
+\protected_separator 
+1,
+\protected_separator 
+5,
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+string,
+\protected_separator 
+item,
+\protected_separator 
+"item",
+\protected_separator 
+//
+\protected_separator 
+type,
+\protected_separator 
+id,
+\protected_separator 
+column
+\protected_separator 
+name
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+int,
+\protected_separator 
+num,
+\protected_separator 
+"quantity",
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+double,
+\protected_separator 
+weight,
+\protected_separator 
+"weight",
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+double,
+\protected_separator 
+price,
+\protected_separator 
+"price"
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+MysqlDate,
+\protected_separator 
+date,
+\protected_separator 
+"shipment")
+\protected_separator 
+
+\layout Standard
+
+When 
+\series bold 
+field_list
+\series default 
+ or 
+\series bold 
+equal_list
+\series default 
+ is used it will use the given  field names rather than the variable names
+ for example: 
+\layout LyX-Code
+
+stock
+\protected_separator 
+s("Dinner
+\protected_separator 
+Roles",75,0.95,0.97,"1998-05-25");
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+cout
+\protected_separator 
+<<
+\protected_separator 
+"Field
+\protected_separator 
+List:
+\protected_separator 
+"
+\protected_separator 
+<<
+\protected_separator 
+s.field_list()
+\protected_separator 
+<<
+\protected_separator 
+endl;
+\protected_separator 
+
+\newline 
+cout
+\protected_separator 
+<<
+\protected_separator 
+"Equal
+\protected_separator 
+List:
+\protected_separator 
+"
+\protected_separator 
+<<
+\protected_separator 
+s.equal_list()
+\protected_separator 
+<<
+\protected_separator 
+endl;
+\protected_separator 
+
+\layout Standard
+
+Would return something like (with a little extra hand formating): 
+\layout LyX-Code
+
+Field
+\protected_separator 
+List:
+\protected_separator 
+item,quantity,weight,price,shipment
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+Equal
+\protected_separator 
+List:
+\protected_separator 
+item
+\protected_separator 
+=
+\protected_separator 
+'Dinner
+\protected_separator 
+Roles',quantity
+\protected_separator 
+=
+\protected_separator 
+75,weight
+\protected_separator 
+=
+\protected_separator 
+0.95,
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+price
+\protected_separator 
+=
+\protected_separator 
+0.97,shipment
+\protected_separator 
+=
+\protected_separator 
+'1998-05-25'
+\protected_separator 
+
+\layout Section
+
+sql_create_c_names General Format 
+\layout Standard
+
+The general format is: 
+\layout LyX-Code
+
+sql_create_c_names_#
+\protected_separator 
+(NAME,
+\protected_separator 
+CMP,
+\protected_separator 
+CNST,
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+TYPE1,
+\protected_separator 
+ITEM1,
+\protected_separator 
+NAME1,
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+...
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+TYPE#,
+\protected_separator 
+ITEM#,
+\protected_separator 
+NAME#)
+\protected_separator 
+
+\layout Standard
+
+where NAME1 is the name of the first field, etc.
+  Everything else is the same as it is the same as in sql_create_basic_c_order
+ General Format.
+ 
+\layout Section
+
+sql_create_c_order 
+\layout Standard
+
+As in sql_create_basic_c_order you may specify a custom order.
+ The general from is: 
+\layout LyX-Code
+
+sql_create_c_order_#
+\protected_separator 
+(NAME,
+\protected_separator 
+CMP,
+\protected_separator 
+CNST,
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+TYPE1,
+\protected_separator 
+ITEM1,
+\protected_separator 
+ORDER1,
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+...
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+TYPE#,
+\protected_separator 
+ITEM#,
+\protected_separator 
+ORDER#)
+\protected_separator 
+
+\layout Standard
+
+where everything is the same as in  sql_create_basic_c_order General Format.
+ 
+\layout Section
+
+sql_create_complete 
+\layout Standard
+
+You can also specify both a custom order and custom field names.
+   The general from is.
+ 
+\layout LyX-Code
+
+sql_create_complete_#
+\protected_separator 
+(NAME,
+\protected_separator 
+CMP,
+\protected_separator 
+CNST,
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+TYPE1,
+\protected_separator 
+ITEM1,
+\protected_separator 
+NAME1,
+\protected_separator 
+ORDER1,
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+...
+\protected_separator 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+TYPE#,
+\protected_separator 
+ITEM#,
+\protected_separator 
+NAME#,
+\protected_separator 
+ORDER#)
+\protected_separator 
+
+\layout Standard
+
+Where everything is the same as in  sql_create_c_order General Format and
+ sql_create_c_names General Format.
+ 
+\layout Section
+
+Changing the table name 
+\layout Standard
+
+In order to avoid having even more forms I decided not to allow you to specify
+ a different table name in the actual macro call.
+ The table name is used by 
+\series bold 
+SQLQuery::insert
+\series default 
+, 
+\series bold 
+replace
+\series default 
+, and 
+\series bold 
+update
+\series default 
+.
+  However you can easeally change the default table name, which is the same
+ as the struct name, by changing the reference 
+\series bold 
+NAME::table()
+\series default 
+ returns to a different 
+\series bold 
+const char *
+\series default 
+  For example: 
+\layout LyX-Code
+
+stock::table()
+\protected_separator 
+=
+\protected_separator 
+"in_stock"
+\protected_separator 
+
+\protected_separator 
+
+\layout Standard
+
+Will change the table name to "in_stock" in the examples used through out
+ this guide.
+ 
+\layout Section
+
+Seeing the actual code 
+\layout Standard
+
+To see the actual code that the macro inserts use sql++pretty.
+  For example: 
+\layout LyX-Code
+
+sql++pretty
+\protected_separator 
+<
+\protected_separator 
+test.cc
+\protected_separator 
+|
+\protected_separator 
+less
+\protected_separator 
+
+\protected_separator 
+
+\layout Section
+
+Adding functionality 
+\layout Standard
+
+The best way to add functionality is through inheritance.
+  Even though you could paste the code outputted from pretty.pl and modify
+ it this is not recommended because it won't reflect future enhancements.
+ 
+\layout Section
+
+Other notes 
+\layout Standard
+
+Macros are defined for structures with up to 25 items.
+  If you need more  modify the underlying perl script custom.pl.
+ This perl script is used to generate the header file.
+ It in no way tries to parse C++ code.
+ 
+\layout Standard
+
+The header file that the script custom.pl creates is close to a meg.
+ However, please note that the 1 meg header file (custom-macros.hh) is NOTHING
+ but macros.
+  Therefor the compiler has to do very little work when reading is.
+ 
+\layout Standard
+
+Also, everything included by the macro call is done in such a way that you
+ can safely include the macro call in a header file and not have to worry
+ about duplicate function calls or anything of the like.
+ 
+\layout Chapter
+
+Long Names
+\layout Standard
+
+By default the Mysql++ API uses both short names with out the
+\series bold 
+ Mysql
+\series default 
+ or 
+\series bold 
+mysql_ 
+\series default 
+prefix and long names with the 
+\series bold 
+Mysql
+\series default 
+ or 
+\series bold 
+mysql_ 
+\series default 
+prefix.
+ If this causes name problems define the macro 
+\series bold 
+MYSQL_NO_SHORT_NAMES
+\series default 
+ before including 
+\series bold 
+mysql++
+\series default 
+.
+ This will force the use of long names only.
+ The short and long names are mapped as follows:
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align center \LyXTable
+multicol4
+33 2 0 0 -1 -1 -1 -1
+1 1 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+2 1 0 
+2 1 1 
+1 8 1 1 0 0 0
+1 8 1 1 0 0 0
+0 2 1 0 0 0 0
+0 2 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+0 8 1 0 0 0 0
+
+
+\series bold 
+Short Name
+\newline 
+Long Name
+\series default 
+
+\newline 
+BadQuery
+\newline 
+MysqlBadQuery
+\newline 
+Connection
+\newline 
+MysqlConnection
+\newline 
+ResNSel
+\newline 
+ResNSel
+\newline 
+ResUse 
+\newline 
+ResUse MysqlResUse
+\newline 
+Result 
+\newline 
+MysqlRes
+\newline 
+Field
+\newline 
+MysqlField
+\newline 
+Fields
+\newline 
+MysqlFields
+\newline 
+ResIter 
+\newline 
+MysqlResIter
+\newline 
+ResultIter 
+\newline 
+MysqlResIter
+\newline 
+Row 
+\newline 
+MysqlRow
+\newline 
+MutableRow 
+\newline 
+MysqlMutableRow
+\newline 
+FieldNames 
+\newline 
+MysqlFieldNames
+\newline 
+Query
+\newline 
+MysqlQuery
+\newline 
+BadConversion 
+\newline 
+MysqlBadConversion 
+\newline 
+ColData 
+\newline 
+MysqlColData 
+\newline 
+MutableColData
+\newline 
+MysqlMutableColData
+\newline 
+quote
+\newline 
+mysql_quote
+\newline 
+quote_only
+\newline 
+mysql_quote_only
+\newline 
+quote_double_only
+\newline 
+mysql_quote_double_only
+\newline 
+escape
+\newline 
+mysql_escape
+\newline 
+do_nothing 
+\newline 
+mysql_do_nothing 
+\newline 
+ignore
+\newline 
+mysql_ignore
+\newline 
+Date
+\newline 
+MysqDate
+\newline 
+Time
+\newline 
+MysqlTime
+\newline 
+DateTime
+\newline 
+MysqlDateTime
+\newline 
+Set
+\newline 
+MysqlSet
+\newline 
+Null
+\newline 
+MysqlNull
+\newline 
+null_type 
+\newline 
+mysql_null_type
+\newline 
+null 
+\newline 
+mysql_null
+\newline 
+NullisNull
+\newline 
+MysqlNullisNull
+\newline 
+NullisZero
+\newline 
+MysqlNullisZero
+\newline 
+NullisBlank
+\newline 
+MysqlNullisBlank
+\layout Part*
+
+Appendices
+\layout LaTeX
+
+
+\backslash 
+appendix
+\layout Chapter
+
+Changelog
+\layout Section*
+
+.64.1.1a (Sep 27 1998)
+\layout Itemize
+
+Fixed several bugs that caused my library to fail to compile with egcs 1.1.
+ Hopefully it will still compile with egcs 1.0 however I have not been able
+ to test it with egcs 1.0.
+\layout Itemize
+
+Removed some problem causing debug output in sql++pretty.
+\layout Section*
+
+.64.1a (Aug 1 1998)
+\layout Itemize
+
+Added an (almost) full guide to using Template Queries.
+\layout Itemize
+
+Fixed it so the SQLQuery will throw an exception when all the template parameter
+s are not provided.
+\layout Itemize
+
+Proofread and speedchecked the manual (it really needed it).
+\layout Itemize
+
+Other minor document fixes.
+\layout Section*
+
+.64.0.1a (July 31 1998) 
+\layout Itemize
+
+Reworked the Class Reference section a bit.
+\layout Itemize
+
+Minor document fixes
+\layout Itemize
+
+Added more examples for SSQLS.
+\layout Itemize
+
+Changed the syntax of equal_list for SSQLS from equal_list (cchar *, Manip,
+ cchar *) to (cchar *, cchar *, Manip).
+\layout Itemize
+
+Added set methods to SSQLS.
+ These new methods do the same thing as there corresponding constructors.
+\layout Itemize
+
+Added methods for creating a mysql_type_info from a C++ type_info.
+\layout Section*
+
+.64.a (July 24 1998)
+\layout Itemize
+
+Changed the names of all the classes so they no longer have to have Mysql
+ in the begging of it.
+ However if this creates a problem you can define a macro to 
+\emph on 
+only
+\emph default 
+ use the old names instead.
+ 
+\layout Itemize
+
+The Specialized SQL Structures (formally known as Custom Mysql Structures)
+ changed from mysql_ to sql_.
+\layout Itemize
+
+Added the option of using exceptions thoughout the API.
+\layout Itemize
+
+ColData (formally known as MysqlStrings) will now throw an exception if
+ there is a problem in the conversion.
+\layout Itemize
+
+Added a null adapter.
+\layout Itemize
+
+Added Mutable Result Sets
+\layout Itemize
+
+Added a very basic runtime type identification for SQL types
+\layout Itemize
+
+Changed the document format from POD to LyX .
+\layout Itemize
+
+Am now using a modified version of Perceps to extract the class information
+ directly from the code to make my life easier.
+\layout Itemize
+
+Added an option of defining a macro to avoid using the automatic conversion
+ with binary operators.
+\layout Itemize
+
+Other small fixed I probully forgot to mentune.
+\layout Section*
+
+.63.1.a
+\layout Itemize
+
+Added Custom Mysql Structures.
+\layout Itemize
+
+Fixed the Copy constructor of class Mysql
+\layout Itemize
+
+Started adding code so that class Mysql lets it children now when it is
+ leaving
+\layout Itemize
+
+Attempted to compile it into a library but still need help.
+ As default it will compile as a regular program.
+\layout Itemize
+
+Other small fixes.
+\layout Section*
+
+.62.a (May 3 1998)
+\layout Itemize
+
+Added Template Queries
+\layout Itemize
+
+Created s separate SQLQuery object that is independent of an SQL connection.
+\layout Itemize
+
+You no longer have to import the data for the test program as the program
+ creates the database and tables it needs.
+\layout Itemize
+
+Many small bug fixes.
+\layout Section*
+
+.61.1.a (April 28 1998)
+\layout Itemize
+
+Cleaned up the example code in test.cc and included it in the manual.
+\layout Itemize
+
+Added an interface layout plan to the manual.
+\layout Itemize
+
+Added a reverse iterator.
+\layout Itemize
+
+Fixed a bug with row.hh (It wasn't being included because of a typo).
+\layout Section*
+
+.61.0.a
+\layout Itemize
+
+Major interface changes.
+ I warned you that the interface may change while it is in pre-alpha state
+ and I wasn't kidding.
+\layout Itemize
+
+Created a new and Separate Query Object.
+ You can no longer execute queries from the Mysql object instead you have
+ to create a query object with Mysql::query() and use it to execute queries.
+\layout Itemize
+
+Added the comparison operators to MysqlDate, MysqlTime and MysqlDateTime.
+ Fixed a few bugs in the MysqlDate...
+ that effected the stream output and the conversion of them to strings.
+\layout Itemize
+
+Reflected the MysqlDate...
+ changes in the manual.
+\layout Itemize
+
+Added a new MysqlSet object and a bunch of functions for working with mysql
+ set strings.
+ 
+\layout Section*
+
+.60.3a (April 24 1998)
+\layout Itemize
+
+Changed strtoq and strtouq to strtoll and strtull for metter compatibility
+ Minor Manual fix.
+\layout Itemize
+
+Changed makefile to make it more compatible with Solaris (Thanks Chris H)
+\layout Itemize
+
+Fixed bug in comparison functions so that they would compare in he right
+ direction.
+\layout Itemize
+
+Added some items to the to do list be sure to have a look.
+\layout Chapter
+
+To Do
+\layout Standard
+
+These are in the order I plan on implementing them.
+\layout Itemize
+
+Improve the runtime type identification system for the sql types which will
+ be needed for the mutable results sets and the binary operators in particular.
+\layout Itemize
+
+Improve the mutable results sets so that they can be assigned types that
+ are not strings setting the sql type aproprestly.
+ Also allow the SQLtype to be fixed so that when the programmer assigned
+ a type to the data field that is not compatible with that sql type it will
+ through an exception.
+ For example setting an string to an int.
+\layout Itemize
+
+Change the behavior of MysqlString when used with binary operators.
+ Instead of converting to the type on the other side of the operator have
+ it convert to the type the Mysql server said it originally was.
+\layout Itemize
+
+Improve the Null adapters to make them more intelligently.
+\layout Itemize
+
+Be able to store the result set in an assignable container that stores the
+ results in the format they were originally stored in on the server.
+ (Not sure what the best way to go about this is.
+ If you have any ideas let me know.) 
+\layout Itemize
+
+Switch to using automake/configure and libtools for better portability.
+\layout Itemize
+
+Rework the library to make it more generic.
+ Considering using SQL Drivers so that my library can work with any SQL
+ database.
+ 
+\layout Itemize
+
+Better handling of the destruction of the Mysql class.
+ Have it first tell all its children that its parent is getting destroys
+ and have then respond appropreatly.
+ (Partly implemented as of version .63.1.a) 
+\layout Itemize
+
+Create a container to hold Mysql enums and sets as a bit set as opposed
+ to a list of STL set.
+ 
+\layout Itemize
+
+Have a more intelligent MysqlRes that can reexecute to refresh the data.
+ 
+\layout Standard
+
+If you have anything else you want to see let me know at kevina@clark.net.
+ 
+\layout Chapter
+
+Credits
+\layout Standard
+
+The following is an informal list of programs and people I would like to
+ thank.
+\layout Itemize
+
+egcs - for the great compiler (egcs.cygnus.com)
+\layout Itemize
+
+Perl - for making my life in general a lot easier (www.perl.com)
+\layout Itemize
+
+Lyx - as a great tool for helping me with this manual (www.lyx.org)
+\layout Itemize
+
+perceps - As a great tool for extracting documentation from the source (friga.mer.
+utexas.edu/mark/perl/perceps/)
+\layout Itemize
+
+latex2html - For making the html version of this document possible (www-dsed.llnl.
+gov/files/programs/unix/latex2html/)
+\layout Itemize
+
+lynx - For manking the text version of this document possible.
+\layout Itemize
+
+Mysql - for obvious reasons (www.tcx.se)
+\layout Itemize
+
+Xemacs - the editor of choice
+\layout Itemize
+
+Debian/GNU Linux - The platform I developed this on (www.debian.org)
+\layout Itemize
+
+Chris Halverson - For helping me get it to compile under Solaris.
+\layout Itemize
+
+Fredric Fredricson - For a long talk about automatic conversions.
+\layout Itemize
+
+Michael Widenius - Mysql developer who has been very supportive of my efforts.
+\layout Itemize
+
+Paul J.
+ Lucas -For the original idea of treating the query object like a stream.
+\layout Itemize
+
+Scott Barron - For helping me with the shared libraries.
+\layout Itemize
+
+Jools Enticknap - For giving me the Template Queries Idea.
+\layout Itemize
+
+M.
+ S.
+ Sriram - For a detailed dission of how the Template Queries should be implement
+ed, the suggestion to throw exceptions on bad queries, and the idea of having
+ a back-end independent query object (ie SQLQuery).
+\layout Standard
+
+If you fell that I forgot something please let me know.
+\layout Chapter
+
+Copyright
+\layout Standard
+
+The Mysql++ API is copyright 1998 by Kevin Atkinson and is released under
+ the LGPL license for now.
+\layout Standard
+
+The intent of doing this is allow developers to use my library to develop
+ commercial programs and to allow it be distributed with commercial databases.
+\layout Standard
+
+However if you do use it to develop a commercial program a small donation
+ to me would be greatly appreciated.
+ Your donation will will encourage me to continue to work on improving this
+ API and also encourage me to continue to keep it under the LGPL.
+ Please send donations too.
+ 
+\layout Quote
+
+Kevin Atkinson
+\newline 
+7962 Helmart Dr.
+ 
+\newline 
+Laurel, MD 20723
+\layout Standard
+
+I reserve the right to change the license to future versions of the library
+ if I do not get sufficient pay-back to my work.
+ However, it is my promise to you that it will never become more restrictive
+ than the GPL (not LGPL) license.
+\layout Standard
+
+You can contact me at kevina@clark.net or (301) 498-3290 or at the address
+ above.
+\layout Section
+
+LGPL
+\layout Standard
+\align center 
+GNU LIBRARY GENERAL PUBLIC LICENSE 
+\newline 
+Version 2, June 1991
+\layout Standard
+
+Copyright (C) 1991 Free Software Foundation, Inc.
+ 
+\layout Quote
+
+59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+\layout Standard
+
+Everyone is permitted to copy and distribute verbatim copies of this license
+ document, but changing it is not allowed.
+\layout Standard
+
+[This is the first released version of the library GPL.
+ It is numbered 2 because it goes with version 2 of the ordinary GPL.]
+\layout Standard
+\align center 
+Preamble
+\layout Standard
+
+The licenses for most software are designed to take away your freedom to
+ share and change it.
+ By contrast, the GNU General Public Licenses are intended to guarantee
+ your freedom to share and change free software--to make sure the software
+ is free for all its users.
+\layout Standard
+
+This license, the Library General Public License, applies to some specially
+ designated Free Software Foundation software, and to any other libraries
+ whose authors decide to use it.
+ You can use it for your libraries, too.
+\layout Standard
+
+When we speak of free software, we are referring to freedom, not price.
+ Our General Public Licenses are designed to make sure that you have the
+ freedom to distribute copies of free software (and charge for this service
+ if you wish), that you receive source code or can get it if you want it,
+ that you can change the software or use pieces of it in new free programs;
+ and that you know you can do these things.
+\layout Standard
+
+To protect your rights, we need to make restrictions that forbid anyone
+ to deny you these rights or to ask you to surrender the rights.
+ These restrictions translate to certain responsibilities for you if you
+ distribute copies of the library, or if you modify it.
+\layout Standard
+
+For example, if you distribute copies of the library, whether gratis or
+ for a fee, you must give the recipients all the rights that we gave you.
+ You must make sure that they, too, receive or can get the source code.
+ If you link a program with the library, you must provide complete object
+ files to the recipients so that they can relink them with the library,
+ after making changes to the library and recompiling it.
+ And you must show them these terms so they know their rights.
+\layout Standard
+
+Our method of protecting your rights has two steps: (1) copyright the library,
+ and (2) offer you this license which gives you legal permission to copy,
+ distribute and/or modify the library.
+\layout Standard
+
+Also, for each distributor's protection, we want to make certain that everyone
+ understands that there is no warranty for this free library.
+ If the library is modified by someone else and passed on, we want its recipient
+s to know that what they have is not the original version, so that any problems
+ introduced by others will not reflect on the original authors' reputations.
+\layout Standard
+
+Finally, any free program is threatened constantly by software patents.
+ We wish to avoid the danger that companies distributing free software will
+ individually obtain patent licenses, thus in effect transforming the program
+ into proprietary software.
+ To prevent this, we have made it clear that any patent must be licensed
+ for everyone's free use or not licensed at all.
+\layout Standard
+
+Most GNU software, including some libraries, is covered by the ordinary
+ GNU General Public License, which was designed for utility programs.
+ This license, the GNU Library General Public License, applies to certain
+ designated libraries.
+ This license is quite different from the ordinary one; be sure to read
+ it in full, and don't assume that anything in it is the same as in the
+ ordinary license.
+\layout Standard
+
+The reason we have a separate public license for some libraries is that
+ they blur the distinction we usually make between modifying or adding to
+ a program and simply using it.
+ Linking a program with a library, without changing the library, is in some
+ sense simply using the library, and is analogous to running a utility program
+ or application program.
+ However, in a textual and legal sense, the linked executable is a combined
+ work, a derivative of the original library, and the ordinary General Public
+ License treats it as such.
+\layout Standard
+
+Because of this blurred distinction, using the ordinary General Public License
+ for libraries did not effectively promote software sharing, because most
+ developers did not use the libraries.
+ We concluded that weaker conditions might promote sharing better.
+\layout Standard
+
+However, unrestricted linking of non-free programs would deprive the users
+ of those programs of all benefit from the free status of the libraries
+ themselves.
+ This Library General Public License is intended to permit developers of
+ non-free programs to use free libraries, while preserving your freedom
+ as a user of such programs to change the free libraries that are incorporated
+ in them.
+ (We have not seen how to achieve this as regards changes in header files,
+ but we have achieved it as regards changes in the actual functions of the
+ Library.) The hope is that this will lead to faster development of free
+ libraries.
+\layout Standard
+
+The precise terms and conditions for copying, distribution and modification
+ follow.
+ Pay close attention to the difference between a "work based on the library"
+ and a "work that uses the library".
+ The former contains code derived from the library, while the latter only
+ works together with the library.
+\layout Standard
+
+Note that it is possible for a library to be covered by the ordinary General
+ Public License rather than by this special one.
+\layout Standard
+\align center 
+GNU LIBRARY GENERAL PUBLIC LICENSE
+\newline 
+TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+\layout Standard
+
+0.
+ This License Agreement applies to any software library which contains a
+ notice placed by the copyright holder or other authorized party saying
+ it may be distributed under the terms of this Library General Public License
+ (also called "this License").
+ Each licensee is addressed as "you".
+\layout Standard
+
+A "library" means a collection of software functions and/or data prepared
+ so as to be conveniently linked with application programs (which use some
+ of those functions and data) to form executables.
+\layout Standard
+
+The "Library", below, refers to any such software library or work which
+ has been distributed under these terms.
+ A "work based on the Library" means either the Library or any derivative
+ work under copyright law: that is to say, a work containing the Library
+ or a portion of it, either verbatim or with modifications and/or translated
+ straightforwardly into another language.
+ (Hereinafter, translation is included without limitation in the term "modificat
+ion".)
+\layout Standard
+
+"Source code" for a work means the preferred form of the work for making
+ modifications to it.
+ For a library, complete source code means all the source code for all modules
+ it contains, plus any associated interface definition files, plus the scripts
+ used to control compilation and installation of the library.
+\layout Standard
+
+Activities other than copying, distribution and modification are not covered
+ by this License; they are outside its scope.
+ The act of running a program using the Library is not restricted, and output
+ from such a program is covered only if its contents constitute a work based
+ on the Library (independent of the use of the Library in a tool for writing
+ it).
+ Whether that is true depends on what the Library does and what the program
+ that uses the Library does.
+ 1.
+ You may copy and distribute verbatim copies of the Library's complete source
+ code as you receive it, in any medium, provided that you conspicuously
+ and appropriately publish on each copy an appropriate copyright notice
+ and disclaimer of warranty; keep intact all the notices that refer to this
+ License and to the absence of any warranty; and distribute a copy of this
+ License along with the Library.
+\layout Standard
+
+You may charge a fee for the physical act of transferring a copy, and you
+ may at your option offer warranty protection in exchange for a fee.
+\layout Standard
+
+2.
+ You may modify your copy or copies of the Library or any portion of it,
+ thus forming a work based on the Library, and copy and distribute such
+ modifications or work under the terms of Section 1 above, provided that
+ you also meet all of these conditions:
+\layout Standard
+\pextra_type 1 \pextra_width 0.5in
+
+a) The modified work must itself be a software library.
+\layout Standard
+\pextra_type 1 \pextra_width 0.5in
+
+b) You must cause the files modified to carry prominent notices stating
+ that you changed the files and the date of any change.
+\layout Standard
+\pextra_type 1 \pextra_width 0.5in
+
+c) You must cause the whole of the work to be licensed at no charge to all
+ third parties under the terms of this License.
+\layout Standard
+\pextra_type 1 \pextra_width 0.5in
+
+d) If a facility in the modified Library refers to a function or a table
+ of data to be supplied by an application program that uses the facility,
+ other than as an argument passed when the facility is invoked, then you
+ must make a good faith effort to ensure that, in the event an application
+ does not supply such function or table, the facility still operates, and
+ performs whatever part of its purpose remains meaningful.
+\layout Standard
+
+(For example, a function in a library to compute square roots has a purpose
+ that is entirely well-defined independent of the application.
+ Therefore, Subsection 2d requires that any application-supplied function
+ or table used by this function must be optional: if the application does
+ not supply it, the square root function must still compute square roots.)
+\layout Standard
+
+These requirements apply to the modified work as a whole.
+ If identifiable sections of that work are not derived from the Library,
+ and can be reasonably considered independent and separate works in themselves,
+ then this License, and its terms, do not apply to those sections when you
+ distribute them as separate works.
+ But when you distribute the same sections as part of a whole which is a
+ work based on the Library, the distribution of the whole must be on the
+ terms of this License, whose permissions for other licensees extend to
+ the entire whole, and thus to each and every part regardless of who wrote
+ it.
+\layout Standard
+
+Thus, it is not the intent of this section to claim rights or contest your
+ rights to work written entirely by you; rather, the intent is to exercise
+ the right to control the distribution of derivative or collective works
+ based on the Library.
+\layout Standard
+
+In addition, mere aggregation of another work not based on the Library with
+ the Library (or with a work based on the Library) on a volume of a storage
+ or distribution medium does not bring the other work under the scope of
+ this License.
+\layout Standard
+
+3.
+ You may opt to apply the terms of the ordinary GNU General Public License
+ instead of this License to a given copy of the Library.
+ To do this, you must alter all the notices that refer to this License,
+ so that they refer to the ordinary GNU General Public License, version
+ 2, instead of to this License.
+ (If a newer version than version 2 of the ordinary GNU General Public License
+ has appeared, then you can specify that version instead if you wish.) Do
+ not make any other change in these notices.
+\layout Standard
+
+Once this change is made in a given copy, it is irreversible for that copy,
+ so the ordinary GNU General Public License applies to all subsequent copies
+ and derivative works made from that copy.
+\layout Standard
+
+This option is useful when you wish to copy part of the code of the Library
+ into a program that is not a library.
+\layout Standard
+
+4.
+ You may copy and distribute the Library (or a portion or derivative of
+ it, under Section 2) in object code or executable form under the terms
+ of Sections 1 and 2 above provided that you accompany it with the complete
+ corresponding machine-readable source code, which must be distributed under
+ the terms of Sections 1 and 2 above on a medium customarily used for software
+ interchange.
+\layout Standard
+
+If distribution of object code is made by offering access to copy from a
+ designated place, then offering equivalent access to copy the source code
+ from the same place satisfies the requirement to distribute the source
+ code, even though third parties are not compelled to copy the source along
+ with the object code.
+\layout Standard
+
+5.
+ A program that contains no derivative of any portion of the Library, but
+ is designed to work with the Library by being compiled or linked with it,
+ is called a "work that uses the Library".
+ Such a work, in isolation, is not a derivative work of the Library, and
+ therefore falls outside the scope of this License.
+\layout Standard
+
+However, linking a "work that uses the Library" with the Library creates
+ an executable that is a derivative of the Library (because it contains
+ portions of the Library), rather than a "work that uses the library".
+ The executable is therefore covered by this License.
+ Section 6 states terms for distribution of such executables.
+\layout Standard
+
+When a "work that uses the Library" uses material from a header file that
+ is part of the Library, the object code for the work may be a derivative
+ work of the Library even though the source code is not.
+ Whether this is true is especially significant if the work can be linked
+ without the Library, or if the work is itself a library.
+ The threshold for this to be true is not precisely defined by law.
+\layout Standard
+
+If such an object file uses only numerical parameters, data structure layouts
+ and accessors, and small macros and small inline functions (ten lines or
+ less in length), then the use of the object file is unrestricted, regardless
+ of whether it is legally a derivative work.
+ (Executables containing this object code plus portions of the Library will
+ still fall under Section 6.)
+\layout Standard
+
+Otherwise, if the work is a derivative of the Library, you may distribute
+ the object code for the work under the terms of Section 6.
+ Any executables containing that work also fall under Section 6, whether
+ or not they are linked directly with the Library itself.
+\layout Standard
+
+6.
+ As an exception to the Sections above, you may also compile or link a "work
+ that uses the Library" with the Library to produce a work containing portions
+ of the Library, and distribute that work under terms of your choice, provided
+ that the terms permit modification of the work for the customer's own use
+ and reverse engineering for debugging such modifications.
+\layout Standard
+
+You must give prominent notice with each copy of the work that the Library
+ is used in it and that the Library and its use are covered by this License.
+ You must supply a copy of this License.
+ If the work during execution displays copyright notices, you must include
+ the copyright notice for the Library among them, as well as a reference
+ directing the user to the copy of this License.
+ Also, you must do one of these things:
+\layout Standard
+\pextra_type 1 \pextra_width 0.5in
+
+a) Accompany the work with the complete corresponding machine-readable source
+ code for the Library including whatever changes were used in the work (which
+ must be distributed under Sections 1 and 2 above); and, if the work is
+ an executable linked with the Library, with the complete machine-readable
+ "work that uses the Library", as object code and/or source code, so that
+ the user can modify the Library and then relink to produce a modified executabl
+e containing the modified Library.
+ (It is understood that the user who changes the contents of definitions
+ files in the Library will not necessarily be able to recompile the application
+ to use the modified definitions.)
+\layout Standard
+\pextra_type 1 \pextra_width 0.5in
+
+b) Accompany the work with a written offer, valid for at least three years,
+ to give the same user the materials specified in Subsection 6a, above,
+ for a charge no more than the cost of performing this distribution.
+\layout Standard
+\pextra_type 1 \pextra_width 0.5in
+
+c) If distribution of the work is made by offering access to copy from a
+ designated place, offer equivalent access to copy the above specified materials
+ from the same place.
+\layout Standard
+\pextra_type 1 \pextra_width 0.5in
+
+d) Verify that the user has already received a copy of these materials or
+ that you have already sent this user a copy.
+\layout Standard
+
+For an executable, the required form of the "work that uses the Library"
+ must include any data and utility programs needed for reproducing the executabl
+e from it.
+ However, as a special exception, the source code distributed need not include
+ anything that is normally distributed (in either source or binary form)
+ with the major components (compiler, kernel, and so on) of the operating
+ system on which the executable runs, unless that component itself accompanies
+ the executable.
+\layout Standard
+
+It may happen that this requirement contradicts the license restrictions
+ of other proprietary libraries that do not normally accompany the operating
+ system.
+ Such a contradiction means you cannot use both them and the Library together
+ in an executable that you distribute.
+\layout Standard
+
+7.
+ You may place library facilities that are a work based on the Library side-by-s
+ide in a single library together with other library facilities not covered
+ by this License, and distribute such a combined library, provided that
+ the separate distribution of the work based on the Library and of the other
+ library facilities is otherwise permitted, and provided that you do these
+ two things:
+\layout Standard
+\pextra_type 1 \pextra_width 0.5in
+
+a) Accompany the combined library with a copy of the same work based on
+ the Library, uncombined with any other library facilities.
+ This must be distributed under the terms of the Sections above.
+\layout Standard
+\pextra_type 1 \pextra_width 0.5in
+
+b) Give prominent notice with the combined library of the fact that part
+ of it is a work based on the Library, and explaining where to find the
+ accompanying uncombined form of the same work.
+\layout Standard
+
+8.
+ You may not copy, modify, sublicense, link with, or distribute the Library
+ except as expressly provided under this License.
+ Any attempt otherwise to copy, modify, sublicense, link with, or distribute
+ the Library is void, and will automatically terminate your rights under
+ this License.
+ However, parties who have received copies, or rights, from you under this
+ License will not have their licenses terminated so long as such parties
+ remain in full compliance.
+\layout Standard
+
+9.
+ You are not required to accept this License, since you have not signed
+ it.
+ However, nothing else grants you permission to modify or distribute the
+ Library or its derivative works.
+ These actions are prohibited by law if you do not accept this License.
+ Therefore, by modifying or distributing the Library (or any work based
+ on the Library), you indicate your acceptance of this License to do so,
+ and all its terms and conditions for copying, distributing or modifying
+ the Library or works based on it.
+\layout Standard
+
+10.
+ Each time you redistribute the Library (or any work based on the Library),
+ the recipient automatically receives a license from the original licensor
+ to copy, distribute, link with or modify the Library subject to these terms
+ and conditions.
+ You may not impose any further restrictions on the recipients' exercise
+ of the rights granted herein.
+ You are not responsible for enforcing compliance by third parties to this
+ License.
+\layout Standard
+
+11.
+ If, as a consequence of a court judgment or allegation of patent infringement
+ or for any other reason (not limited to patent issues), conditions are
+ imposed on you (whether by court order, agreement or otherwise) that contradict
+ the conditions of this License, they do not excuse you from the conditions
+ of this License.
+ If you cannot distribute so as to satisfy simultaneously your obligations
+ under this License and any other pertinent obligations, then as a consequence
+ you may not distribute the Library at all.
+ For example, if a patent license would not permit royalty-free redistribution
+ of the Library by all those who receive copies directly or indirectly through
+ you, then the only way you could satisfy both it and this License would
+ be to refrain entirely from distribution of the Library.
+\layout Standard
+
+If any portion of this section is held invalid or unenforceable under any
+ particular circumstance, the balance of the section is intended to apply,
+ and the section as a whole is intended to apply in other circumstances.
+\layout Standard
+
+It is not the purpose of this section to induce you to infringe any patents
+ or other property right claims or to contest validity of any such claims;
+ this section has the sole purpose of protecting the integrity of the free
+ software distribution system which is implemented by public license practices.
+ Many people have made generous contributions to the wide range of software
+ distributed through that system in reliance on consistent application of
+ that system; it is up to the author/donor to decide if he or she is willing
+ to distribute software through any other system and a licensee cannot impose
+ that choice.
+\layout Standard
+
+This section is intended to make thoroughly clear what is believed to be
+ a consequence of the rest of this License.
+\layout Standard
+
+12.
+ If the distribution and/or use of the Library is restricted in certain
+ countries either by patents or by copyrighted interfaces, the original
+ copyright holder who places the Library under this License may add an explicit
+ geographical distribution limitation excluding those countries, so that
+ distribution is permitted only in or among countries not thus excluded.
+ In such case, this License incorporates the limitation as if written in
+ the body of this License.
+\layout Standard
+
+13.
+ The Free Software Foundation may publish revised and/or new versions of
+ the Library General Public License from time to time.
+ Such new versions will be similar in spirit to the present version, but
+ may differ in detail to address new problems or concerns.
+\layout Standard
+
+Each version is given a distinguishing version number.
+ If the Library specifies a version number of this License which applies
+ to it and "any later version", you have the option of following the terms
+ and conditions either of that version or of any later version published
+ by the Free Software Foundation.
+ If the Library does not specify a license version number, you may choose
+ any version ever published by the Free Software Foundation.
+\layout Standard
+
+14.
+ If you wish to incorporate parts of the Library into other free programs
+ whose distribution conditions are incompatible with these, write to the
+ author to ask for permission.
+ For software which is copyrighted by the Free Software Foundation, write
+ to the Free Software Foundation; we sometimes make exceptions for this.
+ Our decision will be guided by the two goals of preserving the free status
+ of all derivatives of our free software and of promoting the sharing and
+ reuse of software generally.
+\layout Standard
+\align center 
+NO WARRANTY
+\layout Standard
+
+15.
+ BECAUSE THE LIBRARY IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR
+ THE LIBRARY, TO THE EXTENT PERMITTED BY APPLICABLE LAW.
+ EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER
+ PARTIES PROVIDE THE LIBRARY "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER
+ EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE LIBRARY IS WITH
+ YOU.
+ SHOULD THE LIBRARY PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY
+ SERVICING, REPAIR OR CORRECTION.
+\layout Standard
+
+16.
+ IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL
+ ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE
+ THE LIBRARY AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING
+ ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF
+ THE USE OR INABILITY TO USE THE LIBRARY (INCLUDING BUT NOT LIMITED TO LOSS
+ OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR
+ THIRD PARTIES OR A FAILURE OF THE LIBRARY TO OPERATE WITH ANY OTHER SOFTWARE),
+ EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY
+ OF SUCH DAMAGES.
+\layout Standard
+\align center 
+END OF TERMS AND CONDITIONS
+\layout Standard
+\align center 
+How to Apply These Terms to Your New Libraries
+\layout Standard
+
+If you develop a new library, and you want it to be of the greatest possible
+ use to the public, we recommend making it free software that everyone can
+ redistribute and change.
+ You can do so by permitting redistribution under these terms (or, alternatively
+, under the terms of the ordinary General Public License).
+\layout Standard
+
+To apply these terms, attach the following notices to the library.
+ It is safest to attach them to the start of each source file to most effectivel
+y convey the exclusion of warranty; and each file should have at least the
+ "copyright" line and a pointer to where the full notice is found.
+\layout Quote
+
+<one line to give the library's name and a brief idea of what it does.>
+\newline 
+Copyright (C) <year> <name of author>
+\layout Quote
+
+This library is free software; you can redistribute it and/or modify it
+ under the terms of the GNU Library General Public License as published
+ by the Free Software Foundation; either version 2 of the License, or (at
+ your option) any later version.
+\layout Quote
+
+This library is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ FOR A PARTICULAR PURPOSE.
+ See the GNU Library General Public License for more details.
+\layout Quote
+
+You should have received a copy of the GNU Library General Public License
+ along with this library; if not, write to the Free Foundation, Inc., 59
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA
+\layout Standard
+
+Also add information on how to contact you by electronic and paper mail.
+\layout Standard
+
+You should also get your employer (if you work as a programmer) or your
+ school, if any, to sign a "copyright disclaimer" for the library, if necessary.
+ Here is a sample; alter the names:
+\layout Quote
+
+Yoyodyne, Inc., hereby disclaims all copyright interest in the library `Frob'
+ (a library for tweaking knobs) written by James Random Hacker.
+\layout Quote
+
+<signature of Ty Coon>, 1 April 1990 Ty Coon, President of Vice
+\layout Standard
+
+That's all there is to it!
+\layout Chapter
+
+Feedback
+\layout Standard
+
+Please give me some.
+ With out your feedback the library will get nowhere.
+ I can me reached at kevina@clark.net.
+ 
+\the_end

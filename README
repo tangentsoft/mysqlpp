@@ -1,0 +1,28 @@
+This is version .64.1 a of my mysql-c++ wrapper library.
+
+After several people commented on how my quickie wrapper would be of
+little use I decided to go all out and create a full featured
+version.
+
+To my knolage this library requiures gcc 2.8 or egcc or better and of
+course the mysql library.
+
+To compile the library and modify the file Configure apropretly
+and type make.
+
+I am working on trying to get this to compile into a library.
+However I really don't know what I am doing. If you have some
+experense with this please take a look at my makefile and uncomment the
+appropriate lines and let me know if I am doing everything right.
+
+For more information please see the manual.
+
+I developed it using egcc ver 1.02 (I think) from the Debian hamm
+package with kernel 2.0.33 and a Cryix P150+ cpu.  I am also using
+Mysql 3.21.25 that is in the non-free section of the Debian
+distribution.
+
+Be sure to let me know what you think.  I depend on your feedback.
+
+Thanks,
+I can be reached at kevina@clark.net

@@ -19,6 +19,12 @@ New Feature Requests
 Bug Fix/Maintenance Items
 -------------------------
 
+	o Some way to skip building examples.  Particularly useful when
+	  building RPM, but not useful when building library as a developer,
+	  since building examples is a simple test of the library.  Some
+	  ideas in this thread on the automake mailing list:
+	  http://lists.gnu.org/archive/html/automake/2005-01/msg00001.html
+
 	o custom2 and custom3 are broken under VC++.  Find out why.  It may
 	  be related to the ostringstream conversion of the query classes.
 	  These two are the only SSQLS examples that update the database.

@@ -34,3 +34,5 @@ distclean-local:
 
 ctags:
 	ctags *.cpp *.h
+
+tags: ctags

@@ -53,7 +53,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "load_file", "examples\load_
 		{07B537E5-ABA8-4053-A97B-82A2AD8B76FE} = {07B537E5-ABA8-4053-A97B-82A2AD8B76FE}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "updel_ex", "examples\updel_ex.vcproj", "{2365B3B5-A119-4F10-A6A7-5CE3265F5650}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "updel", "examples\updel.vcproj", "{2365B3B5-A119-4F10-A6A7-5CE3265F5650}"
 	ProjectSection(ProjectDependencies) = postProject
 		{07B537E5-ABA8-4053-A97B-82A2AD8B76FE} = {07B537E5-ABA8-4053-A97B-82A2AD8B76FE}
 	EndProjectSection

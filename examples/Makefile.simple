@@ -1,0 +1,96 @@
+## This version of the Makefile is for compiling the examples outside the
+## mysql++ source tree, using the MySQL++ library and headers installed
+## into the system directories rather than the ones in ../src.
+
+# --- Things you might need to change:
+
+CXX=g++
+MYSQLPP_INC_DIR=/usr/include/mysql++
+MYSQLCLIENT_INC_DIR=/usr/include/mysql
+CXXFLAGS=-I$(MYSQLPP_INC_DIR) -I$(MYSQLCLIENT_INC_DIR) -O2
+
+LD=$(CXX)
+LDFLAGS=-lmysqlpp -lmysqlclient
+
+
+# --- No user-serviceable parts below :)
+
+BINARIES=resetdb simple1 complic1 custom1 custom2 custom3 custom4 \
+	fieldinf1 dbinfo cgi_image load_file updel
+
+RESETDB_OBJS=resetdb.o util.o
+SIMPLE1_OBJS=simple1.o util.o
+COMPLIC1_OBJS=complic1.o util.o
+CUSTOM1_OBJS=custom1.o util.o
+CUSTOM2_OBJS=custom2.o util.o
+CUSTOM3_OBJS=custom3.o util.o
+CUSTOM4_OBJS=custom4.o util.o
+FIELDINF1_OBJS=fieldinf1.o util.o
+DBINFO_OBJS=dbinfo.o
+CGI_IMAGE_OBJS=cgi_image.o
+LOAD_FILE_OBJS=load_file.o
+UPDEL_OBJS=updel.o
+
+.SUFFIXES: .cc
+
+.cc.o:
+	$(CXX) $(CXXFLAGS) -c $<
+
+
+all: $(BINARIES)
+
+clean:
+	rm -f *.o $(BINARIES)
+
+
+resetdb: $(RESETDB_OBJS)
+	$(LD) $(RESETDB_OBJS) -o $@ $(LDFLAGS)
+
+simple1: $(SIMPLE1_OBJS)
+	$(LD) $(SIMPLE1_OBJS) -o $@ $(LDFLAGS)
+
+complic1: $(COMPLIC1_OBJS)
+	$(LD) $(COMPLIC1_OBJS) -o $@ $(LDFLAGS)
+
+custom1: $(CUSTOM1_OBJS)
+	$(LD) $(CUSTOM1_OBJS) -o $@ $(LDFLAGS)
+
+custom2: $(CUSTOM2_OBJS)
+	$(LD) $(CUSTOM2_OBJS) -o $@ $(LDFLAGS)
+
+custom3: $(CUSTOM3_OBJS)
+	$(LD) $(CUSTOM3_OBJS) -o $@ $(LDFLAGS)
+
+custom4: $(CUSTOM4_OBJS)
+	$(LD) $(CUSTOM4_OBJS) -o $@ $(LDFLAGS)
+
+fieldinf1: $(FIELDINF1_OBJS)
+	$(LD) $(FIELDINF1_OBJS) -o $@ $(LDFLAGS)
+
+dbinfo: $(DBINFO_OBJS)
+	$(LD) $(DBINFO_OBJS) -o $@ $(LDFLAGS)
+
+cgi_image: $(CGI_IMAGE_OBJS)
+	$(LD) $(CGI_IMAGE_OBJS) -o $@ $(LDFLAGS)
+
+load_file: $(LOAD_FILE_OBJS)
+	$(LD) $(LOAD_FILE_OBJS) -o $@ $(LDFLAGS)
+
+updel: $(UPDEL_OBJS)
+	$(LD) $(UPDEL_OBJS) -o $@ $(LDFLAGS)
+
+
+resetdb.o: resetdb.cc util.h
+simple1.o: simple1.cc util.h
+complic1.o: complic1.cc util.h
+custom1.o: custom1.cc util.h
+custom2.o: custom2.cc util.h
+custom3.o: custom3.cc util.h
+custom4.o: custom4.cc util.h
+fieldinf1.o: fieldinf1.cc util.h
+dbinfo.o: dbinfo.cc
+cgi_image.o: cgi_image.cc
+load_file.o: load_file.cc
+updel.o: updel.cc
+util.o: util.cc util.h
+

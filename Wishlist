@@ -1,13 +1,20 @@
-Features/Changes Requested
---------------------------
-
 Patches for any of these thoughtfully considered!
 
-	o is_connected() may not be returning the right value.
-	  <bayufa@bdg.centrin.net.id>
+New Feature Requests
+--------------------
 
 	o Look through my own code for uses of custom SQL queries, and try
 	  to reduce them to API features.
+
+	o Overload SQLQuery::insert() to accept a pair of STL iterators
+	  for mass insertion of a range within a container.
+
+
+Bug Fix/Maintenance Items
+-------------------------
+
+	o is_connected() may not be returning the right value.
+	  <bayufa@bdg.centrin.net.id>
 
 	o Does it build under GCC 3.4 yet?
 	
@@ -15,13 +22,10 @@ Patches for any of these thoughtfully considered!
 
 	o A report says Query objects cannot be reused.  Verify.
 
-	o Documentation needs a thorough reworking.
-
-	o Overload SQLQuery::insert() to accept a pair of STL iterators
-	  for mass insertion of a range within a container.
-
 	o VC++ supports 64-bit ints, but not as "long long"s as GCC does.
 	  Is the stuff in defs.h sufficient to fix up this difference?
+
+	o Documentation needs a thorough reworking.
 
 	o Factor tests out of configure.in into individual files in a config
 	  subdir.
@@ -32,10 +36,5 @@ Patches for any of these thoughtfully considered!
 	  have a private std::stringstream member, and add the function
 	  definitions it needs to look like a stringstream.  The Standard
 	  C++ library classes were not designed to be subclassed.
-
-	o Split RPM into lib, devel and examples sections.  For the latter,
-	  make a simple non-autotools Makefile that looks in the same
-	  directory as the lib and devel RPMs unpack into for the library
-	  and headers.
 
 	o Rename *.cc to *.cpp.

@@ -1,4 +1,4 @@
-The included project files (sqlplusint/*.bp? and examples/*.bp?) were
+The included project files (lib/*.bp? and examples/*.bp?) were
 made for Borland C++ Builder 6.0 by Totte Karlsson.  Totte writes:
 
 	"Any Borland user has to define macros (under IDE user variables)

@@ -1,0 +1,9 @@
+This file comes with the main mysql++ RPM.  This RPM primarily includes
+the libraries needed to run MySQL++ based programs.
+
+For more information about MySQL++, see its home page:
+
+	http://tangentsoft.net/mysql++/
+
+For the library's license information, see the LICENSE file in this
+directory.

@@ -8294,7 +8294,7 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -8400,7 +8400,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
     sql_construct_define_##CONTR(NAME, T1, I1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -8557,7 +8557,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1  \
   }; \
   const char *NAME::_table = #NAME ;  \
@@ -8707,22 +8707,22 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -8761,8 +8761,8 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -8870,7 +8870,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, T2, I2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
     sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -9027,7 +9027,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1 ,\
     N2  \
   }; \
@@ -9208,23 +9208,23 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -9264,9 +9264,9 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -9376,7 +9376,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, T2, I2, T3, I3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
     sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -9533,7 +9533,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1 ,\
     N2 ,\
     N3  \
@@ -9742,24 +9742,24 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -9800,10 +9800,10 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -9915,7 +9915,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, T2, I2, T3, I3, T4, I4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
     sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -10072,7 +10072,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1 ,\
     N2 ,\
     N3 ,\
@@ -10309,25 +10309,25 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -10369,11 +10369,11 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -10487,7 +10487,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
     sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -10644,7 +10644,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1 ,\
     N2 ,\
     N3 ,\
@@ -10909,26 +10909,26 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -10971,12 +10971,12 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -11092,7 +11092,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
     sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -11249,7 +11249,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1 ,\
     N2 ,\
     N3 ,\
@@ -11542,27 +11542,27 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -11606,13 +11606,13 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -11730,7 +11730,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
     sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -11887,7 +11887,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1 ,\
     N2 ,\
     N3 ,\
@@ -12208,28 +12208,28 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -12274,14 +12274,14 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -12401,7 +12401,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
     sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -12558,7 +12558,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1 ,\
     N2 ,\
     N3 ,\
@@ -12907,29 +12907,29 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -12975,15 +12975,15 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -13105,7 +13105,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
     sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -13262,7 +13262,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1 ,\
     N2 ,\
     N3 ,\
@@ -13639,30 +13639,30 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -13709,16 +13709,16 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -13842,7 +13842,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
     sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -13999,7 +13999,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1 ,\
     N2 ,\
     N3 ,\
@@ -14404,31 +14404,31 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -14476,17 +14476,17 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -14612,7 +14612,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
     sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -14769,7 +14769,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1 ,\
     N2 ,\
     N3 ,\
@@ -15202,32 +15202,32 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -15276,18 +15276,18 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -15415,7 +15415,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
     sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -15572,7 +15572,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1 ,\
     N2 ,\
     N3 ,\
@@ -16033,33 +16033,33 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -16109,19 +16109,19 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -16251,7 +16251,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
     sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -16408,7 +16408,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1 ,\
     N2 ,\
     N3 ,\
@@ -16897,34 +16897,34 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -16975,20 +16975,20 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -17120,7 +17120,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
     sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -17277,7 +17277,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1 ,\
     N2 ,\
     N3 ,\
@@ -17794,35 +17794,35 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -17874,21 +17874,21 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ];\
-    s->I15 = (T15)row[ O15 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]);\
+    s->I15 = static_cast<T15>(row[ O15 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -18022,7 +18022,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
     sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -18179,7 +18179,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1 ,\
     N2 ,\
     N3 ,\
@@ -18724,36 +18724,36 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ];\
-    s->I15 = (T15)row[ O15 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]);\
+    s->I15 = static_cast<T15>(row[ O15 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -18806,22 +18806,22 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ];\
-    s->I15 = (T15)row[ O15 ];\
-    s->I16 = (T16)row[ O16 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]);\
+    s->I15 = static_cast<T15>(row[ O15 ]);\
+    s->I16 = static_cast<T16>(row[ O16 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -18957,7 +18957,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
     sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -19114,7 +19114,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1 ,\
     N2 ,\
     N3 ,\
@@ -19687,37 +19687,37 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ];\
-    s->I15 = (T15)row[ O15 ];\
-    s->I16 = (T16)row[ O16 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]);\
+    s->I15 = static_cast<T15>(row[ O15 ]);\
+    s->I16 = static_cast<T16>(row[ O16 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -19771,23 +19771,23 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ];\
-    s->I15 = (T15)row[ O15 ];\
-    s->I16 = (T16)row[ O16 ];\
-    s->I17 = (T17)row[ O17 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]);\
+    s->I15 = static_cast<T15>(row[ O15 ]);\
+    s->I16 = static_cast<T16>(row[ O16 ]);\
+    s->I17 = static_cast<T17>(row[ O17 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -19925,7 +19925,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
     sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -20082,7 +20082,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1 ,\
     N2 ,\
     N3 ,\
@@ -20683,38 +20683,38 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ];\
-    s->I15 = (T15)row[ O15 ];\
-    s->I16 = (T16)row[ O16 ];\
-    s->I17 = (T17)row[ O17 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]);\
+    s->I15 = static_cast<T15>(row[ O15 ]);\
+    s->I16 = static_cast<T16>(row[ O16 ]);\
+    s->I17 = static_cast<T17>(row[ O17 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -20769,24 +20769,24 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ];\
-    s->I15 = (T15)row[ O15 ];\
-    s->I16 = (T16)row[ O16 ];\
-    s->I17 = (T17)row[ O17 ];\
-    s->I18 = (T18)row[ O18 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]);\
+    s->I15 = static_cast<T15>(row[ O15 ]);\
+    s->I16 = static_cast<T16>(row[ O16 ]);\
+    s->I17 = static_cast<T17>(row[ O17 ]);\
+    s->I18 = static_cast<T18>(row[ O18 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -20926,7 +20926,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
     sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -21083,7 +21083,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1 ,\
     N2 ,\
     N3 ,\
@@ -21712,39 +21712,39 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ];\
-    s->I15 = (T15)row[ O15 ];\
-    s->I16 = (T16)row[ O16 ];\
-    s->I17 = (T17)row[ O17 ];\
-    s->I18 = (T18)row[ O18 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]);\
+    s->I15 = static_cast<T15>(row[ O15 ]);\
+    s->I16 = static_cast<T16>(row[ O16 ]);\
+    s->I17 = static_cast<T17>(row[ O17 ]);\
+    s->I18 = static_cast<T18>(row[ O18 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -21800,25 +21800,25 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ];\
-    s->I15 = (T15)row[ O15 ];\
-    s->I16 = (T16)row[ O16 ];\
-    s->I17 = (T17)row[ O17 ];\
-    s->I18 = (T18)row[ O18 ];\
-    s->I19 = (T19)row[ O19 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]);\
+    s->I15 = static_cast<T15>(row[ O15 ]);\
+    s->I16 = static_cast<T16>(row[ O16 ]);\
+    s->I17 = static_cast<T17>(row[ O17 ]);\
+    s->I18 = static_cast<T18>(row[ O18 ]);\
+    s->I19 = static_cast<T19>(row[ O19 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -21960,7 +21960,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, T19, I19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
     sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, T19, I19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -22117,7 +22117,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1 ,\
     N2 ,\
     N3 ,\
@@ -22774,40 +22774,40 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ];\
-    s->I15 = (T15)row[ O15 ];\
-    s->I16 = (T16)row[ O16 ];\
-    s->I17 = (T17)row[ O17 ];\
-    s->I18 = (T18)row[ O18 ];\
-    s->I19 = (T19)row[ O19 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]);\
+    s->I15 = static_cast<T15>(row[ O15 ]);\
+    s->I16 = static_cast<T16>(row[ O16 ]);\
+    s->I17 = static_cast<T17>(row[ O17 ]);\
+    s->I18 = static_cast<T18>(row[ O18 ]);\
+    s->I19 = static_cast<T19>(row[ O19 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -22864,26 +22864,26 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ];\
-    s->I15 = (T15)row[ O15 ];\
-    s->I16 = (T16)row[ O16 ];\
-    s->I17 = (T17)row[ O17 ];\
-    s->I18 = (T18)row[ O18 ];\
-    s->I19 = (T19)row[ O19 ];\
-    s->I20 = (T20)row[ O20 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]);\
+    s->I15 = static_cast<T15>(row[ O15 ]);\
+    s->I16 = static_cast<T16>(row[ O16 ]);\
+    s->I17 = static_cast<T17>(row[ O17 ]);\
+    s->I18 = static_cast<T18>(row[ O18 ]);\
+    s->I19 = static_cast<T19>(row[ O19 ]);\
+    s->I20 = static_cast<T20>(row[ O20 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -23027,7 +23027,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, T19, I19, T20, I20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
     sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, T19, I19, T20, I20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -23184,7 +23184,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1 ,\
     N2 ,\
     N3 ,\
@@ -23869,41 +23869,41 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ];\
-    s->I15 = (T15)row[ O15 ];\
-    s->I16 = (T16)row[ O16 ];\
-    s->I17 = (T17)row[ O17 ];\
-    s->I18 = (T18)row[ O18 ];\
-    s->I19 = (T19)row[ O19 ];\
-    s->I20 = (T20)row[ O20 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]);\
+    s->I15 = static_cast<T15>(row[ O15 ]);\
+    s->I16 = static_cast<T16>(row[ O16 ]);\
+    s->I17 = static_cast<T17>(row[ O17 ]);\
+    s->I18 = static_cast<T18>(row[ O18 ]);\
+    s->I19 = static_cast<T19>(row[ O19 ]);\
+    s->I20 = static_cast<T20>(row[ O20 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -23961,27 +23961,27 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ];\
-    s->I15 = (T15)row[ O15 ];\
-    s->I16 = (T16)row[ O16 ];\
-    s->I17 = (T17)row[ O17 ];\
-    s->I18 = (T18)row[ O18 ];\
-    s->I19 = (T19)row[ O19 ];\
-    s->I20 = (T20)row[ O20 ];\
-    s->I21 = (T21)row[ O21 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]);\
+    s->I15 = static_cast<T15>(row[ O15 ]);\
+    s->I16 = static_cast<T16>(row[ O16 ]);\
+    s->I17 = static_cast<T17>(row[ O17 ]);\
+    s->I18 = static_cast<T18>(row[ O18 ]);\
+    s->I19 = static_cast<T19>(row[ O19 ]);\
+    s->I20 = static_cast<T20>(row[ O20 ]);\
+    s->I21 = static_cast<T21>(row[ O21 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -24127,7 +24127,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, T19, I19, T20, I20, T21, I21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
     sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, T19, I19, T20, I20, T21, I21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -24284,7 +24284,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1 ,\
     N2 ,\
     N3 ,\
@@ -24997,42 +24997,42 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ];\
-    s->I15 = (T15)row[ O15 ];\
-    s->I16 = (T16)row[ O16 ];\
-    s->I17 = (T17)row[ O17 ];\
-    s->I18 = (T18)row[ O18 ];\
-    s->I19 = (T19)row[ O19 ];\
-    s->I20 = (T20)row[ O20 ];\
-    s->I21 = (T21)row[ O21 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]);\
+    s->I15 = static_cast<T15>(row[ O15 ]);\
+    s->I16 = static_cast<T16>(row[ O16 ]);\
+    s->I17 = static_cast<T17>(row[ O17 ]);\
+    s->I18 = static_cast<T18>(row[ O18 ]);\
+    s->I19 = static_cast<T19>(row[ O19 ]);\
+    s->I20 = static_cast<T20>(row[ O20 ]);\
+    s->I21 = static_cast<T21>(row[ O21 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -25091,28 +25091,28 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ];\
-    s->I15 = (T15)row[ O15 ];\
-    s->I16 = (T16)row[ O16 ];\
-    s->I17 = (T17)row[ O17 ];\
-    s->I18 = (T18)row[ O18 ];\
-    s->I19 = (T19)row[ O19 ];\
-    s->I20 = (T20)row[ O20 ];\
-    s->I21 = (T21)row[ O21 ];\
-    s->I22 = (T22)row[ O22 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]);\
+    s->I15 = static_cast<T15>(row[ O15 ]);\
+    s->I16 = static_cast<T16>(row[ O16 ]);\
+    s->I17 = static_cast<T17>(row[ O17 ]);\
+    s->I18 = static_cast<T18>(row[ O18 ]);\
+    s->I19 = static_cast<T19>(row[ O19 ]);\
+    s->I20 = static_cast<T20>(row[ O20 ]);\
+    s->I21 = static_cast<T21>(row[ O21 ]);\
+    s->I22 = static_cast<T22>(row[ O22 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -25260,7 +25260,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, T19, I19, T20, I20, T21, I21, T22, I22, 0, 0, 0, 0, 0, 0, 0, 0)\
     sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, T19, I19, T20, I20, T21, I21, T22, I22, 0, 0, 0, 0, 0, 0, 0, 0)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -25417,7 +25417,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1 ,\
     N2 ,\
     N3 ,\
@@ -26158,43 +26158,43 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ];\
-    s->I15 = (T15)row[ O15 ];\
-    s->I16 = (T16)row[ O16 ];\
-    s->I17 = (T17)row[ O17 ];\
-    s->I18 = (T18)row[ O18 ];\
-    s->I19 = (T19)row[ O19 ];\
-    s->I20 = (T20)row[ O20 ];\
-    s->I21 = (T21)row[ O21 ];\
-    s->I22 = (T22)row[ O22 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]);\
+    s->I15 = static_cast<T15>(row[ O15 ]);\
+    s->I16 = static_cast<T16>(row[ O16 ]);\
+    s->I17 = static_cast<T17>(row[ O17 ]);\
+    s->I18 = static_cast<T18>(row[ O18 ]);\
+    s->I19 = static_cast<T19>(row[ O19 ]);\
+    s->I20 = static_cast<T20>(row[ O20 ]);\
+    s->I21 = static_cast<T21>(row[ O21 ]);\
+    s->I22 = static_cast<T22>(row[ O22 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -26254,29 +26254,29 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ];\
-    s->I15 = (T15)row[ O15 ];\
-    s->I16 = (T16)row[ O16 ];\
-    s->I17 = (T17)row[ O17 ];\
-    s->I18 = (T18)row[ O18 ];\
-    s->I19 = (T19)row[ O19 ];\
-    s->I20 = (T20)row[ O20 ];\
-    s->I21 = (T21)row[ O21 ];\
-    s->I22 = (T22)row[ O22 ];\
-    s->I23 = (T23)row[ O23 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]);\
+    s->I15 = static_cast<T15>(row[ O15 ]);\
+    s->I16 = static_cast<T16>(row[ O16 ]);\
+    s->I17 = static_cast<T17>(row[ O17 ]);\
+    s->I18 = static_cast<T18>(row[ O18 ]);\
+    s->I19 = static_cast<T19>(row[ O19 ]);\
+    s->I20 = static_cast<T20>(row[ O20 ]);\
+    s->I21 = static_cast<T21>(row[ O21 ]);\
+    s->I22 = static_cast<T22>(row[ O22 ]);\
+    s->I23 = static_cast<T23>(row[ O23 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -26426,7 +26426,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, T19, I19, T20, I20, T21, I21, T22, I22, T23, I23, 0, 0, 0, 0, 0, 0)\
     sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, T19, I19, T20, I20, T21, I21, T22, I22, T23, I23, 0, 0, 0, 0, 0, 0)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -26583,7 +26583,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1 ,\
     N2 ,\
     N3 ,\
@@ -27352,44 +27352,44 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ];\
-    s->I15 = (T15)row[ O15 ];\
-    s->I16 = (T16)row[ O16 ];\
-    s->I17 = (T17)row[ O17 ];\
-    s->I18 = (T18)row[ O18 ];\
-    s->I19 = (T19)row[ O19 ];\
-    s->I20 = (T20)row[ O20 ];\
-    s->I21 = (T21)row[ O21 ];\
-    s->I22 = (T22)row[ O22 ];\
-    s->I23 = (T23)row[ O23 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]);\
+    s->I15 = static_cast<T15>(row[ O15 ]);\
+    s->I16 = static_cast<T16>(row[ O16 ]);\
+    s->I17 = static_cast<T17>(row[ O17 ]);\
+    s->I18 = static_cast<T18>(row[ O18 ]);\
+    s->I19 = static_cast<T19>(row[ O19 ]);\
+    s->I20 = static_cast<T20>(row[ O20 ]);\
+    s->I21 = static_cast<T21>(row[ O21 ]);\
+    s->I22 = static_cast<T22>(row[ O22 ]);\
+    s->I23 = static_cast<T23>(row[ O23 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -27450,30 +27450,30 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ];\
-    s->I15 = (T15)row[ O15 ];\
-    s->I16 = (T16)row[ O16 ];\
-    s->I17 = (T17)row[ O17 ];\
-    s->I18 = (T18)row[ O18 ];\
-    s->I19 = (T19)row[ O19 ];\
-    s->I20 = (T20)row[ O20 ];\
-    s->I21 = (T21)row[ O21 ];\
-    s->I22 = (T22)row[ O22 ];\
-    s->I23 = (T23)row[ O23 ];\
-    s->I24 = (T24)row[ O24 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]);\
+    s->I15 = static_cast<T15>(row[ O15 ]);\
+    s->I16 = static_cast<T16>(row[ O16 ]);\
+    s->I17 = static_cast<T17>(row[ O17 ]);\
+    s->I18 = static_cast<T18>(row[ O18 ]);\
+    s->I19 = static_cast<T19>(row[ O19 ]);\
+    s->I20 = static_cast<T20>(row[ O20 ]);\
+    s->I21 = static_cast<T21>(row[ O21 ]);\
+    s->I22 = static_cast<T22>(row[ O22 ]);\
+    s->I23 = static_cast<T23>(row[ O23 ]);\
+    s->I24 = static_cast<T24>(row[ O24 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -27625,7 +27625,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, T19, I19, T20, I20, T21, I21, T22, I22, T23, I23, T24, I24, 0, 0, 0, 0)\
     sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, T19, I19, T20, I20, T21, I21, T22, I22, T23, I23, T24, I24, 0, 0, 0, 0)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -27782,7 +27782,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1 ,\
     N2 ,\
     N3 ,\
@@ -28579,45 +28579,45 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ];\
-    s->I15 = (T15)row[ O15 ];\
-    s->I16 = (T16)row[ O16 ];\
-    s->I17 = (T17)row[ O17 ];\
-    s->I18 = (T18)row[ O18 ];\
-    s->I19 = (T19)row[ O19 ];\
-    s->I20 = (T20)row[ O20 ];\
-    s->I21 = (T21)row[ O21 ];\
-    s->I22 = (T22)row[ O22 ];\
-    s->I23 = (T23)row[ O23 ];\
-    s->I24 = (T24)row[ O24 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]);\
+    s->I15 = static_cast<T15>(row[ O15 ]);\
+    s->I16 = static_cast<T16>(row[ O16 ]);\
+    s->I17 = static_cast<T17>(row[ O17 ]);\
+    s->I18 = static_cast<T18>(row[ O18 ]);\
+    s->I19 = static_cast<T19>(row[ O19 ]);\
+    s->I20 = static_cast<T20>(row[ O20 ]);\
+    s->I21 = static_cast<T21>(row[ O21 ]);\
+    s->I22 = static_cast<T22>(row[ O22 ]);\
+    s->I23 = static_cast<T23>(row[ O23 ]);\
+    s->I24 = static_cast<T24>(row[ O24 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -28679,31 +28679,31 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ];\
-    s->I15 = (T15)row[ O15 ];\
-    s->I16 = (T16)row[ O16 ];\
-    s->I17 = (T17)row[ O17 ];\
-    s->I18 = (T18)row[ O18 ];\
-    s->I19 = (T19)row[ O19 ];\
-    s->I20 = (T20)row[ O20 ];\
-    s->I21 = (T21)row[ O21 ];\
-    s->I22 = (T22)row[ O22 ];\
-    s->I23 = (T23)row[ O23 ];\
-    s->I24 = (T24)row[ O24 ];\
-    s->I25 = (T25)row[ O25 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]);\
+    s->I15 = static_cast<T15>(row[ O15 ]);\
+    s->I16 = static_cast<T16>(row[ O16 ]);\
+    s->I17 = static_cast<T17>(row[ O17 ]);\
+    s->I18 = static_cast<T18>(row[ O18 ]);\
+    s->I19 = static_cast<T19>(row[ O19 ]);\
+    s->I20 = static_cast<T20>(row[ O20 ]);\
+    s->I21 = static_cast<T21>(row[ O21 ]);\
+    s->I22 = static_cast<T22>(row[ O22 ]);\
+    s->I23 = static_cast<T23>(row[ O23 ]);\
+    s->I24 = static_cast<T24>(row[ O24 ]);\
+    s->I25 = static_cast<T25>(row[ O25 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -28857,7 +28857,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, T19, I19, T20, I20, T21, I21, T22, I22, T23, I23, T24, I24, T25, I25, 0, 0)\
     sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, T19, I19, T20, I20, T21, I21, T22, I22, T23, I23, T24, I24, T25, I25, 0, 0)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -29014,7 +29014,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1 ,\
     N2 ,\
     N3 ,\
@@ -29839,46 +29839,46 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ];\
-    s->I15 = (T15)row[ O15 ];\
-    s->I16 = (T16)row[ O16 ];\
-    s->I17 = (T17)row[ O17 ];\
-    s->I18 = (T18)row[ O18 ];\
-    s->I19 = (T19)row[ O19 ];\
-    s->I20 = (T20)row[ O20 ];\
-    s->I21 = (T21)row[ O21 ];\
-    s->I22 = (T22)row[ O22 ];\
-    s->I23 = (T23)row[ O23 ];\
-    s->I24 = (T24)row[ O24 ];\
-    s->I25 = (T25)row[ O25 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]);\
+    s->I15 = static_cast<T15>(row[ O15 ]);\
+    s->I16 = static_cast<T16>(row[ O16 ]);\
+    s->I17 = static_cast<T17>(row[ O17 ]);\
+    s->I18 = static_cast<T18>(row[ O18 ]);\
+    s->I19 = static_cast<T19>(row[ O19 ]);\
+    s->I20 = static_cast<T20>(row[ O20 ]);\
+    s->I21 = static_cast<T21>(row[ O21 ]);\
+    s->I22 = static_cast<T22>(row[ O22 ]);\
+    s->I23 = static_cast<T23>(row[ O23 ]);\
+    s->I24 = static_cast<T24>(row[ O24 ]);\
+    s->I25 = static_cast<T25>(row[ O25 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -29941,32 +29941,32 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ];\
-    s->I15 = (T15)row[ O15 ];\
-    s->I16 = (T16)row[ O16 ];\
-    s->I17 = (T17)row[ O17 ];\
-    s->I18 = (T18)row[ O18 ];\
-    s->I19 = (T19)row[ O19 ];\
-    s->I20 = (T20)row[ O20 ];\
-    s->I21 = (T21)row[ O21 ];\
-    s->I22 = (T22)row[ O22 ];\
-    s->I23 = (T23)row[ O23 ];\
-    s->I24 = (T24)row[ O24 ];\
-    s->I25 = (T25)row[ O25 ];\
-    s->I26 = (T26)row[ O26 ]; \
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]);\
+    s->I15 = static_cast<T15>(row[ O15 ]);\
+    s->I16 = static_cast<T16>(row[ O16 ]);\
+    s->I17 = static_cast<T17>(row[ O17 ]);\
+    s->I18 = static_cast<T18>(row[ O18 ]);\
+    s->I19 = static_cast<T19>(row[ O19 ]);\
+    s->I20 = static_cast<T20>(row[ O20 ]);\
+    s->I21 = static_cast<T21>(row[ O21 ]);\
+    s->I22 = static_cast<T22>(row[ O22 ]);\
+    s->I23 = static_cast<T23>(row[ O23 ]);\
+    s->I24 = static_cast<T24>(row[ O24 ]);\
+    s->I25 = static_cast<T25>(row[ O25 ]);\
+    s->I26 = static_cast<T26>(row[ O26 ]); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -30122,7 +30122,7 @@
     void set (const Row &row);\
     sql_compare_define_##CMP(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, T19, I19, T20, I20, T21, I21, T22, I22, T23, I23, T24, I24, T25, I25, T26, I26)\
     sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, T19, I19, T20, I20, T21, I21, T22, I22, T23, I23, T24, I24, T25, I25, T26, I26)\
-    static char *names[];\
+    static const char *names[];\
     static const char *_table;\
     static const char *& table() {return _table;}\
     NAME##_value_list<quote_type0> value_list() const {\
@@ -30279,7 +30279,7 @@
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, \
 					    sql_cmp_type sc) const;\
   }; \
-  char *NAME::names[] = { \
+  const char *NAME::names[] = { \
     N1 ,\
     N2 ,\
     N3 ,\
@@ -31132,47 +31132,47 @@
   } \
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_field_list<Manip> \
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {\
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, field, NUM);\
   }\
   template <class Manip>\
   inline NAME##_cus_equal_list<Manip> \
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {\
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_defe_##CMP (NAME, equal, NUM);\
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = (T1)row[ O1 ];\
-    s->I2 = (T2)row[ O2 ];\
-    s->I3 = (T3)row[ O3 ];\
-    s->I4 = (T4)row[ O4 ];\
-    s->I5 = (T5)row[ O5 ];\
-    s->I6 = (T6)row[ O6 ];\
-    s->I7 = (T7)row[ O7 ];\
-    s->I8 = (T8)row[ O8 ];\
-    s->I9 = (T9)row[ O9 ];\
-    s->I10 = (T10)row[ O10 ];\
-    s->I11 = (T11)row[ O11 ];\
-    s->I12 = (T12)row[ O12 ];\
-    s->I13 = (T13)row[ O13 ];\
-    s->I14 = (T14)row[ O14 ];\
-    s->I15 = (T15)row[ O15 ];\
-    s->I16 = (T16)row[ O16 ];\
-    s->I17 = (T17)row[ O17 ];\
-    s->I18 = (T18)row[ O18 ];\
-    s->I19 = (T19)row[ O19 ];\
-    s->I20 = (T20)row[ O20 ];\
-    s->I21 = (T21)row[ O21 ];\
-    s->I22 = (T22)row[ O22 ];\
-    s->I23 = (T23)row[ O23 ];\
-    s->I24 = (T24)row[ O24 ];\
-    s->I25 = (T25)row[ O25 ];\
-    s->I26 = (T26)row[ O26 ];\
+    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I14 = static_cast<T14>(row[ O14 ]);\
+    s->I15 = static_cast<T15>(row[ O15 ]);\
+    s->I16 = static_cast<T16>(row[ O16 ]);\
+    s->I17 = static_cast<T17>(row[ O17 ]);\
+    s->I18 = static_cast<T18>(row[ O18 ]);\
+    s->I19 = static_cast<T19>(row[ O19 ]);\
+    s->I20 = static_cast<T20>(row[ O20 ]);\
+    s->I21 = static_cast<T21>(row[ O21 ]);\
+    s->I22 = static_cast<T22>(row[ O22 ]);\
+    s->I23 = static_cast<T23>(row[ O23 ]);\
+    s->I24 = static_cast<T24>(row[ O24 ]);\
+    s->I25 = static_cast<T25>(row[ O25 ]);\
+    s->I26 = static_cast<T26>(row[ O26 ]);\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\

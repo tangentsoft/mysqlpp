@@ -42,7 +42,7 @@ public:
 	  if (!mysql_res) {  if (throw_exceptions) throw BadQuery("Results not fetched");
     else return Row();}
     MYSQL_ROW row = mysql_fetch_row(mysql_res);
-    unsigned int* length = (unsigned int*) mysql_fetch_lengths(mysql_res);
+    unsigned long* length = mysql_fetch_lengths(mysql_res);
 	  if (!row || !length) {  if (throw_exceptions) throw BadQuery("Bad row");
     else return Row();}
     return Row(row, this, length, throw_exceptions);
@@ -51,7 +51,7 @@ public:
   //: raw c api function
   bool          eof () const {return mysql_eof(mysql_res) != 0;}
   //: raw c api function
-  long unsigned int *fetch_lengths () const {return mysql_fetch_lengths(mysql_res);}
+  unsigned long *fetch_lengths () const {return mysql_fetch_lengths(mysql_res);}
   //: raw c api function
 
   /* raw mysql c api fields functions */
@@ -155,7 +155,10 @@ public:
   Result () {} //:
   Result (MYSQL_RES *result, bool te = false) 
     : ResUse(result, NULL, te) {mysql = NULL;} //:
-  Result (const Result &other) : ResUse(other) {mysql = NULL;} //:
+  Result (const Result &other)
+	: ResUse(other),
+	const_subscript_container<Result,Row,const Row>() // no copying here
+	{mysql = NULL;} //:
   virtual ~Result() {}  
   // raw mysql c api functions
   const Row fetch_row() const
@@ -163,7 +166,7 @@ public:
 	  if (!mysql_res) {  if (throw_exceptions) throw BadQuery("Results not fetched");
     else return Row();}
     MYSQL_ROW row = mysql_fetch_row(mysql_res);
-    unsigned int* length = (unsigned int*) mysql_fetch_lengths(mysql_res);
+    unsigned long* length = mysql_fetch_lengths(mysql_res);
 	  if (!row || !length) {  if (throw_exceptions) throw BadQuery("Bad row");
     else return Row();}
     return Row(row, this, length, throw_exceptions);

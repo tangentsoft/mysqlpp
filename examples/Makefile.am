@@ -1,7 +1,7 @@
 include $(top_srcdir)/common.am
 
-LDFLAGS = 
-LDADD = $(MYSQLPP_LIB)
+AM_CXXFLAGS = @PTHREAD_CFLAGS@
+LDADD = $(MYSQLPP_LIB) @PTHREAD_LIBS@
 
 EXTRA_DIST = *.vcproj *.bpf *.bpr *.bpg Makefile.simple
 

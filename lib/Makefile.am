@@ -1,5 +1,8 @@
 include $(top_srcdir)/common.am
 
+AM_CXXFLAGS = @PTHREAD_CFLAGS@
+LDADD = $(MYSQLPP_LIB) @PTHREAD_LIBS@
+
 EXTRA_DIST = custom.pl *.bpf *.bpr *.bpg
 
 lib_LTLIBRARIES=libmysqlpp.la

@@ -19,7 +19,7 @@ void strip(std::string& s)
 	j--;
 	for (i = j; i && s[i] == ' '; i--) ;
 	if (i != j) {
-		s.erase(i + 1, (size_t) - 1);
+		s.erase(i + 1, static_cast<size_t> (-1));
 	}
 }
 

@@ -221,7 +221,7 @@ foreach $i (1..26) {
 	$parm_simple2c_b .= ", " unless $j == $i;
 	$defs  .= "    T$j I$j;";
 	$defs  .= "\n" unless $j == $i;
-	$popul .= "    s->I$j = (T$j)row[ O$j ];";
+	$popul .= "    s->I$j = static_cast<T$j>(row[ O$j ]);";
 	$popul .= "\n" unless $j == $i;
         $names .= "    N$j ";
 	$names .= ",\n" unless $j == $i;
@@ -422,7 +422,7 @@ $defs
     void set (const Row &row);
     sql_compare_define_##CMP(NAME, $parmC)
     sql_construct_define_##CONTR(NAME, $parmC)
-    static char *names[];
+    static const char *names[];
     static const char *_table;
     static const char *& table() {return _table;}
 
@@ -595,7 +595,7 @@ $defs
 					    sql_cmp_type sc) const;
   }; 
 
-  char *NAME::names[] = { 
+  const char *NAME::names[] = { 
 $names 
   }; 
   const char *NAME::_table = #NAME ;  
@@ -761,19 +761,19 @@ $cus_equal_list
 
   template <class Manip>
   inline NAME##_cus_value_list<Manip> 
-  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {
     sql_compare_type_def_##CMP (NAME, value, NUM);
   }
 
   template <class Manip>
   inline NAME##_cus_field_list<Manip> 
-  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {
     sql_compare_type_def_##CMP (NAME, field, NUM);
   }
 
   template <class Manip>
   inline NAME##_cus_equal_list<Manip> 
-  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type /*sc*/) const {
     sql_compare_type_defe_##CMP (NAME, equal, NUM);
   }
 

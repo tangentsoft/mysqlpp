@@ -48,7 +48,7 @@ SQLString* pprepare(char option, SQLString& S, bool replace = true)
 	if (option == 'r' || (option == 'q' && S.is_string)) {
 		char *s = new char[S.size() * 2 + 1];
 		mysql_escape_string(s, const_cast < char *>(S.c_str()),
-							(unsigned long) S.size());
+							S.size());
 		SQLString *ss = new SQLString("'");
 		*ss += s;
 		*ss += "'";
@@ -96,9 +96,9 @@ void SQLQuery::proc(SQLQueryParms& p)
 		*this << i->before;
 		num = i->num;
 		if (num != -1) {
-			if (num < (int)p.size())
+			if (num < static_cast<int>(p.size()))
 				c = &p;
-			else if (num < (int)def.size())
+			else if (num < static_cast<int>(def.size()))
 				c = &def;
 			else {
 				*this << " ERROR";
@@ -202,9 +202,9 @@ void SQLQuery::parse()
 						s++;
 					}
 
-					if (n >= (long int) parsed_names.size()) {
+					if (n >= static_cast<long int> (parsed_names.size())) {
 						parsed_names.insert(parsed_names.end(),
-								(vector<string>::size_type)(n + 1) -
+								static_cast<vector<string>::size_type>(n + 1) -
 									parsed_names.size(),
 								string());
 					}

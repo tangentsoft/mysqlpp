@@ -85,18 +85,18 @@ public:
 	inline const bool is_null(void) const {return _null;}
 	inline const std::string&  get_string(void) const {return buf;}
   operator cchar*() const {return buf.c_str();}
-  operator  signed char() const {return conv((signed char)0);}
-  operator  unsigned char() const {return conv((unsigned char)0);}
-  operator  int() const {return conv((int)0);}
-  operator  unsigned int() const {return conv((unsigned int)0);}
-  operator  short int() const {return conv((short int)0);}
-  operator  unsigned short int() const {return conv((unsigned short int)0);}
-  operator  long int() const {return conv((long int)0);}
-  operator  unsigned long int() const {return conv((unsigned long int)0);}
-  operator  longlong() const {return conv((longlong)0);}
-  operator  ulonglong() const {return conv((ulonglong)0);}
-  operator  float() const {return conv((float)0);}
-  operator  double() const {return conv((double)0);}
+  operator  signed char() const {return conv(static_cast<signed char>(0));}
+  operator  unsigned char() const {return conv(static_cast<unsigned char>(0));}
+  operator  int() const {return conv(static_cast<int>(0));}
+  operator  unsigned int() const {return conv(static_cast<unsigned int>(0));}
+  operator  short int() const {return conv(static_cast<short int>(0));}
+  operator  unsigned short int() const {return conv(static_cast<unsigned short int>(0));}
+  operator  long int() const {return conv(static_cast<long int>(0));}
+  operator  unsigned long int() const {return conv(static_cast<unsigned long int>(0));}
+  operator  longlong() const {return conv(static_cast<longlong>(0));}
+  operator  ulonglong() const {return conv(static_cast<ulonglong>(0));}
+  operator  float() const {return conv(static_cast<float>(0));}
+  operator  double() const {return conv(static_cast<double>(0));}
 
   template <class T, class B> operator Null<T,B> () const;
 };
@@ -117,10 +117,10 @@ typedef ColData MysqlStr;
 #define oprsw(opr, other, conv) \
   template<class Str> \
   inline other operator opr (ColData_Tmpl<Str> x, other y) \
-    {return (conv)x opr y;} \
+    {return static_cast<conv>(x) opr y;} \
   template<class Str> \
   inline other operator opr (other x, ColData_Tmpl<Str> y) \
-    {return x opr (conv)y;}
+    {return x opr static_cast<conv>(y);}
 
 #define operator_binary(other, conv) \
   oprsw(+, other, conv) \
@@ -166,7 +166,7 @@ ColData_Tmpl<Str>::operator Null<T,B> () const {
 
 
 template <class Str> template<class Type> 
-Type ColData_Tmpl<Str>::conv (Type dummy) const {
+Type ColData_Tmpl<Str>::conv (Type /*dummy*/) const {
 	std::string strbuf = buf;
 	strip_all_blanks(strbuf);
   size_t len = strbuf.size();

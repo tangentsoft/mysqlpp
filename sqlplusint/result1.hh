@@ -15,14 +15,10 @@
 #include "field_names1.hh"
 #include "row1.hh"
 #include "resiter1.hh"
-#include "tracker.h"
 #include "field_types1.hh"
 #include "fields1.hh"
-
-#include "connection0.hh"
-
 //:
-class ResUse : public MysqlChild {
+class ResUse  {
   friend Connection;
 protected:
   Connection            *mysql;
@@ -32,9 +28,6 @@ protected:
   mutable FieldTypes    *_types;
   Fields                _fields;
   string                _table;       
-
-  static pointer_tracker<MYSQL_RES, ResUse> others;
-
   void copy(const ResUse& other); 
 public:
   ResUse () : mysql(0), mysql_res(0), throw_exceptions(false), _names(NULL), _types(NULL), _fields(this) {}
@@ -44,7 +37,7 @@ public:
   MYSQL_RES *mysql_result (void) {return mysql_res;}
   /* raw mysql c api functions */
   Row fetch_row()
-    {return Row(mysql_fetch_row(mysql_res), this, throw_exceptions);}
+    {return Row(mysql_fetch_row(mysql_res), this, (unsigned int *)mysql_fetch_lengths(mysql_res), throw_exceptions);}
   //: raw c api function
   bool          eof () const {return mysql_eof(mysql_res);}
   //: raw c api function
@@ -160,7 +153,7 @@ public:
   
   // raw mysql c api functions
   const Row    fetch_row() const
-    {return Row(mysql_fetch_row(mysql_res), this, throw_exceptions);}  
+    {return Row(mysql_fetch_row(mysql_res), this, (unsigned int *) mysql_fetch_lengths(mysql_res), throw_exceptions);}  
   //: Raw c api function
   int          num_rows() const {return mysql_num_rows(mysql_res);}
   //: Raw c api function

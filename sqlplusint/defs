@@ -1,14 +1,22 @@
-
+// -*- Mode:C++ -*-
 #ifndef __mysql_defs_h_
 #define __mysql_defs_h_
-
 #include <mysql.h>
+
 #include "define_short"
+
+/* These are set in type_info.cc because they need to be set from
+   config.h, but config.h should not be included in a header file */
+extern unsigned int sqlplus_major_version;
+extern unsigned int sqlplus_minor_version;
+extern unsigned int sqlplus_micro_version;
 
 typedef MYSQL_FIELD MysqlField;
 typedef const char cchar;
 typedef long long int longgint;
-
+#ifndef uint
+typedef unsigned int uint;
+#endif
 class Connection;
 class ResUse;
 class Result;

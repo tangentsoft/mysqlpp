@@ -1,3 +1,5 @@
+#include <mysql++-config.hh>
+
 #include "vallist3.hh"
 #include "row2.hh"
 

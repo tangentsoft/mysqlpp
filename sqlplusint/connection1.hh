@@ -19,9 +19,6 @@
 #include "query1.hh"
 #include "result1.hh"
 
-#include "connection0.hh" 
-#include "tracker.h"
-
 //: Exception thrown when a BadQuery is encountered
 struct BadQuery {
   BadQuery(string er) : error(er) {}
@@ -37,9 +34,6 @@ class Connection {
   friend Query;
   
 private:
-  set<MysqlChild*> children;
-//  static pointer_tracker<MYSQL, Connection> others;
-  
   bool throw_exceptions;
   MYSQL mysql;
   bool is_connected;
@@ -50,15 +44,15 @@ private:
   int          insert_id () {return mysql_insert_id(&mysql);}
 
 public:
-  Connection () : throw_exceptions(false), locked(false) //:
-    {/* others.insert(&mysql,this);*/	mysql_init(&mysql);}
-  Connection (bool te) : throw_exceptions(te), is_connected(false), locked(false), Success(false) //:
-    {/*others.insert(&mysql,this);*/	mysql_init(&mysql);}
+  Connection () : throw_exceptions(true), locked(false) //:
+    {mysql_init(&mysql);}
+  Connection (bool te) : throw_exceptions(te), is_connected(false), locked(true), Success(false) //:
+    {mysql_init(&mysql);}
   Connection (const char *db, const char *host = "", const char *user = "", 
-	      const char *passwd = "", bool te = false); 
+	      const char *passwd = "", bool te = true); 
   Connection (const char *db, const char *host, const char *user, 
 	      const char *passwd = "", uint port = 3306, my_bool compress = 1,
-	      unsigned int connect_timeout = 5, bool te = false,
+	      unsigned int connect_timeout = 5, bool te = true,
 	      cchar *socket_name = "");
 
   bool   real_connect (cchar *db = "", cchar *host = "", 
@@ -86,12 +80,6 @@ public:
   void purge (MYSQL *m) {mysql_close(&mysql); }
   //:
 
-  void add_child(MysqlChild *child) {children.insert(child);}
-  //:
-
-  void remove_child(MysqlChild *child) {children.erase(child); }
-  //: 
-
   inline Query query();
   //:
 
@@ -114,6 +102,7 @@ public:
   Result  store(const string &str) {return store(str, throw_exceptions);} //:
   ResUse  use(const string &str)   {return use(str, throw_exceptions);} //:
   ResNSel execute(const string &str) {return execute(str, throw_exceptions);} //:
+	bool exec (const string &str);
   Result  store(const string &str, bool te); //:
   ResUse  use(const string &str, bool te); //:
   ResNSel execute(const string &str, bool te); //:

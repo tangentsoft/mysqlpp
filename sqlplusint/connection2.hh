@@ -12,7 +12,7 @@ void Connection::storein_sequence (Sequence &seq, const string &str) {
   while (1) {
 	  MYSQL_ROW d = mysql_fetch_row(result.mysql_res);
 		if (!d) break;
-	  Row row(d,&result,true);
+	  Row row(d,&result,(unsigned int *)mysql_fetch_lengths(result.mysql_res),true);
 		if (!row) break;
     seq.push_back(typename Sequence::value_type(row));
 	}
@@ -24,7 +24,7 @@ void Connection::storein_set (Set &sett, const string &str) {
 	while (1) {
 	  MYSQL_ROW d = mysql_fetch_row(result.mysql_res);	
 		if (!d) return;
-	  Row row(d,&result,true);
+	  Row row(d,&result,(unsigned int *)mysql_fetch_lengths(result.mysql_res),true);
 		if (!row) break;
     sett.insert(typename Set::value_type(row));
 	}

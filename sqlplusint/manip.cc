@@ -1,7 +1,10 @@
+#include <mysql++-config.hh>
 
 #include "manip3.hh"
 
 // quote manipulator
+
+bool dont_quote_auto=false;
 
 SQLQueryParms& operator << (quote_type2 p, SQLString &in) {
   if (in.is_string) {
@@ -70,6 +73,80 @@ ostream& operator << (quote_type1 o, const mysql_ColData<string>& in) {
 template <>
 ostream& operator << (quote_type1 o, const mysql_ColData<const_string>& in) {
   return _manip(o,in);
+}
+
+ostream& operator << (ostream& o, const mysql_ColData<string>& in) {
+	if (dont_quote_auto || (o.rdbuf() == cout.rdbuf()) || (o.rdbuf() == cerr.rdbuf())) return o << in.get_string();
+  if (in.escape_q()) {
+    char *s = new char[in.size()*2+1];
+    mysql_escape_string(s, const_cast<char *>(in.c_str()), in.size() );
+    if (in.quote_q())
+      o << "'" << s << "'";
+    else
+      o << s;
+    delete s;
+  } else if (in.quote_q()) {
+    o << "'" << in.get_string() << "'";
+  } else {
+    o << in.get_string();
+  }
+  return o;
+}
+
+
+ostream& operator << (ostream& o, const mysql_ColData<const_string>& in) {
+	if (dont_quote_auto || (o.rdbuf() == cout.rdbuf()) || (o.rdbuf() == cerr.rdbuf())) return o << in.get_string();
+  if (in.escape_q()) {
+    char *s = new char[in.size()*2+1];
+    mysql_escape_string(s, const_cast<char *>(in.c_str()), in.size() );
+    if (in.quote_q())
+      o << "'" << s << "'";
+    else
+      o << s;
+    delete s;
+  } else if (in.quote_q()) {
+    o << "'" << in.get_string() << "'";
+  } else {
+    o << in.get_string();
+  }
+  return o;
+}
+
+SQLQuery& operator << (SQLQuery& o, const mysql_ColData<string>& in) {
+	if (dont_quote_auto) {o << in.get_string(); return o;}
+  if (in.escape_q()) {
+    char *s = new char[in.size()*2+1];
+    mysql_escape_string(s, const_cast<char *>(in.c_str()), in.size() );
+    if (in.quote_q())
+      o << "'" << s << "'";
+    else
+      o << s;
+    delete s;
+  } else if (in.quote_q()) {
+    o << "'" << in.get_string() << "'";
+  } else {
+    o << in.get_string();
+  }
+  return o;
+}
+
+
+SQLQuery& operator << (SQLQuery& o, const mysql_ColData<const_string>& in) {
+	if (dont_quote_auto) {o << in.get_string(); return o;}
+  if (in.escape_q()) {
+    char *s = new char[in.size()*2+1];
+    mysql_escape_string(s, const_cast<char *>(in.c_str()), in.size() );
+    if (in.quote_q())
+      o << "'" << s << "'";
+    else
+      o << s;
+    delete s;
+  } else if (in.quote_q()) {
+    o << "'" << in.get_string() << "'";
+  } else {
+    o << in.get_string();
+  }
+  return o;
 }
 
 // quote only manipulator

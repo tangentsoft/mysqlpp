@@ -5,7 +5,6 @@
 #include <string>
 #include "defs"
 #include "define_short"
-//#include "result1.hh"
 #include "coldata1.hh"
 #include "resiter1.hh"
 #include "vallist1.hh"
@@ -241,14 +240,14 @@ private:
 
 public:
   Row() {}
-  Row(MYSQL_ROW d, const ResUse *r, bool te = false) 
+  Row(MYSQL_ROW d, const ResUse *r, unsigned int *jj, bool te = false) 
     : res(r), throw_exceptions(te) 
 		{
 		  if (!d) return;
 		  data.clear();
 		  for (unsigned int i=0;i<size();i++) 
 			{
-			  data.insert(data.end(),(d[i]) ? (string)d[i] : (string)"");
+			  data.insert(data.end(),(d[i]) ? string(d[i],jj[i]) : (string)"");
 			}
 		}
   const Row& self() const {return *this;}
@@ -267,7 +266,7 @@ public:
   //: Returns the value of the field with the field name of i.
   // This method is not nearly as effecent as using the index number. Use sparingly. 
 
-  const char * raw_data(int i) const {return data[i].c_str();}
+  const char *raw_data(int i) const {return data[i].data();}
 
   operator bool() const {return (data.size()) ? true : false;}
   //: Returns true if there is data in the row.

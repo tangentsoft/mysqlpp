@@ -1,5 +1,5 @@
-#ifndef __resiter1_hh__
-#define __resiter1_hh__
+#ifndef MYSQLPP_RESITER_H
+#define MYSQLPP_RESITER_H
 
 #include <defs.h>
 

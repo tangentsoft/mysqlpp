@@ -1,5 +1,5 @@
-#ifndef __datetime1_hh__
-#define __datetime1_hh__
+#ifndef MYSQLPP_DATETIME_H
+#define MYSQLPP_DATETIME_H
 
 #include <coldata.h>
 #include <defs.h>

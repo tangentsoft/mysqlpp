@@ -1,4 +1,4 @@
-include ../common.am
+include $(top_srcdir)/common.am
 
 LDFLAGS = 
 LDADD = $(MYSQLPP_LIB)

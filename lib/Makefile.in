@@ -61,8 +61,8 @@ libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libmysqlpp_la_LIBADD =
 am_libmysqlpp_la_OBJECTS = coldata.lo connection.lo datetime.lo \
-	fields.lo field_names.lo field_types.lo manip.lo query.lo \
-	result.lo row.lo set.lo sql_query.lo type_info.lo vallist.lo \
+	fields.lo field_names.lo field_types.lo manip.lo myset.lo \
+	query.lo result.lo row.lo sql_query.lo type_info.lo vallist.lo \
 	string_util.lo
 libmysqlpp_la_OBJECTS = $(am_libmysqlpp_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir) -I.
@@ -191,19 +191,19 @@ lib_LTLIBRARIES = libmysqlpp.la
 # interfaces supported.  Bump the last only if explicit backwards-
 # compatibility is added -- like two different versions of a single 
 # function.  'age' must be less than the current interface version.
-libmysqlpp_la_LDFLAGS = -version-info 3:0:0
+libmysqlpp_la_LDFLAGS = -version-info 4:0:0
 libmysqlpp_la_SOURCES = \
 	coldata.cc connection.cc datetime.cc fields.cc field_names.cc \
-	field_types.cc manip.cc query.cc result.cc row.cc set.cc \
+	field_types.cc manip.cc myset.cc query.cc result.cc row.cc \
 	sql_query.cc type_info.cc vallist.cc string_util.cc
 
 include_HEADERS = \
 	bad_query.h coldata.h compare.h connection.h const_string.h \
 	convert.h custom.h custom-macros.h defs.h datetime.h exceptions.h \
-	field_names.h field_types.h fields.h manip.h mysql++.h mysql++.hh \
-	null.h platform.h query.h resiter.h result.h row.h set.h \
-	sqlplus.hh sql_query.h sql_string.h stream2string.h tiny_int.h \
-	type_info.h string_util.h vallist.h
+	field_names.h field_types.h fields.h manip.h myset.h mysql++.h \
+	mysql++.hh null.h platform.h query.h resiter.h result.h row.h \
+	sqlplus.hh sql_query.h sql_string.h stream2string.h string_util.h \
+	tiny_int.h type_info.h vallist.h
 
 all: exceptions.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -299,10 +299,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/field_types.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fields.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/manip.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/myset.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/query.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/result.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/row.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/set.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sql_query.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/string_util.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/type_info.Plo@am__quote@

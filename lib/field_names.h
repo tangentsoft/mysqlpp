@@ -1,6 +1,5 @@
-
-#ifndef __field_names1_hh__
-#define __field_names1_hh__
+#ifndef MYSQLPP_FIELD_NAMES_H
+#define MYSQLPP_FIELD_NAMES_H
 
 #include <coldata.h>
 #include <string_util.h>

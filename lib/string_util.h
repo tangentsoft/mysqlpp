@@ -1,5 +1,6 @@
-#ifndef __STRING_UTIL1__
-#define __STRING_UTIL1__
+#ifndef MYSQLPP_STRING_UTIL_H
+#define MYSQLPP_STRING_UTIL_H
+
 #include <ctype.h>
 #include <string>
 

@@ -1,5 +1,5 @@
-#ifndef __connection1_hh__
-#define __connection1_hh__
+#ifndef MYSQLPP_CONNECTION_H
+#define MYSQLPP_CONNECTION_H
 
 #include <platform.h>
 

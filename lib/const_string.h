@@ -1,5 +1,5 @@
-#ifndef __const_string1_hh__
-#define __const_string1_hh__
+#ifndef MYSQLPP_CONST_STRING_H
+#define MYSQLPP_CONST_STRING_H
 
 #include <stdexcept>
 #include <string>

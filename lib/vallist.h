@@ -1,5 +1,5 @@
-#ifndef __vallist1_hh__
-#define __vallist1_hh__
+#ifndef MYSQLPP_VALLIST_H
+#define MYSQLPP_VALLIST_H
 
 #include <manip.h>
 

@@ -1,9 +1,9 @@
 #ifndef MYSQLPP_CONVERT_H
 #define MYSQLPP_CONVERT_H
 
-#include <platform.h>
+#include "platform.h"
 
-#include <defs.h>
+#include "defs.h"
 
 #include <stdlib.h>
 
@@ -76,7 +76,7 @@ mysql__convert(ulonglong, _strtoui64)
 #endif
 #endif // !defined(NO_LONG_LONGS)
 
-}; // end namespace mysqlpp
+} // end namespace mysqlpp
 
 #endif
 

@@ -16,4 +16,4 @@ void FieldTypes::init(const ResUse * res)
 	}
 }
 
-};							// end namespace mysqlpp
+} // end namespace mysqlpp

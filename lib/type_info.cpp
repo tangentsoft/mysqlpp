@@ -143,5 +143,5 @@ bool mysql_type_info::escape_q() const
 		return false;
 }
 
-};								// end namespace mysqlpp
+} // end namespace mysqlpp
 

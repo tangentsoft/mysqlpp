@@ -1,8 +1,8 @@
 #ifndef MYSQLPP_FIELD_NAMES_H
 #define MYSQLPP_FIELD_NAMES_H
 
-#include <coldata.h>
-#include <string_util.h>
+#include "coldata.h"
+#include "string_util.h"
 
 #include <algorithm>
 #include <vector>
@@ -40,7 +40,7 @@ public:
   //: returns the index number of the field with that name
 };
 
-}; // end namespace mysqlpp
+} // end namespace mysqlpp
 
 #endif
 

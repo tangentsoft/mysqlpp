@@ -1,14 +1,14 @@
 #ifndef MYSQLPP_RESULT_H
 #define MYSQLPP_RESULT_H
 
-#include <defs.h>
+#include "defs.h"
 
-#include <exceptions.h>
-#include <fields.h>
-#include <field_names.h>
-#include <field_types.h>
-#include <resiter.h>
-#include <row.h>
+#include "exceptions.h"
+#include "fields.h"
+#include "field_names.h"
+#include "field_types.h"
+#include "resiter.h"
+#include "row.h"
 
 #include <mysql.h>
 
@@ -318,7 +318,7 @@ inline ResUse& ResUse::operator = (const ResUse &other)
   return *this;
 }
 
-}; // end namespace mysqlpp
+} // end namespace mysqlpp
 
 #endif
 

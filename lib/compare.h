@@ -1,7 +1,7 @@
 #ifndef MYSQLPP_COMPARE_H
 #define MYSQLPP_COMPARE_H
 
-#include <row.h>
+#include "row.h"
 
 #include <cstring>
 #include <functional>
@@ -79,6 +79,7 @@ mysql_cmp_cstr (uint i, const BinaryPred &func, const char *cmp2) {
   return MysqlCmpCStr<BinaryPred>(i, func, cmp2);
 }
 
-}; // end namespace mysqlpp
+} // end namespace mysqlpp
 
 #endif
+

@@ -15,4 +15,4 @@ const Field & Fields::operator[] (Fields::size_type i) const
 	return res->fetch_field();
 }
 
-};								// end namespace mysqlpp
+} // end namespace mysqlpp

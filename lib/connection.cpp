@@ -216,4 +216,4 @@ Query Connection::query() {
 	return Query(this, throw_exceptions);
 }
 
-};								// end namespace mysqlpp
+} // end namespace mysqlpp

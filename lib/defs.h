@@ -1,7 +1,7 @@
 #ifndef MYSQLPP_DEFS_H
 #define MYSQLPP_DEFS_H
 
-#include <platform.h>
+#include "platform.h"
 
 #include <mysql.h>
 
@@ -27,7 +27,7 @@ typedef unsigned int uint;
 
 const bool use_exceptions = true;
 
-}; // end namespace mysqlpp
+} // end namespace mysqlpp
 
 #endif
 

@@ -121,5 +121,5 @@ short int DateTime::compare(const DateTime &other) const
 	return mysql_time::compare(&other);
 }
 
-}; // end namespace mysqlpp
+} // end namespace mysqlpp
 

@@ -1,7 +1,7 @@
 #ifndef MYSQLPP_CONST_STRING_H
 #define MYSQLPP_CONST_STRING_H
 
-#include <defs.h>
+#include "defs.h"
 
 #include <stdexcept>
 #include <string>
@@ -118,7 +118,7 @@ inline bool operator >= (const_string &lhs, const_string &rhs)
   return compare(lhs,rhs) >= 0;
 }
 
-}; // end namespace mysqlpp
+} // end namespace mysqlpp
 
 #endif
 

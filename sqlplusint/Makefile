@@ -1,3 +1,4 @@
+# Generated automatically from Makefile.in by configure.
 # Makefile.in generated automatically by automake 1.4a from Makefile.am
 
 # Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
@@ -12,46 +13,45 @@
 
 
 
-SHELL = @SHELL@
+SHELL = /bin/sh
 
-srcdir = @srcdir@
-top_srcdir = @top_srcdir@
-VPATH = @srcdir@
-prefix = @prefix@
-exec_prefix = @exec_prefix@
+srcdir = .
+top_srcdir = ..
+prefix = /usr/local
+exec_prefix = ${prefix}
 
-bindir = @bindir@
-sbindir = @sbindir@
-libexecdir = @libexecdir@
-datadir = @datadir@
-sysconfdir = @sysconfdir@
-sharedstatedir = @sharedstatedir@
-localstatedir = @localstatedir@
-libdir = @libdir@
-infodir = @infodir@
-mandir = @mandir@
-includedir = @includedir@
+bindir = ${exec_prefix}/bin
+sbindir = ${exec_prefix}/sbin
+libexecdir = ${exec_prefix}/libexec
+datadir = ${prefix}/share
+sysconfdir = ${prefix}/etc
+sharedstatedir = ${prefix}/com
+localstatedir = ${prefix}/var
+libdir = ${exec_prefix}/lib
+infodir = ${prefix}/info
+mandir = ${prefix}/man
+includedir = ${prefix}/include
 oldincludedir = /usr/local/include/
 
 DESTDIR =
 
-pkgdatadir = $(datadir)/@PACKAGE@
-pkglibdir = $(libdir)/@PACKAGE@
-pkgincludedir = $(includedir)/@PACKAGE@
+pkgdatadir = $(datadir)/sqlplus
+pkglibdir = $(libdir)/sqlplus
+pkgincludedir = $(includedir)/sqlplus
 
 top_builddir = ..
 
-ACLOCAL = @ACLOCAL@
-AUTOCONF = @AUTOCONF@
-AUTOMAKE = @AUTOMAKE@
-AUTOHEADER = @AUTOHEADER@
+ACLOCAL = aclocal
+AUTOCONF = autoconf
+AUTOMAKE = automake
+AUTOHEADER = autoheader
 
-INSTALL = @INSTALL@
-INSTALL_PROGRAM = @INSTALL_PROGRAM@
-INSTALL_DATA = @INSTALL_DATA@
-INSTALL_SCRIPT = @INSTALL_SCRIPT@
+INSTALL = /usr/bin/install -c
+INSTALL_PROGRAM = ${INSTALL}
+INSTALL_DATA = ${INSTALL} -m 644
+INSTALL_SCRIPT = ${INSTALL_PROGRAM}
 INSTALL_STRIP_FLAG =
-transform = @program_transform_name@
+transform = s,x,x,
 
 NORMAL_INSTALL = :
 PRE_INSTALL = :
@@ -59,26 +59,26 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-host_alias = @host_alias@
-host_triplet = @host@
+host_alias = i686-pc-linux-gnu
+host_triplet = i686-pc-linux-gnu
 AS = @AS@
-CC = @CC@
-CXX = @CXX@
+CC = gcc
+CXX = c++
 DLLTOOL = @DLLTOOL@
-LD = @LD@
-LIBTOOL = @LIBTOOL@
-LN_S = @LN_S@
-MAINT = @MAINT@
-MAKEINFO = @MAKEINFO@
-MYSQL_HOME = @MYSQL_HOME@
-NM = @NM@
+LD = /usr/bin/ld
+LIBTOOL = $(SHELL) $(top_builddir)/libtool
+LN_S = ln -s
+MAINT = #
+MAKEINFO = makeinfo
+MYSQL_HOME = /usr/local
+NM = /usr/bin/nm -B
 OBJDUMP = @OBJDUMP@
-PACKAGE = @PACKAGE@
-RANLIB = @RANLIB@
-SQLPLUS_MAJOR_VERSION = @SQLPLUS_MAJOR_VERSION@
-SQLPLUS_MICRO_VERSION = @SQLPLUS_MICRO_VERSION@
-SQLPLUS_MINOR_VERSION = @SQLPLUS_MINOR_VERSION@
-VERSION = @VERSION@
+PACKAGE = sqlplus
+RANLIB = ranlib
+SQLPLUS_MAJOR_VERSION = 1
+SQLPLUS_MICRO_VERSION = 
+SQLPLUS_MINOR_VERSION = 1
+VERSION = 1.1
 
 INCLUDES = -Wall -I$(top_srcdir)/sqlplusint
 
@@ -103,15 +103,15 @@ CONFIG_CLEAN_FILES =
 LTLIBRARIES =  $(lib_LTLIBRARIES)
 
 
-DEFS = @DEFS@ -I. -I$(srcdir) -I..
-CPPFLAGS = @CPPFLAGS@
-LDFLAGS = @LDFLAGS@
-LIBS = @LIBS@
+DEFS = -DHAVE_CONFIG_H -I. -I$(srcdir) -I..
+CPPFLAGS =  -I/usr/local/include/mysql
+LDFLAGS =  -L/usr/local/lib/mysql
+LIBS = -lmysqlclient -lnsl 
 libsqlplus_la_LIBADD = 
 libsqlplus_la_OBJECTS =  coldata.lo connection.lo datetime.lo \
 field_names.lo field_types.lo manip.lo query.lo result.lo row.lo set.lo \
 sql_query.lo type_info.lo vallist.lo
-CXXFLAGS = @CXXFLAGS@
+CXXFLAGS = -O2
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
@@ -131,7 +131,7 @@ OBJECTS = $(libsqlplus_la_OBJECTS)
 all: all-redirect
 .SUFFIXES:
 .SUFFIXES: .S .c .cc .lo .o .s
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) $(top_srcdir)/Configure
+$(srcdir)/Makefile.in: # Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) $(top_srcdir)/Configure
 	cd $(top_srcdir) && $(AUTOMAKE) --foreign --include-deps sqlplusint/Makefile
 
 Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status

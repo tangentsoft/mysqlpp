@@ -1,4 +1,4 @@
-#This file was created by <Sinisa> Fri Aug 13 21:51:13 1999
+#This file was created by <Sinisa> Tue Sep 28 12:51:01 1999
 #LyX 0.12 (C) 1995-1998 Matthias Ettrich and the LyX Team
 \lyxformat 2.15
 \textclass book
@@ -55,12 +55,12 @@ Mysql++
 \newline 
 A C++ API for Mysql
 \newline 
-ver 1.1
+ver 1.2
 \layout Author
 
 Kevin Atkinson
 \newline 
-(kevina@clark.net)
+(kevinatk@home.com)
 \newline 
  Sinisa Milivojevic
 \newline 
@@ -350,7 +350,9 @@ beware !,
 \noun toggle 
  do not yet use -O6 -mpentium options are still unsafe for g++, with a heavy
  use of constant and static initializers, and especially with C++ exceptions
- 
+ .
+ Also, please try to keep all objects as local as possible.
+ Declare it in the lowest blocks always !!
 \layout Itemize
 
 The 
@@ -433,6 +435,10 @@ MysqlColData
  with a const string in a much more efficient way (ie it doesn't copy it).
  Unfortunitlly this data type is also more limited see the section on "const_str
 ing" for more info.
+\layout Itemize
+
+All necessary methods pertaining to the administration funcitons have been
+ added
 \layout Section
 
 Future Changes
@@ -515,6 +521,365 @@ simple1.cc
 \layout Comment
 
 example:simple1.cc
+\layout LyX-Code-Sans
+
+#include <iostream> 
+\newline 
+#include <iomanip> 
+\newline 
+#include <sqlplus.hh>
+\newline 
+
+\protected_separator 
+
+\newline 
+int main() {
+\newline 
+
+\protected_separator 
+ Connection con("mysql_cpp_data");
+\newline 
+
+\protected_separator 
+ // The full format for the Connection constructor is
+\newline 
+
+\protected_separator 
+ // Connection(cchar *db, cchar *host="", 
+\newline 
+
+\protected_separator 
+ //
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cchar *user="", cchar *passwd="") 
+\newline 
+
+\protected_separator 
+ // You may need to specify some of them if the database is not on
+\newline 
+
+\protected_separator 
+ // the local machine or you database username is not the same as your
+\newline 
+
+\protected_separator 
+ // login name, etc..
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+ Query query = con.query();
+\newline 
+
+\protected_separator 
+ // This creates a query object that is bound to con.
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+ query << "select * from stock";
+\newline 
+
+\protected_separator 
+ // You can write to the query object like you would any other ostrem
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+ Result res = query.store();
+\newline 
+
+\protected_separator 
+ // Query::store() executes the query and returns the results
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+ cout << "Query: " << query.preview() << endl;
+\newline 
+
+\protected_separator 
+ // Query::preview() simply returns a string with the current query
+\newline 
+
+\protected_separator 
+ // string in it.
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+ cout << "Records Found: " << res.size() << endl << endl;
+\newline 
+
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+ Row row;
+\newline 
+
+\protected_separator 
+ cout.setf(ios::left);
+\newline 
+
+\protected_separator 
+ cout << setw(17) << "Item" 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw(4)
+\protected_separator 
+ << "Num"
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw(7)
+\protected_separator 
+ << "Weight"
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw(7)
+\protected_separator 
+ << "Price" 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << "Date" << endl
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << endl;
+\newline 
+
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+ Result::iterator i;
+\newline 
+
+\protected_separator 
+ // The Result class has a read-only Random Access Iterator
+\newline 
+
+\protected_separator 
+ for (i = res.begin(); i != res.end(); i++) {
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ row = *i;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout << setw(17) << row[0] 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw(4)
+\protected_separator 
+ << row[1] 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw(7)
+\protected_separator 
+ << row["weight"]
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // you can use either the index number or column name when
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // retrieving the colume data as demonstrated above.
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw(7)
+\protected_separator 
+ << row[3]
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << row[4] << endl;
+\newline 
+
+\protected_separator 
+ }
+\newline 
+
+\protected_separator 
+ return 0;
+\newline 
+}
 \layout Standard
 
 Everything here should be fairly obvious.
@@ -539,6 +904,709 @@ complic1.cc
 \layout Comment
 
 example:complic1.cc
+\layout LyX-Code-Sans
+
+#include <iostream>
+\newline 
+#include <iomanip>
+\newline 
+#include <sqlplus.hh>
+\newline 
+
+\protected_separator 
+
+\newline 
+int main() {
+\newline 
+
+\protected_separator 
+ try { // its in one big try block
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ Connection con(use_exceptions);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ con.connect("mysql_cpp_data");
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // Here I broke making the connection into two calls.
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // The first one creates the Connection object with the 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // use exceptions option turned on and the second one
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // makes the connection
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ Query query = con.query();
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ query << "select * from stock";
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ Result res = query.store();
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout << "Query: " << query.preview() << endl;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout << "Records Found: " << res.size() << endl << endl;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ Row row;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout.setf(ios::left);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout << setw(17) << "Item" 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw(4)
+\protected_separator 
+ << "Num"
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw(7)
+\protected_separator 
+ << "Weight"
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw(7)
+\protected_separator 
+ << "Price" 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << "Date" << endl
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << endl;
+\newline 
+
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ Result::iterator i;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout.precision(3);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ for (i = res.begin(); i != res.end(); i++) {
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ row = *i;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout << setw(17) << row["item"] << setw(4) << row[1] 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw(7)
+\protected_separator 
+ << (double)row[2]
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// This is converting the row to a double so that we
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// can set the precision of it.
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// ColData has the nice feature that it will convert to
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// any of the basic c++ types.
+\protected_separator 
+ if there is a problem
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// in the conversion it will throw an exception (which I 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// cache below).
+\protected_separator 
+ To test it try changing the 2 in row[2]
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// to row[0]
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw(7) << (double)row[3];
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ Date date = row["sdate"]; 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // The ColData is implicitly converted to a date here.
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout.setf(ios::right);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout.fill('0');
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout << setw(2) << date.month << "-" << setw(2) << date.day << endl;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout.fill(' ');
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout.unsetf(ios::right);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ }
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ return 0;
+\newline 
+
+\protected_separator 
+ } catch (BadQuery er) { // handle any connection or
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // query errors that may come up
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cerr << "Error: " << er.error << endl;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ return -1;
+\newline 
+
+\protected_separator 
+ } catch (BadConversion er) { // handle bad conversions
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cerr << "Error: Tried to convert 
+\backslash 
+"" << er.data << "
+\backslash 
+" to a 
+\backslash 
+"" 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << er.type_name << "
+\backslash 
+"." << endl;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ return -1;
+\newline 
+
+\protected_separator 
+ }
+\newline 
+}
 \layout Standard
 
 Everything should be fairly obvious.
@@ -608,6 +1676,669 @@ The following example demonstrates how to get some basic information about
 \layout Comment
 
 example:fieldinf1.cc
+\layout LyX-Code-Sans
+
+#include <iostream>
+\newline 
+#include <iomanip>
+\newline 
+#include <sqlplus.hh>
+\newline 
+
+\protected_separator 
+
+\newline 
+int main() {
+\newline 
+
+\protected_separator 
+ try { // its in one big try block
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ Connection con(use_exceptions);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ con.connect("mysql_cpp_data");
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ Query query = con.query();
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ query << "select * from stock";
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ Result res = query.store();
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout << "Query: " << query.preview() << endl;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout << "Records Found: " << res.size() << endl << endl;
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout << "Query Info:
+\backslash 
+n";
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout.setf(ios::left);
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ for (unsigned int i = 0; i < res.size(); i++) {
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout << setw(2)
+\protected_separator 
+ << i
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw(15) << res.names(i).c_str()
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// this is the name of the field
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw(15) << res.types(i).sql_name()
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// this is the SQL identifier name
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// Result::types(unsigned int) returns a mysql_type_info which in many
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// ways is like type_info except that it has additional sql type
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// information in it.
+ (with one of the methods being sql_name())
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw(20) << res.types(i).name()
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// this is the C++ identifier name which most closely resembles
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// the sql name (its is implementation defined and often not very readable)
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << endl;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ }
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout << endl;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ if (res.types(0) == typeid(string))
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout << "Field 'item' is of an sql type which most closely resembles a
+\backslash 
+n"
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << "the c++ string type
+\backslash 
+n";
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // this is demonstrating how a mysql_type_info can be compared with a c++
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // type_info.
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ if (res.types(1) == typeid(short int))
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout << "Field 'num' is of an sql type which most closely resembles a
+\backslash 
+n"
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << "the c++ short int type
+\backslash 
+n";
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ else if (res.types(1).base_type() == typeid(short int))
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout << "Field 'num' base type is of an sql type which most closely 
+\backslash 
+n"
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << "resembles a the c++ short int type
+\backslash 
+n";
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // However you have to be careful as if it can be null the actual type
+ is 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // Null<TYPE> not TYPE.
+\protected_separator 
+ So you should always use the base_type method
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // to get at the underlying type.
+\protected_separator 
+ If the type is not null than this base
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // type would be the same as its type.
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ return 0;
+\newline 
+
+\protected_separator 
+ } catch (BadQuery er) {
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cerr << "Error: " << er.error << endl;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ return -1;
+\newline 
+
+\protected_separator 
+ } catch (BadConversion er) { // handle bad conversions
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cerr << "Error: Tried to convert 
+\backslash 
+"" << er.data << "
+\backslash 
+" to a 
+\backslash 
+"" 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << er.type_name << "
+\backslash 
+"." << endl;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ return -1;
+\newline 
+
+\protected_separator 
+ }
+\newline 
+}
+\newline 
+
+\protected_separator 
+
 \layout Section
 
 Specialized SQL Structures
@@ -626,6 +2357,937 @@ custom1.cc
 \layout Comment
 
 example:custom1.cc
+\layout LyX-Code-Sans
+
+#include <iostream>
+\newline 
+#include <iomanip>
+\newline 
+#include <vector>
+\newline 
+#include <sqlplus.hh>
+\newline 
+#include <custom.hh>
+\newline 
+
+\protected_separator 
+
+\newline 
+sql_create_5 (stock,
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// struct name, 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 1, 5,
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// I'll explain these latter
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ string, item,
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// type, id
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ int, num,
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ double, weight,
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ double, price,
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ Date, sdate)
+\newline 
+
+\protected_separator 
+
+\newline 
+// this is calling a very complex macro which will create a custom
+\newline 
+// struct "stock" which has the variables:
+\newline 
+//
+\protected_separator 
+
+\protected_separator 
+ string item
+\newline 
+//
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ int num
+\newline 
+//
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ ...
+\newline 
+//
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ Date sdate
+\newline 
+// defined as well methods to help populate the class from a mysql row
+\newline 
+// among other things that I'll get too in a latter example
+\newline 
+
+\protected_separator 
+
+\newline 
+int main () {
+\newline 
+
+\protected_separator 
+ try {
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// its in one big try block
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ Connection con (use_exceptions);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ con.connect ("mysql_cpp_data");
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ Query query = con.query ();
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ query << "select * from stock";
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ vector < stock > res;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ query.storein (res);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // this is storing the results into a vector of the custom struct
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // "stock" which was created my the macro above.
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout.setf (ios::left);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout << setw (17) << "Item"
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw (4) << "Num"
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw (7) << "Weight"
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw (7) << "Price"
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << "Date" << endl
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << endl;
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // Now we we iterate through the vector using an iterator and
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // produce output similar to that using Row
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // Notice how we call the actual variables in i and not an index
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // offset.
+\protected_separator 
+ This is because the macro at the begging of the file
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // set up an *actual* struct of type stock which contains the 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // variables item, num, weight, price, and data.
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout.precision(3);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ vector <stock>::iterator i;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ for (i = res.begin (); i != res.end (); i++) {
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout << setw (17) << i->item.c_str ()
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// unfortunally the gnu string class does not respond to format
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+// modifers so I have to convert it to a conat char *.
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw (4) << i->num
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw (7) << i->weight
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw (7) << i->price
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << i->sdate
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << endl;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ }
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ return 0;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+ } catch (BadQuery er){ // handle any connection 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // or query errors that may come up
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cerr << "Error: " << er.error << endl;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ return -1;
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+ } catch (BadConversion er) {
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // we still need to cache bad conversions incase something goes 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // wrong when the data is converted into stock
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cerr << "Error: Tried to convert 
+\backslash 
+"" << er.data << "
+\backslash 
+" to a 
+\backslash 
+""
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << er.type_name << "
+\backslash 
+"." << endl;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ return -1;
+\newline 
+
+\protected_separator 
+ }
+\newline 
+}
 \layout Standard
 
 As you can see.
@@ -640,6 +3302,339 @@ SSQLS can also be used to add data to a table.
 \layout Comment
 
 example:custom2.cc
+\layout LyX-Code-Sans
+
+#include <iostream>
+\newline 
+#include <vector>
+\newline 
+#include <sqlplus.hh>
+\newline 
+#include <custom.hh>
+\newline 
+#include "util.hh"
+\newline 
+// util.hh/cc contains the print_stock_table function
+\newline 
+
+\protected_separator 
+
+\newline 
+sql_create_5(stock, 1, 5, string, item, int, num, 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ double, weight, double, price, Date, sdate)
+\newline 
+
+\protected_separator 
+
+\newline 
+int main() {
+\newline 
+
+\protected_separator 
+ try { // its in one big try block
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ Connection con(use_exceptions);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ con.connect("mysql_cpp_data");
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ Query query = con.query();
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ stock row;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // create an empty stock object
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ /*
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ row.item = "Hot Dogs";
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ row.num = 100;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ row.weight = 1.5;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ row.price = 1.75;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ row.sdate = "1998-09-25"; */
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ row.set("Hot Dogs", 100, 1.5, 1.75, "1998-09-25");
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // populate stock
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ query.insert(row);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // form the query to insert the row
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // the table name is the name of the struct by default
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout << "Query : " << query.preview() << endl;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // show the query about to be executed
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ query.execute();
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // execute a query that does not return a result set
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ print_stock_table(query);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // now print the new table;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+ } catch (BadQuery er) {
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cerr << "Error: " << er.error << endl;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ return -1;
+\newline 
+
+\protected_separator 
+ } catch (BadConversion er) { 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cerr << "Error: Tried to convert 
+\backslash 
+"" << er.data << "
+\backslash 
+" to a 
+\backslash 
+"" 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << er.type_name << "
+\backslash 
+"." << endl;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ return -1;
+\newline 
+
+\protected_separator 
+ }
+\newline 
+}
 \layout Standard
 
 That's all there is to it.
@@ -658,6 +3653,394 @@ And it almost as easy to modify data with SSQLS.
 \layout Comment
 
 example:custom3.cc
+\layout LyX-Code-Sans
+
+#include <iostream>
+\newline 
+#include <vector>
+\newline 
+#include <sqlplus.hh>
+\newline 
+#include <custom.hh>
+\newline 
+#include "util.hh"
+\newline 
+// util.hh/cc contains the print_stock_table function
+\newline 
+
+\protected_separator 
+
+\newline 
+sql_create_5(stock, 1, 5, string, item, int, num, 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ double, weight, double, price, Date, sdate)
+\newline 
+
+\protected_separator 
+
+\newline 
+int main() {
+\newline 
+
+\protected_separator 
+ try { // its in one big try block
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ Connection con(use_exceptions);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ con.connect("mysql_cpp_data");
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ Query query = con.query();
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ query << "select * from stock where item = 
+\backslash 
+"Hotdogs' Buns
+\backslash 
+" ";
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ Result res = query.store();
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ if (res.empty()) 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ throw BadQuery("Hotdogs' Buns not found in table, run reset-db");
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // here we are testing if the query was successful, if not throw a bad
+ query
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ stock row = res[0];
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // because there should only be one row in this query we don't
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // need to use a vector.
+\protected_separator 
+ Just store the first row directly in
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // "row".
+\protected_separator 
+ We can do this because one of the constructors for
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // stock takes a Row as an parameter.
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ stock row2 = row;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // Now we need to create a copy so that the replace query knows
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // what the original values are.
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ row.item = "Hotdog Buns"; // now change item
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ query.update(row2, row);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // form the query to replace the row
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // the table name is the name of the struct by default
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout << "Query : " << query.preview() << endl;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // show the query about to be executed
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ query.execute();
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // execute a query that does not return a result set
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ print_stock_table(query);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // now print the new table;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+ } catch (BadQuery er) {
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cerr << "Error: " << er.error << endl;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ return -1;
+\newline 
+
+\protected_separator 
+ } catch (BadConversion er) { 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cerr << "Error: Tried to convert 
+\backslash 
+"" << er.data << "
+\backslash 
+" to a 
+\backslash 
+"" 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << er.type_name << "
+\backslash 
+"." << endl;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ return -1;
+\newline 
+
+\protected_separator 
+ }
+\newline 
+}
 \layout Standard
 
 When you run the example you will notice that in the where clause only the
@@ -686,6 +4069,817 @@ SSQLS are can also be made less-than-comparable.
 \layout Comment
 
 example:custom4.cc
+\layout LyX-Code-Sans
+
+#include <iostream>
+\newline 
+#include <iomanip>
+\newline 
+#include <vector>
+\newline 
+#include <sqlplus.hh>
+\newline 
+#include <custom.hh>
+\newline 
+
+\protected_separator 
+
+\newline 
+sql_create_5(stock, 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 1, // This number is used to make a SSQLS less-than-comparable.
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // If this number is n then if the first n elements are the 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // same the two SSQLS are the same.
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // In this case if two two stock's "item" are the same then
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // the two stock are the same.
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 5, // this number should generally be the same as the number of
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // elements in the list unless you have a good reason not to.
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ string,item,
+\protected_separator 
+ int,num,
+\protected_separator 
+ double,weight,
+\protected_separator 
+ double,price,
+\protected_separator 
+ Date,sdate)
+\newline 
+
+\protected_separator 
+
+\newline 
+int main() {
+\newline 
+
+\protected_separator 
+ try { // its in one big try block
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ Connection con(use_exceptions);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ con.connect("mysql_cpp_data");
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ Query query = con.query();
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ query << "select * from stock";
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ set<stock> res;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ query.storein(res);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // here we are storing the elements in a set not a vector.
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout.setf (ios::left);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout << setw (17) << "Item"
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw (4) << "Num"
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw (7) << "Weight"
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw (7) << "Price"
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << "Date" << endl
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << endl;
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // Now we we iterate through the set.
+\protected_separator 
+ Since it is a set the list will
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // naturally be in order.
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ set<stock>::iterator i;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout.precision(3);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ for (i = res.begin (); i != res.end (); i++) {
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout << setw (17) << i->item.c_str ()
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw (4) << i->num
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw (7) << i->weight
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << setw (7) << i->price
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << i->sdate
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << endl;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ }
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ i = res.find(stock("Hamburger Buns"));
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ if (i != res.end())
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout << "Hamburger Buns found.
+\protected_separator 
+ Currently " << i->num << " in stock.
+\backslash 
+n";
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ else
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cout << "Sorry no Hamburger Buns found in stock
+\backslash 
+n";
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // Now we are using the set's find method to find out how many
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // Hamburger Buns are in stock.
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ return 0;
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+ } catch (BadQuery er) {
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cerr << "Error: " << er.error << endl;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ return -1;
+\newline 
+
+\protected_separator 
+ } catch (BadConversion er) { 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cerr << "Error: Tried to convert 
+\backslash 
+"" << er.data << "
+\backslash 
+" to a 
+\backslash 
+"" 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << er.type_name << "
+\backslash 
+"." << endl;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ return -1;
+\newline 
+
+\protected_separator 
+ }
+\newline 
+}
 \layout Subsection
 
 And There's More
@@ -711,6 +4905,495 @@ Another powerful feature of Mysql++ is being able to set up template queries.
 \layout Comment
 
 example:reset-db.cc
+\layout LyX-Code-Sans
+
+#include <iostream>
+\newline 
+#include <sqlplus.hh>
+\newline 
+
+\protected_separator 
+
+\newline 
+int main (int argc, char *argv[]) {
+\newline 
+
+\protected_separator 
+ Connection connection(use_exceptions);
+\newline 
+
+\protected_separator 
+ try { // the entire main block is one big try block;
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ if (argc == 1) connection.connect("");
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ else if (argc == 2) connection.connect("",argv[1]);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ else if (argc == 3) connection.connect("",argv[1],argv[2]);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ else if (argc <= 4) connection.connect("",argv[1],argv[2],argv[3]);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // create a new object and connect based on any (if any) arguments
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // passed to main();
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ try {
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ connection.select_db("mysql_cpp_data");
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ } catch (BadQuery er) {
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // if it couldn't connect to the database assume that it doesn't exist
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // and try created it.
+\protected_separator 
+ If that does not work exit with an error.
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ connection.create_db("mysql_cpp_data");
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ connection.select_db("mysql_cpp_data");
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ }
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ Query query = connection.query();
+\protected_separator 
+ // create a new query object
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ try { // ignore any errors here
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // I hope to make this simpler soon
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ query.execute("drop table stock");
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ } catch (BadQuery er) {}
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ query << "create table stock
+\protected_separator 
+ (item char(20) not null, num smallint,"
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ << "weight double, price double, sdate date)";
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ query.execute(RESET_QUERY);
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // send the query to create the table and execute it.
+\protected_separator 
+ The
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // RESET_QUERY tells the query object to reset it self after
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // execution
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ query << "insert into %5:table values (%0q, %1q, %2, %3, %4q)";
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ query.parse();
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // set up the template query I will use to insert the data.
+\protected_separator 
+ The
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // parse method call is important as it is what lets the query
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // know that this is a template and not a literal string
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ query.def["table"] = "stock";
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // This is setting the parameter named table to stock.
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ query.execute ("Hamburger Buns", 56, 1.25, 1.1, "1998-04-26");
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ query.execute ("Hotdogs' Buns"
+\protected_separator 
+
+\protected_separator 
+ ,65, 1.1 , 1.1, "1998-04-23");
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ query.execute ("Dinner Roles"
+\protected_separator 
+ , 75,
+\protected_separator 
+ .95, .97, "1998-05-25");
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ query.execute ("White Bread"
+\protected_separator 
+
+\protected_separator 
+ , 87, 1.5, 1.75, "1998-09-04");
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // The last parameter "table" is not specified here.
+\protected_separator 
+ Thus
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ // the default value for "table" is used which is "stock".
+\newline 
+
+\protected_separator 
+
+\newline 
+
+\protected_separator 
+ } catch (BadQuery er) { // handle any errors that may come up
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ cerr << "Error: " << er.error << endl;
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ return -1;
+\newline 
+
+\protected_separator 
+ }
+\newline 
+}
+\newline 
+
+\protected_separator 
+
 \layout Chapter
 
 Class Reference 
@@ -7462,19 +12145,31 @@ appendix
 \layout Chapter
 
 Changelog
-\layout Standard
-
-
-\protected_separator 
-
 \layout Section*
 
-1.1 (1999-08-02
-\protected_separator 
- Sinisa Milivojevic <sinisa@cytanet.com.cy>)
+1.2 (Sep 28 1999) Sinisa Milivojevic <sinisa@cytanet.com.cy>
 \layout Itemize
 
-Changed version to 1.1
+First offical release.
+ Version 1.0 and 1.1 were releases by Sinisa before I (Kevin Atkinson) made
+ him the offical maintainer,
+\layout Itemize
+
+Many manual fixes.
+\layout Itemize
+
+Added methods in Connection class which are necessary for fullfilling administra
+tive functions with MySQL
+\layout Itemize
+
+Added many bug fixes in code pertaining to missing class initializers ,
+ as notified by Michael Rendell <michael@cs.mun.ca>
+\layout Itemize
+
+Sinisa Milivojevic <sinisa@cytanet.com.cy> is now the offical maintainer.
+\layout Section*
+
+1.1 (Aug 2 1999) Sinisa Milivojevic <sinisa@cytanet.com.cy>
 \layout Itemize
 
 Added several bug fixes
@@ -7492,30 +12187,9 @@ Added Makefile for manual
 Added support for cygwin
 \layout Itemize
 
-Added example sinisa_ex (let modesty prevail) which used to crash a 
-\layout Itemize
-
-lot when memory allocation, memory leak and overlap problems were
-\layout Itemize
-
-present.
- Smooth running of this example proves that all those bugs are 
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
-fixed
+Added example sinisa_ex (let modesty prevail) which used to crash a lot
+ when memory allocation, memory leak and overlap problems were present.
+ Smooth running of this example proves that all those bugs are fixed 
 \layout Itemize
 
 Corrected bugs in sql_query.cc regarding delete versus delete[] and string
@@ -7531,20 +12205,11 @@ Changed README
 Many other smaller things
 \layout Section*
 
-1.0 (1999-06-09
-\protected_separator 
- Michael Widenius
-\protected_separator 
- <monty@monty.pp.sci.fi>)
+1.0 (June 9 1999) Michael Widenius <monty@monty.pp.sci.fi>
 \layout Itemize
 
-Changed version to 1.0
-\layout Itemize
-
-Added patches from Orion Poplawski <orion@bvt.com> to support the
-\layout Itemize
-
-UnixWare 7.0 compiler
+Added patches from Orion Poplawski <orion@bvt.com> to support the UnixWare
+ 7.0 compiler
 \layout Section*
 
 .64.1.1a (Sep 27 1998)
@@ -7784,6 +12449,9 @@ Create a container to hold Mysql enums and sets as a bit set as opposed
 
 Have a more intelligent MysqlRes that can reexecute to refresh the data.
  
+\layout Itemize
+
+Create full fledged client side cursors
 \layout Standard
 
 If you have anything else you want to see let us know at sinisa@cytanet.com.cy
@@ -7851,6 +12519,9 @@ M.
  Sriram - For a detailed dission of how the Template Queries should be implement
 ed, the suggestion to throw exceptions on bad queries, and the idea of having
  a back-end independent query object (ie SQLQuery).
+\layout Itemize
+
+Sinisa Milivojevic - For becoming the new offical maintainer.
 \layout Standard
 
 If you fell that I forgot something please let me know.
@@ -7859,38 +12530,12 @@ If you fell that I forgot something please let me know.
 Copyright
 \layout Standard
 
-The Mysql++ API is copyright 1998 by Kevin Atkinson and is released under
- the LGPL license for now.
+The Mysql++ API is copyright 1998 by Kevin Atkinson and 1999 by MySQL and
+ is released under the LGPL license .
 \layout Standard
 
 The intent of doing this is allow developers to use my library to develop
  commercial programs and to allow it be distributed with commercial databases.
-\layout Standard
-
-However if you do use it to develop a commercial program a small donation
- to me would be greatly appreciated.
- Your donation will will encourage me to continue to work on improving this
- API and also encourage me to continue to keep it under the LGPL.
- Please send donations too.
- 
-\layout Quote
-
-Kevin Atkinson
-\newline 
-7962 Helmart Dr.
- 
-\newline 
-Laurel, MD 20723
-\layout Standard
-
-I reserve the right to change the license to future versions of the library
- if I do not get sufficient pay-back to my work.
- However, it is my promise to you that it will never become more restrictive
- than the GPL (not LGPL) license.
-\layout Standard
-
-You can contact me at kevina@clark.net or (301) 498-3290 or at the address
- above.
 \layout Section
 
 LGPL
@@ -8497,7 +13142,7 @@ That's all there is to it!
 Feedback
 \layout Standard
 
-Since July 1999, all maintenance has been transferred to Sinisa Milivojevic
+Since October 1999, all maintenance has been transferred to Sinisa Milivojevic
  (sinisa@cytanet.com.cy) and Michael Widenius (monty@mysql.com).
 \layout Standard
 

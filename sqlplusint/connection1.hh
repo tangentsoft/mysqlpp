@@ -52,7 +52,7 @@ private:
 public:
   Connection () : throw_exceptions(false), locked(false) //:
     {others.insert(&mysql,this);}
-  Connection (bool te) : throw_exceptions(te), locked(false) //:
+  Connection (bool te) : throw_exceptions(te), is_connected(false), locked(false), Success(false) //:
     {others.insert(&mysql,this);}
   Connection (const char *db, const char *host = "", const char *user = "", 
 	      const char *passwd = "", bool te = false); 
@@ -98,7 +98,9 @@ public:
   operator bool () {return success();}                  //: returns success()
   string error () {return string(mysql_error(&mysql));} //: last error message()
 	int errnum () {return mysql_errno(&mysql);}
-
+	int   refresh (unsigned int refresh_options){ return mysql_refresh (&mysql,refresh_options); }
+	int ping (void) { return mysql_ping(&mysql);}
+	int kill (unsigned long pid) { return mysql_kill (&mysql,pid);}
   string clinet_info () {return string(mysql_get_client_info());} //:
   
   string host_info () {return string(mysql_get_host_info(&mysql));} //:

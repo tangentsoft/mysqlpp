@@ -1,12 +1,12 @@
-This is c++ wrapper library for MySQL.
+This is C++ API  library for MySQL.
 
-Starting based of .64.1.1b, this is now maintained by monty@mysql.com
-as kevina@clark.net doesn't have time to support this library anymore. He has
+Starting based of 1.2, this is now maintained by sinisa@cytanet.com.cy
+as kevinatk@home.com doesn't have time to support this library anymore. He has
 give TCX the full right to use this library as we wish. We will continue to
 keep this library under LGPL.
 
 --------
-Original information from kevina@clark.net:
+Original information from kevinatk@home.com:
 
 After several people commented on how my quickie wrapper would be of
 little use I decided to go all out and create a full featured
@@ -33,10 +33,10 @@ distribution.
 Be sure to let me know what you think.  I depend on your feedback.
 
 Thanks,
-I can be reached at kevina@clark.net
+I can be reached at kevinatk@home.com
 
 
-Since July 1999, all maintenance has been transferred to Sinisa
+Since October 1999, all maintenance has been transferred to Sinisa
 Milivojevic (sinisa@cytanet.com.cy) and Michael Widenius (monty@mysql.com).
 
 Send your feedback to any of these addresses, or even better to the

@@ -16,12 +16,13 @@ manual:
 	latex manual.tex
 	latex2html \
 	  -split 3 \
-          -toc_depth 3 \
+	  -toc_depth 3 \
 	  -dir man-html \
 	  -long_titles 2 \
+	  -local_icons \
 	  -show_section_numbers \
-	  -ascii_mode \
-	  manual.tex
+	   manual.tex
+
 	-rm -f -r man-text
 	-mkdir man-text
 	perl html2txt.pl

@@ -485,9 +485,7 @@ $defs
 					  vector<bool> *i) const;
     template <class Manip>
     NAME##_cus_value_list<Manip> value_list(cchar *d, Manip m, 
-					  sql_cmp_type sc) const {
-      sql_compare_type_def_##CMP (NAME, value, NUM);
-    }
+					  sql_cmp_type sc) const;
     /* cus field */
 
     NAME##_cus_field_list<do_nothing_type0> field_list($cusparms1) const {
@@ -532,9 +530,7 @@ $defs
 					    vector<bool> *i) const;
     template <class Manip>
     NAME##_cus_field_list<Manip> field_list(cchar *d, Manip m, 
-					    sql_cmp_type sc) const {
-      sql_compare_type_def_##CMP (NAME, field, NUM);
-    }
+					    sql_cmp_type sc) const;
 
     /* cus equal */
 
@@ -594,9 +590,7 @@ $defs
 					    vector<bool> *i) const;
     template <class Manip>
     NAME##_cus_equal_list<Manip> equal_list(cchar *d, cchar *c, Manip m, 
-					    sql_cmp_type sc) const {
-      sql_compare_type_defe_##CMP (NAME, equal, NUM);
-    }
+					    sql_cmp_type sc) const;
   }; 
 
   char *##NAME##::names[] = { 
@@ -762,6 +756,24 @@ $cus_equal_list
 							 $cusparms22) const { 
     return NAME##_cus_equal_list<Manip> (this, d, c, m, $cusparmsv); 
   } 
+
+  template <class Manip>
+  inline NAME##_cus_value_list<Manip> 
+  NAME##::value_list(cchar *d, Manip m, sql_cmp_type sc) const {
+    sql_compare_type_def_##CMP (NAME, value, NUM);
+  }
+
+  template <class Manip>
+  inline NAME##_cus_field_list<Manip> 
+  NAME##::field_list(cchar *d, Manip m, sql_cmp_type sc) const {
+    sql_compare_type_def_##CMP (NAME, field, NUM);
+  }
+
+  template <class Manip>
+  inline NAME##_cus_equal_list<Manip> 
+  NAME##::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {
+    sql_compare_type_defe_##CMP (NAME, equal, NUM);
+  }
 
   template <sql_dummy_type dummy> 
   void populate_##NAME (NAME *s, const MysqlRow &row) { 

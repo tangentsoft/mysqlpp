@@ -1,7 +1,8 @@
 ####### Compiler, tools and options
 
 CC	=	g++
-CFLAGS	= -DWINDOZE -D_WIN32 -O0 -mno-cygwin -D__cplusplus	-Wall -fstrength-reduce -D__WIN32__ -I/cygnus/cygwin-b20/include/g++ -I/cygnus/cygwin-b20/include/g++ -I/my/mysql_src/mysql-3.22.13-beta/include -L/my/mysql_src/mysql-3.22.13-beta/client/.libs -L../mysql++-int  -mno-cygwin
+CFLAGS	= -DWINDOZE -D_WIN32 -O0 -mno-cygwin -D__cplusplus	-Wall
+-fstrength-reduce -D__WIN32__ -I/cygnus/cygwin-b20/include/g++ -I/cygnus/cygwin-b20/include/g++ -I/my/mysql_src/mysql-3.22.13-beta/include -L/my/mysql_src/mysql-3.22.13-beta/client/.libs -L../sqlplusint  -mno-cygwin
 #CFLAGS +=	-fkeep-inline-functions
 # If you have problems when with undefined refrences try uncommenting
 # the above line when compiling the library.  But then recommenting 
@@ -37,7 +38,7 @@ TARGET  =	linux
 
 # You should not need to modify anything below this line. If you do
 # need to modify something below this line please email me at
-# kevina@clark.net with what you did.
+# sinisa@cytanet.com.cy with what you did.
 
 ifeq ($(TARGET), solaris)
   LIBS += $(SOLLIBS)
@@ -93,7 +94,7 @@ HEADSINT = mysql++ defs \
 
 %: %.o
 ifeq ($(TYPE), objs)
-	$(CC) $(CFLAGS) $(LIBS) -o $@ ../mysql++-int/*.o $^
+	$(CC) $(CFLAGS) $(LIBS) -o $@ ../sqlplusint/*.o $^
 endif
 ifeq ($(TYPE), static)
 	$(CC) $(CFLAGS) $(NLFLAGS) $(LIBS) -o $@ $^

@@ -54,13 +54,13 @@ class Connection {
 	Connection(const char* db, const char* host, const char* user,
 			const char* passwd, uint port, my_bool compress = 0,
 			unsigned int connect_timeout = 60, bool te = true,
-			cchar* socket_name = "", unsigned int client_flag = 0);
+			cchar* socket_name = 0, unsigned int client_flag = 0);
 	~Connection();
 
 	bool real_connect(cchar* db = "", cchar* host = "",
 			cchar* user = "", cchar* passwd = "", uint port = 0,
 			my_bool compress = 0, unsigned int connect_timeout = 60,
-			cchar* socket_name = "", unsigned int client_flag = 0);
+			cchar* socket_name = 0, unsigned int client_flag = 0);
 
 	void close()
 	{
@@ -76,7 +76,7 @@ class Connection {
 		return is_connected;
 	}
 
-	//: returns true of the last query was successful
+	//: returns true if the last query was successful
 	bool success() const
 	{
 		return Success;

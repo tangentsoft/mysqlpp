@@ -33,6 +33,15 @@ This puts the MySQL++ header files in their own directory.
 If you wish to install mysql++ in a root directory other than /usr/local,
 run configure with --prefix=.....
 
+If you need thread support on your system, give the --enable-thread-check
+option to the configure script.  It will then try to determine whether
+your system has a threads implementation it can understand, and whether it
+can use the thread-safe MySQL C library.  If both of these aren't true,
+you won't get a thread-safe MySQL++ library.  Beware that a thread-aware
+MySQL++ library requires that you link your program differently, so if
+you depend on ABI stability and have been using MySQL++ for some time,
+you will almost certainly want to leave this option out.
+
 You may want to try out the programs in the examples subdirectory to
 ensure that the MySQL++ API and your MySQL database are both working
 properly.  See examples/README for further details.

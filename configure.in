@@ -1,6 +1,6 @@
 dnl Standard autotools stuff
 AC_INIT(lib/mysql++.h)
-AM_INIT_AUTOMAKE(mysql++, 1.7.30)	# Change this in mysql++.spec, too!
+AM_INIT_AUTOMAKE(mysql++, 1.7.31)	# Change this in mysql++.spec, too!
 AM_CONFIG_HEADER(config.h)
 AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
@@ -18,11 +18,17 @@ AC_C_CONST
 AC_CHECK_FUNCS(strtol)
 
 
-dnl Figure out how to handle threading support, if available.
-ACX_PTHREAD
-LIBS="$PTHREAD_LIBS $LIBS"
-CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
-CC="$PTHREAD_CC"
+dnl Figure out whether/how to handle threading support, if available.
+AC_ARG_ENABLE(thread-check,
+		[  --enable-thread-check  Check for threads, and use if available. ],
+		[ thread_check=yes ])
+if test "x$thread_check" = "xyes"
+then
+	ACX_PTHREAD
+	LIBS="$PTHREAD_LIBS $LIBS"
+	CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+	CC="$PTHREAD_CC"
+fi
 
 
 dnl Checks for libraries and local system features

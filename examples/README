@@ -26,7 +26,7 @@ General Instructions
 
 	Start with resetdb:
 
-		$ ./resetdb [host] [user] [password]
+		$ ./resetdb [host] [user] [password] [port]
 
 	This sets up the mysql_cpp_data database used by most of the
 	other examples.

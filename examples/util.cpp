@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -59,8 +60,8 @@ connect_to_db(int argc, char *argv[], mysqlpp::Connection& con,
 	}
 
 	if ((argc > 1) && (argv[1][0] == '-')) {
-		cout << "usage: " << argv[0] << " [host] [user] [password]" <<
-				endl;
+		cout << "usage: " << argv[0] <<
+				" [host] [user] [password] [port]" << endl;
 		cout << endl << "\tConnects to database ";
 		if (kdb) {
 			cout << '"' << kdb << '"';
@@ -87,8 +88,12 @@ connect_to_db(int argc, char *argv[], mysqlpp::Connection& con,
 	else if (argc == 3) {
 		success = con.connect(kdb, argv[1], argv[2]);
 	}
-	else if (argc >= 4) {
+	else if (argc == 4) {
 		success = con.connect(kdb, argv[1], argv[2], argv[3]);
+	}
+	else if (argc >= 5) {
+		success = con.real_connect(kdb, argv[1], argv[2], argv[3],
+				atoi(argv[4]));
 	}
 
 	if (!success) {

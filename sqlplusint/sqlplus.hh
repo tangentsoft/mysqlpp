@@ -55,6 +55,7 @@
 #include "vallist2.hh"
 
 #include "coldata3.hh"
+#include "coldata4.hh"
 #include "compare3.hh"
 #include "connection3.hh"
 #include "const_string3.hh"

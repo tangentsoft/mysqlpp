@@ -88,7 +88,7 @@ short int mysql_date::compare(const mysql_date* other) const {
 short int mysql_time::compare(const mysql_time* other) const {
   if (hour != other->hour) return hour - other->hour;
   if (minute != other->minute) return minute - other->minute;
-  return minute - other->minute;
+  return second - other->second;
 }
 
 short int MysqlDateTime::compare(const MysqlDateTime &other) const {

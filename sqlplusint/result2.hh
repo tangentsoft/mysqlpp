@@ -83,6 +83,7 @@ inline void              ResUse::reset_types() {reset_field_types();}
 //
 
 inline ResUse& ResUse::operator = (const ResUse &other) {
+  if (this == &other) return *this;
   copy(other);  other.mysql_res=NULL;
   return *this;
 }

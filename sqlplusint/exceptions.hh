@@ -3,7 +3,7 @@
 #define __MYSQLPLUS_EXCEPTIONS__
 #include <string>
 
-#define USE_STANDARD_EXCEPTION 1
+/* #undef USE_STANDARD_EXCEPTION */
 
 
 #ifdef USE_STANDARD_EXCEPTION //new non-default exception style.

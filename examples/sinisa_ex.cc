@@ -10,7 +10,7 @@ int main() {
 	try {
 	con.real_connect ("","localhost","root","",3306,(int)0,60,NULL);
 					
-	cout << con.clinet_info() << endl << endl;
+	cout << con.client_info() << endl << endl;
   Query query = con.query();
 
   query << "show databases";
@@ -101,9 +101,11 @@ int main() {
          << er.type_name << "\"." << endl;
 #endif
     return -1;
+#ifdef USE_STANDARD_EXCEPTION		
   } catch (exception &er) {
     cerr << "Error: " << er.what() << endl;
     return -1;
+#endif		
   }
 }
 

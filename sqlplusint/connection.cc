@@ -45,7 +45,10 @@ bool Connection::real_connect (cchar *db, cchar *host, cchar *user,
 {
   mysql.options.compress = compress;
   mysql.options.connect_timeout=connect_timeout;
-  locked = true; mysql.options.my_cnf_file="my";
+  locked = true; //mysql.options.my_cnf_file="my";
+
+	mysql_options(&mysql, MYSQL_READ_DEFAULT_FILE, "my");
+
 	if (mysql_real_connect(&mysql,host,user,passwd,db, port,socket_name,client_flag))
   {
     locked = false;
@@ -56,7 +59,7 @@ bool Connection::real_connect (cchar *db, cchar *host, cchar *user,
     locked = false; Success = is_connected = false;
     if (throw_exceptions) throw BadQuery(error());
   }
-	mysql.options.my_cnf_file=0;
+	//	mysql.options.my_cnf_file=0;
   if (!Success) return Success;
   if (db && db[0]) // if db is not empty
     Success = select_db(db);
@@ -86,7 +89,10 @@ bool Connection::shutdown () {
 }  
 
 bool Connection::connect (cchar *db, cchar *host, cchar *user, cchar *passwd) {
-  locked = true; mysql.options.my_cnf_file="my";
+  locked = true; // mysql.options.my_cnf_file="my";
+
+	mysql_options(&mysql, MYSQL_READ_DEFAULT_FILE, "my");
+
 	if (mysql_real_connect(&mysql,host,user,passwd,db, 3306,NULL,0)) {
     locked = false;
     Success = is_connected = true;
@@ -95,7 +101,7 @@ bool Connection::connect (cchar *db, cchar *host, cchar *user, cchar *passwd) {
     if (throw_exceptions) throw BadQuery(error());
     Success = is_connected = false;
   }
-	mysql.options.my_cnf_file=0;
+	//	mysql.options.my_cnf_file=0;
   if (!Success) return Success;
   if (db && db[0]) // if db is not empty
     Success = select_db(db);

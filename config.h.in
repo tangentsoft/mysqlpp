@@ -27,6 +27,9 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
+/* Define if mysql_shutdown() has a second 'level' argument */
+#undef HAVE_MYSQL_SHUTDOWN_LEVEL_ARG
+
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 

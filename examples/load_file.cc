@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
   Connection con(use_exceptions);
 	try {
 		con.real_connect (MY_DATABASE,MY_HOST,MY_USER,MY_PASSWORD,3306,(int)0,60,NULL);
-		Query query = con.query(); ostrstream strbuf;
+		Query query = con.query(); ostringstream strbuf;
 		ifstream In (argv[1],ios::in | ios::binary); struct stat for_len;
 		if ((In.rdbuf())->is_open()) {
 			if (stat (argv[1],&for_len) == -1) return -1;

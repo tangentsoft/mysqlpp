@@ -143,15 +143,23 @@ bool Connection::exec(const std::string &str) {
 
 Result Connection::store(const std::string &str, bool throw_excptns) {
   Success = false;
-  if (lock()) 
+
+  if (lock()) {
     if (throw_excptns) throw BadQuery(error());
     else return Result();
+  }
+
   Success = !mysql_query(&mysql, str.c_str()); 
   unlock();
-  if (!Success) 
+
+  if (!Success) {
     if (throw_excptns) throw BadQuery(error());
     else return Result();
-  return Result(mysql_store_result(&mysql));
+  }
+
+  MYSQL_RES* res = mysql_store_result(&mysql);
+  if (res) return Result(res);
+  else return Result();
 }
   
 ResUse Connection::use(const std::string &str, bool throw_excptns) {

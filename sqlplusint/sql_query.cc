@@ -32,7 +32,7 @@ void SQLQuery::reset() {
 
 char * SQLQuery::preview_char() {
   *this << std::ends;
-  uint length = pcount();
+  uint length = rdbuf()->str().size();
   char *s = new char[length + 1];
   get(s, length, '\0'); 
   seekg (0,std::ios::beg);
@@ -92,14 +92,7 @@ std::string SQLQuery::str(const SQLQueryParms &p) const {
   SQLQuery *const_this = const_cast<SQLQuery *>(this);
   if (!parsed.empty()) const_this->proc(const_cast<SQLQueryParms&>(p));
   *const_this << std::ends;
-  uint length = const_this->pcount() + 1;
-  char* s = new char[length]; 
-  const_this->get(s, length, '\0'); 
-  const_this->seekg (0,std::ios::beg);
-  const_this->seekp (-1,std::ios::cur);
-  std::string ret(s);
-  delete[] s;
-  return ret;
+  return const_this->str();
 }
 
 std::string SQLQuery::str(const SQLQueryParms &p, query_reset r) {

@@ -1,0 +1,6 @@
+
+sub filter {
+  local $_ = $_[0];
+  s/[\%\{\}\=\\]/-/g;
+  return $_;
+}

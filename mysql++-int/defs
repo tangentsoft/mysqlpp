@@ -1,0 +1,20 @@
+
+#ifndef __mysql_defs_h_
+#define __mysql_defs_h_
+
+#include <mysql.h>
+#include "define_short"
+
+typedef MYSQL_FIELD MysqlField;
+typedef const char cchar;
+typedef long long int longgint;
+
+class Connection;
+class ResUse;
+class Result;
+class FieldNames;
+
+const bool use_exceptions = true;
+
+#endif
+

@@ -1,0 +1,11 @@
+
+sub filter {
+  local $_ = $_[0];
+  s/(\A|\s)\*(\S.*?\S)\*([\s\.\,]|\Z)/$1\x00o-textbf\x00$2\x00cl\x00$3/g;
+  s/(\A|\s)\_(\S.*?\S)\_([\s\.\,]|\Z)/$1\x00o-textit\x00$2\x00cl\x00$3/g;
+  s/(\A|\s)\~(\S.*?\S)\~([\s\.\,]|\Z)/$1\x00o-texttt\x00$2\x00cl\x00$3/g;
+  $_=&FILTER($_,"$tmpldir${X}other.flt");
+  s/\x00o-(\w+)\x00/\\$1\{/g;
+  s/\x00cl\x00/\}/g;
+  return $_;
+}

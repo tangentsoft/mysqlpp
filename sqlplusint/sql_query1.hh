@@ -1,7 +1,7 @@
 #ifndef __sql_query_1_hh
 #define __sql_query_1_hh
 
-#include <strstream>
+#include <sstream>
 #include <vector>
 #include <map>
 #include "define_short.hh"
@@ -98,9 +98,9 @@ struct SQLParseElement {
 // wish to also be able to execute the queries without having to send
 // them to the *Connection* object.
 //
-// This class is subclassed from *strstream*. This means that you can
+// This class is subclassed from *stringstream*. This means that you can
 // write to it like a stream to avoid having to piece parts together
-// by creating you own *strstream* or by using *sprintf*. Although you
+// by creating you own *stringstream* or by using *sprintf*. Although you
 // can read from query because it is a stream this is _not_
 // recommended. I can not guarantee the predictability of the class if
 // you do and will offer no help if you run into problems when you do
@@ -109,7 +109,7 @@ struct SQLParseElement {
 // your query before you try to use any of the *SQLQuery* specific
 // methods except for *error()* and *success()*.
 
-class SQLQuery : public std::strstream { 
+class SQLQuery : public std::stringstream { 
   friend class SQLQueryParms;
 private:
   char* preview_char();

@@ -71,7 +71,7 @@
 #include <vallist3.hh>
 
 #ifdef MYSQL_NO_SHORT_NAMES
-#include <undef_short>
+#include <undef_short.hh>
 #endif
 
 #include <exceptions.hh>

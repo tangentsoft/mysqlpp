@@ -1,3 +1,22 @@
+1.7.18, 2004.10.01
+
+	o Changed all the strstream (and friends) stuff to stringstream type
+	  classes.  Let there be much rejoicing.
+
+	o Query object now lets you use store() even when the SQL query
+	  cannot return a result, such as a DROP TABLE command.  This is
+	  useful for sending arbitrary SQL to the server.  Thanks to
+	  Jose Mortensen for the patch.
+
+	o Quote fix in configure.in, thanks to David Sward.
+
+	o Renamed undef_short file to undef_short.hh.
+
+	o Gentoo ebuild file is actually being shipped with the tarball,
+	  instead of just sitting in my private CVS tree since 1.7.14 was
+	  current.  Ooops....
+
+
 1.7.17, 2004.09.16
 
 	o Reverted one of the VC++ warning fix changes from 1.7.16 that

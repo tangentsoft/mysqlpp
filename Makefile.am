@@ -1,4 +1,4 @@
-EXTRA_DIST = bootstrap common.am doc devel LGPL mysql++.spec \
+EXTRA_DIST = bootstrap common.am doc devel LGPL *.spec *.ebuild \
 		Wishlist *.vcproj *.sln README.*
 
 #SUBDIRS = sqlplusint examples doc

@@ -170,7 +170,10 @@ public:
   }
 
   //: Raw c api function
-  int  num_rows() const {return mysql_num_rows(mysql_res);}
+  int  num_rows() const {
+  	if (initialized) return mysql_num_rows(mysql_res);
+	else return 0;
+  }
   //: Raw c api function
   void         data_seek (uint offset) const 
     {mysql_data_seek(mysql_res, offset);}

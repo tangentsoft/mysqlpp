@@ -2,7 +2,7 @@
 #define __datetime1_hh__
 
 #include <string>
-#include <strstream>
+#include <sstream>
 #include <iostream>
 
 #include "defs.hh"

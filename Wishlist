@@ -9,9 +9,6 @@ Patches for any of these thoughtfully considered!
 	o All the redefinitions in define_short.hh are bad code style.
 	  We should use the Mysql* ones only, and drop the #defines.
 
-	o Move from strstream to stringstream.  Do any other "obsolete
-	  header" fixes that remain.
-
 	o Fix the "cascading include files from hell".
 
 	o Look through my own code for uses of custom SQL queries, and try

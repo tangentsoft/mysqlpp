@@ -1,8 +1,11 @@
 #ifndef __connection1_hh__
 #define __connection1_hh__
-#ifdef __WIN32__
-#include <winsock.h>
-#endif
+
+#include <mysql++-windows.hh>
+#include <define_short.hh>
+#include <exceptions.hh>
+#include <query1.hh>
+#include <result1.hh>
 
 #include <mysql.h>
 
@@ -19,11 +22,6 @@
 #      include <slist>
 #  endif
 #endif
-
-#include "define_short.hh"
-#include "exceptions.hh"
-#include "query1.hh"
-#include "result1.hh"
 
 //: The main database handle
 class Connection {

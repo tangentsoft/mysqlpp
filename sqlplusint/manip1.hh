@@ -1,19 +1,16 @@
 #ifndef __manip1_hh__
 #define __manip1_hh__
 
-#ifdef __WIN32__
-#include <winsock.h>
-#endif
+#include <datetime1.hh>
+#include <define_short.hh>
+#include <mysql++-windows.hh>
+#include <sql_string1.hh>
+#include <sql_query1.hh>
+#include <set1.hh>
 
 #include <mysql.h>
 
 #include <iostream>
-
-#include "define_short.hh"
-#include "sql_string1.hh"
-#include "sql_query1.hh"
-#include "datetime1.hh"
-#include "set1.hh"
 
 //quote manipulaor
 

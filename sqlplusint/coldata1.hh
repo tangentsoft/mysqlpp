@@ -1,13 +1,14 @@
 #ifndef __coldata1_hh__
 #define __coldata1_hh__
 
+#include <const_string1.hh>
+#include <defs.hh>
+#include <exceptions.hh>
+#include <null1.hh>
+#include <type_info1.hh>
+
 #include <typeinfo>
 #include <string>
-#include "defs.hh"
-#include "exceptions.hh"
-#include "type_info1.hh"
-#include "const_string1.hh"
-#include "null1.hh"
 
 //!  with_class = mysql_ColData
 

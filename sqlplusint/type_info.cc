@@ -1,14 +1,11 @@
-#ifdef __WIN32__
-#include <winsock.h>
-#endif
+#include <datetime1.hh>
+#include <set1.hh>
+#include <type_info3.hh>
 
+#include <mysql++-windows.hh>
 #include <mysql.h>
 
 #include <string>
-
-#include "datetime1.hh"
-#include "set1.hh"
-#include "type_info3.hh"
 
 using namespace std;
 

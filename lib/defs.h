@@ -7,6 +7,8 @@
 
 namespace mysqlpp {
 
+enum sql_cmp_type {sql_use_compare};
+
 #if defined(NO_LONG_LONGS)
 typedef unsigned long ulonglong;
 typedef long longlong;

@@ -1,4 +1,18 @@
-1.7.27, 2004.01.12
+1.7.28, 2005.02.04
+
+	o --with-mysql* flags to configure script now try the given
+	  directory explicitly, and only if that fails do they try
+	  variations, like tacking '/lib' and such onto it to try and find
+	  the MySQL includes and libraries.  Thanks to Matthew Walton for
+	  the patch.
+
+	o Finally removed sql_quote.h's dependence on custom.h, by moving
+	  the one definition it needed from custom.h to deps.h.  This will
+	  help portability to compilers that can't handle the SSQLS macros,
+	  by making that part of the library truly optional.
+
+
+1.7.27, 2005.01.12
 
 	o configure check for libmysqlclient now halts configuration if the
 	  library isn't found.  Previously, it would just be flagged as
@@ -389,10 +403,10 @@
 	  new member function lookup_by_name() was added to maintain the old
 	  by-field-name functionality.
 
-	o Fixed another operator overloading problem in SQLSS macro
+	o Fixed another operator overloading problem in SSQLS macro
 	  generation with GCC 3.3.
 
-	o The _table member of SQLSS-defined structures is now const char*,
+	o The _table member of SSQLS-defined structures is now const char*,
 	  so you can assign to it from a const char* string.
 
 	o Got autoconf/automake build system working with current versions

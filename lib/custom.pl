@@ -19,7 +19,6 @@ print OUT0 << "---";
 namespace mysqlpp {
 
 enum sql_dummy_type {sql_dummy};
-enum sql_cmp_type {sql_use_compare};
 
 inline int sql_cmp(const std::string &a, const std::string &b) {
   return a.compare(b);

@@ -7,7 +7,7 @@ template<class Strng, class T>
 Strng stream2string(const T &object) {
   std::ostrstream str;
   object.out_stream(str);
-  str << ends;
+  str << std::ends;
   Strng s = str.str();
 #ifdef __USLC__
   strstreambuf *tmpbuf = str.rdbuf();

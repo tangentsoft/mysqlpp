@@ -7,14 +7,16 @@
 #include <winsock.h>
 #define errno WSAGetLastError()
 #endif
+
 #include <mysql.h>
-#include <vector.h>
-#include <deque.h>
-#include <list.h>
-#include <slist.h>
-#include <set.h>
-#include <map.h>
-#include <multiset.h>
+
+#include <vector>
+#include <deque>
+#include <list>
+#include <ext/slist>
+#include <set>
+#include <map>
+
 #include "define_short.hh"
 #include "exceptions.hh"
 #include "query1.hh"

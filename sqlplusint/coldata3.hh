@@ -16,7 +16,7 @@
 template <class Str> template <class T, class B> 
 mysql_ColData<Str>::operator Null<T,B> () const {
   if ((*this)[0] == 'N' && (*this)[1] == 'U' && 
-      (*this)[2] == 'U' && (*this)[3] == 'L' && size() == 4)
+      (*this)[2] == 'U' && (*this)[3] == 'L' && Str::size() == 4)
     return Null<T,B>(null);
   else return Null<T,B>(conv(T()));
 }

@@ -7,7 +7,10 @@
 #endif
 
 #include "datetime3.hh"
-#include <iomanip.h>
+
+#include <iomanip>
+
+using namespace std;
 
 ostream& mysql_date::out_stream (ostream& s) const {
   char fill = s.fill('0');

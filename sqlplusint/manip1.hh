@@ -1,5 +1,6 @@
 #ifndef __manip1_hh__
 #define __manip1_hh__
+
 #ifdef __WIN32__
 #include <Windows32/Base.h>
 #include <Windows32/Defines.h>
@@ -7,8 +8,11 @@
 #include <winsock.h>
 #define errno WSAGetLastError()
 #endif
+
 #include <mysql.h>
+
 #include <iostream>
+
 #include "define_short.hh"
 #include "sql_string1.hh"
 #include "sql_query1.hh"
@@ -24,11 +28,11 @@ class SQLQueryParms;
 enum quote_type0 {mysql_quote};
 
 struct quote_type1 {
-  ostream *ostr;
-  quote_type1(ostream *o) : ostr(o) {}
+  std::ostream *ostr;
+  quote_type1(std::ostream *o) : ostr(o) {}
 }; 
 
-inline quote_type1 operator << (ostream &o, quote_type0 esc) {
+inline quote_type1 operator << (std::ostream &o, quote_type0 esc) {
   return quote_type1(&o);
 }
 
@@ -44,7 +48,7 @@ inline quote_type2 operator << (SQLQueryParms &p, quote_type0 esc) {
 SQLQueryParms& operator << (quote_type2 p, SQLString &in);
 
 template <class T>
-inline ostream& operator << (quote_type1 o, const T &in) {
+inline std::ostream& operator << (quote_type1 o, const T &in) {
   return *o.ostr << in;
 }
 
@@ -98,8 +102,8 @@ inline std::ostream& operator << (quote_type1 o, const MysqlSet<ST> &in) {
 enum quote_only_type0 {mysql_quote_only};
 
 struct quote_only_type1 {
-  ostream *ostr;
-  quote_only_type1(ostream *o) : ostr(o) {}
+  std::ostream *ostr;
+  quote_only_type1(std::ostream *o) : ostr(o) {}
 }; 
 
 inline quote_only_type1 operator << (std::ostream &o, quote_only_type0 esc) {
@@ -309,8 +313,4 @@ inline SQLQueryParms & operator << (ignore_type2 p, SQLString &in) {
 }
 
 #endif
-
-
-
-
 

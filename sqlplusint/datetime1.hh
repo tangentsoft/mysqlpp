@@ -1,16 +1,10 @@
-#ifndef __datatime1_hh__
-
 #ifndef __datetime1_hh__
-
-// for some strange strange reason when I just use one #ifndef it
-// doesn't work.  If anyone has any idea what is going on please let
-// me know
-
 #define __datetime1_hh__
 
 #include <string>
 #include <strstream>
 #include <iostream>
+
 #include "defs.hh"
 #include "define_short.hh"
 #include "coldata1.hh"
@@ -145,7 +139,5 @@ struct DateTime : public mysql_date, public mysql_time,
 
 inline std::ostream& operator << (std::ostream& s, const DateTime& d)
                                                    {return d.out_stream(s);}
-
-#endif
 #endif //__datetime1_hh__
 

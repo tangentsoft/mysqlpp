@@ -1,5 +1,7 @@
 #include <mysql++.hh>
 
+using namespace std;
+
 #define MY_DATABASE	"telcent"
 #define MY_TABLE		"fax"
 #define MY_HOST    "localhost"

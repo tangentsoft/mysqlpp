@@ -1,6 +1,8 @@
 #ifndef MYSQLPP_SQL_QUERY_H
 #define MYSQLPP_SQL_QUERY_H
 
+#include <defs.h>
+
 #include <custom.h>
 #include <sql_string.h>
 #include <tiny_int.h>
@@ -209,7 +211,7 @@ public:
   template <class T> SQLQuery& insert(const T &v) {
     reset();
     *this << "INSERT INTO " << v.table() << " (" << v.field_list()
-          << ") VALUES (" << v.value_list() << ")";
+		<< ") VALUES (" << v.value_list() << ")";
     return *this;
   } //:
   template <class T> SQLQuery& replace(const T &v) {
@@ -228,11 +230,14 @@ public:
 };  
 
 
-inline SQLString &SQLQueryParms::operator[] (const char *str) {
+inline SQLString &SQLQueryParms::operator[] (const char *str)
+{
   if (parent) return operator[] (parent->parsed_nums[str]);
   throw; // only here temporary 
 }
-inline const SQLString &SQLQueryParms::operator[] (const char *str) const {
+
+inline const SQLString &SQLQueryParms::operator[] (const char *str) const
+{
   if (parent) return operator[] (parent->parsed_nums[str]);
   throw; // only here temporary 
 }

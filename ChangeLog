@@ -1,3 +1,18 @@
+1.7.25, 2004.12.09
+
+	o Yet more fixes to the --with-mysql-lib and --with-mysql-include
+	  flags.
+
+	o Added DLLEXPORT stuff to platform.h, hopefully so that someone
+	  can figure out how to make VC++ make a DLL version of MySQL++.
+
+	o Renamed *.cc to *.cpp.
+
+	o Made 'set -> myset' change in VC++ project files.
+
+	o Some style changes (mostly whitespace) in header files.
+
+
 1.7.24, 2004.12.08
 
 	o Fixed the --with-mysql-lib and --with-mysql-include flags'

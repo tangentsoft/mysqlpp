@@ -1,7 +1,7 @@
 #ifndef MYSQLPP_MANIP_H
 #define MYSQLPP_MANIP_H
 
-#include <platform.h>
+#include <defs.h>
 
 #include <datetime.h>
 #include <myset.h>
@@ -24,34 +24,41 @@ class SQLQueryParms;
 
 enum quote_type0 {quote};
 
-struct quote_type1 {
+struct quote_type1
+{
   std::ostream *ostr;
   quote_type1(std::ostream *o) : ostr(o) {}
 }; 
 
-inline quote_type1 operator << (std::ostream &o, quote_type0 esc) {
+inline quote_type1 operator << (std::ostream &o, quote_type0 esc)
+{
   return quote_type1(&o);
 }
 
-struct quote_type2 {
+struct quote_type2
+{
   SQLQueryParms *qparms;
   quote_type2(SQLQueryParms *p) : qparms(p) {}
 };
 
-inline quote_type2 operator << (SQLQueryParms &p, quote_type0 esc) {
+inline quote_type2 operator << (SQLQueryParms &p, quote_type0 esc)
+{
   return quote_type2(&p);
 }
 
 SQLQueryParms& operator << (quote_type2 p, SQLString &in);
 
 template <class T>
-inline std::ostream& operator << (quote_type1 o, const T &in) {
+inline std::ostream& operator << (quote_type1 o, const T &in)
+{
   return *o.ostr << in;
 }
 
-std::ostream& operator << (std::ostream& o,const ColData_Tmpl<std::string>& in);
+std::ostream&
+operator << (std::ostream& o,const ColData_Tmpl<std::string>& in);
 
-std::ostream& operator << (std::ostream& o, const ColData_Tmpl<const_string>& in);
+std::ostream&
+operator << (std::ostream& o, const ColData_Tmpl<const_string>& in);
 
 SQLQuery& operator << (SQLQuery& o, const ColData_Tmpl<std::string>& in);
 

@@ -1,7 +1,7 @@
 #ifndef MYSQLPP_MYSET_H
 #define MYSQLPP_MYSET_H
 
-#include <platform.h>
+#include <defs.h>
 
 #include <coldata.h>
 #include <stream2string.h>
@@ -31,12 +31,14 @@ public:
 };
 
 template <class T>
-inline SetInsert<std::set<T> > set_insert(std::set<T> *o) {
+inline SetInsert<std::set<T> > set_insert(std::set<T> *o)
+{
   return SetInsert<std::set<T> >(o);
 }
 
 template <class T>
-inline ListInsert<std::vector<T> > set_insert(std::vector<T> *o) {
+inline ListInsert<std::vector<T> > set_insert(std::vector<T> *o)
+{
   return ListInsert<std::vector<T> >(o);
 }
 
@@ -68,13 +70,15 @@ inline std::ostream& operator << (std::ostream &s, const Set<Container> &d)
 
 
 template <class Container> 
-inline Set<Container>::operator std::string () {
+inline Set<Container>::operator std::string () 
+{
   return stream2string<std::string>(*this);
 }
 
 
 template <class Insert>
-void set2container (const char *str, Insert insert) {
+void set2container (const char *str, Insert insert)
+{
   while (1) {
     MutableColData s("");
     while (*str != ',' && *str) {
@@ -88,7 +92,8 @@ void set2container (const char *str, Insert insert) {
 }
 
 template <class Container>
-std::ostream& Set<Container>::out_stream (std::ostream &s) const {
+std::ostream& Set<Container>::out_stream (std::ostream &s) const
+{
   typename Container::const_iterator i = Container::begin();
   typename Container::const_iterator e = Container::end();
   while (true) {

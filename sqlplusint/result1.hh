@@ -17,7 +17,7 @@
 #include "resiter1.hh"
 #include "field_types1.hh"
 #include "fields1.hh"
-#include "bad_query.hh"
+#include "exceptions.hh"
 //:
 class ResUse  {
   friend Connection;

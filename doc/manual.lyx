@@ -54,7 +54,7 @@ Mysql++
 \newline 
 A C++ API for Mysql
 \newline 
-ver 1.7.6
+ver 1.7.8
 \layout Author
 
 Kevin Atkinson
@@ -248,6 +248,15 @@ The actual data that all the dramatic result sets return is stored in a
  times, sets, and types with a null value.
  If there is a problem in the conversion it will either set a warning flag
  or throw an exception depending on how it is configured.
+ Regarding exceptions, MySQL++ supports two different methods of tracing
+ exceptions.
+ One is by the fixed type (the old one) and one is standard C++ type by
+ the usage of what() method.
+ A choice of methods has to be done in building a library.
+ If configure script is run with --enable-exception option , then new method
+ will be used.
+ If no option is provided, or --disable-exception is used, old MySQL++ exception
+s will be enforced.
 \layout Standard
 
 The drastic result sets can even be used to help form queries with the help
@@ -485,18 +494,23 @@ There is a new method of fetching strings
 \layout Itemize
 
 Mysql++ can now work with binary data
+\layout Itemize
+
+Standard C++ exceptions handling with what() method has been introduced
+\layout Itemize
+
+All 64 int handling of string conversions have been moved to libmysqlclient
+ 
+\layout Itemize
+
+Programs written with MySQL++ will now automatically read all relevant MySQL
+ configuration files
 \layout Section
 
 Future Changes
 \layout Itemize
 
-To move properly all 64 int handling to libmysqlclient 
-\layout Itemize
-
 To implement fully mutable result sets 
-\layout Itemize
-
-To improve configure for better detection of mysql includes and libs
 \layout Itemize
 
 The behavior of MysqlString when used with binary operators is going to
@@ -6569,6 +6583,49 @@ appendix
 \layout Chapter
 
 Changelog
+\layout Section*
+
+1.7.8 (November 14 2000) Sinisa Milivojevic <sinisa@mysql.com>
+\layout Itemize
+
+Introduced a new, standard way of dealing with C++ exceptions.
+ MySQL++ now supports two different methods of tracing exceptions.
+ One is by the fixed type (the old one) and one is standard C++ type by
+ the usage of what() method.
+ A choice of methods has to be done in building a library.
+ If configure script is run with --enable-exception option , then new method
+ will be used.
+ If no option is provided, or --disable-exception is used, old MySQL++ exception
+s will be enforced.
+ This innovation is a contribution of Mr.
+ Ben Johnson <ben@blarg.net>
+\layout Itemize
+
+MySQL++ now automatically reads at connection all standard MySQL configuration
+ files
+\layout Itemize
+
+Fixed a bug in sql_query::parse to enable it to parse more then 99 char's
+\layout Itemize
+
+Added an optional client flag in connect, which will enable usage of this
+ option, e.g.
+ for getting matched and not just affected rows.
+ This change does not require any changes in existing programs
+\layout Itemize
+
+Fixed some smaller bugs
+\layout Itemize
+
+Added better handling of NULL's.
+ Programmers will get a NULL string in result set and should use is_null()
+ method in ColData to check if value is NULL
+\layout Itemize
+
+Further improved configuration
+\layout Itemize
+
+Updated documentation, including a Postscript format
 \layout Section*
 
 1.7.6 (September 22 2000) Sinisa Milivojevic <sinisa@mysql.com>

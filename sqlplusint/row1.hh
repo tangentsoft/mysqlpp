@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <string>
-#include "bad_query.hh"
+#include "exceptions.hh"
 #include "defs"
 #include "define_short"
 #include "coldata1.hh"
@@ -246,7 +246,7 @@ public:
 		  data.clear(); is_nulls.clear(); initialized=true;
 		  for (unsigned int i=0;i<size();i++) 
 			{
-			  data.insert(data.end(),(d[i]) ? string(d[i],jj[i]) : (string)"");
+			  data.insert(data.end(),(d[i]) ? string(d[i],jj[i]) : (string)"NULL");
 				is_nulls.insert(is_nulls.end(),d[i] ? false : true);
 			}
 		}

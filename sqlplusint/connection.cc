@@ -7,7 +7,7 @@ Connection::Connection (const char *db, const char *host, const char *user,
   : throw_exceptions(te), locked(false)
 {
 	mysql_init(&mysql);
-  if (connect (db, host, user, passwd))
+  if (real_connect (db, host, user, passwd,3306,0,60,NULL,0))
 	{
     locked = false;
     Success = is_connected = true;
@@ -20,13 +20,13 @@ Connection::Connection (const char *db, const char *host, const char *user,
 }
 
 Connection::Connection (const char *db, const char *host, const char *user, 
-			const char *passwd, uint port, my_bool compress,
-			unsigned int connect_timeout, bool te,
-			const char *socket_name)
+			const char *passwd, uint port, my_bool compress = 0,
+			unsigned int connect_timeout = 60, bool te = true,
+			const char *socket_name = "", unsigned client_flag = 0)
   : throw_exceptions(te), locked(false)
 {
 	mysql_init(&mysql);
-  if (real_connect (db, host, user, passwd, port, compress,		connect_timeout,socket_name))
+  if (real_connect (db, host, user, passwd, port, compress,		connect_timeout,socket_name, client_flag))
   {
     locked = false;
     Success = is_connected = true;
@@ -39,19 +39,14 @@ Connection::Connection (const char *db, const char *host, const char *user,
 }
 
 bool Connection::real_connect (cchar *db, cchar *host, cchar *user,
-			       cchar *passwd, uint port, my_bool compress,
-			       unsigned int connect_timeout,
-			       const char *socket_name)
+			       cchar *passwd, uint port, my_bool compress = 0,
+			       unsigned int connect_timeout = 60,
+			       const char *socket_name = "", unsigned int client_flag = 0)
 {
-  if (socket_name && socket_name[0])
-    mysql.options.unix_socket = (char *)socket_name;
-  else
-    mysql.options.unix_socket=NULL;
-  mysql.options.port = port;
   mysql.options.compress = compress;
   mysql.options.connect_timeout=connect_timeout;
-  locked = true; 
-  if (mysql_connect(&mysql, host, user, passwd))
+  locked = true; mysql.options.my_cnf_file="my";
+	if (mysql_real_connect(&mysql,host,user,passwd,db, port,socket_name,client_flag))
   {
     locked = false;
     Success = is_connected = true;
@@ -61,8 +56,9 @@ bool Connection::real_connect (cchar *db, cchar *host, cchar *user,
     locked = false; Success = is_connected = false;
     if (throw_exceptions) throw BadQuery(error());
   }
+	mysql.options.my_cnf_file=0;
   if (!Success) return Success;
-  if (db[0]) // if db is not empty
+  if (db && db[0]) // if db is not empty
     Success = select_db(db);
   return Success;
 }
@@ -90,8 +86,8 @@ bool Connection::shutdown () {
 }  
 
 bool Connection::connect (cchar *db, cchar *host, cchar *user, cchar *passwd) {
-  locked = true;
-  if (mysql_connect(&mysql, host, user, passwd)) {
+  locked = true; mysql.options.my_cnf_file="my";
+	if (mysql_real_connect(&mysql,host,user,passwd,db, 3306,NULL,0)) {
     locked = false;
     Success = is_connected = true;
   } else {
@@ -99,8 +95,9 @@ bool Connection::connect (cchar *db, cchar *host, cchar *user, cchar *passwd) {
     if (throw_exceptions) throw BadQuery(error());
     Success = is_connected = false;
   }
+	mysql.options.my_cnf_file=0;
   if (!Success) return Success;
-  if (db[0]) // if db is not empty
+  if (db && db[0]) // if db is not empty
     Success = select_db(db);
   return Success;
 }

@@ -7,6 +7,7 @@
 #endif
 
 #include "sql_query3.hh"
+#include "exceptions.hh"
 //#include "result3.hh"
 
 SQLQuery::SQLQuery(const SQLQuery &q) {
@@ -130,7 +131,7 @@ SQLQueryParms SQLQueryParms::operator + (const SQLQueryParms &other) const {
 
 void SQLQuery::parse() {
   string str = "";
-  char num[3];
+  char num[4];
   long int n;
   char option;
   string name;
@@ -148,6 +149,12 @@ void SQLQuery::parse() {
 	  num[1] = *s;
 	  num[2] = 0;
           s++;
+		if (*s >= '0' && *s <= '9') {
+			num[2] = *s;
+			num[3] = 0;
+			s++;
+		}
+		else num[2] = 0;
 	} else {
 	  num[1] = 0;
 	}

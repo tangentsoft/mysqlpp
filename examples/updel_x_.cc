@@ -21,8 +21,28 @@ int  main (void) {
 		string output(strbuf.str()); output.erase(output.size()-1,1); output += ")";
 		query.exec((const string&)output); // cout << output << endl;
 		return 0;
-	} catch (BadQuery er) { 
-    cerr << "Error: " << er.error << " " << con.errnum() << endl;
-    return -1;
+	} catch (BadQuery &er) { // handle any connection or
+                          // query errors that may come up
+#ifdef USE_STANDARD_EXCEPTION
+		cerr << "Error: " << er.what() << " " << con.errnum() << endl;
+#else
+		cerr << "Error: " << er.error << " " << con.errnum() << endl;
+#endif
+		return -1;
+	} catch (BadConversion &er) { // handle bad conversions
+    // we still need to cache bad conversions incase something goes 
+    // wrong when the data is converted into stock
+#ifdef USE_STANDARD_EXCEPTION
+		cerr << "Error: " << er.what() << "\"." << endl
+		     << "retrieved data size: " << er.retrieved
+		     << " actual data size: " << er.actual_size << endl;
+#else
+		cerr << "Error: Tried to convert \"" << er.data << "\" to a \""
+		     << er.type_name << "\"." << endl;
+#endif
+		return -1;
+	} catch (exception &er) {
+		cerr << "Error: " << er.what() << endl;
+		return -1;
 	}
 }

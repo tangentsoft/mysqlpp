@@ -22,7 +22,7 @@ include_HEADERS = sqlplus.hh coldata1.hh coldata2.hh coldata3.hh coldata4.hh \
 	sql_query3.hh sql_string1.hh sql_string2.hh sql_string3.hh stream2string1.hh \
 	stream2string2.hh stream2string3.hh tiny_int1.hh tiny_int2.hh tiny_int3.hh \
 	type_info1.hh type_info2.hh type_info3.hh vallist1.hh vallist2.hh vallist3.hh \
-	string_util.hh mysql++ bad_query.hh define_short defs 
+	string_util.hh mysql++ exceptions.hh define_short defs 
 
 all-local: custom.hh custom-macros.hh
 

@@ -15,7 +15,7 @@ int main (int argc, char *argv[]) {
     
     try {
       connection.select_db("mysql_cpp_data");
-    } catch (BadQuery er) {
+    } catch (BadQuery &er) {
       // if it couldn't connect to the database assume that it doesn't exist
       // and try created it.  If that does not work exit with an error.
       connection.create_db("mysql_cpp_data");
@@ -27,7 +27,7 @@ int main (int argc, char *argv[]) {
     try { // ignore any errors here
           // I hope to make this simpler soon
       query.execute("drop table stock");
-    } catch (BadQuery er) {}
+    } catch (BadQuery &er) {}
     
     query << "create table stock  (item char(20) not null, num bigint,"
 	  << "weight double, price double, sdate date)";
@@ -52,8 +52,26 @@ int main (int argc, char *argv[]) {
     // The last parameter "table" is not specified here.  Thus
     // the default value for "table" is used which is "stock".
 
-  } catch (BadQuery er) { // handle any errors that may come up
+  } catch (BadQuery &er) { // handle any connection or
+                          // query errors that may come up
+#ifdef USE_STANDARD_EXCEPTION
+    cerr << "Error: " << er.what() << endl;
+#else
     cerr << "Error: " << er.error << endl;
+#endif
+    return -1;
+  } catch (BadConversion &er) { // handle bad conversions
+#ifdef USE_STANDARD_EXCEPTION
+    cerr << "Error: " << er.what() << "\"." << endl
+         << "retrieved data size: " << er.retrieved
+         << " actual data size: " << er.actual_size << endl;
+#else
+    cerr << "Error: Tried to convert \"" << er.data << "\" to a \""
+         << er.type_name << "\"." << endl;
+#endif
+    return -1;
+  } catch (exception &er) {
+    cerr << "Error: " << er.what() << endl;
     return -1;
   }
 }

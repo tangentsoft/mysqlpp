@@ -4,20 +4,12 @@
 #include <typeinfo>
 #include <string>
 #include "defs"
+#include "exceptions.hh"
 #include "type_info1.hh"
 #include "const_string1.hh"
 #include "null1.hh"
 
 //!  with_class = mysql_ColData
-
-//: Exception structure thrown when a bad conversion takes place
-struct BadConversion {
-  const char*  type_name;  //:
-  const string data;       //:
-  size_t       retrieved;  //:
-  size_t       actual_size;//:
-  BadConversion(const char* tn, const char* d, size_t r, size_t a) : type_name(tn), data(d), retrieved(r), actual_size(a) {};
-};
 
 //: Base class for auto-converting column data.  Do not use directly. 
 //

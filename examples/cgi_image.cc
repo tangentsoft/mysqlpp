@@ -24,7 +24,14 @@ int  main (int argc, char *argv[]) {
 		fwrite(row.raw_data(0),1,*jj,stdout);
 		return 0;
 	} catch (BadQuery er) { 
+#ifdef USE_STANDARD_EXCEPTION
+    cerr << "Error: " << er.what() << " " << con.errnum() << endl;
+#else
     cerr << "Error: " << er.error << " " << con.errnum() << endl;
+#endif
     return -1;
-	}
+	} catch (exception &er) {
+    cerr << "Error: " << er.what() << endl;
+    return -1;
+        }
 }

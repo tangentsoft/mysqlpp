@@ -1,3 +1,20 @@
+
+1999-08-02  Sinisa Milivojevic <sinisa@cytanet.com.cy>
+
+* Changed version to 1.1
+* Added several bug fixes
+* Fixed memory leak problems and variables overlapping problems.
+* Added automake and autoconf support by loic@net.fr
+* Added Makefile for manual
+* Added support for cygwin
+* Added example sinisa_ex (let modesty prevail) which used to crash a 
+  lot when memory allocation, memory leak and overlap problems were
+  present. Smooth running of this example proves that all those bugs are
+	fixed
+* Changed manual
+* Cheanged README
+* Many other smaller things
+
 1999-06-09  Michael Widenius  <monty@monty.pp.sci.fi>
 
 * Changed version to 1.0

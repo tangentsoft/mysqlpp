@@ -1,6 +1,12 @@
 #ifndef __connection1_hh__
 #define __connection1_hh__
-
+#ifdef __WIN32__
+#include <Windows32/Base.h>
+#include <Windows32/Defines.h>
+#include <Windows32/Structures.h>
+#include <winsock.h>
+#define errno WSAGetLastError()
+#endif
 #include <mysql.h>
 #include <vector.h>
 #include <deque.h>
@@ -42,8 +48,6 @@ private:
 
   int          affected_rows() const {return mysql_affected_rows(&mysql);}
   int          insert_id () {return mysql_insert_id(&mysql);}
-  string       info ();
-  void         close() {mysql_close(&mysql);}
 
 public:
   Connection () : throw_exceptions(false), locked(false) //:
@@ -63,6 +67,8 @@ public:
 		       cchar *socket_name= "");
 				
   ~Connection (); //:
+  void         close() {mysql_close(&mysql);}	
+  string       info ();	
 
   bool   connected() const {return is_connected;}
   //: returns true if a successful connection was made

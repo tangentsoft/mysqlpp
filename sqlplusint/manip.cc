@@ -10,7 +10,7 @@ SQLQueryParms& operator << (quote_type2 p, SQLString &in) {
       in2.processed = true;
       return *p.qparms << in2;
     } else {
-      char* s = new char[in.size()*2];
+      char* s = new char[in.size()*2+1];
       mysql_escape_string(s, const_cast<char *>(in.c_str()), in.size() );
       SQLString in2 = SQLString("'") + s + "'";
       in2.processed = true;
@@ -26,7 +26,7 @@ SQLQueryParms& operator << (quote_type2 p, SQLString &in) {
 
 template <>
 ostream& operator << (quote_type1 o, const string &in) {
-  char* s = new char[in.size()*2];
+  char* s = new char[in.size()*2+1];
   mysql_escape_string(s, const_cast<char *>(in.c_str()), in.size() );
   *o.ostr << "'" << s << "'";
   delete s;
@@ -47,7 +47,7 @@ ostream& operator << (quote_type1 o, const char* const &in) {
 template <class Str>
 inline ostream& _manip (quote_type1 o, const mysql_ColData<Str>& in) {
   if (in.escape_q()) {
-    char *s = new char[in.size()*2];
+    char *s = new char[in.size()*2+1];
     mysql_escape_string(s, const_cast<char *>(in.c_str()), in.size() );
     if (in.quote_q())
       *o.ostr << "'" << s << "'";
@@ -147,7 +147,7 @@ SQLQueryParms & operator << (escape_type2 p, SQLString &in) {
       in.processed = true;
       return *p.qparms << in;
     } else {
-      char* s = new char[in.size()*2];
+      char* s = new char[in.size()*2+1];
       mysql_escape_string(s, const_cast<char *>(in.c_str()), in.size() );
       SQLString in2 = s;
       in2.processed = true;
@@ -163,7 +163,7 @@ SQLQueryParms & operator << (escape_type2 p, SQLString &in) {
 
 template <>
 ostream& operator << (escape_type1 o, const string &in) {
-  char* s = new char[in.size()*2];
+  char* s = new char[in.size()*2+1];
   mysql_escape_string(s, const_cast<char *>(in.c_str()), in.size());
   *o.ostr << s;
   delete s;
@@ -185,7 +185,7 @@ ostream& operator << (escape_type1 o, const char* const &in) {
 template <class Str>
 inline ostream& _manip (escape_type1 o, const mysql_ColData<Str>& in) {
   if (in.escape_q()) {
-    char *s = new char[in.size()*2];
+    char *s = new char[in.size()*2+1];
     mysql_escape_string(s, const_cast<char *>(in.c_str()), in.size() );
     delete s;
   } else {

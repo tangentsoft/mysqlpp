@@ -1,8 +1,8 @@
 
 #include <iostream>
 #include <vector>
-#include <mysql++>
-#include <mysql++-custom>
+#include <sqlplus.hh>
+#include <custom.hh>
 #include "util.hh"
 // util.hh/cc contains the print_stock_table function
 

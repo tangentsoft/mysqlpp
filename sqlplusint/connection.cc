@@ -36,7 +36,7 @@ bool Connection::real_connect (cchar *db, cchar *host, cchar *user,
   mysql.options.port = port;
   mysql.options.compress = compress;
   mysql.options.connect_timeout=connect_timeout;
-  locked = true;
+  locked = true; 
   if (mysql_connect(&mysql, host, user, passwd))
   {
     locked = false;
@@ -44,9 +44,8 @@ bool Connection::real_connect (cchar *db, cchar *host, cchar *user,
   }
   else
   {
-    locked = false;
+    locked = false; Success = is_connected = false;
     if (throw_exceptions) throw BadQuery(error());
-    Success = is_connected = false;
   }
   if (!Success) return Success;
   if (db[0]) // if db is not empty

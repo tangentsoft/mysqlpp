@@ -2,8 +2,8 @@
 #include <iostream>
 #include <iomanip>
 #include <vector>
-#include <mysql++>
-#include <mysql++-custom>
+#include <sqlplus.hh>
+#include <custom.hh>
 
 sql_create_5(stock, 
 	     1, // This number is used to make a SSQLS less-than-comparable.

@@ -1,7 +1,7 @@
 
 #include <iostream>
 #include <iomanip>
-#include <mysql++>
+#include <sqlplus.hh>
 
 int main() {
   try { // its in one big try block

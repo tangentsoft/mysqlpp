@@ -13,13 +13,19 @@ New Feature Requests
 	  appropritate.  (e.g., add -pthread when building on Linux.)
 	  Without this, using MySQL++ in a threaded program causes crashes.
 
-	o None of the 'custom' examples do an insert.  Make one that does.
-
 	o Get PDF documentation generation working.
 
 
 Bug Fix/Maintenance Items
 -------------------------
+
+	o custom2 and custom3 are broken under VC++.  Find out why.  It may
+	  be related to the ostringstream conversion of the query classes.
+	  These two are the only SSQLS examples that update the database.
+	  Is that significant?
+
+	o Attribution and licensing needs attention.  Note LGPL at top of
+	  all source files, and note copyrights where known.
 
 	o 64-bit integer support is not heavily tested.  It may yet have
 	  problems.

@@ -78,3 +78,5 @@
 #ifdef MYSQL_NO_SHORT_NAMES
 #include "undef_short"
 #endif
+
+#include "exceptions.hh"

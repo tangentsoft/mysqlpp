@@ -30,8 +30,27 @@ int main(int argc, char *argv[]) {
 		else 
 			cerr << "Your binary file " << argv[1] << "could not be open, errno = " << errno;
 		return 0;
-  } catch (BadQuery er) { 
+
+  } catch (BadQuery &er) { // handle any connection or
+                          // query errors that may come up
+#ifdef USE_STANDARD_EXCEPTION
+    cerr << "Error: " << er.what() << " " << con.errnum() << endl;
+#else
     cerr << "Error: " << er.error << " " << con.errnum() << endl;
+#endif
     return -1;
-	}
+  } catch (BadConversion &er) { // handle bad conversions
+#ifdef USE_STANDARD_EXCEPTION
+    cerr << "Error: " << er.what() << "\"." << endl
+         << "retrieved data size: " << er.retrieved
+         << " actual data size: " << er.actual_size << endl;
+#else
+    cerr << "Error: Tried to convert \"" << er.data << "\" to a \""
+         << er.type_name << "\"." << endl;
+#endif
+    return -1;
+  } catch (exception &er) {
+    cerr << "Error: " << er.what() << endl;
+    return -1;
+  }
 }

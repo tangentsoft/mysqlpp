@@ -2,13 +2,10 @@
 #define __null1_hh__
 
 #include <ostream.h>
+#include "exceptions.hh"
 #include "define_short"
 
 //! with_class = Null
-
-//: Thrown when a *Null* value is trying to be converted into a type 
-//: it can't convert to.
-class BadNullConversion {};
 
 class null_type {
 public:

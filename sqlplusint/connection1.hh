@@ -16,7 +16,7 @@
 #include <map.h>
 #include <multiset.h>
 #include "define_short"
-#include "bad_query.hh"
+#include "exceptions.hh"
 #include "query1.hh"
 #include "result1.hh"
 
@@ -41,14 +41,14 @@ public:
   Connection (const char *db, const char *host = "", const char *user = "", 
 	      const char *passwd = "", bool te = true); //:
   Connection (const char *db, const char *host, const char *user, 
-	      const char *passwd, uint port, my_bool compress = 1,
-	      unsigned int connect_timeout = 5, bool te = true,
-	      cchar *socket_name = ""); //:
+	      const char *passwd, uint port, my_bool compress = 0,
+	      unsigned int connect_timeout = 60, bool te = true,
+	      cchar *socket_name = "",unsigned int client_flag=0); //:
 
   bool   real_connect (cchar *db = "", cchar *host = "", 
 		       cchar *user = "", cchar *passwd = "", uint port = 0,
 		       my_bool compress = 0, unsigned int connect_timeout = 60,
-		       cchar *socket_name= ""); //:
+		       cchar *socket_name= "", unsigned int client_flag=0); //:
 				
   ~Connection (); //:
   void         close() {mysql_close(&mysql);}	 //:

@@ -3,7 +3,7 @@ This is C++ API  library for MySQL.
 Starting based of 1.2, this is now maintained by sinisa@mysql.com
 as kevinatk@home.com doesn't have time to support this library anymore. 
 
-He has made sinisa@cytanet.com.cy a new official maintainer, which will
+He has made sinisa@mysql.com a new official maintainer, which will
 continue to keep mysql++ library under LGPL.
 
 
@@ -18,9 +18,10 @@ autoconf.
 
 This will make compilation and  installation much easier. 
 
-You should cd to the root of source directory and run ./configure.
-
-If that does not help, run autoconf first. 
+You should cd to the root of source directory and run :
+automake
+autoconf
+./configure.
 
 If you are running it several times, because you have problems, do delete 
 config.cache. In case of the problem config.log contains more info on
@@ -31,14 +32,11 @@ After configure is run, config.h and Makefiles are generated.
 If you wish to install mysql++ in a root directory other then /usr/local,
 you should run configure with --with-prefix=.....
 
-Configure contains description of other switches available.
+Configure script and manual. contains description of other switches 
+available.
 
 After running configure, run make and make install. Libs will be
 installed in prefix/lib and include files in prefix/include/mysql++.
-
-
-
-
 
 Since version 1.3 of mysql++, it can no longer be compiled  and built by GNU
 compilers older then 2.95. Since version 1.3, mysql++ has been changed to

@@ -14,14 +14,6 @@ class SQLQuery;
 
 //! with_class = SQLQuery
 
-//: Exception thrown when not enough parameters are provided
-// Thrown when not enough parameters are provided for a 
-// template query.
-struct SQLQueryNEParms {
-  SQLQueryNEParms(const char *c) : error(c) {}
-  const char* error; //:
-};
-
 //: This class holds the parameter values for filling template queries. 
 // It is a subclass of a vector of *SQLStrings*.
 class SQLQueryParms : public vector<SQLString> {

@@ -2,8 +2,8 @@
 #include <iostream>
 #include <iomanip>
 #include <vector>
-#include <mysql++>
-#include <mysql++-custom>
+#include <sqlplus.hh>
+#include <custom.hh>
 
 sql_create_5 (stock,		// struct name, 
 	      1, 5,		// I'll explain these latter

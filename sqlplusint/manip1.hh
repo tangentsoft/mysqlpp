@@ -1,6 +1,12 @@
 #ifndef __manip1_hh__
 #define __manip1_hh__
-
+#ifdef __WIN32__
+#include <Windows32/Base.h>
+#include <Windows32/Defines.h>
+#include <Windows32/Structures.h>
+#include <winsock.h>
+#define errno WSAGetLastError()
+#endif
 #include <mysql.h>
 #include <iostream>
 #include "define_short"

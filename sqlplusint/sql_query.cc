@@ -48,7 +48,7 @@ SQLString * pprepare (char option, SQLString &S, bool replace = true) {
     SQLString *ss = new SQLString("'");
     *ss += s;
     *ss += "'";
-    delete s;
+    delete[] s;
     if (replace) {S = *ss; S.processed = true; return &S;}
     return ss;
   } else if (option == 'R' || (option == 'Q' && S.is_string)) {
@@ -173,6 +173,6 @@ void SQLQuery::parse() {
     }
   }
   parsed.push_back( SQLParseElement(str,' ',-1) );
-  delete s0;
+  delete[] s0;
 }
 

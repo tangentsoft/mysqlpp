@@ -1,6 +1,6 @@
 
 #include <iostream>
-#include <mysql++>
+#include <sqlplus.hh>
 
 int main (int argc, char *argv[]) {
   Connection connection(use_exceptions);

@@ -1,4 +1,4 @@
-#This file was created by <kevina> Sun Sep 27 17:23:13 1998
+#This file was created by <Sinisa> Fri Aug 13 21:51:13 1999
 #LyX 0.12 (C) 1995-1998 Matthias Ettrich and the LyX Team
 \lyxformat 2.15
 \textclass book
@@ -55,15 +55,20 @@ Mysql++
 \newline 
 A C++ API for Mysql
 \newline 
-ver .64.1.1 pre-alpha
+ver 1.1
 \layout Author
 
 Kevin Atkinson
 \newline 
 (kevina@clark.net)
-\layout Date
-
-September 27, 1998
+\newline 
+ Sinisa Milivojevic
+\newline 
+(sinisa@cytanet.com.cy)
+\newline 
+Michael Widenius
+\newline 
+(monty@mysql.com)
 \layout Standard
 
 
@@ -97,16 +102,15 @@ Mysql++ is a complex C++ API for Mysql (And other SQL Databases Soon).
 Getting Mysql++
 \layout Standard
 
-The latest version of Mysql++ can be found at the mysql++ web site at http://sun
-site.unc.edu/kevina/mysql++.
+The latest version of Mysql++ can be found at the mysql++ web site at http://www.
+mysql.com/mysql++.
 \layout Section
 
 Mysql++ Mailing List
 \layout Standard
 
 Instructions for joining the mailing list (and an archive of the mailing
- list) can be found off the Mysql++ home page at http://sunsite.unc.edu/kevina/mys
-ql++
+ list) can be found off the Mysql++ home page at http://www.mysql.com/mysql++
 \layout Chapter
 
 Overview
@@ -339,6 +343,16 @@ equal_list (cchar *, cchar *, Manip)
 .
 \layout Itemize
 
+Mysql++ now runs with egcs.
+ But 
+\noun on 
+beware !,
+\noun toggle 
+ do not yet use -O6 -mpentium options are still unsafe for g++, with a heavy
+ use of constant and static initializers, and especially with C++ exceptions
+ 
+\layout Itemize
+
 The 
 \begin_inset Quotes eld
 \end_inset 
@@ -362,6 +376,17 @@ Mysql
 ) has changed so that the data base name is the first paremeter.
 \layout Itemize
 
+All new client feature implemented in 3.22.xx as various options on connect
+ are mplemented in a new constructor and real_connect method
+\layout Itemize
+
+Mysql++ now can be compiled on Win32 with use of Cygwin compiler from Cygnus
+ Inc.
+\layout Itemize
+
+Autoconf and Automake are fully implemented
+\layout Itemize
+
 The Specialized SQL Structures (formally known as Custom Mysql Structures)
  changed from mysql_ to sql_.
 \layout Itemize
@@ -372,6 +397,10 @@ Changed all of the functions that return zero (false) on success and non-zero
  This means that you now need to negate your expressions that test the output
  of these functions.
  
+\layout Itemize
+
+Corrected bugs in sql_query.cc regarding delete versus delete[] and string
+ length in manip.cc
 \layout Itemize
 
 Almost all methods that returned MysqlString now return a normal string.
@@ -414,10 +443,6 @@ The behavior of MysqlString when used with binary operators is going to
  of converting to the type on the other side of the operator the MysqlString
  will it convert to the type the Mysql server said it originally was.
  This will be a lot safer and more predictable.
-\layout Itemize
-
-As soon as a stable egcc comes out that supports namespaces comes out I
- intend to use it.
 \layout Part*
 
 Usage
@@ -7187,7 +7212,7 @@ mysql++
  The short and long names are mapped as follows:
 \layout Standard
 \added_space_top 0.3cm \added_space_bottom 0.3cm \align center \LyXTable
-multicol4
+multicol5
 33 2 0 0 -1 -1 -1 -1
 1 1 0 0
 1 0 0 0
@@ -7222,74 +7247,74 @@ multicol4
 1 0 0 0
 1 0 0 0
 1 0 0 0
-2 1 0 
-2 1 1 
-1 8 1 1 0 0 0
-1 8 1 1 0 0 0
-0 2 1 0 0 0 0
-0 2 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
-0 8 1 0 0 0 0
+2 1 0 "" ""
+2 1 1 "" ""
+1 8 1 1 0 0 0 "" ""
+1 8 1 1 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
 
 
 \series bold 
@@ -7437,6 +7462,89 @@ appendix
 \layout Chapter
 
 Changelog
+\layout Standard
+
+
+\protected_separator 
+
+\layout Section*
+
+1.1 (1999-08-02
+\protected_separator 
+ Sinisa Milivojevic <sinisa@cytanet.com.cy>)
+\layout Itemize
+
+Changed version to 1.1
+\layout Itemize
+
+Added several bug fixes
+\layout Itemize
+
+Fixed memory leak problems and variables overlapping problems.
+\layout Itemize
+
+Added automake and autoconf support by loic@ceic.com
+\layout Itemize
+
+Added Makefile for manual
+\layout Itemize
+
+Added support for cygwin
+\layout Itemize
+
+Added example sinisa_ex (let modesty prevail) which used to crash a 
+\layout Itemize
+
+lot when memory allocation, memory leak and overlap problems were
+\layout Itemize
+
+present.
+ Smooth running of this example proves that all those bugs are 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+fixed
+\layout Itemize
+
+Corrected bugs in sql_query.cc regarding delete versus delete[] and string
+ length in manip.cc
+\layout Itemize
+
+Changed manual
+\layout Itemize
+
+Changed README
+\layout Itemize
+
+Many other smaller things
+\layout Section*
+
+1.0 (1999-06-09
+\protected_separator 
+ Michael Widenius
+\protected_separator 
+ <monty@monty.pp.sci.fi>)
+\layout Itemize
+
+Changed version to 1.0
+\layout Itemize
+
+Added patches from Orion Poplawski <orion@bvt.com> to support the
+\layout Itemize
+
+UnixWare 7.0 compiler
 \layout Section*
 
 .64.1.1a (Sep 27 1998)
@@ -7663,15 +7771,6 @@ Be able to store the result set in an assignable container that stores the
  If you have any ideas let me know.) 
 \layout Itemize
 
-Switch to using automake/configure and libtools for better portability.
-\layout Itemize
-
-Rework the library to make it more generic.
- Considering using SQL Drivers so that my library can work with any SQL
- database.
- 
-\layout Itemize
-
 Better handling of the destruction of the Mysql class.
  Have it first tell all its children that its parent is getting destroys
  and have then respond appropreatly.
@@ -7687,7 +7786,8 @@ Have a more intelligent MysqlRes that can reexecute to refresh the data.
  
 \layout Standard
 
-If you have anything else you want to see let me know at kevina@clark.net.
+If you have anything else you want to see let us know at sinisa@cytanet.com.cy
+ or monty@mysql.com.
  
 \layout Chapter
 
@@ -8397,8 +8497,10 @@ That's all there is to it!
 Feedback
 \layout Standard
 
-Please give me some.
- With out your feedback the library will get nowhere.
- I can me reached at kevina@clark.net.
- 
+Since July 1999, all maintenance has been transferred to Sinisa Milivojevic
+ (sinisa@cytanet.com.cy) and Michael Widenius (monty@mysql.com).
+\layout Standard
+
+Send your feedback to any of these addresses, or even better to the mailing
+ list mysql-plusplus@lists.mysql.com.
 \the_end

@@ -1,6 +1,6 @@
 #include <iostream>
 #include <iomanip>
-#include <mysql++>
+#include <sqlplus.hh>
 
 int main() {
   Connection con("mysql_cpp_data");

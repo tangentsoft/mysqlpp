@@ -3,6 +3,7 @@
 
 #include "connection.h"
 
+#include "query.h"
 #include "result.h"
 
 #if defined(HAVE_MYSQL_SHUTDOWN_LEVEL_ARG)

@@ -2,7 +2,6 @@
 #define __row1_hh__
 
 #include <coldata.h>
-#include <defs.h>
 #include <exceptions.h>
 #include <resiter.h>
 #include <vallist.h>
@@ -13,6 +12,9 @@
 #include <string.h>
 
 namespace mysqlpp {
+
+class FieldNames;
+class ResUse;
 
 template <class ThisType, class Res>
 class RowTemplate {

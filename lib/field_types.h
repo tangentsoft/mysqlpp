@@ -1,12 +1,13 @@
 #ifndef __field_types1_hh__
 #define __field_types1_hh__
 
-#include <defs.h>
 #include <type_info.h>
 
 #include <vector>
 
 namespace mysqlpp {
+
+class ResUse;
 
 //: A vector of the field types.
 class FieldTypes : public std::vector<mysql_type_info> {

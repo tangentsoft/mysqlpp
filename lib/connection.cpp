@@ -45,8 +45,9 @@ locked(false)
 	else {
 		locked = false;
 		Success = is_connected = false;
-		if (throw_exceptions)
+		if (throw_exceptions) {
 			throw BadQuery(error());
+		}
 	}
 }
 
@@ -59,17 +60,17 @@ throw_exceptions(te),
 locked(false)
 {
 	mysql_init(&mysql);
-	if (real_connect
-		(db, host, user, passwd, port, compress, connect_timeout,
-		 socket_name, client_flag)) {
+	if (real_connect(db, host, user, passwd, port, compress,
+			connect_timeout, socket_name, client_flag)) {
 		locked = false;
 		Success = is_connected = true;
 	}
 	else {
 		locked = false;
 		Success = is_connected = false;
-		if (throw_exceptions)
+		if (throw_exceptions) {
 			throw BadQuery(error());
+		}
 	}
 }
 
@@ -84,23 +85,26 @@ bool Connection::real_connect(cchar* db, cchar* host, cchar* user,
 
 	mysql_options(&mysql, MYSQL_READ_DEFAULT_FILE, "my");
 
-	if (mysql_real_connect
-		(&mysql, host, user, passwd, db, port, socket_name,
-		 client_flag)) {
+	if (mysql_real_connect(&mysql, host, user, passwd, db, port,
+			socket_name, client_flag)) {
 		locked = false;
 		Success = is_connected = true;
 	}
 	else {
 		locked = false;
 		Success = is_connected = false;
-		if (throw_exceptions)
+		if (throw_exceptions) {
 			throw BadQuery(error());
+		}
 	}
-	//  mysql.options.my_cnf_file=0;
-	if (!Success)
+
+	if (!Success) {
 		return Success;
-	if (db && db[0])		// if db is not empty
+	}
+	if (db && db[0]) {
+		// db is not empty
 		Success = select_db(db);
+	}
 	return Success;
 }
 
@@ -112,28 +116,34 @@ Connection::~Connection()
 bool Connection::select_db(const char *db)
 {
 	bool suc = !(mysql_select_db(&mysql, db));
-	if (throw_exceptions && !suc)
+	if (throw_exceptions && !suc) {
 		throw BadQuery(error());
-	else
-	return suc;
+	}
+	else {
+		return suc;
+	}
 }
 
 bool Connection::reload()
 {
 	bool suc = !mysql_reload(&mysql);
-	if (throw_exceptions && !suc)
+	if (throw_exceptions && !suc) {
 		throw BadQuery(error());
-	else
-	return suc;
+	}
+	else {
+		return suc;
+	}
 }
 
 bool Connection::shutdown()
 {
 	bool suc = !(mysql_shutdown(&mysql SHUTDOWN_ARG));
-	if (throw_exceptions && !suc)
+	if (throw_exceptions && !suc) {
 		throw BadQuery(error());
-	else
-	return suc;
+	}
+	else {
+		return suc;
+	}
 }
 
 bool Connection::connect(cchar* db, cchar* host, cchar* user,

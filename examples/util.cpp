@@ -27,10 +27,11 @@ print_stock_table(mysqlpp::Query& query)
 
 	// Display a header for the stock table
 	cout.setf(ios::left);
-	cout << setw(20) << "Item" <<
-			setw(9) << "Num" <<
-			setw(9) << "Weight" <<
-			setw(9) << "Price" << "Date" << endl << endl;
+	cout << setw(21) << "Item" <<
+			setw(10) << "Num" <<
+			setw(10) << "Weight" <<
+			setw(10) << "Price" <<
+			"Date" << endl << endl;
 
 	// Use the Result class's read-only random access iterator to walk
 	// through the query results.
@@ -41,10 +42,10 @@ print_stock_table(mysqlpp::Query& query)
 
 		// Note that you can use either the column index or name to
 		// retrieve the data.
-		cout << setw(20) << row[0].c_str() <<
-				setw(9) << row[1].c_str() <<
-				setw(9) << row.lookup_by_name("weight").c_str() <<
-				setw(9) << row[3].c_str() <<
+		cout << setw(20) << row[0].c_str() << ' ' <<
+				setw(9) << row[1].c_str() << ' ' <<
+				setw(9) << row.lookup_by_name("weight").c_str() << ' ' <<
+				setw(9) << row[3].c_str() << ' ' <<
 				row[4] << endl;
 	}
 }

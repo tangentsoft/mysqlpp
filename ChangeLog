@@ -1,3 +1,28 @@
+1.7.32, 2005.03.10
+
+	o Example building may now be skipped with --disable-examples
+	  configure script flag.
+
+	o Changed stock items added in resetdb.  One is now UTF-8 encoded,
+	  to show that basic use of Unicode with MySQL++ is easy, yet not
+	  foolproof.  (See formatting of table on systems where cout isn't
+	  UTF-8 aware!)  Other stock items now follow a theme, for your
+	  amusement.  :)
+
+	o custom3 example now changes UTF-8 item's name to the 7-bit ASCII
+	  equivalent.  Previously, this example would fix a spelling error
+	  in the table.
+
+	o resetdb example now says 'why' when it is unable to create the
+	  sample database.
+
+	o Small formatting change to print_stock_table(), used by several
+	  examples.
+
+	o Was issuing a VC++-specific warning-disable pragma when built by
+	  any Windows compiler.  Fixed.
+	
+
 1.7.31, 2005.03.05 The "Inevitable Point-one Followup" release
 
 	o Check for threads support must now be explicitly requested via

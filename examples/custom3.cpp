@@ -28,12 +28,13 @@ main(int argc, char *argv[])
 		}
 
 		Query query = con.query();
-		query << "select * from stock where item = \"Hotdogs' Buns\" ";
+		query << "select * from stock where item = \"Nürnberger Brats\"";
 
 		// Is the query was successful?  If not throw a bad query.
 		Result res = query.store();
 		if (res.empty()) {
-			throw BadQuery("Hotdogs' Buns not found in table, run resetdb");
+			throw BadQuery("UTF-8 bratwurst item not found in "
+					"table, run resetdb");
 		}
 
 		// Because there should only be one row in the result set, we
@@ -46,8 +47,10 @@ main(int argc, char *argv[])
 		// original values are.
 		stock row2 = row;
 
-		// Change item column, fixing the spelling.
-		row.item = "Hotdog Buns";
+		// Change item column to use only 7-bit ASCII, and to
+		// deliberately be wider than normal column widths printed by
+		// print_stock_table().
+		row.item = "Nuerenberger Bratwurst";
 
 		// Form the query to replace the row.  The table name is the
 		// name of the struct by default.

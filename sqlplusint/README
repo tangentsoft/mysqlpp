@@ -1,4 +1,4 @@
-All of the header files in this dir (mysql++-int) are internal.  This
+All of the header files in this dir (sqlplusint) are internal.  This
 means that you should never include any of these directly in your
 programs as they are subject to change from one relese to another.
 

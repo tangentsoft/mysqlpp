@@ -14,7 +14,7 @@ $orgcode = <STDIN>;
 
 $out = << "---";
 
-#include <mysql++-int/custom-macros.hh>
+#include <sqlplusint/custom-macros.hh>
 
 $macro
 

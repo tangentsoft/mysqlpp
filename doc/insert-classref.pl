@@ -1,7 +1,7 @@
 $/ = undef;
 
 open F, "manual.tex";
-open CR, "mysql++-int/doc.tex";
+open CR, "../sqlplusint/doc.tex";
 
 $_=<F>;
 $classref=<CR>;

@@ -20,7 +20,7 @@ template <class BinaryPred>
 class MysqlCmpCStr : public MysqlCmp<BinaryPred, const char *>
 {
 public:
-  MysqlCmpCStr(uint i, const BinaryPred &f, const char* c) : MysqlCmp(i,f,c) {}
+  MysqlCmpCStr(uint i, const BinaryPred &f, const char* c) : MysqlCmp<BinaryPred, const char *> (i,f,c) {}
   bool operator () (const MysqlRow& cmp1) const 
     {return func(cmp2,cmp1[index]);}
 };

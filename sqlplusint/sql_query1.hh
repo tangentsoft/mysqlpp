@@ -142,7 +142,7 @@ public:
   bool     success() const {return Success;}
 
   operator bool () {return success();}
-  operator !    () {return !success();}
+  bool operator !    () {return !success();}
 
   //!dummy: string str (query_reset r = DONT_RESET);
   //: Returns the full query string.

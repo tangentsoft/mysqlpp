@@ -2,15 +2,15 @@
 #include "connection3.hh"
 #include "result3.hh"
 
-pointer_tracker<MYSQL,Connection> 
-Connection::others = pointer_tracker<MYSQL, Connection>();
+// pointer_tracker<MYSQL,Connection>  Connection::others = pointer_tracker<MYSQL, Connection>();
 
 Connection::Connection (const char *db, const char *host, const char *user, 
 			const char *passwd, bool te) 
   : throw_exceptions(te), locked(false)
 {
+	mysql_init(&mysql);
   connect (db, host, user, passwd);
-  others.insert(&mysql,this);
+//  others.insert(&mysql,this);
 }
 
 Connection::Connection (const char *db, const char *host, const char *user, 
@@ -19,9 +19,10 @@ Connection::Connection (const char *db, const char *host, const char *user,
 			const char *socket_name)
   : throw_exceptions(te), locked(false)
 {
+	mysql_init(&mysql);
   real_connect (db, host, user, passwd, port, compress,
 		connect_timeout,socket_name);
-  others.insert(&mysql,this);
+//  others.insert(&mysql,this);
 }
 
 bool Connection::real_connect (cchar *db, cchar *host, cchar *user,
@@ -60,7 +61,8 @@ Connection::~Connection () {
     {
       (*i)->parent_leaving();
     }
-  others.remove(&mysql,this);
+	mysql_close(&mysql);
+//  others.remove(&mysql,this); 
 }
 
 bool Connection::select_db (const char *db) {

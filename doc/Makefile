@@ -26,3 +26,4 @@ manual:
 	-rm -f -r man-text
 	-mkdir man-text
 	perl html2txt.pl
+

@@ -1,7 +1,7 @@
 #ifndef __null1_hh__
 #define __null1_hh__
 
-#include <ostream.h>
+#include <ostream>
 #include "exceptions.hh"
 #include "define_short"
 
@@ -18,19 +18,19 @@ const null_type null = null_type();
 //: Type to use for the behavior parameter for *Null<>*
 struct NullisNull {
   static null_type null_is() {return null_type();}
-  static ostream&  null_ostr(ostream& o) {o << "(NULL)"; return o;}
+  static std::ostream&  null_ostr(std::ostream& o) {o << "(NULL)"; return o;}
 };
 
 //: Type to use for the behavior parameter for *Null<>*
 struct NullisZero {
   static int   null_is() {return 0;}
-  static ostream& null_ostr(ostream &o) {o << 0; return o;}
+  static std::ostream& null_ostr(std::ostream &o) {o << 0; return o;}
 };
 
 //: Type to use for the behavior parameter for *Null<>*
 struct NullisBlank {
   static const char * null_is() {return "";}
-  static ostream& null_ostr(ostream &o) {o << ""; return o;}
+  static std::ostream& null_ostr(std::ostream &o) {o << ""; return o;}
 };
 
 //: Container class for holding null types.

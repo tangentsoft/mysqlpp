@@ -13,7 +13,7 @@ print OUT0 << "---";
 enum sql_dummy_type {sql_dummy};
 enum sql_cmp_type {sql_use_compare};
 
-inline int sql_cmp(const string &a, const string &b) {
+inline int sql_cmp(const std::string &a, const std::string &b) {
   return a.compare(b);
 }
 ---
@@ -80,21 +80,21 @@ print OUT << "---";
 
 #define sql_compare_define(NAME) \\
     bool operator == (const NAME &other) const \\
-      {return sql_compare_##NAME##<sql_dummy>(*this,other) == 0;} \\
+      {return sql_compare_##NAME<sql_dummy>(*this,other) == 0;} \\
     bool operator != (const NAME &other) const \\
-      {return sql_compare_##NAME##<sql_dummy>(*this,other) != 0;} \\
+      {return sql_compare_##NAME<sql_dummy>(*this,other) != 0;} \\
     bool operator > (const NAME &other) const \\
-      {return sql_compare_##NAME##<sql_dummy>(*this,other) >  0;} \\
+      {return sql_compare_##NAME<sql_dummy>(*this,other) >  0;} \\
     bool operator < (const NAME &other) const \\
-      {return sql_compare_##NAME##<sql_dummy>(*this,other) <  0;} \\
+      {return sql_compare_##NAME<sql_dummy>(*this,other) <  0;} \\
     bool operator >= (const NAME &other) const \\
-      {return sql_compare_##NAME##<sql_dummy>(*this,other) >= 0;} \\
+      {return sql_compare_##NAME<sql_dummy>(*this,other) >= 0;} \\
     bool operator <= (const NAME &other) const \\
-      {return sql_compare_##NAME##<sql_dummy>(*this,other) <= 0;} \\
+      {return sql_compare_##NAME<sql_dummy>(*this,other) <= 0;} \\
     int cmp (const NAME &other) const \\
-      {return sql_compare_##NAME##<sql_dummy>(*this,other);} \\
+      {return sql_compare_##NAME<sql_dummy>(*this,other);} \\
     int compare (const NAME &other) const \\
-      {return sql_compare_##NAME##<sql_dummy>(*this,other);}
+      {return sql_compare_##NAME<sql_dummy>(*this,other);}
 ---
 
 foreach $j (1..26) {
@@ -128,9 +128,9 @@ foreach $i (1..26) {
   $compr = "    int cmp; \\\n" unless $i == 1;
   $compp = "";
   foreach $j (1..$i) {
-      $compr .= "    if (cmp = sql_cmp(x.##C$j , y.##C$j )) return cmp; \\\n"
+      $compr .= "    if (cmp = sql_cmp(x.C$j , y.C$j )) return cmp; \\\n"
                                                               unless $j == $i;
-      $compr .= "    return sql_cmp(x.##C$j , y.##C$j );"   if $j == $i;
+      $compr .= "    return sql_cmp(x.C$j , y.C$j );"   if $j == $i;
       $parm2 .= "const T$j &p$j";
       $parm2 .= ", "  unless $j == $i;
       $define.= "C$j (p$j)";
@@ -219,7 +219,7 @@ foreach $i (1..26) {
 	$parm_simple2c_b .= ", " unless $j == $i;
 	$defs  .= "    T$j I$j;";
 	$defs  .= "\n" unless $j == $i;
-	$popul .= "    s->##I$j = row[ O$j ];";
+	$popul .= "    s->I$j = (T$j)row[ O$j ];";
 	$popul .= "\n" unless $j == $i;
         $names .= "    N$j ";
 	$names .= ",\n" unless $j == $i;
@@ -227,7 +227,7 @@ foreach $i (1..26) {
 	$enums .= ",\n" unless $j == $i;
         $field_list .= "    s << obj.manip << obj.obj->names[".($j-1)."]";
 	$field_list .= " << obj.delem;\n" unless $j == $i;
-	$value_list .= "    s << obj.manip << obj.obj->##I$j";
+	$value_list .= "    s << obj.manip << obj.obj->I$j";
 	$value_list .= " << obj.delem;\n" unless $j == $i;
         $create_bool .= "    if (i$j) (*include)[".($j-1)."]=true;\n";
         $create_list .= "    if (i$j == NAME##_NULL) return;\n" unless $i == 1;
@@ -235,7 +235,7 @@ foreach $i (1..26) {
 
         $value_list_cus .= "    if ((*obj.include)[".($j-1)."]) { \n";
 	$value_list_cus .= "      if (before) s << obj.delem;\n" unless $j == 1;
-        $value_list_cus .= "      s << obj.manip << obj.obj->##I$j;\n";
+        $value_list_cus .= "      s << obj.manip << obj.obj->I$j;\n";
 	$value_list_cus .= "      before = true; \n" unless $j == $i;
 	$value_list_cus .= "     } \n";
 
@@ -248,22 +248,22 @@ foreach $i (1..26) {
         $cus_equal_list .= "    if ((*obj.include)[".($j-1)."]) { \n";
 	$cus_equal_list .= "      if (before) s << obj.delem;\n" unless $j == 1;
         $cus_equal_list .= "      s << obj.obj->names[".($j-1)."] << obj.comp";
-        $cus_equal_list .=        " << obj.manip << obj.obj->##I$j;\n";
+        $cus_equal_list .=        " << obj.manip << obj.obj->I$j;\n";
 	$cus_equal_list .= "      before = true; \n" unless $j == $i;
 	$cus_equal_list .= "     } \n";
 
         $equal_list .= "    s << obj.obj->names[".($j-1)."] << obj.comp";
-        $equal_list .= " << obj.manip << obj.obj->##I$j";
+        $equal_list .= " << obj.manip << obj.obj->I$j";
 	$equal_list .= " << obj.delem;\n" unless $j == $i;
         $cusparms1  .= "bool i$j"         if     $j == 1;
 	$cusparms1  .= "bool i$j = false" unless $j == 1;
 	$cusparms1  .= ", " unless $j == $i;
         $cusparms11  .= "bool i$j" ;
 	$cusparms11  .= ", " unless $j == $i;
-	$cusparms2  .= "##NAME##_enum i$j" if $j == 1;
-	$cusparms2  .= "##NAME##_enum i$j = ##NAME##_NULL" unless $j == 1;
+	$cusparms2  .= "NAME##_enum i$j" if $j == 1;
+	$cusparms2  .= "NAME##_enum i$j = NAME##_NULL" unless $j == 1;
 	$cusparms2  .= ", " unless $j == $i;
-	$cusparms22  .= "##NAME##_enum i$j";
+	$cusparms22  .= "NAME##_enum i$j";
 	$cusparms22  .= ", " unless $j == $i;
         $cusparmsv  .= "i$j";
 	$cusparmsv  .= ", " unless $j == $i;
@@ -303,10 +303,10 @@ $defs
 $popul 
   } 
 
-  inline NAME##::##NAME (const MysqlRow &row) 
-    {populate_##NAME##<sql_dummy>(this, row);} 
+  inline NAME::NAME (const MysqlRow &row) 
+    {populate_##NAME<sql_dummy>(this, row);} 
 
-  sql_COMPARE__##CMP##(NAME, $parmc )
+  sql_COMPARE__##CMP(NAME, $parmc )
 ---
     print OUT &prepare($out);
 
@@ -367,7 +367,7 @@ $enums
     vector<bool> *include;
     bool del_vector;
   public: 
-    ~##NAME##_cus_value_list () {if (del_vector) delete include;} 
+    ~NAME##_cus_value_list () {if (del_vector) delete include;} 
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, $cusparms11);
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, $cusparms22); 
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m ,vector<bool>)
@@ -385,7 +385,7 @@ $enums
     vector<bool> *include; 
     bool del_vector; 
   public: 
-    ~##NAME##_cus_field_list () {if (del_vector) delete include;} 
+    ~NAME##_cus_field_list () {if (del_vector) delete include;} 
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, $cusparms11); 
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, $cusparms22); 
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, vector<bool> *i) 
@@ -404,7 +404,7 @@ $enums
     cchar *comp;
     Manip manip;
   public:
-    ~##NAME##_##cus_equal_list () {if (del_vector) delete include;}
+    ~NAME##_##cus_equal_list () {if (del_vector) delete include;}
     NAME##_##cus_equal_list (const NAME *o, cchar *d, cchar *c, Manip m, $cusparms11); 
     NAME##_##cus_equal_list (const NAME *o, cchar *d, cchar *c, Manip m, $cusparms22); 
     NAME##_##cus_equal_list (const NAME *o, cchar *d, cchar *c, Manip m, vector<bool> *i) 
@@ -421,8 +421,8 @@ $defs
     sql_compare_define_##CMP(NAME, $parmC)
     sql_construct_define_##CONTR(NAME, $parmC)
     static char *names[];
-    static char *_table;
-    static char *& table() {return _table;}
+    static const char *_table;
+    static const char *& table() {return _table;}
 
     NAME##_value_list<quote_type0> value_list() const {
       return value_list(",", mysql_quote);}
@@ -593,10 +593,10 @@ $defs
 					    sql_cmp_type sc) const;
   }; 
 
-  char *##NAME##::names[] = { 
+  char *NAME::names[] = { 
 $names 
   }; 
-  char *##NAME##::_table = #NAME ;  
+  const char *NAME::_table = #NAME ;  
 
   template <class Manip>
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list
@@ -707,71 +707,71 @@ $cus_equal_list
   } 
 
   template <class Manip>
-  inline NAME##_value_list<Manip> NAME##::value_list(cchar *d, Manip m) const { 
+  inline NAME##_value_list<Manip> NAME::value_list(cchar *d, Manip m) const { 
     return NAME##_value_list<Manip> (this, d, m); 
   } 
 
   template <class Manip>
-  inline NAME##_field_list<Manip> NAME##::field_list(cchar *d, Manip m) const { 
+  inline NAME##_field_list<Manip> NAME::field_list(cchar *d, Manip m) const { 
     return NAME##_field_list<Manip> (this, d, m); 
   } 
 
   template <class Manip>
-  inline NAME##_equal_list<Manip> NAME##::equal_list(cchar *d, cchar *c, Manip m) const { 
+  inline NAME##_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m) const { 
     return NAME##_equal_list<Manip> (this, d, c, m); 
   } 
  
   template <class Manip>
-  inline NAME##_cus_value_list<Manip> NAME##::value_list(cchar *d, Manip m,
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,
 						       $cusparms11) const {
     return NAME##_cus_value_list<Manip> (this, d, m, $cusparmsv); 
   } 
 
   template <class Manip>
-  inline NAME##_cus_field_list<Manip> NAME##::field_list(cchar *d, Manip m,
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,
 							 $cusparms11) const { 
     return NAME##_cus_field_list<Manip> (this, d, m, $cusparmsv); 
   } 
 
   template <class Manip>
-  inline NAME##_cus_equal_list<Manip> NAME##::equal_list(cchar *d, cchar *c, Manip m,
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,
 							 $cusparms11) const { 
     return NAME##_cus_equal_list<Manip> (this, d, c, m, $cusparmsv); 
   } 
 
   template <class Manip>
-  inline NAME##_cus_value_list<Manip> NAME##::value_list(cchar *d, Manip m,
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,
 						       $cusparms22) const { 
     return NAME##_cus_value_list<Manip> (this, d, m, $cusparmsv); 
   } 
 
   template <class Manip>
-  inline NAME##_cus_field_list<Manip> NAME##::field_list(cchar *d, Manip m,
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,
 							 $cusparms22) const {
     return NAME##_cus_field_list<Manip> (this, d, m, $cusparmsv); 
   } 
 
   template <class Manip>
-  inline NAME##_cus_equal_list<Manip> NAME##::equal_list(cchar *d, cchar *c, Manip m, 
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m, 
 							 $cusparms22) const { 
     return NAME##_cus_equal_list<Manip> (this, d, c, m, $cusparmsv); 
   } 
 
   template <class Manip>
   inline NAME##_cus_value_list<Manip> 
-  NAME##::value_list(cchar *d, Manip m, sql_cmp_type sc) const {
+  NAME::value_list(cchar *d, Manip m, sql_cmp_type sc) const {
     sql_compare_type_def_##CMP (NAME, value, NUM);
   }
 
   template <class Manip>
   inline NAME##_cus_field_list<Manip> 
-  NAME##::field_list(cchar *d, Manip m, sql_cmp_type sc) const {
+  NAME::field_list(cchar *d, Manip m, sql_cmp_type sc) const {
     sql_compare_type_def_##CMP (NAME, field, NUM);
   }
 
   template <class Manip>
   inline NAME##_cus_equal_list<Manip> 
-  NAME##::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {
+  NAME::equal_list(cchar *d, cchar *c, Manip m, sql_cmp_type sc) const {
     sql_compare_type_defe_##CMP (NAME, equal, NUM);
   }
 
@@ -780,12 +780,12 @@ $cus_equal_list
 $popul
   } 
 
-  inline NAME##::##NAME (const MysqlRow &row) 
-                                        {populate_##NAME##<sql_dummy>(this, row);}
-  inline void NAME##::set (const MysqlRow &row)
-                                        {populate_##NAME##<sql_dummy>(this, row);}
+  inline NAME::NAME (const MysqlRow &row) 
+                                        {populate_##NAME<sql_dummy>(this, row);}
+  inline void NAME::set (const MysqlRow &row)
+                                        {populate_##NAME<sql_dummy>(this, row);}
 
-  sql_COMPARE__##CMP##(NAME, $parmc )
+  sql_COMPARE__##CMP(NAME, $parmc )
 ---
 print OUT &prepare($out);
 

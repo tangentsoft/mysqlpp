@@ -47,12 +47,12 @@ inline int Query::insert_id () {
   return mysql->insert_id();
 }
 
-inline string Query::info() {
+inline std::string Query::info() {
   return mysql->info();
 }
 
-inline string Query::error () {
-  if (errmsg) return string(errmsg);
+inline std::string Query::error () {
+  if (errmsg) return std::string(errmsg);
   return mysql->error();
 }
 

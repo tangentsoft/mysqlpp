@@ -1,74 +1,46 @@
-This is C++ API  library for MySQL.
+This is the C++ API for MySQL.
 
-Starting based of 1.2, this is now maintained by sinisa@mysql.com
-as kevinatk@home.com doesn't have time to support this library anymore. 
+Starting with 1.7.10, this is maintained by Warren Young
+<mysqlpp@etr-usa.com>. It was maintained by Sinisa Milivojevic
+<sinisa@mysql.com> from version 1.2 to 1.7.9, and by kevinatk@home.com
+prior to that.
 
-He has made sinisa@mysql.com a new official maintainer, which will
-continue to keep mysql++ library under LGPL.
+Send feedback to the MySQL++ mailing list <plusplus@lists.mysql.com>.
 
+Since version 1.1, mysql++ has been autoconfiscated.
 
-Since October 1999, all maintenance has been transferred to Sinisa
-Milivojevic (sinisa@mysql.com).
+From within the source directory, you should just need to say:
+	
+	$ ./configure
+	$ make
+	$ su
+	# make install
 
-Send your feedback to this address, or even better to the
-mailing list mysql-plusplus@lists.mysql.com.
+to build and install the program.
 
-Since versin 1.1, mysql++ has been prepared to be built with automake and
-autoconf. 
+You may want to try out the programs in the examples subdirectory to
+ensure that the MySQL++ API and your MySQL database are both working
+properly. Start with reset_db, and work through the other examples to
+test things.
 
-This will make compilation and  installation much easier. 
+If you've got a fresh CVS checkout, you will need to say:
 
-You should cd to the root of source directory and run :
-automake
-autoconf
-./configure.
+	$ ./bootstrap
 
-If you are running it several times, because you have problems, do delete 
-config.cache. In case of the problem config.log contains more info on
-it's whereabouts.
+before running configure for the first time.  The bootstrap script
+should only need to be run once in normal circumstances.  Occasionally
+automake/autoconf gets confused and you have to run it again, but this
+only affects people tweaking these configuration files. (*.am, *.in,
+and everything in the config subdir, mostly.)
 
-After configure is run, config.h and Makefiles are generated. 
+If you wish to install mysql++ in a root directory other than /usr/local,
+run configure with --with-prefix=.....
 
-If you wish to install mysql++ in a root directory other then /usr/local,
-you should run configure with --with-prefix=.....
+At the moment, this project only builds under GCC 3.0 and higher. If
+enough demand is there, I can fix it to build under 2.95 and newer again.
+I'd rather that people just upgraded to 3.x, though. I won't be making
+any effort to support older compilers.
 
-Configure script and manual. contains description of other switches 
-available.
-
-After running configure, run make and make install. Libs will be
-installed in prefix/lib and include files in prefix/include/mysql++.
-
-Since version 1.3 of mysql++, it can no longer be compiled  and built by GNU
-compilers older then 2.95. Since version 1.3, mysql++ has been changed to
-accomodate changes in 2.95 on various aspects of C++. This prevents it's
-building with earlier versions of GNU , like 2.7.xx, 2.8.xx. Also building
-by egcs compilers 1.x.x is not supported any more. Although with some
-changes in code mysql++ could be built with earlier compilers, running of
-such programs would result in their crashing.
-
-
-It was also noted that on certain SPARC Solaris installation, C++ exceptions
-did not work with gcc 2.95.2.
-
-This case was tested and it is established that mysql++ builds and runs
-flawlessly with a following version of gcc on Solaris:
-
-gcc version 2.95 19990728 (release)
-
-
-Also gcc 2.96 and 2.95.3 have too many problems that they could be used with
-MySQL++. 2.95.3 has problems with C++ exceptions, but this has yet to be
-fully tested.
-
-There are separate versions of MySQL++ for Borland C++ 5.*, VC 6.0 and for
-Compaq compilers versions 6.2 and 6.3.
-
-Integration of the above versions is in progress.
-
-
-Recommended building of library and examples is the following one:
-automake
-autoconf
-./configure --with-options-of-your-choice
-make
-make install
+As for non-GCC compilers, these ports will live solely through contributed
+patches. I don't have access to any non-GCC based systems, so if you
+want support for those systems, you'll have to help out.

@@ -7,7 +7,7 @@
 inline Query Connection::query() {return Query(this, throw_exceptions);}
 
 template <class Sequence>
-void Connection::storein_sequence (Sequence &seq, const string &str) {
+void Connection::storein_sequence (Sequence &seq, const std::string &str) {
   ResUse result = use(str);
   while (1) {
 	  MYSQL_ROW d = mysql_fetch_row(result.mysql_res);
@@ -19,7 +19,7 @@ void Connection::storein_sequence (Sequence &seq, const string &str) {
 }
 
 template <class Set>
-void Connection::storein_set (Set &sett, const string &str) {
+void Connection::storein_set (Set &sett, const std::string &str) {
   ResUse result = use(str);
 	while (1) {
 	  MYSQL_ROW d = mysql_fetch_row(result.mysql_res);	

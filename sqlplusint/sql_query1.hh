@@ -1,7 +1,7 @@
 #ifndef __sql_query_1_hh
 #define __sql_query_1_hh
 
-#include <strstream.h>
+#include <strstream>
 #include <vector>
 #include <map>
 #include "define_short"
@@ -16,8 +16,8 @@ class SQLQuery;
 
 //: This class holds the parameter values for filling template queries. 
 // It is a subclass of a vector of *SQLStrings*.
-class SQLQueryParms : public vector<SQLString> {
-  friend Query;
+class SQLQueryParms : public std::vector<SQLString> {
+  friend class Query;
 private:
   typedef const SQLString&      ss;
   SQLQuery                 *parent;
@@ -28,10 +28,10 @@ public:
   void               clear() {erase(begin(),end());} //: Clears the list
   SQLString &operator [] (size_type n) {
     if (n >= size()) insert(end(),(n+1) - size(), "");
-    return vector<SQLString>::operator [] (n);
+    return std::vector<SQLString>::operator [] (n);
   } //: Access element number n
   const SQLString &operator [] (size_type n) const 
-    {return vector<SQLString>::operator [] (n);}     
+    {return std::vector<SQLString>::operator [] (n);}
   //: Access element number n
   SQLString &operator [] (const char *str); 
   //: Access the value of the element with a key of str.
@@ -81,8 +81,8 @@ public:
 enum query_reset {DONT_RESET, RESET_QUERY};
 
 struct SQLParseElement {
-  SQLParseElement(string b, char o, char n) : before(b),option(o),num(n) {}
-  string before;
+  SQLParseElement(std::string b, char o, char n) : before(b),option(o),num(n) {}
+  std::string before;
   char   option;
   char   num;
 };
@@ -107,16 +107,16 @@ struct SQLParseElement {
 // your query before you try to use any of the *SQLQuery* specific
 // methods except for *error()* and *success()*.
 
-class SQLQuery : public strstream { 
-  friend SQLQueryParms; 
+class SQLQuery : public std::strstream { 
+  friend class SQLQueryParms;
 private:
   char* preview_char();
 protected:
   bool    Success;
   char*   errmsg;
-  vector<SQLParseElement> parsed;
-  vector<string>          parsed_names;
-  map<string,int>         parsed_nums;
+  std::vector<SQLParseElement> parsed;
+  std::vector<std::string>          parsed_names;
+  std::map<std::string,int>         parsed_nums;
   typedef  const SQLString&  ss;
   typedef  SQLQueryParms  parms;
   void     proc(parms &p);
@@ -130,7 +130,7 @@ public:
 
   void     parse();  
 
-  string   error () const {return errmsg;}
+  std::string   error () const {return errmsg;}
   bool     success() const {return Success;}
 
   operator bool () {return success();}
@@ -184,7 +184,7 @@ public:
     return *this;
   } //:
 
-  mysql_query_define_const1(string,str)
+  mysql_query_define_const1(std::string,str)
 };  
 
 #endif

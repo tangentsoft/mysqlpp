@@ -1,6 +1,9 @@
 #include <sys/stat.h>
 #include <fstream>
 #include <mysql++>
+
+using namespace std;
+
 extern int errno;
 const char  MY_DATABASE[]="telcent";
 const char  MY_TABLE[]="fax";

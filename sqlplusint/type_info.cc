@@ -10,8 +10,8 @@
 #include "set1.hh"
 #include "type_info3.hh"
 
-typedef string Enum;
-
+typedef std::string Enum;
+using std::string;
 const mysql_type_info::sql_type_info mysql_type_info::types[62] = {
   sql_type_info("DECIMAL NOT NULL", typeid(double), 0),
   sql_type_info("TINYINT NOT NULL", typeid(signed char), 1, true),

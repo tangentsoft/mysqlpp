@@ -5,6 +5,8 @@
 #include <sqlplus.hh>
 #include <custom.hh>
 
+using namespace std;
+
 sql_create_5 (stock,		// struct name, 
 	      1, 5,		// I'll explain these latter
 	      string, item,	// type, id

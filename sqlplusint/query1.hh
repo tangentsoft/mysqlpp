@@ -25,7 +25,7 @@ private:
 
   int     affected_rows() const;
   int     insert_id ();
-  string  info ();
+  std::string  info ();
   bool    lock();
   void    unlock();
 
@@ -36,13 +36,13 @@ public:
   Query(const Query &q); //:
   Query& operator = (const Query &q); //:
 
-  string   error ();  //: The error message if the query was not successful.
+  std::string   error ();  //: The error message if the query was not successful.
   bool     success(); //: Displays the string currently in the buffer.
   // Same thing as string().
 
-  string   preview () {return str(def);}       //:
-  string   preview (parms &p) {return str(p);} //:
-	bool     exec (const string &str);
+  std::string   preview () {return str(def);}       //:
+  std::string   preview (parms &p) {return str(p);} //:
+	bool     exec (const std::string &str);
   //!dummy: MysqlResNSel execute (...);
   //: Executes the query in the string buffer.
   // Executes the query in the string buffer and returns a structure
@@ -67,7 +67,7 @@ public:
   //
   // The parameters can be anything in a valid SQLQuery::str.
 
-  mysql_query_define0(string,preview)
+  mysql_query_define0(std::string,preview)
 
   mysql_query_define1(ResNSel, execute)
   mysql_query_define1(ResUse, use)

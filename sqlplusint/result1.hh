@@ -20,7 +20,7 @@
 #include "exceptions.hh"
 //:
 class ResUse  {
-  friend Connection;
+  friend class Connection;
 protected:
   Connection            *mysql;
   mutable MYSQL_RES     *mysql_res;
@@ -28,7 +28,7 @@ protected:
   mutable FieldNames    *_names;
   mutable FieldTypes    *_types;
   Fields                _fields;
-  string                _table;       
+  std::string                _table;
   void copy(const ResUse& other);  //: not to be used on the self. self - copy is not allowed
 public:
   ResUse () : mysql(0), mysql_res(0), throw_exceptions(false),initialized(false), _names(NULL), _types(NULL), _fields(this) {}
@@ -72,17 +72,17 @@ public:
   operator bool() const {if (mysql_res) return true; return false;} //:
   unsigned int columns() const {return num_fields();} //:
 
-  string& table() {return _table;}
+  std::string& table() {return _table;}
   //: table name
-  const string& table() const {return _table;}
+  const std::string& table() const {return _table;}
   //: table name
 
   /* methods for working with field names */
-  inline int               field_num(const string&) const;
+  inline int               field_num(const std::string&) const;
   //: Returns the offset of the filed which equals str.
-  inline string&           field_name(int);
+  inline std::string&           field_name(int);
   //: Returns the field with an offset of i.
-  inline const string&     field_name(int) const;
+  inline const std::string&     field_name(int) const;
   //: Returns the field with an offset of i.
   inline FieldNames&       field_names();
   //: Returns a reference to the underlying FieldNames class.
@@ -104,11 +104,11 @@ public:
   //: Resets the field_types to their original values.
 
   /* short names for the above methods */
-  inline int               names(const string& s) const;
+  inline int               names(const std::string& s) const;
   //: Returns the offset of the filed which equals str.
-  inline string&           names(int i);
+  inline std::string&           names(int i);
   //: Returns the field with an offset of i.
-  inline const string&     names(int i) const;
+  inline const std::string&     names(int i) const;
   //: Returns the field with an offset of i.
   inline FieldNames&       names();
   //: Returns a reference to the underlying FieldNames class.
@@ -151,7 +151,7 @@ public:
 class Result : public ResUse, 
 	       public const_subscript_container<Result,Row,const Row>
 {
-  friend Connection;
+  friend class Connection;
 public:
   Result () {} //:
   Result (MYSQL_RES *result, bool te = false) 
@@ -210,7 +210,7 @@ struct ResNSel {
   bool     success;   
   int      insert_id; //: 
   int      rows;      //: Number of rows affected
-  string   info;      //: Additional info
+  std::string   info;      //: Additional info
 
   ResNSel() : success(false) {};
   ResNSel (Connection *q);

@@ -2,6 +2,8 @@
 #include <iomanip>
 #include <sqlplus.hh>
 
+using namespace std;
+
 int main() {
   // The full format for the Connection constructor is
   // Connection(cchar *db, cchar *host="", 
@@ -41,7 +43,7 @@ int main() {
 			row = *i;
 			cout << setw(17) << row[0].c_str()
 				<< setw(4)  << row[1].c_str()
-				<< setw(7)  << row["weight"].c_str()
+				<< setw(7)  << row.lookup_by_name("weight").c_str()
 				// you can use either the index number or column name when
 				// retrieving the colume data as demonstrated above.
 				<< setw(7)  << row[3].c_str()

@@ -1,4 +1,7 @@
 #include <sqlplus.hh>
+#include <string>
+
+using namespace std;
 
 #define MY_DATABASE	"telcent"
 #define MY_TABLE		"nazivi"

@@ -13,7 +13,7 @@ MysqlQuery& MysqlQuery::operator = (const MysqlQuery &q) {
   return *this;
 }
 
-bool MysqlQuery::exec (const string& str) { return mysql->exec(str);}
+bool MysqlQuery::exec (const std::string& str) { return mysql->exec(str);}
 
 
 

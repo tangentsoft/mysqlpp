@@ -5,8 +5,8 @@
 #include "stream2string3.hh"
 
 template <class Container> 
-inline Set<Container>::operator string () {
-  return stream2string<string>(*this);
+inline Set<Container>::operator std::string () {
+  return stream2string<std::string>(*this);
 }
 
 #endif

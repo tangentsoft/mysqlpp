@@ -27,14 +27,14 @@ SQLQuery& SQLQuery::operator = (const SQLQuery &q) {
 
 
 void SQLQuery::reset() {
-  seekg (0L,ios::beg);
-  seekp (0L,ios::beg);
+  seekg (0L,std::ios::beg);
+  seekp (0L,std::ios::beg);
   parsed.erase(parsed.begin(), parsed.end());
   def.clear(); clear();
 }
 
 char * SQLQuery::preview_char() {
-  *this << ends;
+  *this << std::ends;
 #ifdef __USLC__
   strstreambuf *tmpbuf = rdbuf();
   uint length = tmpbuf->pcount();
@@ -43,8 +43,8 @@ char * SQLQuery::preview_char() {
 #endif
   char *s = new char[length+1]; 
   get(s, length, '\0'); 
-  seekg (0,ios::beg);
-  seekp (-1,ios::cur);
+  seekg (0,std::ios::beg);
+  seekp (-1,std::ios::cur);
   return s;
 }
 
@@ -70,12 +70,12 @@ SQLString * pprepare (char option, SQLString &S, bool replace = true) {
 }
 
 void SQLQuery::proc(SQLQueryParms& p) {
-  seekg (0,ios::beg);
-  seekp (0,ios::beg);
+  seekg (0,std::ios::beg);
+  seekp (0,std::ios::beg);
   char      num;
   SQLString *ss;
   SQLQueryParms *c;
-  for (vector<SQLParseElement>::iterator i = parsed.begin();
+  for (std::vector<SQLParseElement>::iterator i = parsed.begin();
        i != parsed.end(); i++) {
     *this << i->before;
     num    = i->num;
@@ -95,10 +95,10 @@ void SQLQuery::proc(SQLQueryParms& p) {
   }
 } 
 
-string SQLQuery::str(const SQLQueryParms &p) const {
+std::string SQLQuery::str(const SQLQueryParms &p) const {
   SQLQuery *const_this = const_cast<SQLQuery *>(this);
   if (!parsed.empty()) const_this->proc(const_cast<SQLQueryParms&>(p));
-  *const_this << ends;
+  *const_this << std::ends;
 #ifdef __USLC__
   strstreambuf *tmpbuf = const_this->rdbuf();
   uint length = tmpbuf->pcount() + 1;
@@ -108,13 +108,13 @@ string SQLQuery::str(const SQLQueryParms &p) const {
   char s[length]; 
 #endif
   const_this->get(s, length, '\0'); 
-  const_this->seekg (0,ios::beg);
-  const_this->seekp (-1,ios::cur);
-  return string(s);
+  const_this->seekg (0,std::ios::beg);
+  const_this->seekp (-1,std::ios::cur);
+  return std::string(s);
 }
 
-string SQLQuery::str(const SQLQueryParms &p, query_reset r) {
-  string tmp = str(p);
+std::string SQLQuery::str(const SQLQueryParms &p, query_reset r) {
+  std::string tmp = str(p);
   if (r==RESET_QUERY) reset();
   return tmp;
 }
@@ -130,11 +130,11 @@ SQLQueryParms SQLQueryParms::operator + (const SQLQueryParms &other) const {
 }
 
 void SQLQuery::parse() {
-  string str = "";
+  std::string str = "";
   char num[4];
   long int n;
   char option;
-  string name;
+  std::string name;
   char *s, *s0;
   s0 = s = preview_char();
   while (*s) {
@@ -170,8 +170,8 @@ void SQLQuery::parse() {
 	  if (*s == ':') s++;
           if (n >= (long int)parsed_names.size())
 	    parsed_names.insert(parsed_names.end(),
-				(vector<string>::size_type)(n+1) 
-				- parsed_names.size(), string());
+				(std::vector<std::string>::size_type)(n+1)
+				- parsed_names.size(), std::string());
 	  parsed_names[n] = name;
 	  parsed_nums[name] = n;
 	}

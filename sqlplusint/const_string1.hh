@@ -47,7 +47,7 @@ public:
   const_reference operator[](size_type pos) const {return str_data[pos];} //:
   const_reference at(size_type pos) const //: 
   {
-    if (pos >= size()) throw out_of_range("");
+    if (pos >= size()) throw std::out_of_range("");
     else return str_data[pos];
   }
   
@@ -67,7 +67,7 @@ public:
 //! with_class = const_string
 
 //:
-inline ostream& operator << (ostream &o, const const_string &str) {
+inline std::ostream& operator << (std::ostream &o, const const_string &str) {
   return o << str.c_str();
 }
 

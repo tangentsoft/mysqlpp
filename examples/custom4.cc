@@ -5,6 +5,10 @@
 #include <sqlplus.hh>
 #include <custom.hh>
 
+#include <string>
+
+using namespace std;
+
 sql_create_5(stock, 
 	     1, // This number is used to make a SSQLS less-than-comparable.
 	        // If this number is n then if the first n elements are the 

@@ -2,6 +2,8 @@
 #include <iostream>
 #include <sqlplus.hh>
 
+using namespace std;
+
 int main (int argc, char *argv[]) {
   Connection connection(use_exceptions);
   try { // the entire main block is one big try block;

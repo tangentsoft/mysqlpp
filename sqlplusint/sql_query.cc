@@ -19,10 +19,10 @@ SQLQuery& SQLQuery::operator = (const SQLQuery &q) {
 
 
 void SQLQuery::reset() {
-  seekg (0,ios::beg);
-  seekp (0,ios::beg);
+  seekg (0L,ios::beg);
+  seekp (0L,ios::beg);
   parsed.erase(parsed.begin(), parsed.end());
-  def.clear();
+  def.clear(); clear();
 }
 
 char * SQLQuery::preview_char() {

@@ -37,15 +37,15 @@
   mysql_query_define0(RETURN,FUNC) \
 
 #define mysql_query_define1(RETURN, FUNC) \
-  RETURN FUNC (query_reset r = DONT_RESET) {return FUNC (def,r);} \
+  RETURN FUNC (query_reset r = RESET_QUERY) {return FUNC (def,r);} \
   RETURN FUNC (const char* str); \
-  RETURN FUNC (parms &p, query_reset r = DONT_RESET);\
+  RETURN FUNC (parms &p, query_reset r = RESET_QUERY);\
   mysql_query_define0(RETURN,FUNC) \
 
 #define mysql_query_define2(FUNC) \
-  template <class T1> void FUNC (T1 &con, query_reset r = DONT_RESET) {FUNC (con, def,r);} \
+  template <class T1> void FUNC (T1 &con, query_reset r = RESET_QUERY) {FUNC (con, def,r);} \
   template <class T1> void FUNC (T1 &con, const char* str); \
-  template <class T1> void FUNC (T1 &con, parms &p, query_reset r = DONT_RESET);\
+  template <class T1> void FUNC (T1 &con, parms &p, query_reset r = RESET_QUERY);\
   template <class T1> void FUNC (T1 &con, ss a)\
     {FUNC (con, parms() << a);}\
   template <class T1> void FUNC (T1 &con, ss a, ss b)\

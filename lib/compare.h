@@ -17,7 +17,7 @@ protected:
   CmpType      cmp2;
 public:
   MysqlCmp(uint i, const BinaryPred &f, const CmpType &c) : index(i),func(f),cmp2(c) {}
-  bool operator () (const Row& cmp1) const {return func(cmp2,cmp1[index]);}
+  bool operator () (const Row& cmp1) const {return func(cmp2,cmp1[this->index]);}
 };
 
 template <class BinaryPred>

@@ -9,18 +9,16 @@ New Feature Requests
 	o Overload SQLQuery::insert() to accept a pair of STL iterators
 	  for mass insertion of a range within a container.
 
+	o Detect thread-safety libraries on systems where this is
+	  appropritate.  (e.g., add -pthread when building on Linux.)
+	  Without this, using MySQL++ in a threaded program causes crashes.
+
 
 Bug Fix/Maintenance Items
 -------------------------
 
 	o is_connected() may not be returning the right value.
 	  <bayufa@bdg.centrin.net.id>
-
-	o Does it build under GCC 3.4 yet?
-	
-	o One report says it doesn't build under what will become GCC 4.0.
-
-	o A report says Query objects cannot be reused.  Verify.
 
 	o VC++ supports 64-bit ints, but not as "long long"s as GCC does.
 	  Is the stuff in defs.h sufficient to fix up this difference?

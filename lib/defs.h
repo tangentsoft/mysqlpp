@@ -25,11 +25,6 @@ typedef longlong longgint;
 typedef unsigned int uint;
 #endif
 
-class Connection;
-class ResUse;
-class Result;
-class FieldNames;
-
 const bool use_exceptions = true;
 
 }; // end namespace mysqlpp

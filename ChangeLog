@@ -1,3 +1,28 @@
+1.7.22, 2004.11.17
+
+	o Applied patches by Zahroof Mohammed to allow it to build under GCC
+	  3.4.2.  Tested on MinGW and Fedora Core 3 systems.
+
+	o Removed all the forward declarations in defs.h, and added
+	  forward declarations where necessary in individual header files.
+	  #including defs.h in fewer locations as a result.
+
+	o Legacy headers sqlplus.hh and mysql++.hh now declare they are
+	  using namespace mysqlpp, to allow old code to compile against the
+	  new library without changes.
+
+	o Removed query_reset parameter from several class Query member
+	  functions.  In the implementation, these parameters were always
+	  overridden!  No sense pretending that we pay attention to these
+	  parameters.  This changes the ABI version to 3.
+
+	o #including custom.h in sql_query.h again...it's necessary on GCC
+	  3.4.
+	
+	o bootstrap script runs lib/config.pl after configure.  This is
+	  just a nicety for those running in 'maintainer mode'.
+
+
 1.7.21, 2004.11.05
 
 	o Generating a main mysql++ RPM containing just the library files
@@ -78,6 +103,8 @@
 	  ctor, but intolerable in an operator.  Since the copy ctor is good
 	  enough for all code within the library and within my own code, I'm
 	  removing the operator.
+
+	o Above changes required bumping the ABI to version 2.
 
 	o Visual C++ projects now look for MySQL build files in c:\mysql,
 	  since that's the default install location.  (Previously, it was

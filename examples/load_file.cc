@@ -2,8 +2,10 @@
 
 #include <sys/stat.h>
 
-#include <stdlib.h>
 #include <fstream>
+
+#include <errno.h>
+#include <stdlib.h>
 
 using namespace std;
 using namespace mysqlpp;

@@ -25,18 +25,18 @@ ResNSel Query::execute(const char* str) {
   return mysql->execute(str);
 }
 
-ResNSel Query::execute(parms &p, query_reset r)
+ResNSel Query::execute(parms &p)
 {
-  r = (parsed.size()) ? DONT_RESET : RESET_QUERY;
-  return mysql->execute(str(p,r));
+  query_reset r = parsed.size() ? DONT_RESET : RESET_QUERY;
+  return mysql->execute(str(p, r));
 }
 
 ResUse Query::use(const char* str) {
   return mysql->use(str);
 }
 
-ResUse Query::use(parms &p, query_reset r) {
-  r = (parsed.size()) ? DONT_RESET: RESET_QUERY;
+ResUse Query::use(parms &p) {
+  query_reset r = parsed.size() ? DONT_RESET : RESET_QUERY;
   return mysql->use(str(p,r));
 }
 
@@ -44,8 +44,8 @@ Result Query::store(const char* str) {
   return mysql->store(str);
 }
 
-Result Query::store(parms &p, query_reset r) {
-  r = (parsed.size()) ? DONT_RESET: RESET_QUERY;
+Result Query::store(parms &p) {
+  query_reset r = parsed.size() ? DONT_RESET : RESET_QUERY;
   return mysql->store(str(p,r));
 }
 

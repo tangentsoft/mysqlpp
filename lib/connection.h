@@ -4,7 +4,6 @@
 #include <platform.h>
 
 #include <exceptions.h>
-#include <query.h>
 #include <result.h>
 
 #include <mysql.h>
@@ -24,6 +23,8 @@
 #endif
 
 namespace mysqlpp {
+
+class Query;
 
 class MysqlChild {
 public:

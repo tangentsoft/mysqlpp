@@ -8,3 +8,4 @@ autoheader && \
 automake --add-missing --copy --foreign && \
 autoconf &&
 ./configure --enable-maintainer-mode $*
+( cd lib ; perl custom.pl )

@@ -2,7 +2,6 @@
 #ifndef __field_names1_hh__
 #define __field_names1_hh__
 
-#include <defs.h>
 #include <coldata.h>
 #include <string_util.h>
 
@@ -10,6 +9,8 @@
 #include <vector>
 
 namespace mysqlpp {
+
+class ResUse;
 
 //: A vector of the field names.
 class FieldNames : public std::vector<std::string> {

@@ -1,5 +1,7 @@
 #include "sql_string.h"
 
+#include <sstream>
+
 using namespace std;
 
 namespace mysqlpp {
@@ -32,9 +34,9 @@ is_string(false),
 dont_escape(false),
 processed(false)
 {
-	char s[6];
-	snprintf(s, sizeof(s), "%dh", (short int)i);
-	*this = s;
+	ostringstream outs;
+	outs << static_cast<short int>(i);
+	assign(outs.str());
 }
 
 SQLString::SQLString(unsigned char i) :
@@ -42,9 +44,9 @@ is_string(false),
 dont_escape(false),
 processed(false)
 {
-	char s[6];
-	snprintf(s, sizeof(s), "%uh", (short int)i);
-	*this = s;
+	ostringstream outs;
+	outs << static_cast<unsigned short int>(i);
+	assign(outs.str());
 }
 
 SQLString::SQLString(short int i) :
@@ -52,9 +54,9 @@ is_string(false),
 dont_escape(false),
 processed(false)
 {
-	char s[6];
-	snprintf(s, sizeof(s), "%dh", i);
-	*this = s;
+	ostringstream outs;
+	outs << i;
+	assign(outs.str());
 }
 
 SQLString::SQLString(unsigned short int i) :
@@ -62,9 +64,9 @@ is_string(false),
 dont_escape(false),
 processed(false)
 {
-	char s[6];
-	snprintf(s, sizeof(s), "%uh", i);
-	*this = s;
+	ostringstream outs;
+	outs << i;
+	assign(outs.str());
 }
 
 SQLString::SQLString(int i) :
@@ -72,9 +74,9 @@ is_string(false),
 dont_escape(false),
 processed(false)
 {
-	char s[22];
-	snprintf(s, sizeof(s), "%d", i);
-	*this = s;
+	ostringstream outs;
+	outs << i;
+	assign(outs.str());
 }
 
 SQLString::SQLString(unsigned int i) :
@@ -82,9 +84,9 @@ is_string(false),
 dont_escape(false),
 processed(false)
 {
-	char s[22];
-	snprintf(s, sizeof(s), "%u", i);
-	*this = s;
+	ostringstream outs;
+	outs << i;
+	assign(outs.str());
 }
 
 SQLString::SQLString(longlong i) :
@@ -92,9 +94,9 @@ is_string(false),
 dont_escape(false),
 processed(false)
 {
-	char s[22];
-	snprintf(s, sizeof(s), "%dL", i); 
-	*this = s;
+	ostringstream outs;
+	outs << i;
+	assign(outs.str());
 }
 
 SQLString::SQLString(ulonglong i) :
@@ -102,29 +104,29 @@ is_string(false),
 dont_escape(false),
 processed(false) 
 {
-	char s[22];
-	snprintf(s, sizeof(s), "%uL", i);
-	*this = s;
+	ostringstream outs;
+	outs << i;
+	assign(outs.str());
 }
 
-SQLString::SQLString(float i) :
+SQLString::SQLString(float f) :
 is_string(false),
 dont_escape(false),
 processed(false)
 {
-	char s[40];
-	snprintf(s, sizeof(s), "%g", i);
-	*this = s;
+	ostringstream outs;
+	outs << f;
+	assign(outs.str());
 }
 
-SQLString::SQLString(double i) :
+SQLString::SQLString(double f) :
 is_string(false),
 dont_escape(false),
 processed(false)
 {
-	char s[40];
-	snprintf(s, sizeof(s), "%g", i);
-	*this = s;
+	ostringstream outs;
+	outs << f;
+	assign(outs.str());
 }
 
 } // end namespace mysqlpp

@@ -3,15 +3,14 @@ Patches for any of these thoughtfully considered!
 New Feature Requests
 --------------------
 
-	o Look through my own code for uses of hand-rolled SQL queries, and
-	  try to reduce them to API features.
-
+	o User-settable floating-point comparison precisions?  Something
+	  like this: http://lists.mysql.com/plusplus/3984
+	
 	o Overload SQLQuery::insert() to accept a pair of STL iterators
 	  for mass insertion of a range within a container.
 
-	o Detect thread-safety libraries on systems where this is
-	  appropritate.  (e.g., add -pthread when building on Linux.)
-	  Without this, using MySQL++ in a threaded program causes crashes.
+	o Look through my own code for uses of hand-rolled SQL queries, and
+	  try to reduce them to API features.
 
 	o Get PDF documentation generation working.
 
@@ -19,6 +18,18 @@ New Feature Requests
 Bug Fix/Maintenance Items
 -------------------------
 
+	o sql_cmp(double,double) is foolish.  One shouldn't do == comparison
+	  on floating point values.  Same for sql_cmp(float,float).  See
+	  also floating point precision item in previous section.
+
+	o Fold SQLQuery class into Query?  The only reason for the
+	  separation goes back to the dream of having MySQL++ be database-
+	  independent.
+
+	o Is any specific Unicode support needed in MySQL++?  If not, at
+	  least we should consider adding an example to demonstrate what you
+	  have to do to use the existing features.
+	
 	o Some way to skip building examples.  Particularly useful when
 	  building RPM, but not useful when building library as a developer,
 	  since building examples is a simple test of the library.  Some
@@ -36,13 +47,7 @@ Bug Fix/Maintenance Items
 	o 64-bit integer support is not heavily tested.  It may yet have
 	  problems.
 
-	o is_connected() may not be returning the right value.
-	  <bayufa@bdg.centrin.net.id>
-
 	o Documentation needs a thorough reworking.
-
-	o Factor tests out of configure.in into individual files in a config
-	  subdir.
 
 	o SQLQuery shouldn't derive from std::stringstream.  It should
 	  have a private std::stringstream member, and add the function
@@ -56,7 +61,3 @@ Bug Fix/Maintenance Items
 	  reorganization in 1.7.20: if you move everything from row.cc to
 	  a new row2.h file and include it in a few strategic locations, it
 	  works.  But, this is a bogus fix.  Find the right one.
-
-	o Fold SQLQuery class into Query?  The only reason for the
-	  separation goes back to the dream of having MySQL++ be database-
-	  independent.

@@ -90,7 +90,7 @@ public:
   subscript_iterator  operator - (SizeType n) const
     {subscript_iterator tmp = *this; tmp.i-=n; return tmp;}
   DiffType operator - (const subscript_iterator &j) const
-    {if (d == j.d) return (SizeType)i - j.i; return 0;}
+    {if (d == j.d) return static_cast<SizeType>(i) - j.i; return 0;}
 };
 
 template <class OnType, class ReturnType, class SizeType, class DiffType>

@@ -21,7 +21,7 @@ main()
 		ostringstream strbuf;
 		unsigned int i = 0;
 		con.real_connect(MY_DATABASE, MY_HOST, MY_USER, MY_PASSWORD, 3306,
-						 (int) 0, 60, NULL);
+						 0, 60, NULL);
 		Query query = con.query();
 		query << MY_QUERY;
 		ResUse res = query.use();
@@ -36,33 +36,22 @@ main()
 		string output(strbuf.str());
 		output.erase(output.size() - 1, 1);
 		output += ")";
-		query.exec((const string &) output);	// cout << output << endl;
+		query.exec(output);	// cout << output << endl;
 		return 0;
 	}
 	catch (BadQuery& er) {
 		// handle any connection or query errors that may come up
-#ifdef USE_STANDARD_EXCEPTION
 		cerr << "Error: " << er.what() << " " << con.errnum() << endl;
-#else
-		cerr << "Error: " << er.error << " " << con.errnum() << endl;
-#endif
 		return -1;
 	}
 	catch (BadConversion& er) {
-#ifdef USE_STANDARD_EXCEPTION
 		cerr << "Error: " << er.what() << "\"." << endl
 			<< "retrieved data size: " << er.retrieved
 			<< " actual data size: " << er.actual_size << endl;
-#else
-		cerr << "Error: Tried to convert \"" << er.data << "\" to a \""
-			<< er.type_name << "\"." << endl;
-#endif
 		return -1;
 	}
-#ifdef USE_STANDARD_EXCEPTION
 	catch (exception& er) {
 		cerr << "Error: " << er.what() << endl;
 		return -1;
 	}
-#endif
 }

@@ -8,7 +8,7 @@ class tiny_int {
 public:
   tiny_int() {}
   tiny_int(short int v) : value(char(v)) {}
-  operator short int() const {return (short int)value;};
+  operator short int() const {return static_cast<short int>(value);};
   tiny_int &operator = (short int v) {value = char(v); return *this;}
   tiny_int &operator += (short int v) {value += char(v); return *this;}
   tiny_int &operator -= (short int v) {value -= char(v); return *this;}

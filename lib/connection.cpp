@@ -12,11 +12,31 @@
 #	define SHUTDOWN_ARG
 #endif
 
+using namespace std;
+
 namespace mysqlpp {
 
-Connection::Connection(const char *db, const char *host,
-					   const char *user, const char *passwd, bool te)
-:throw_exceptions(te), locked(false) {
+Connection::Connection() :
+throw_exceptions(true),
+locked(false) 
+{
+	mysql_init(&mysql);
+}
+
+Connection::Connection(bool te) :
+throw_exceptions(te),
+is_connected(false),
+locked(true),
+Success(false)
+{
+	mysql_init(&mysql);
+}
+
+Connection::Connection(const char* db, const char* host,
+		const char* user, const char* passwd, bool te) :
+throw_exceptions(te),
+locked(false)
+{
 	mysql_init(&mysql);
 	if (real_connect(db, host, user, passwd, 3306, 0, 60, NULL, 0)) {
 		locked = false;
@@ -30,12 +50,14 @@ Connection::Connection(const char *db, const char *host,
 	}
 }
 
-Connection::Connection(const char *db, const char *host,
-					   const char *user, const char *passwd, uint port,
-					   my_bool compress, unsigned int connect_timeout,
-					   bool te, const char *socket_name,
-					   unsigned client_flag)
-:throw_exceptions(te), locked(false) {
+Connection::Connection(const char* db, const char* host,
+		const char* user, const char* passwd, uint port,
+		my_bool compress, unsigned int connect_timeout,
+		bool te, const char* socket_name,
+		unsigned client_flag) :
+throw_exceptions(te),
+locked(false)
+{
 	mysql_init(&mysql);
 	if (real_connect
 		(db, host, user, passwd, port, compress, connect_timeout,
@@ -51,12 +73,11 @@ Connection::Connection(const char *db, const char *host,
 	}
 }
 
-bool Connection::real_connect(cchar * db, cchar * host, cchar * user,
-							  cchar * passwd, uint port,
-							  my_bool compress,
-							  unsigned int connect_timeout,
-							  const char *socket_name,
-							  unsigned int client_flag) {
+bool Connection::real_connect(cchar* db, cchar* host, cchar* user,
+		cchar* passwd, uint port, my_bool compress,
+		unsigned int connect_timeout, const char* socket_name,
+		unsigned int client_flag)
+{
 	mysql.options.compress = compress;
 	mysql.options.connect_timeout = connect_timeout;
 	locked = true;			//mysql.options.my_cnf_file="my";
@@ -83,11 +104,13 @@ bool Connection::real_connect(cchar * db, cchar * host, cchar * user,
 	return Success;
 }
 
-Connection::~Connection() {
+Connection::~Connection()
+{
 	mysql_close(&mysql);
 }
 
-bool Connection::select_db(const char *db) {
+bool Connection::select_db(const char *db)
+{
 	bool suc = !(mysql_select_db(&mysql, db));
 	if (throw_exceptions && !suc)
 		throw BadQuery(error());
@@ -95,7 +118,8 @@ bool Connection::select_db(const char *db) {
 	return suc;
 }
 
-bool Connection::reload() {
+bool Connection::reload()
+{
 	bool suc = !mysql_reload(&mysql);
 	if (throw_exceptions && !suc)
 		throw BadQuery(error());
@@ -103,7 +127,8 @@ bool Connection::reload() {
 	return suc;
 }
 
-bool Connection::shutdown() {
+bool Connection::shutdown()
+{
 	bool suc = !(mysql_shutdown(&mysql SHUTDOWN_ARG));
 	if (throw_exceptions && !suc)
 		throw BadQuery(error());
@@ -111,8 +136,9 @@ bool Connection::shutdown() {
 	return suc;
 }
 
-bool Connection::connect(cchar * db, cchar * host, cchar * user,
-						 cchar * passwd) {
+bool Connection::connect(cchar* db, cchar* host, cchar* user,
+		cchar* passwd)
+{
 	locked = true;			// mysql.options.my_cnf_file="my";
 
 	mysql_options(&mysql, MYSQL_READ_DEFAULT_FILE, "my");
@@ -136,16 +162,17 @@ bool Connection::connect(cchar * db, cchar * host, cchar * user,
 	return Success;
 }
 
-std::string Connection::info() {
+string Connection::info()
+{
 	const char *i = mysql_info(&mysql);
 	if (!i)
-		return std::string();
+		return string();
 	else
-		return std::string(i);
+		return string(i);
 }
 
-ResNSel Connection::execute(const std::string & str,
-							bool throw_excptns) {
+ResNSel Connection::execute(const string& str, bool throw_excptns)
+{
 	Success = false;
 	if (lock())
 		if (throw_excptns)
@@ -162,14 +189,16 @@ ResNSel Connection::execute(const std::string & str,
 	return ResNSel(this);
 }
 
-bool Connection::exec(const std::string & str) {
+bool Connection::exec(const string& str)
+{
 	Success = !mysql_query(&mysql, str.c_str());
 	if (!Success && throw_exceptions)
 		throw BadQuery(error());
 	return Success;
 }
 
-Result Connection::store(const std::string & str, bool throw_excptns) {
+Result Connection::store(const string& str, bool throw_excptns)
+{
 	Success = false;
 
 	if (lock()) {
@@ -196,7 +225,8 @@ Result Connection::store(const std::string & str, bool throw_excptns) {
 		return Result();
 }
 
-ResUse Connection::use(const std::string & str, bool throw_excptns) {
+ResUse Connection::use(const string& str, bool throw_excptns)
+{
 	Success = false;
 	if (lock())
 		if (throw_excptns)
@@ -212,8 +242,10 @@ ResUse Connection::use(const std::string & str, bool throw_excptns) {
 	return ResUse(mysql_use_result(&mysql), this);
 }
 
-Query Connection::query() {
+Query Connection::query()
+{
 	return Query(this, throw_exceptions);
 }
 
 } // end namespace mysqlpp
+

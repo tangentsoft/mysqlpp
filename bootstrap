@@ -1,13 +1,17 @@
 #!/bin/sh
 
+if [ "$1" == "pedantic" ]
+then 
+	export CXXFLAGS="-g -O2 -ansi -pedantic -Wall -W -Wold-style-cast -Wfloat-equal -Wwrite-strings -Woverloaded-virtual -Wno-long-long"
+	shift
+fi
+
 set -x
 
-aclocal && \
-libtoolize --force --copy && \
-autoheader && \
-automake --add-missing --copy --foreign && \
-autoconf &&
-./configure --enable-maintainer-mode $*
-
-cd lib
-make custom.h
+aclocal -I config && \
+	libtoolize --force --copy && \
+	autoheader && \
+	automake --add-missing --copy --foreign && \
+	autoconf &&
+	./configure --enable-maintainer-mode $* &&
+	( cd lib ; make custom.h )

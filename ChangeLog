@@ -1,3 +1,44 @@
+1.7.30, 2005.02.28 The "Power of Round Numbers" release
+
+	o bootstrap script now accepts a 'pedantic' argument, which sets a
+	  bunch of CFLAGS that make g++ very picky about the code it
+	  accepts without warnings.
+	  
+	o Fixed a bunch of things that generated warnings with g++ in
+	  pedantic mode. Only two warnings remain, having to do with
+	  floating point comparisons.  (See Wishlist for plans on how to
+	  deal with these.)  Thanks to Chris Frey for this patch.
+
+	o Split long tests out of configure.in into M4 files in new config
+	  subdir.  This makes configure.in easier to read.
+
+	o Added preliminary thread support.  Currently, this just means that
+	  we detect the required compiler and linker thread flags, and link
+	  against the proper thread-safe libraries.  THERE MAY BE
+	  UN-THREAD-SAFE CODE IN MYSQL++ STILL!
+
+	o Standard C++ exceptions are the default now.  Old pre-Standard
+	  exception stuff removed.
+
+	o Row::lookup_by_name() will throw the new BadFieldName exception if
+	  you pass an bad field name.  Thanks for this patch to Chris Frey.
+
+	o Row::operator[] will throw a Standard C++ out of bounds exception
+	  by way of std::vector::at() if you pass it a bad index.  Thanks
+	  for this patch to Chris Frey.
+
+	o Setting Connection::is_connected flag to false on close().
+	  Previously, is_connected() would continue to return true after
+	  close() was called.
+
+	o All number-to-string conversion ctors in SQLString class now use
+	  ostringstream to do the conversion.  Previously, we used
+	  snprintf(), which isn't available on all systems.  Also, we used a
+	  C99 format specifier for the "long long" conversion, which is also
+	  not available on all systems.  This new ostringstream code should
+	  be platform-independent, finally.
+
+
 1.7.28, 2005.02.04
 
 	o --with-mysql* flags to configure script now try the given

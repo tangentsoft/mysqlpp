@@ -77,7 +77,7 @@ connect_to_db(int argc, char *argv[], mysqlpp::Connection& con,
 		kdb = kpcSampleDatabase;
 	}
 
-	bool success;
+	bool success = false;
 	if (argc == 1) {
 		success = con.connect(kdb);
 	}

@@ -242,7 +242,7 @@ private:
 
 public:
   Row() {}
-  Row(MYSQL_ROW d, const ResUse *r, unsigned int *jj, bool te = false) 
+  Row(MYSQL_ROW d, const ResUse *r, unsigned long *jj, bool te = false) 
     : res(r), throw_exceptions(te), initialized(false)
 		{
 		  if (!d || !r) {

@@ -30,7 +30,7 @@ struct quote_type1
   quote_type1(std::ostream *o) : ostr(o) {}
 }; 
 
-inline quote_type1 operator << (std::ostream &o, quote_type0 esc)
+inline quote_type1 operator << (std::ostream &o, quote_type0 /*esc*/)
 {
   return quote_type1(&o);
 }
@@ -41,7 +41,7 @@ struct quote_type2
   quote_type2(SQLQueryParms *p) : qparms(p) {}
 };
 
-inline quote_type2 operator << (SQLQueryParms &p, quote_type0 esc)
+inline quote_type2 operator << (SQLQueryParms &p, quote_type0 /*esc*/)
 {
   return quote_type2(&p);
 }
@@ -110,7 +110,7 @@ struct quote_only_type1 {
   quote_only_type1(std::ostream *o) : ostr(o) {}
 }; 
 
-inline quote_only_type1 operator << (std::ostream &o, quote_only_type0 esc) {
+inline quote_only_type1 operator << (std::ostream &o, quote_only_type0 /*esc*/) {
   return quote_only_type1(&o);
 }
 
@@ -119,7 +119,7 @@ struct quote_only_type2 {
   quote_only_type2(SQLQueryParms *p) : qparms(p) {}
 };
 
-inline quote_only_type2 operator << (SQLQueryParms &p, quote_only_type0 esc) {
+inline quote_only_type2 operator << (SQLQueryParms &p, quote_only_type0 /*esc*/) {
   return quote_only_type2(&p);
 }
 
@@ -170,7 +170,7 @@ struct quote_double_only_type1 {
 }; 
 
 inline quote_double_only_type1 operator << (std::ostream &o,
-					    quote_double_only_type0 esc) {
+					    quote_double_only_type0 /*esc*/) {
   return quote_double_only_type1(&o);
 }
 
@@ -180,7 +180,7 @@ struct quote_double_only_type2 {
 };
 
 inline quote_double_only_type2 operator << (SQLQueryParms &p, 
-					     quote_double_only_type0 esc) {
+					     quote_double_only_type0 /*esc*/) {
   return quote_double_only_type2(&p);
 }
 
@@ -232,7 +232,7 @@ struct escape_type1 {
   escape_type1(std::ostream *o) : ostr(o) {}
 }; 
 
-inline escape_type1 operator << (std::ostream &o, escape_type0 esc) {
+inline escape_type1 operator << (std::ostream &o, escape_type0 /*esc*/) {
   return escape_type1(&o);
 }
 
@@ -241,7 +241,7 @@ struct escape_type2 {
   escape_type2(SQLQueryParms *p) : qparms(p) {}
 };
 
-inline escape_type2 operator << (SQLQueryParms &p, escape_type0 esc) {
+inline escape_type2 operator << (SQLQueryParms &p, escape_type0 /*esc*/) {
   return escape_type2(&p);
 }
 
@@ -278,7 +278,7 @@ struct do_nothing_type1 {
   do_nothing_type1(std::ostream *o) : ostr(o) {}
 }; 
 
-inline do_nothing_type1 operator << (std::ostream &o, do_nothing_type0 esc) {
+inline do_nothing_type1 operator << (std::ostream &o, do_nothing_type0 /*esc*/) {
   return do_nothing_type1(&o);
 }
 
@@ -292,7 +292,7 @@ struct do_nothing_type2 {
   do_nothing_type2(SQLQueryParms *p) : qparms(p) {}
 };
 
-inline do_nothing_type2 operator << (SQLQueryParms &p, do_nothing_type0 esc) {
+inline do_nothing_type2 operator << (SQLQueryParms &p, do_nothing_type0 /*esc*/) {
   return do_nothing_type2(&p);
 }
 
@@ -308,7 +308,7 @@ struct ignore_type2 {
   ignore_type2(SQLQueryParms *p) : qparms(p) {}
 };
 
-inline ignore_type2 operator << (SQLQueryParms &p, ignore_type0 esc) {
+inline ignore_type2 operator << (SQLQueryParms &p, ignore_type0 /*esc*/) {
   return ignore_type2(&p);
 }
 

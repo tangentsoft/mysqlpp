@@ -12,9 +12,6 @@
 /* Define to 1 if you have the `intl' library (-lintl). */
 #undef HAVE_LIBINTL
 
-/* Define to 1 if you have the `mysqlclient' library (-lmysqlclient). */
-#undef HAVE_LIBMYSQLCLIENT
-
 /* Define to 1 if you have the `nsl' library (-lnsl). */
 #undef HAVE_LIBNSL
 
@@ -29,6 +26,9 @@
 
 /* Define if mysql_shutdown() has a second 'level' argument */
 #undef HAVE_MYSQL_SHUTDOWN_LEVEL_ARG
+
+/* Define if you have POSIX threads libraries and header files. */
+#undef HAVE_PTHREAD
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
@@ -78,11 +78,12 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
+/* Define to necessary symbol if this constant uses a non-standard name on
+   your system. */
+#undef PTHREAD_CREATE_JOINABLE
+
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
-
-/* Define if using Standard C++ exception classes */
-#undef USE_STANDARD_EXCEPTION
 
 /* Version number of package */
 #undef VERSION

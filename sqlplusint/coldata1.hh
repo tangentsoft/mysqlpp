@@ -8,7 +8,7 @@
 #include "const_string1.hh"
 #include "null1.hh"
 
-//! with_class = mysql_ColData
+//!  with_class = mysql_ColData
 
 //: Exception structure thrown when a bad conversion takes place
 struct BadConversion {
@@ -16,8 +16,7 @@ struct BadConversion {
   const string data;       //:
   size_t       retrieved;  //:
   size_t       actual_size;//:
-  BadConversion(const char* tn, const char* d, size_t r, size_t a)
-    : type_name(tn), data(d), retrieved(r), actual_size(a) {};
+  BadConversion(const char* tn, const char* d, size_t r, size_t a) : type_name(tn), data(d), retrieved(r), actual_size(a) {};
 };
 
 //: Base class for auto-converting column data.  Do not use directly. 

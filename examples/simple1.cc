@@ -39,12 +39,12 @@ int main() {
 		// The Result class has a read-only Random Access Iterator
 		for (i = res.begin(); i != res.end(); i++) {
 			row = *i;
-			cout << setw(17) << row[0] 
-				<< setw(4)  << row[1] 
-				<< setw(7)  << row["weight"]
+			cout << setw(17) << row[0].c_str()
+				<< setw(4)  << row[1].c_str()
+				<< setw(7)  << row["weight"].c_str()
 				// you can use either the index number or column name when
 				// retrieving the colume data as demonstrated above.
-				<< setw(7)  << row[3]
+				<< setw(7)  << row[3].c_str()
 				<< row[4] << endl;
 		}
   } catch (BadQuery er){ // handle any connection 

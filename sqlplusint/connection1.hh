@@ -32,30 +32,27 @@ private:
   bool is_connected;
   bool locked;
   bool Success;
-
-  int          affected_rows()  {return mysql_affected_rows((MYSQL*) &mysql);}
-  int          insert_id () {return mysql_insert_id(&mysql);}
-
-public:
-  Connection () : throw_exceptions(true), locked(false) //:
-    {mysql_init(&mysql);}
+	
+public: 
+  Connection () : throw_exceptions(true), locked(false) 
+    {mysql_init(&mysql);} //:
   Connection (bool te) : throw_exceptions(te), is_connected(false), locked(true), Success(false) //:
-    {mysql_init(&mysql);}
+    {mysql_init(&mysql);} //:
   Connection (const char *db, const char *host = "", const char *user = "", 
-	      const char *passwd = "", bool te = true); 
+	      const char *passwd = "", bool te = true); //:
   Connection (const char *db, const char *host, const char *user, 
-	      const char *passwd = "", uint port = 3306, my_bool compress = 1,
+	      const char *passwd, uint port, my_bool compress = 1,
 	      unsigned int connect_timeout = 5, bool te = true,
-	      cchar *socket_name = "");
+	      cchar *socket_name = ""); //:
 
   bool   real_connect (cchar *db = "", cchar *host = "", 
 		       cchar *user = "", cchar *passwd = "", uint port = 0,
 		       my_bool compress = 0, unsigned int connect_timeout = 60,
-		       cchar *socket_name= "");
+		       cchar *socket_name= ""); //:
 				
   ~Connection (); //:
-  void         close() {mysql_close(&mysql);}	
-  string       info ();	
+  void         close() {mysql_close(&mysql);}	 //:
+  string       info ();	//:
 
   bool   connected() const {return is_connected;}
   //: returns true if a successful connection was made
@@ -109,6 +106,8 @@ public:
 	string infoo (void) {return info ();}
 	st_mysql_options get_options (void) const {return mysql.options;}
 	int read_options(enum mysql_option option,const char *arg) {return  mysql_options(&mysql, option,arg);}
+  int          affected_rows()  {return mysql_affected_rows((MYSQL*) &mysql);}
+  int          insert_id () {return mysql_insert_id(&mysql);}
 
   template <class Sequence> void storein_sequence(Sequence &, const string &); //:
   template <class Set>      void storein_set(Set &, const string &);  //:
@@ -131,8 +130,7 @@ public:
     {storein_set(con,s);}
 };
 
-
-//! with_class = Connection
+//! with_class = Connection 
 
 //: For backwards companablity, don't use
 typedef Connection Mysql;

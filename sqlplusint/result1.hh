@@ -170,7 +170,7 @@ public:
   }
 
   //: Raw c api function
-  my_ulonglong  num_rows() const {return mysql_num_rows(mysql_res);}
+  int  num_rows() const {return mysql_num_rows(mysql_res);}
   //: Raw c api function
   void         data_seek (uint offset) const 
     {mysql_data_seek(mysql_res, offset);}
@@ -208,8 +208,8 @@ inline void swap (Result &x, Result &y) {
 class ResNSel {
 public:
   bool success;   
-  my_ulonglong insert_id;	//: 
-  my_ulonglong rows;		//: Number of rows affected
+  int insert_id;	//: 
+  int rows;		//: Number of rows affected
   std::string info;			//: Additional info
 
   ResNSel() : success(false) {};

@@ -19,7 +19,7 @@ Patches for any of these thoughtfully considered!
 
 	o Does it build under GCC 3.4 yet?
 	
-	o One report says it still doesn't build under GCC 3.5.
+	o One report says it doesn't build under what will become GCC 4.0.
 
 	o Why can Query objects not be reused?
 
@@ -33,3 +33,6 @@ Patches for any of these thoughtfully considered!
 	  NO_LONG_LONGS in mysql++-windows.hh, use functions like strtoi64()
 	  instead of strtoll(), and use __int64 instead of long long.  To do
 	  this portably, it isn't a trivial conversion.
+
+	o Factor tests out of configure.in into individual files in a config
+	  subdir.

@@ -1,6 +1,12 @@
-
 #include "connection3.hh"
 #include "result3.hh"
+#include "config.h"
+
+#if defined(HAVE_MYSQL_SHUTDOWN_LEVEL_ARG)
+#	define SHUTDOWN_ARG ,SHUTDOWN_DEFAULT
+#else
+#	define SHUTDOWN_ARG
+#endif
 
 Connection::Connection (const char *db, const char *host, const char *user, 
 			const char *passwd, bool te) 
@@ -83,7 +89,7 @@ bool Connection::reload() {
 }
 
 bool Connection::shutdown () {
-  bool suc = !(mysql_shutdown(&mysql));
+  bool suc = !(mysql_shutdown(&mysql SHUTDOWN_ARG));
   if (throw_exceptions && !suc) throw MysqlBadQuery(error());
   else return suc;
 }  

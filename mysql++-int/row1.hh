@@ -234,15 +234,19 @@ class Row : public const_subscript_container<Row,ColData,const ColData>,
   friend MutableRow<ResUse>;
   friend MutableRow<MutableRes>;
 private:
-  MYSQL_ROW    data;
+//  MYSQL_ROW    data;
+  vector <string> data;
   const ResUse *res;
   bool         throw_exceptions;
 
 public:
   Row() {}
   Row(MYSQL_ROW d, const ResUse *r, bool te = false) 
-    : data(d), res(r), throw_exceptions(te) {}
-  ~Row() {}
+    : res(r), throw_exceptions(te) 
+		{
+		  for (unsigned int i=0;i<size();i++) data.insert(data.end(),(d[i]) ? (string)d[i] : (string)"");
+		}
+  ~Row() {data.clear();}
   const Row& self() const {return *this;}
   Row& self() {return *this;}
 
@@ -259,9 +263,9 @@ public:
   //: Returns the value of the field with the field name of i.
   // This method is not nearly as effecent as using the index number. Use sparingly. 
 
-  const char * raw_data(int i) const {return data[i];}
+  const char * raw_data(int i) const {return data[i].c_str();}
 
-  operator bool() const {if (data) return true; else return false;}
+  operator bool() const {if (data.size()) return true; else return false;}
   //: Returns true if there is data in the row.
 }; 
 

@@ -49,12 +49,13 @@ template <class Str>
 class mysql_ColData : public Str {
 private:
   mysql_type_info _type;
+	string buf;
 public:
   mysql_ColData (mysql_type_info t = mysql_type_info::string_type) 
     : _type(t) {}
   mysql_ColData (const char *str, 
 		 mysql_type_info t = mysql_type_info::string_type)
-    : Str (str), _type(t) {}
+    : Str(str), _type(t) {buf=(string)str;}
 
   mysql_type_info type() {return _type;}
   //: Returns the current mysql type of current item
@@ -78,7 +79,7 @@ public:
   //
   // (Note, This is not an actual template)
 
-  operator cchar*() const {return c_str();}
+  operator cchar*() const {return buf.c_str();}
   operator  signed char() const {return conv((signed char)0);}
   operator  unsigned char() const {return conv((unsigned char)0);}
   operator  int() const {return conv((int)0);}

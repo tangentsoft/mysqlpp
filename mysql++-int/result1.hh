@@ -35,7 +35,7 @@ public:
   ResUse (MYSQL_RES *result, Connection *m = NULL, bool te = false);
   ResUse (const ResUse &other) {copy(other);}
   inline ResUse& operator = (const ResUse &other);
-
+  MYSQL_RES *mysql_result (void) {return mysql_res;}
   /* raw mysql c api functions */
   Row fetch_row()
     {return Row(mysql_fetch_row(mysql_res), this, throw_exceptions);}

@@ -1,15 +1,14 @@
 include ../Configure
 
-ifeq ($(TYPE),shared)
+ifeq "$(findstring shared, $(TYPE))" "shared"
   CFLAGS += $(FPIC)
 endif
 
-
-ifeq ($(TYPE), static)
-  INTLIBS = libmysql++.a
+ifeq "$(findstring static, $(TYPE))" "static"
+  INTLIBS := libmysql++.a
 endif
-ifeq ($(TYPE), shared)
-  INTLIBS = libmysql++.so libmysql++.so.1
+ifeq "$(findstring shared, $(TYPE))" "shared"
+  INTLIBS := $(INTLIBS) libmysql++.so libmysql++.so.1
 endif
 
 objs: $(OBJSINT)
@@ -23,6 +22,7 @@ libmysql++.a: $(OBJSINT)
 
 libmysql++.so libmysql++.so.1: $(OBJSINT)
 	$(LINK) -shared -o libmysql++.so.1 -W1,-soname,libmysql++.so.1 $(OBJSINT)
+	-rm libmysql++.so
 	-ln -s libmysql++.so.1 libmysql++.so
 
 clean:
@@ -42,11 +42,12 @@ install: $(HEADSINT) $(INTLIBS)
 	-mkdir $(INSTHEAD)/mysql++-int
 	$(CP_R) -f $(HEADSINT) $(INSTHEAD)/mysql++-int/
 	-mkdir $(INSTLIB)
-ifeq ($(TYPE), static)
+ifeq "$(findstring static, $(TYPE))" "static"
+	$(CP_R) -f $(INTLIBS) $(INSTLIB)
+else
+ifeq "$(findstring shared, $(TYPE))" "shared"
 	$(CP_R) -f $(INTLIBS) $(INSTLIB)
 endif
-ifeq ($(TYPE), shared)
-	$(CP_R) -f $(INTLIBS) $(INSTLIB)
 endif
 
 remove:

@@ -15,7 +15,7 @@
 #include <set.h>
 #include <map.h>
 #include <multiset.h>
-#include "define_short"
+#include "define_short.hh"
 #include "exceptions.hh"
 #include "query1.hh"
 #include "result1.hh"

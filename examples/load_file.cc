@@ -1,6 +1,6 @@
 #include <sys/stat.h>
 #include <fstream>
-#include <mysql++>
+#include <mysql++.hh>
 
 using namespace std;
 

@@ -6,8 +6,8 @@
 #define errno WSAGetLastError()
 #endif
 
-#include "defs"
-#include "define_short"
+#include "defs.hh"
+#include "define_short.hh"
 
 #include "coldata1.hh"
 #include "compare1.hh"

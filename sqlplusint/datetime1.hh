@@ -11,8 +11,8 @@
 #include <string>
 #include <strstream>
 #include <iostream>
-#include "defs"
-#include "define_short"
+#include "defs.hh"
+#include "define_short.hh"
 #include "coldata1.hh"
 #include "stream2string1.hh"
 #include "tiny_int1.hh"

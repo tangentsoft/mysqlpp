@@ -2,8 +2,8 @@
 #define __field_types1_hh__
 
 #include <vector.h>
-#include "defs"
-#include "define_short"
+#include "defs.hh"
+#include "define_short.hh"
 #include "type_info1.hh"
 
 //: A vector of the field types.

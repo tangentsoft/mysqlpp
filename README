@@ -18,6 +18,18 @@ From within the source directory, you should just need to say:
 
 to build and install the program.
 
+The configure script takes many options.  Say:
+
+	$ ./configure --help
+
+to get a list.  Because MySQL++ comes with a great many header files,
+I highly recommend you add '--includedir=/usr/local/include/mysql++' to
+the configure command, to segregate the header files in their own
+directory.
+
+If you wish to install mysql++ in a root directory other than /usr/local,
+run configure with --prefix=.....
+
 You may want to try out the programs in the examples subdirectory to
 ensure that the MySQL++ API and your MySQL database are both working
 properly. Start with reset_db, and work through the other examples to
@@ -32,9 +44,6 @@ should only need to be run once in normal circumstances.  Occasionally
 automake/autoconf gets confused and you have to run it again, but this
 only affects people tweaking these configuration files. (*.am, *.in,
 and everything in the config subdir, mostly.)
-
-If you wish to install mysql++ in a root directory other than /usr/local,
-run configure with --with-prefix=.....
 
 At the moment, this project only builds under GCC 3.0 and higher. If
 enough demand is there, I can fix it to build under 2.95 and newer again.

@@ -4,7 +4,7 @@
 #include <strstream>
 #include <vector>
 #include <map>
-#include "define_short"
+#include "define_short.hh"
 #include "sql_query0.hh"
 #include "sql_string1.hh"
 

@@ -1,4 +1,28 @@
+1.7.11, 2004.08.17
+
+	o Renamed mysql++, defs and define_short files, adding .hh to the
+	  end of each.  (They're header files!)  This shouldn't impact
+	  library users, since these are hopefully used internal to the
+	  library only.
+
+	o Removed sqlplus.hh file.  Use mysql++.hh instead.
+	
+	o Added mysql++.spec, extracted from contributed 1.7.9 source RPM, 
+	  and updated it significantly.  Also, added an 'rpm' target to
+	  Makefile.am to automate the process of building RPMs.
+
+	o Added bootstrap and LGPL files to distribution tarball.
+
+	o Added pre-1.7.10 history to this file.
+
+	o Removed .version file.  Apparently it's something required by old
+	  versions of libtool.
+
+
 1.7.10, 2004.08.16
+
+	o Maintenance taken over by Warren Young (mysqlpp at etr dash usa
+      dot com.)
 
 	o Applied omnibus GCC 3.3 patch.  See
 	  http://lists.mysql.com/plusplus/3326 for details.
@@ -10,6 +34,339 @@
 	o Renamed library file from libsqlplus to libmysqlpp.
 
 
-1.7.9, 2001.05.19
+1.7.9 (May 1 2001) Sinisa Milivojevic <sinisa@mysql.com>
 
-	o Previous version prior to Warren Young taking over maintenance.
+    * Fixed a serious bug in Connection constructor when reading MySQL
+    * options
+    * Improved copy constructor and some other methods in Result /
+    * ResUse
+    * Many other minor improvements
+    * Produced a complete manual with chapter 5 included
+    * Updated documentation, including a Postscript format
+
+1.7.8 (November 14 2000) Sinisa Milivojevic <sinisa@mysql.com>
+
+    * Introduced a new, standard way of dealing with C++ exceptions.
+    * MySQL++ now supports two different methods of tracing exceptions.
+    * One is by the fixed type (the old one) and one is standard C++
+    * type by the usage of what() method. A choice of methods has to be
+    * done in building a library. If configure script is run with
+    * -enable-exception option , then new method will be used. If no
+    * option is provided, or -disable-exception is used, old MySQL++
+    * exceptions will be enforced. This innovation is a contribution of
+    * Mr. Ben Johnson <ben@blarg.net>
+    * MySQL++ now automatically reads at connection all standard MySQL
+    * configuration files
+    * Fixed a bug in sql_query::parse to enable it to parse more then 99
+    * char's
+    * Added an optional client flag in connect, which will enable usage
+    * of this option, e.g. for getting matched and not just affected
+    * rows. This change does not require any changes in existing
+    * programs
+    * Fixed some smaller bugs
+    * Added better handling of NULL's. Programmers will get a NULL
+    * string in result set and should use is_null() method in ColData to
+    * check if value is NULL
+    * Further improved configuration
+    * Updated documentation, including a Postscript format
+
+1.7.6 (September 22 2000) Sinisa Milivojevic <sinisa@mysql.com>
+
+    * This release contains some C++ coherency improvements and scripts
+    * enhacements
+    * result_id() is made available to programmers to fetch
+    * LAST_INSERT_ID() value
+    * Connection constroctur ambiguity resolved, thanks to marc@mit.edu
+    * Improved cnnfigure for better finding out MySQL libraries and
+    * includes
+    * Updated documentation, including a Postscript format
+
+1.7.5 (July 30 2000) Sinisa Milivojevic <sinisa@mysql.com>
+
+    * This release has mainl bug fixes  and code improvements
+    * A bug in FieldNames::init has been fixed, enabling a bug free
+    * usage of this class with in what ever a mixture of cases that is
+    * required
+    * Changed behaviour of ResUse, Result and Row classes, so that they
+    * could be re-used as much as necessary, without any memory leaks,
+    * nor with any re-initializations necessary
+    * Fixed all potential leaks that could have been caused by usage of
+    * delete instead of delete[] after memory has been allocated with
+    * new[]
+    * Deleted all unused classes and macros. This led to a reduction of
+    * library size to one half of the original size. This has
+    * furthermore brought improvements in compilation speed
+    * Moved all string manipulation from system libraries to
+    * libmysqlclient, thus enabling uniformity of code and usage of 64
+    * bit integers on all platforms, including Windows, without
+    * reverting to conditional compilation. This changes now requires
+    * usage of mysql 3.23 client libraries, as mandatory
+    * Changed examples to reflect above changes
+    * Configuration scripts have been largely changed and further
+    * changes shall appear in consecutive sub-releases. This changes
+    * have been done and shall be done by our MySQL developer Thimble
+    * Smith <tim@mysql.com>
+    * Changed README, TODO and text version of manual. Other versions of
+    * manual have not been updated
+    * Fixed .version ``bug''. This is only partially fixed and version
+    * remains 1.7.0 due to some problems in current versions of libtool.
+    * This shall be finally fixed in a near future
+    * Several smaller fixes and improvements
+    * Added build.sh script to point to the correct procedure of
+    * building of this library. Edit it to add configure options of your
+    * choice
+
+1.7 (May17 2000) Sinisa Milivojevic <sinisa@mysql.com>
+
+    * This is mainly a release dealing with bug fixes, consistency
+    * improvements and easier configure on some platforms
+    * A bug in fetch_row() method of ResUse class has been fixed. Beside
+    * changes that existed in a distributed patch, some additional error
+    * checking has been introduced
+    * A bug in escape manipulator has been fixed that could cause an
+    * error if all characters had to be escaped
+    * An inconsistency in column indexing has been fixed. Before this
+    * version, column names in row indexing with strings, i.e.
+    * row[<string>] , has been case sensitive, which was inconsistent
+    * with MySQL server handling of column names
+    * An inconsistency in conversion from strings to integers or floats
+    * has been fixed. In prior version a space found in data would cause
+    * a BadConversion exception. This has been fixed, but 100%
+    * consistency with MySQL server has not been targeted, so that other
+    * non-numeric characters in data will still cause BadConversion
+    * exception or error. As this API is used in applications, users
+    * should provide feedback if full compatibility with MySQL server is
+    * desired, in which case BadConversion exception or error would be
+    * abolished in some of future versions
+    * A new method in ColData class has been introduced. is_null()
+    * method returns a boolean to denote if a column in a row is NULL.
+    * Finally, as of this release, testing for NULL values is possible.
+    * Those are columns with empty strings for which is_null() returns
+    * true.
+    * Some SPARC Solaris installations had C++ exception problems with
+    * g++ 2.95.2 This was a bug that was fixed in GNU gcc, as from
+    * release 2.95 19990728. This version was thoroughly tested and is
+    * fully functional on SPARC Solaris 2.6 with the above version of
+    * gcc.
+    * A 'virtual destructor ' warning for Result class has been fixed
+    * Several new functions for STL strings have been added. Those
+    * functions (see string_util.hh) add some of the functionality
+    * missing in existing STL libraries
+    * Conversion for 64 bit integers on FreeBSD systems has been added.
+    * On those systems _FIX_FOR_BSD_ should be defined in CXXFLAGS prior
+    * to configuring. Complete conversion to the usage of functions for
+    * integer conversion found in mysqlclient library is planned for one
+    * of the next releases
+    * A completely new, fully dynamic, dramatic and fully mutable result
+    * set has been designed and will be implemented in some of 2.x
+    * releases
+    * Several smaller fixes and improvements, including defaulting
+    * exceptions to true, instead of false, as of this version
+    * An up-to-date and complete Postscript version of documentation is
+    * included in this distribution
+    * Large chunks of this manual are changed, as well as README and
+    * TODO files.
+
+1.6 (Feb 3 2000) Sinisa Milivojevic <sinisa@mysql.com>
+
+    * This is a major release as it includes new features and major
+    * rewrites
+    * Automatic quoting and escaping with streams. It works
+    * automatically , depending on the column type. It will work with <<
+    * on all ostream derived types. it is paricularly handy with query
+    * objects and strstreams. Automatic quoting and escaping on cout,
+    * cerr and clog stream objects is intentionally left out, as quoting
+    * / escaping on those stream objects is not necessary. This feature
+    * can be turned of by setting global boolean dont_quote_auto to
+    * true.
+    * Made some major changes in code, so that now execute method should
+    * be used only with SSQL and template queries, while for all other
+    * query execution of UPDATE's, INSERT's, DELETE's, new method exec()
+    * should be used. It is also faster.
+    * New method get_string is inroduced for easier handling / casting
+    * ColData into C++ strings.
+    * Major rewrite of entire code, which led to it's reduction and
+    * speed improvement. This also led to removal of several source
+    * files.
+    * Handling of binary data is introduced. No application program
+    * changes are required. One of new example programs demonstrates
+    * handling of binary data
+    * Three new example programs have been written and thoroughly
+    * tested. Their intention is to solve some problems addressed by
+    * MySQL users.
+    * Thorough changes is Makefile system has been made
+    * Better configuration scripts are written, thanks to D.Hawkins
+    * <dhawkins@cdrgts.com>
+    * Added several bug fixes
+    * Changed Manual and Changelog
+
+1.5 (Dec 1 1999) Sinisa Milivojevic <sinisa@mysql.com>
+
+    * Fixed bug in template queries, introduced in 1.4 (!)
+    * Fixed connect bug
+    * Fixed several bug in type_info classes
+    * Added additional robustness in classes
+    * Added additional methods for SQL type info
+    * Changed Changelog and README
+
+1.4 (Nov 25 1999) Sinisa Milivojevic <sinisa@mysql.com>
+
+    * Fixed bug in store and storein methods
+    * Fixed one serious memory leak
+    * Fixed a very serious bug generated by gcc 2.95.xx !!
+    * Added robustness in classes, so that e.g. same query and row
+    * objects can be re-used
+    * Changed sinisa_ex example to reflect and demonstrate this
+    * stability
+    * Changed Changelog and README
+    * Few other bug fixes and small improvements and speed-ups
+
+1.3 (Nov 10 1999) Sinisa Milivojevic <sinisa@mysql.com>
+
+    * Fixed several erronous definitions
+    * Further changed source to be 2.95.2 compatible
+    * Expunged unused statements, especially dubious ones, like use of
+    * pointer_tracker
+    * Corrected bug in example file fieldinf1
+    * Finally fixed mysql_init in Connection constructor, which provided
+    * much greater stability !
+    * Added read and get options, so that clients, like mysqlgui can use
+    * it
+    * Changed Changelog and README
+    * Many other bug fixes.
+
+1.2 (Oct 15 1999) Sinisa Milivojevic <sinisa@mysql.com>
+
+    * First offical release. Version 1.0 and 1.1 were releases by Sinisa
+    * before I (Kevin Atkinson) made him the offical maintainer,
+    * Many manual fixes.
+    * Changed README and Changelog
+    * Changed source to be compilable by gcc 2.95.xx, tribute to Kevin
+    * Atkinson <kevinatk@home.com>
+    * Added methods in Connection class which are necessary for
+    * fullfilling administrative functions with MySQL
+    * Added many bug fixes in code pertaining to missing class
+    * initializers , as notified by Michael Rendell <michael@cs.mun.ca>
+    * Sinisa Milivojevic <sinisa@mysql.com> is now the offical
+    * maintainer.
+
+1.1 (Aug 2 1999) Sinisa Milivojevic <sinisa@mysql.com>
+
+    * Added several bug fixes
+    * Fixed memory leak problems and variables overlapping problems.
+    * Added automake and autoconf support by loic@ceic.com
+    * Added Makefile for manual
+    * Added support for cygwin
+    * Added example sinisa_ex (let modesty prevail) which used to crash
+    * a lot when memory allocation, memory leak and overlap problems
+    * were present. Smooth running of this example proves that all those
+    * bugs are fixed
+    * Corrected bugs in sql_query.cc regarding delete versus delete[]
+    * and string length in manip.cc
+    * Changed manual
+    * Changed README
+    * Many other smaller things
+
+1.0 (June 9 1999) Michael Widenius <monty@monty.pp.sci.fi>
+
+    * Added patches from Orion Poplawski <orion@bvt.com> to support the
+    * UnixWare 7.0 compiler
+
+.64.1.1a (Sep 27 1998)
+
+    * Fixed several bugs that caused my library to fail to compile with
+    * egcs 1.1. Hopefully it will still compile with egcs 1.0 however I
+    * have not been able to test it with egcs 1.0.
+    * Removed some problem causing debug output in sql++pretty.
+
+.64.1a (Aug 1 1998)
+
+    * Added an (almost) full guide to using Template Queries.
+    * Fixed it so the SQLQuery will throw an exception when all the
+    * template parameters are not provided.
+    * Proofread and speedchecked the manual (it really needed it).
+    * Other minor document fixes.
+
+.64.0.1a (July 31 1998)
+
+    * Reworked the Class Reference section a bit.
+    * Minor document fixes
+    * Added more examples for SSQLS.
+    * Changed the syntax of equal_list for SSQLS from equal_list (cchar
+    * *, Manip, cchar *) to (cchar *, cchar *, Manip).
+    * Added set methods to SSQLS. These new methods do the same thing as
+    * there corresponding constructors.
+    * Added methods for creating a mysql_type_info from a C++ type_info.
+
+.64.a (July 24 1998)
+
+    * Changed the names of all the classes so they no longer have to
+    * have Mysql in the begging of it. However if this creates a problem
+    * you can define a macro to only use the old names instead.
+    * The Specialized SQL Structures (formally known as Custom Mysql
+    * Structures) changed from mysql_ to sql_.
+    * Added the option of using exceptions thoughout the API.
+    * ColData (formally known as MysqlStrings) will now throw an
+    * exception if there is a problem in the conversion.
+    * Added a null adapter.
+    * Added Mutable Result Sets
+    * Added a very basic runtime type identification for SQL types
+    * Changed the document format from POD to LYX .
+    * Am now using a modified version of Perceps to extract the class
+    * information directly from the code to make my life easier.
+    * Added an option of defining a macro to avoid using the automatic
+    * conversion with binary operators.
+    * Other small fixed I probully forgot to mentune.
+
+.63.1.a
+
+    * Added Custom Mysql Structures.
+    * Fixed the Copy constructor of class Mysql
+    * Started adding code so that class Mysql lets it children now when
+    * it is leaving
+    * Attempted to compile it into a library but still need help. As
+    * default it will compile as a regular program.
+    * Other small fixes.
+
+.62.a (May 3 1998)
+
+    * Added Template Queries
+    * Created s separate SQLQuery object that is independent of an SQL
+    * connection.
+    * You no longer have to import the data for the test program as the
+    * program creates the database and tables it needs.
+    * Many small bug fixes.
+
+.61.1.a (April 28 1998)
+
+    * Cleaned up the example code in test.cc and included it in the
+    * manual.
+    * Added an interface layout plan to the manual.
+    * Added a reverse iterator.
+    * Fixed a bug with row.hh (It wasn't being included because of a
+    * typo).
+
+.61.0.a
+
+    * Major interface changes. I warned you that the interface may
+    * change while it is in pre-alpha state and I wasn't kidding.
+    * Created a new and Separate Query Object. You can no longer execute
+    * queries from the Mysql object instead you have to create a query
+    * object with Mysql::query() and use it to execute queries.
+    * Added the comparison operators to MysqlDate, MysqlTime and
+    * MysqlDateTime. Fixed a few bugs in the MysqlDate... that effected
+    * the stream output and the conversion of them to strings.
+    * Reflected the MysqlDate... changes in the manual.
+    * Added a new MysqlSet object and a bunch of functions for working
+    * with mysql set strings.
+
+.60.3a (April 24 1998)
+
+    * Changed strtoq and strtouq to strtoll and strtull for metter
+    * compatibility Minor Manual fix.
+    * Changed makefile to make it more compatible with Solaris (Thanks
+    * Chris H)
+    * Fixed bug in comparison functions so that they would compare in he
+    * right direction.
+    * Added some items to the to do list be sure to have a look.
+

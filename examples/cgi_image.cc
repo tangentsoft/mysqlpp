@@ -1,4 +1,4 @@
-#include <sqlplus.hh>
+#include <mysql++.hh>
 
 #define MY_DATABASE	"telcent"
 #define MY_TABLE		"fax"

@@ -11,7 +11,7 @@
 #include <set.h>
 #include <mysql.h>
 #include <string>
-#include "define_short"
+#include "define_short.hh"
 #include "field_names1.hh"
 #include "row1.hh"
 #include "resiter1.hh"

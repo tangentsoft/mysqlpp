@@ -2,7 +2,7 @@
 #include <string>
 #include <iostream>
 #include <iomanip>
-#include <sqlplus.hh>
+#include <mysql++.hh>
 
 using namespace std;
 

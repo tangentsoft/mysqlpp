@@ -8,7 +8,7 @@
 #define errno WSAGetLastError()
 #endif
 #include <mysql.h>
-#include "define_short"
+#include "define_short.hh"
 #include "sql_query1.hh"
 #include "result1.hh"
 #include "connection1.hh"

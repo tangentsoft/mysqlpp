@@ -22,14 +22,14 @@ template <class Type> class mysql_convert;
     operator TYPE () {return num;}\
   };\
 
-#if defined(__WIN32__) || defined(_WIN32)
+#if defined(_MSC_VER)
 #	pragma warning(disable: 4244)
 #endif
 
 	mysql__convert(float, strtod)
 	mysql__convert(double, strtod)
 
-#if defined(__WIN32__) || defined(_WIN32)
+#if defined(_MSC_VER)
 #	pragma warning(default: 4244)
 #endif
 
@@ -45,7 +45,7 @@ template <class Type> class mysql_convert;
     operator TYPE () {return num;}\
   };\
 
-#if defined(__WIN32__) || defined(_WIN32)
+#if defined(_MSC_VER)
 #	pragma warning(disable: 4244)
 #endif
 
@@ -60,7 +60,7 @@ template <class Type> class mysql_convert;
 	mysql__convert(unsigned short int, strtoul)
 	mysql__convert(unsigned long int, strtoul)
 
-#if defined(__WIN32__) || defined(_WIN32)
+#if defined(_MSC_VER)
 #	pragma warning(default: 4244)
 #endif
 

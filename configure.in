@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 AC_INIT(lib/mysql++.h)
 
 # Don't forget to change this in mysql++.spec, too!
-VERSION=1.7.23
+VERSION=1.7.24
 
 AM_INIT_AUTOMAKE(mysql++, $VERSION)
 
@@ -26,7 +26,7 @@ AC_ARG_ENABLE(exception,
 AC_ARG_WITH(mysql,
     [  --with-mysql=<path>     root directory path of MySQL installation],
     [MYSQL_lib_check="$with_mysql/lib/mysql $with_mysql/lib"
-MYSQL_inc_check="$with_mysql/include/mysql"],
+MYSQL_inc_check="$with_mysql/include $with_mysql/include/mysql"],
     [MYSQL_lib_check="/usr/local/mysql/lib/mysql /usr/local/lib/mysql /opt/mysql/lib/mysql /usr/lib/mysql /usr/local/mysql/lib /usr/local/lib /opt/mysql/lib /usr/lib"
 MYSQL_inc_check="/usr/local/mysql/include/mysql /usr/local/include/mysql /opt/mysql/include/mysql /usr/include/mysql"])
 
@@ -37,7 +37,7 @@ AC_ARG_WITH(mysql-lib,
 AC_ARG_WITH(mysql-include,
     [  --with-mysql-include=<path>
                           directory path of MySQL header installation],
-    [MYSQL_inc_check=$with_mysql/include/mysql])
+    [MYSQL_inc_check="$with_mysql/include $with_mysql/include/mysql"])
 
 AC_MSG_CHECKING([for MySQL library directory])
 MYSQL_libdir=

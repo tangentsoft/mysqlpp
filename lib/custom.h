@@ -2,8 +2,8 @@
 // This file is generated from the perl script custom.pl, please do 
 // not modify this file directly.
 
-#ifndef __mysqlpp_custom_h__
-#define __mysqlpp_custom_h__
+#ifndef MYSQLPP_CUSTOM_H
+#define MYSQLPP_CUSTOM_H
 
 #include <defs.h>
 #include <tiny_int.h>

@@ -45,3 +45,6 @@ Bug Fix/Maintenance Items
 	  a new row2.h file and include it in a few strategic locations, it
 	  works.  But, this is a bogus fix.  Find the right one.
 
+	o Fold SQLQuery class into Query?  The only reason for the
+	  separation goes back to the dream of having MySQL++ be database-
+	  independent.

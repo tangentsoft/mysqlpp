@@ -1,5 +1,5 @@
-#ifndef __result1_hh__
-#define __result1_hh__
+#ifndef MYSQLPP_RESULT_H
+#define MYSQLPP_RESULT_H
 
 #include <platform.h>
 

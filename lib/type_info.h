@@ -1,5 +1,5 @@
-#ifndef __type_info1_hh__
-#define __type_info1_hh__
+#ifndef MYSQLPP_TYPE_INFO_H
+#define MYSQLPP_TYPE_INFO_H
 
 #include <platform.h>
 

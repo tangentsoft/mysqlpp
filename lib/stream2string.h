@@ -1,5 +1,5 @@
-#ifndef __stream2string_hh__
-#define __stream2string_hh__
+#ifndef MYSQLPP_STREAM2STRING_H
+#define MYSQLPP_STREAM2STRING_H
 
 #include <sstream>
 

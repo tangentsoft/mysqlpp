@@ -1,5 +1,5 @@
-#ifndef __compare1_hh__
-#define __compare1_hh__
+#ifndef MYSQLPP_COMPARE_H
+#define MYSQLPP_COMPARE_H
 
 #include <row.h>
 

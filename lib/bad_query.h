@@ -1,5 +1,5 @@
-#ifndef __BAD_QUERY_EXCEPT__KK
-#define __BAD_QUERY_EXCEPT__KK
+#ifndef MYSQLPP_BAD_QUERY_H
+#define MYSQLPP_BAD_QUERY_H
 #include <string>
 
 namespace mysqlpp {

@@ -1,5 +1,5 @@
-#ifndef __field_types1_hh__
-#define __field_types1_hh__
+#ifndef MYSQLPP_FIELD_TYPES_H
+#define MYSQLPP_FIELD_TYPES_H
 
 #include <type_info.h>
 

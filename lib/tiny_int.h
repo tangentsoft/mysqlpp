@@ -1,5 +1,5 @@
-#ifndef __tiny_int1_hh__
-#define __tiny_int1_hh__
+#ifndef MYSQLPP_TINY_INT_H
+#define MYSQLPP_TINY_INT_H
 
 namespace mysqlpp {
 

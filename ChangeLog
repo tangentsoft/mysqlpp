@@ -1,3 +1,23 @@
+1.7.24, 2004.12.08
+
+	o Fixed the --with-mysql-lib and --with-mysql-include flags'
+	  behavior, and extended their search ability to handle one other
+	  common case.  (Fixed by Steve Roberts)
+
+	o Fixes to put freestanding functions in namespace mysqlpp.  (They
+	  weren't in the namespace, while all the class member functions
+	  were.)  This required bumping the ABI version number to 4.
+	  
+	o Renamed set module to myset, to avoid conflicts with Standard C++
+	  Library's set.h when MySQL++ headers were installed into one of
+	  the standard system include directories.
+
+	o Renamed all the idempotency guards to make them consistent in
+	  style and unique to MySQL++.
+
+	o Reformatted all of lib/*.cc.
+
+
 1.7.23, 2004.11.20
 
 	o Query::reset() now empties the stored query string.  If you

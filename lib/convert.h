@@ -1,5 +1,5 @@
-#ifndef __convert1_hh__
-#define __convert1_hh__
+#ifndef MYSQLPP_CONVERT_H
+#define MYSQLPP_CONVERT_H
 
 #include <platform.h>
 

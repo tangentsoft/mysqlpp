@@ -1,5 +1,5 @@
-#ifndef __coldata1_hh__
-#define __coldata1_hh__
+#ifndef MYSQLPP_COLDATA_H
+#define MYSQLPP_COLDATA_H
 
 #include <platform.h>
 

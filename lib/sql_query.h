@@ -1,5 +1,5 @@
-#ifndef __sql_query_1_hh
-#define __sql_query_1_hh
+#ifndef MYSQLPP_SQL_QUERY_H
+#define MYSQLPP_SQL_QUERY_H
 
 #include <custom.h>
 #include <sql_string.h>

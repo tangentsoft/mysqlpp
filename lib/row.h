@@ -1,5 +1,5 @@
-#ifndef __row1_hh__
-#define __row1_hh__
+#ifndef MYSQLPP_ROW_H
+#define MYSQLPP_ROW_H
 
 #include <coldata.h>
 #include <exceptions.h>

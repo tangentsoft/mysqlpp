@@ -1,5 +1,5 @@
-#ifndef __null1_hh__
-#define __null1_hh__
+#ifndef MYSQLPP_NULL_H
+#define MYSQLPP_NULL_H
 
 #include <exceptions.h>
 

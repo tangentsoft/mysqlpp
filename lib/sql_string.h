@@ -1,5 +1,5 @@
-#ifndef __sql_string1_hh__
-#define __sql_string1_hh__
+#ifndef MYSQLPP_SQL_STRING_H
+#define MYSQLPP_SQL_STRING_H
 
 #include <defs.h>
 

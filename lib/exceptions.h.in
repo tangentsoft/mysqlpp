@@ -1,5 +1,5 @@
-#ifndef __MYSQLPLUS_EXCEPTIONS__
-#define __MYSQLPLUS_EXCEPTIONS__
+#ifndef MYSQLPP_EXCEPTIONS_H
+#define MYSQLPP_EXCEPTIONS_H
 #include <string>
 
 namespace mysqlpp {

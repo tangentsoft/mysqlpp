@@ -5,14 +5,15 @@
 
 #include "result.h"
 
-using namespace mysqlpp;
+namespace mysqlpp {
 
-void FieldTypes::init(const ResUse *res)
+void FieldTypes::init(const ResUse * res)
 {
-  int num = res->num_fields();
-  reserve(num);
-  for (int i = 0; i < num; i++) {
-    push_back(res->fields(i));
-  }
+	int num = res->num_fields();
+	reserve(num);
+	for (int i = 0; i < num; i++) {
+		push_back(res->fields(i));
+	}
 }
 
+};							// end namespace mysqlpp

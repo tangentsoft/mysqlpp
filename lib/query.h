@@ -1,5 +1,5 @@
-#ifndef __query1_hh__
-#define __query1_hh__
+#ifndef MYSQLPP_QUERY_H
+#define MYSQLPP_QUERY_H
 
 #include <platform.h>
 

@@ -3,7 +3,9 @@
 
 #include <string>
 
-using namespace mysqlpp;
+namespace mysqlpp {
 
-template class ColData_Tmpl<std::string>;
-template class ColData_Tmpl<const_string>;
+template class ColData_Tmpl < std::string >;
+template class ColData_Tmpl < const_string >;
+
+};								// end namespace mysqlpp

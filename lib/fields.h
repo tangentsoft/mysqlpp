@@ -1,5 +1,5 @@
-#ifndef __fields1_hh__
-#define __fields1_hh__
+#ifndef MYSQLPP_FIELDS_H
+#define MYSQLPP_FIELDS_H
 
 #include <resiter.h>
 

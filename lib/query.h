@@ -1,7 +1,7 @@
 #ifndef MYSQLPP_QUERY_H
 #define MYSQLPP_QUERY_H
 
-#include <platform.h>
+#include <defs.h>
 
 #include <coldata.h>
 #include <connection.h>
@@ -81,7 +81,7 @@ public:
 
   std::string   preview () {return str(def);}       //:
   std::string   preview (parms &p) {return str(p);} //:
-	bool     exec (const std::string &str);
+  bool     exec (const std::string &str);
 
   mysql_query_define0(std::string,preview)
 
@@ -111,35 +111,41 @@ public:
 };
 
 template <class Seq>
-void Query::storein_sequence (Seq &seq,parms &p, query_reset r) {
+void Query::storein_sequence (Seq &seq,parms &p, query_reset r)
+{
   r = (parsed.size()) ? DONT_RESET : RESET_QUERY;
   mysql->storein_sequence (seq, str(p,r));
 }
 
 template <class Set>
-void Query::storein_set (Set &sett, parms &p, query_reset r) {
+void Query::storein_set (Set &sett, parms &p, query_reset r)
+{
   r = (parsed.size()) ? DONT_RESET : RESET_QUERY;
   mysql->storein_set (sett, str(p,r));
 }
 
 template <class Sequence>
-void Query::storein_sequence (Sequence &seq, const char *s) {
+void Query::storein_sequence (Sequence &seq, const char *s)
+{
   mysql->storein_sequence (seq, s);
 }
 
 template <class Set>
-void Query::storein_set (Set &sett, const char * s) {
+void Query::storein_set (Set &sett, const char * s)
+{
   mysql->storein_set (sett, s);
 }
 
 template <class T>
-void Query::storein (T &con, parms &p, query_reset r) {
+void Query::storein (T &con, parms &p, query_reset r)
+{
   r = (parsed.size()) ? DONT_RESET : RESET_QUERY;
   mysql->storein (con, str(p,r));
 }
 
 template <class T>
-void Query::storein (T &con, const char *s) {
+void Query::storein (T &con, const char *s)
+{
   mysql->storein (con, s);
 }
 

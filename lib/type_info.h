@@ -1,7 +1,7 @@
 #ifndef MYSQLPP_TYPE_INFO_H
 #define MYSQLPP_TYPE_INFO_H
 
-#include <platform.h>
+#include <defs.h>
 
 #include <mysql.h>
 
@@ -126,35 +126,49 @@ public:
   // You can also use id() for the same purpose.
 };
 
-inline const mysql_type_info::sql_type_info& mysql_type_info::deref() const {
+inline const mysql_type_info::sql_type_info& mysql_type_info::deref() const
+{
   return types[num];
 }
-inline const char*           mysql_type_info::name()      const {
+
+inline const char* mysql_type_info::name() const
+{
   return deref()._c_type->name();
 }
-inline const char*           mysql_type_info::sql_name()  const {
+
+inline const char* mysql_type_info::sql_name() const
+{
   return deref()._sql_name;
 }
-inline const unsigned int    mysql_type_info::length()  const {
+
+inline const unsigned int mysql_type_info::length() const
+{
   return _length;
 }
-inline const unsigned int    mysql_type_info::max_length()  const {
+
+inline const unsigned int mysql_type_info::max_length() const
+{
   return _max_length;
 }
-inline const std::type_info&      mysql_type_info::c_type()    const {
+
+inline const std::type_info& mysql_type_info::c_type() const
+{
   return *deref()._c_type;
 }
-inline const mysql_type_info mysql_type_info::base_type() const 
+
+inline const mysql_type_info mysql_type_info::base_type() const
 {
   return mysql_type_info(deref()._base_type);
 }
 
 inline mysql_type_info::mysql_type_info(enum_field_types t,
-					bool _unsigned, bool _null) {
+		bool _unsigned, bool _null)
+{
   num = type(t,_unsigned,_null);
 }
 
-inline mysql_type_info::mysql_type_info(const MYSQL_FIELD &f) {
+inline mysql_type_info::mysql_type_info(const MYSQL_FIELD &f)
+{
   num = type(f.type,
 	  (f.flags & UNSIGNED_FLAG) != 0,
 	  (f.flags & NOT_NULL_FLAG) == 0);
@@ -162,38 +176,35 @@ inline mysql_type_info::mysql_type_info(const MYSQL_FIELD &f) {
   _max_length = f.max_length;
 }
 
-inline bool operator == (const mysql_type_info& a, const mysql_type_info& b) {
+inline bool operator == (const mysql_type_info& a, const mysql_type_info& b)
+{
   return a.id() == b.id();
 }
 
-inline bool operator != (const mysql_type_info& a, const mysql_type_info& b) {
+inline bool operator != (const mysql_type_info& a, const mysql_type_info& b)
+{
   return a.id() != b.id();
 }
 
-#if defined(__WIN32__) || defined(_WIN32)
-// Disable warning about converting int to bool in VC++...it's bogus.
-#pragma warning(disable: 4800)
-#endif
-
-inline bool operator == (const std::type_info &a, const mysql_type_info &b) {
+inline bool operator == (const std::type_info &a, const mysql_type_info &b)
+{
   return a == b.c_type();
 }
 
-inline bool operator != (const std::type_info &a, const mysql_type_info &b) {
+inline bool operator != (const std::type_info &a, const mysql_type_info &b)
+{
   return a != b.c_type();
 }
 
-inline bool operator == (const mysql_type_info &a, const std::type_info &b) {
+inline bool operator == (const mysql_type_info &a, const std::type_info &b)
+{
   return a.c_type() == b;
 }
 
-inline bool operator != (const mysql_type_info &a, const std::type_info &b) {
+inline bool operator != (const mysql_type_info &a, const std::type_info &b)
+{
   return a.c_type() != b;
 }
-
-#if defined(__WIN32__) || defined(_WIN32)
-#pragma warning(default: 4800)
-#endif
 
 }; // end namespace mysqlpp
 

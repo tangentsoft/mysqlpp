@@ -1,6 +1,8 @@
 #ifndef MYSQLPP_CONST_STRING_H
 #define MYSQLPP_CONST_STRING_H
 
+#include <defs.h>
+
 #include <stdexcept>
 #include <string>
 #include <iostream>
@@ -61,7 +63,7 @@ public:
     const char* str1 = str_data;
     const char* str2 = str.str_data;
     while (*str1 == *str2 && (*str1 || *str2)) {str1++; str2++;}
-    return *str1-*str2;
+	return *str1-*str2;
   }
 };
 
@@ -69,42 +71,50 @@ public:
 //! with_class = const_string
 
 //:
-inline std::ostream& operator << (std::ostream &o, const const_string &str) {
+inline std::ostream& operator << (std::ostream &o, const const_string &str)
+{
   return o << str.c_str();
 }
 
 //:
-inline int compare (const const_string &lhs, const const_string &rhs) {
+inline int compare (const const_string &lhs, const const_string &rhs)
+{
   return lhs.compare(rhs);
 }
 
 //:
-inline bool operator == (const_string &lhs, const_string &rhs) {
+inline bool operator == (const_string &lhs, const_string &rhs) 
+{
   return compare(lhs,rhs) == 0;
 }
 
 //:
-inline bool operator != (const_string &lhs, const_string &rhs) {
+inline bool operator != (const_string &lhs, const_string &rhs)
+{
   return compare(lhs,rhs) != 0;
 }
 
 //:
-inline bool operator < (const_string &lhs, const_string &rhs) {
+inline bool operator < (const_string &lhs, const_string &rhs)
+{
   return compare(lhs,rhs) < 0;
 }
 
 //:
-inline bool operator <= (const_string &lhs, const_string &rhs) {
+inline bool operator <= (const_string &lhs, const_string &rhs)
+{
   return compare(lhs,rhs) <= 0;
 }
 
 //:
-inline bool operator > (const_string &lhs, const_string &rhs) {
+inline bool operator > (const_string &lhs, const_string &rhs)
+{
   return compare(lhs,rhs) > 0;
 }
 
 //:
-inline bool operator >= (const_string &lhs, const_string &rhs) {
+inline bool operator >= (const_string &lhs, const_string &rhs)
+{
   return compare(lhs,rhs) >= 0;
 }
 

@@ -1,7 +1,7 @@
 #ifndef MYSQLPP_RESULT_H
 #define MYSQLPP_RESULT_H
 
-#include <platform.h>
+#include <defs.h>
 
 #include <exceptions.h>
 #include <fields.h>
@@ -191,7 +191,8 @@ public:
 //! with_class = ResUSe
 
 //:
-inline void swap (ResUse &x, ResUse &y) {
+inline void swap (ResUse &x, ResUse &y)
+{
   ResUse tmp = x;
   x = y;
   y = tmp;
@@ -200,7 +201,8 @@ inline void swap (ResUse &x, ResUse &y) {
 //! with_class = Result
 
 //:
-inline void swap (Result &x, Result &y) {
+inline void swap (Result &x, Result &y)
+{
   Result tmp = x;
   x = y;
   y = tmp;
@@ -224,59 +226,70 @@ public:
 
 // field name info
 
-inline int ResUse::field_num(const std::string &i) const {
+inline int ResUse::field_num(const std::string &i) const
+{
   if (!_names) _names = new FieldNames(this);
   return (*_names)[i];
 }
 
-inline std::string& ResUse::field_name(int i) {
+inline std::string& ResUse::field_name(int i)
+{
   if (!_names) _names = new FieldNames(this);
   return (*_names)[i];
 }
 
-inline const std::string& ResUse::field_name(int i) const {
+inline const std::string& ResUse::field_name(int i) const
+{
   if (!_names) _names = new FieldNames(this);
   return (*_names)[i];
 }
 
-inline FieldNames& ResUse::field_names() {
+inline FieldNames& ResUse::field_names()
+{
   if (!_names) _names = new FieldNames(this);
   return *_names;
 }
 
-inline const FieldNames& ResUse::field_names() const {
+inline const FieldNames& ResUse::field_names() const
+{
   if (!_names) _names = new FieldNames(this);
   return *_names;
 }
 
-inline void ResUse::reset_field_names() {
+inline void ResUse::reset_field_names()
+{
   delete _names;
   _names = new FieldNames(this);
 }
 
 // field type info
 
-inline mysql_type_info& ResUse::field_type(int i) {
+inline mysql_type_info& ResUse::field_type(int i)
+{
   if (!_types) _types = new FieldTypes(this);
   return (*_types)[i];
 }
 
-inline const mysql_type_info& ResUse::field_type(int i) const {
+inline const mysql_type_info& ResUse::field_type(int i) const
+{
   if (!_types) _types = new FieldTypes(this);
   return (*_types)[i];
 }
 
-inline FieldTypes& ResUse::field_types() {
+inline FieldTypes& ResUse::field_types()
+{
   if (!_types) _types = new FieldTypes(this);
   return *_types;
 }
 
-inline const FieldTypes& ResUse::field_types() const {
+inline const FieldTypes& ResUse::field_types() const
+{
   if (!_types) _types = new FieldTypes(this);
   return *_types;
 }
 
-inline void ResUse::reset_field_types() {
+inline void ResUse::reset_field_types()
+{
   delete _types;
   _types = new FieldTypes(this);
 }
@@ -298,7 +311,8 @@ inline void              ResUse::reset_types() {reset_field_types();}
 
 //
 
-inline ResUse& ResUse::operator = (const ResUse &other) {
+inline ResUse& ResUse::operator = (const ResUse &other)
+{
   if (this == &other) return *this;
   copy(other);  other.mysql_res=NULL;
   return *this;

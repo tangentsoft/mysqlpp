@@ -11,9 +11,9 @@ lib_LTLIBRARIES=libmysqlpp.la
 libmysqlpp_la_LDFLAGS=-version-info 4:0:0
 
 libmysqlpp_la_SOURCES = \
-	coldata.cc connection.cc datetime.cc fields.cc field_names.cc \
-	field_types.cc manip.cc myset.cc query.cc result.cc row.cc \
-	sql_query.cc type_info.cc vallist.cc string_util.cc
+	coldata.cpp connection.cpp datetime.cpp fields.cpp field_names.cpp \
+	field_types.cpp manip.cpp myset.cpp query.cpp result.cpp row.cpp \
+	sql_query.cpp type_info.cpp vallist.cpp string_util.cpp
 
 include_HEADERS = \
 	bad_query.h coldata.h compare.h connection.h const_string.h \
@@ -32,4 +32,4 @@ distclean-local:
 	rm -f custom.h custom-macros.h
 
 ctags:
-	ctags *.cc *.h
+	ctags *.cpp *.h

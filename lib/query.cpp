@@ -82,6 +82,11 @@ std::string Query::error()
 	}
 }
 
+bool Query::lock()
+{
+    return mysql->lock();
+}
+
 void Query::unlock()
 {
 	mysql->unlock();

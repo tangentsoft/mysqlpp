@@ -174,19 +174,28 @@ string Connection::info()
 ResNSel Connection::execute(const string& str, bool throw_excptns)
 {
 	Success = false;
-	if (lock())
-		if (throw_excptns)
-			throw BadQuery(error());
-	else
-	return ResNSel();
+	if (lock()) {
+		if (throw_excptns) {
+			throw BadQuery("lock failed");
+		}
+		else {
+			return ResNSel();
+		}
+	}
+
 	Success = !mysql_query(&mysql, str.c_str());
 	unlock();
-	if (!Success)
-		if (throw_excptns)
+	if (Success) {
+		return ResNSel(this);
+	}
+	else {
+		if (throw_excptns) {
 			throw BadQuery(error());
-	else
-	return ResNSel();
-	return ResNSel(this);
+		}
+		else {
+			return ResNSel();
+		}
+	}
 }
 
 bool Connection::exec(const string& str)
@@ -202,44 +211,62 @@ Result Connection::store(const string& str, bool throw_excptns)
 	Success = false;
 
 	if (lock()) {
-		if (throw_excptns)
-			throw BadQuery(error());
-		else
-		return Result();
+		if (throw_excptns) {
+			throw BadQuery("lock failed");
+		}
+		else {
+			return Result();
+		}
 	}
 
 	Success = !mysql_query(&mysql, str.c_str());
+	if (Success) {
+		MYSQL_RES* res = mysql_store_result(&mysql);
+		if (res) {
+			unlock();
+			return Result(res);
+		}
+	}
 	unlock();
 
-	if (!Success) {
-		if (throw_excptns)
-			throw BadQuery(error());
-		else
+	// One of the mysql_* calls failed, so decide how we should fail.
+	if (throw_excptns) {
+		throw BadQuery(error());
+	}
+	else {
 		return Result();
 	}
-
-	MYSQL_RES *res = mysql_store_result(&mysql);
-	if (res)
-		return Result(res);
-	else
-		return Result();
 }
 
 ResUse Connection::use(const string& str, bool throw_excptns)
 {
 	Success = false;
-	if (lock())
-		if (throw_excptns)
-			throw BadQuery(error());
-	else
-	return ResUse();
+	if (lock()) {
+		if (throw_excptns) {
+			throw BadQuery("lock failed");
+		}
+		else {
+			return ResUse();
+		}
+	}
+
 	Success = !mysql_query(&mysql, str.c_str());
-	if (!Success)
-		if (throw_excptns)
-			throw BadQuery(error());
-	else
-	return ResUse();
-	return ResUse(mysql_use_result(&mysql), this);
+	if (Success) {
+		MYSQL_RES* res = mysql_use_result(&mysql);
+		if (res) {
+			unlock();
+			return ResUse(res, this);
+		}
+	}
+	unlock();
+
+	// One of the mysql_* calls failed, so decide how we should fail.
+	if (throw_excptns) {
+		throw BadQuery(error());
+	}
+	else {
+		return ResUse();
+	}
 }
 
 Query Connection::query()

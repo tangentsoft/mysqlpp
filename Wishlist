@@ -14,9 +14,19 @@ New Feature Requests
 
 	o Get PDF documentation generation working.
 
+	o True thread-awareness in the library.  One place this could
+	  impact: Connection lock mechanism could use platform mutexes
+	  where available.  Enable via configure script flag on Unixy
+	  systems.
+
 
 Bug Fix/Maintenance Items
 -------------------------
+
+	o Connection lock mechanism should be extracted into a separate
+	  class, instances of which could be created on the stack so
+	  the lock is always relesased on function exit.  (Does Boost
+	  provide something like this?)
 
 	o sql_cmp(double,double) is foolish.  One shouldn't do == comparison
 	  on floating point values.  Same for sql_cmp(float,float).  See

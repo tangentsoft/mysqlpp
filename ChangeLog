@@ -1,3 +1,32 @@
+1.7.31, 2005.03.05 The "Inevitable Point-one Followup" release
+
+	o Check for threads support must now be explicitly requested via
+	  configure script's new --enable-thread-check flag.
+
+	o Fix for contacting MySQL server on a nonstandard port number.
+	  Thanks to Chris Frey for this patch.
+
+	o Example programs using standard command line format now accept a
+	  fourth optional parameter, a port number for the server.  Thanks
+	  for Chris Frey for this patch.
+
+	o One more g++ 3.4 pedantic warning fix by Chris Frey.
+
+	o Exception handling in resetdb is no longer nested, because you'd
+	  get a segfault on some systems when an exception was thrown from
+	  one of the inner try blocks.
+
+	o Improvements to Connection class's handling of locking mechanism.
+	  Some patches by Rongjun Mu, plus improvements by Warren Young.
+
+	o Implemented the declared-but-never-defined Query::lock().  Thanks
+	  to Rongjun Mu for this patch.
+	
+	o Cleaned up some unclear if/else blocks in connection.cpp by
+	  adding explicit braces, correct indenting and putting normal
+	  code path in the if side instead of the else.
+
+
 1.7.30, 2005.02.28 The "Power of Round Numbers" release
 
 	o bootstrap script now accepts a 'pedantic' argument, which sets a

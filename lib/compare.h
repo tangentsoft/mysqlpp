@@ -27,7 +27,7 @@ public:
   MysqlCmpCStr(uint i, const BinaryPred &f, const char* c) : MysqlCmp<BinaryPred, const char *> (i,f,c) {}
   bool operator () (const Row& cmp1) const 
     {return MysqlCmp<BinaryPred, const char*>::func(
-			MysqlCmp<BinaryPred, const char*>::cmp2, cmp1[index]);}
+			MysqlCmp<BinaryPred, const char*>::cmp2, cmp1[this->index]);}
 };
 
 //: A special function for using in find_if function where i is the field index number.

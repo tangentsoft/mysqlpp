@@ -9,42 +9,48 @@ using namespace std;
 int
 main(int argc, char *argv[])
 {
+	mysqlpp::Connection con(mysqlpp::use_exceptions);
 	try {
-		mysqlpp::Connection con(mysqlpp::use_exceptions);
 		if (!connect_to_db(argc, argv, con, "")) {
 			return 1;
 		}
-
-		bool created = false;
-		try {
-			con.select_db(kpcSampleDatabase);
+	}
+	catch (exception& er) {
+		cerr << "Connection failed: " << er.what() << endl;
+		return 1;
+	}
+	
+	bool created = false;
+	try {
+		con.select_db(kpcSampleDatabase);
+	}
+	catch (mysqlpp::BadQuery &) {
+		// Couldn't switch to the sample database, so assume that it
+		// doesn't exist and create it.  If that doesn't work, exit
+		// with an error.
+		if (con.create_db(kpcSampleDatabase)) {
+			cerr << "Failed to create sample database." << endl;
+			return 1;
 		}
-		catch (mysqlpp::BadQuery &) {
-			// Couldn't switch to the sample database, so assume that it
-			// doesn't exist and create it.  If that doesn't work, exit
-			// with an error.
-			if (con.create_db(kpcSampleDatabase)) {
-				cerr << "Failed to create sample database." << endl;
-				return 1;
-			}
-			else if (!con.select_db(kpcSampleDatabase)) {
-				cerr << "Failed to select sample database." << endl;
-				return 1;
-			}
-			else {
-				created = true;
-			}
+		else if (!con.select_db(kpcSampleDatabase)) {
+			cerr << "Failed to select sample database." << endl;
+			return 1;
 		}
-
-		mysqlpp::Query query = con.query();	// create a new query object
-
-		try {
-			query.execute("drop table stock");
+		else {
+			created = true;
 		}
-		catch (mysqlpp::BadQuery&) {
-			// ignore any errors
-		}
+	}
 
+	mysqlpp::Query query = con.query();	// create a new query object
+
+	try {
+		query.execute("drop table stock");
+	}
+	catch (mysqlpp::BadQuery&) {
+		// ignore any errors
+	}
+
+	try {
 		// Send the query to create the table and execute it.
 		query << "create table stock  (item char(20) not null, num bigint,"
 			<< "weight double, price double, sdate date)";
@@ -79,17 +85,18 @@ main(int argc, char *argv[])
 	catch (mysqlpp::BadQuery& er) {
 		// Handle any connection or query errors that may come up
 		cerr << "Error: " << er.what() << endl;
-		return -1;
+		return 1;
 	}
 	catch (mysqlpp::BadConversion& er) {
 		// Handle bad conversions
 		cerr << "Error: " << er.what() << "\"." << endl
 			<< "retrieved data size: " << er.retrieved
 			<< " actual data size: " << er.actual_size << endl;
-		return -1;
+		return 1;
 	}
 	catch (exception& er) {
 		cerr << "Error: " << er.what() << endl;
-		return -1;
+		return 1;
 	}
 }
+

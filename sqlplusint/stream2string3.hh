@@ -9,12 +9,7 @@ Strng stream2string(const T &object) {
   object.out_stream(str);
   str << std::ends;
   Strng s = str.str();
-#ifdef __USLC__
-  strstreambuf *tmpbuf = str.rdbuf();
-  tmpbuf->freeze(0);
-#else
   str.freeze(0);
-#endif
   return s;
 }
 

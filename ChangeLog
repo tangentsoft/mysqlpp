@@ -1,16 +1,37 @@
+1.7.13, 2004.08.23
+
+	o Removed USL CC support.  (System V stock system compiler.)  Use
+	  GCC on these platforms instead.
+
+	o Added examples/README, explaining how to use the examples, and
+	  what they all do.
+
+	o Most of the example programs now accept command line arguments for
+	  host name, user name and password, like resetdb does.
+
+	o Renamed sinisa_ex example to dbinfo.
+
+	o Several Standard C++ syntax fixes to quash errors emitted by
+	  GCC 3.4 and Borland C++ Builder 6.  Thanks to Steffen Schumacher
+	  and Totte Karlsson for their testing and help with these.
+
+	o Added proper #includes for BCBuilder, plus project files for same.
+	  Thanks to Totte Karlsson for these.
+
+
 1.7.12, 2004.08.19
 
-	o Many Standard C++ fixes, many from the GCC 3.4 patch by
+	o Many Standard C++ fixes, most from the GCC 3.4 patch by
 	  Rune Kleveland.
 
 	o Added Wishlist file to distribution.
 
-	o Fixed a problem in tne bootstrap script that caused complaints
+	o Fixed a problem in the bootstrap script that caused complaints
 	  from the autotools on some systems.
 
 	o RPM building is working properly now.
 
-	o Fixed the indempotency guard in datetime1.hh.
+	o Fixed the idempotency guard in datetime1.hh.
 
 
 1.7.11, 2004.08.17
@@ -37,7 +58,7 @@
 1.7.10, 2004.08.16
 
 	o Maintenance taken over by Warren Young (mysqlpp at etr dash usa
-      dot com.) See http://lists.mysql.com/plusplus/3326 for details.
+	  dot com.) See http://lists.mysql.com/plusplus/3326 for details.
 
 	o Applied many of the GCC 3.x patches submitted for 1.7.9 over
 	  the years.  This allows it to build on everything from 3.0 to

@@ -20,8 +20,8 @@ void set2container (const char *str, Insert insert) {
 
 template <class Container>
 std::ostream& Set<Container>::out_stream (std::ostream &s) const {
-  typename Container::const_iterator i = begin();
-  typename Container::const_iterator e = end();
+  typename Container::const_iterator i = Container::begin();
+  typename Container::const_iterator e = Container::end();
   while (true) {
     s << *i;
     i++;

@@ -72,7 +72,7 @@ public:
   bool operator >= (const subscript_iterator &j) const
     {if (d == j.d && i>=j.i) return true; return false;}
 
-  ReturnType operator -> () const {return &((*d)[i]);}
+  ReturnType* operator -> () const {return &((*d)[i]);}
   ReturnType operator *  () const {return (*d)[i];}
   ReturnType operator [] (SizeType n) const {return (*d)[n];}
 

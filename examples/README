@@ -1,0 +1,38 @@
+Start with resetdb:
+
+	$ ./resetdb [host] [user] [password]
+
+This sets up the mysql_cpp_data database used by most of the other
+examples.
+
+You can give as few of the parameters as you want, but they must be in
+that order.  That is, if you want to give a user name, you must give the
+host first.  It defaults to localhost with your user name and no password.
+
+
+The following examples use the database set up by resetdb, and have
+the same command line format as resetdb:
+
+	simple1: Basic database access. Try this one if nothing else.
+
+	complic1: Similar to simple1, only more complicated. :)
+
+	fieldinf1: Shows how to get information about the fields in
+		a result set.  (Types, etc.)
+
+	custom1-4: Demonstrates the SQLSS features.  (See the docs.)
+
+
+One of the examples is more of a utility program:
+
+	dbinfo: Dumps a bunch of information about the local database.
+
+
+The following are kind of oddballs.  You will have to change the source
+code to get them to run, since they use hard-coded table and database
+names which aren't the same as those set up by resetdb.
+
+	load_file, cgi_image: Shows how to use a BLOB field to store
+		a file, and how to retrieve the file from the DB.
+
+	updel_ex: I'm not sure what this one does...

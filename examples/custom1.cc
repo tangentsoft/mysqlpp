@@ -1,9 +1,10 @@
-
 #include <iostream>
 #include <iomanip>
 #include <vector>
 #include <mysql++.hh>
 #include <custom.hh>
+
+#include "util.hh"
 
 using namespace std;
 
@@ -24,10 +25,11 @@ sql_create_5 (stock,		// struct name,
 // defined as well methods to help populate the class from a mysql row
 // among other things that I'll get too in a latter example
 
-int main () {
+int main (int argc, char *argv[]) {
   try {				// its in one big try block
-    Connection con (use_exceptions);
-    con.connect ("mysql_cpp_data");
+	Connection con(use_exceptions);
+	connect_sample_db(argc, argv, con);
+
     Query query = con.query ();
     query << "select * from stock";
 

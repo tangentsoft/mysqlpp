@@ -32,8 +32,7 @@ run configure with --prefix=.....
 
 You may want to try out the programs in the examples subdirectory to
 ensure that the MySQL++ API and your MySQL database are both working
-properly. Start with reset_db, and work through the other examples to
-test things.
+properly.  See examples/README for further details.
 
 If you've got a fresh CVS checkout, you will need to say:
 

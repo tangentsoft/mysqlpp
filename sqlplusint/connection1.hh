@@ -1,11 +1,7 @@
 #ifndef __connection1_hh__
 #define __connection1_hh__
 #ifdef __WIN32__
-#include <Windows32/Base.h>
-#include <Windows32/Defines.h>
-#include <Windows32/Structures.h>
 #include <winsock.h>
-#define errno WSAGetLastError()
 #endif
 
 #include <mysql.h>
@@ -13,9 +9,16 @@
 #include <vector>
 #include <deque>
 #include <list>
-#include <ext/slist>
 #include <set>
 #include <map>
+
+#ifdef HAVE_EXT_SLIST
+#  include <ext/slist>
+#else
+#  ifdef HAVE_STD_SLIST
+#      include <slist>
+#  endif
+#endif
 
 #include "define_short.hh"
 #include "exceptions.hh"
@@ -124,7 +127,7 @@ public:
      {storein_sequence(con,s);}
   template <class T>        void storein(std::list<T> &con, const std::string &s)
     {storein_sequence(con,s);}
-#ifdef HAVE_STD_SLIST
+#if defined(HAVE_STD_SLIST) || defined(HAVE_EXT_SLIST)
   template <class T>        void storein(std::slist<T> &con, const std::string &s)
     {storein_sequence(con,s);}
 #endif

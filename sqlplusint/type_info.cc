@@ -1,7 +1,4 @@
 #ifdef __WIN32__
-#include <Windows32/Base.h>
-#include <Windows32/Defines.h>
-#include <Windows32/Structures.h>
 #include <winsock.h>
 #endif
 

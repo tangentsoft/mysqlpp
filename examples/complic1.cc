@@ -1,20 +1,17 @@
+#include "util.hh"
+
+#include <mysql++.hh>
 
 #include <iostream>
 #include <iomanip>
-#include <mysql++.hh>
 
 using namespace std;
 
-int main() {
+int main(int argc, char *argv[]) {
   try { // its in one big try block
+	Connection con(use_exceptions);
+	connect_sample_db(argc, argv, con);
 
-    Connection con(use_exceptions);
-    con.connect("mysql_cpp_data");
-    // Here I broke making the connection into two calls.
-    // The first one creates the Connection object with the 
-    // use exceptions option turned on and the second one
-    // makes the connection
-    
     Query query = con.query();
     
     query << "select * from stock";

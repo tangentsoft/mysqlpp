@@ -1,0 +1,70 @@
+MySQL++ was created by Kevin Atkinson <kevinatk@home.com> during 1998.
+
+From version 1.0 (released in June 1999) through 1.7.9 (May 2001), the
+primary maintainer was Sinisa Miliojevic <sinisa@mysql.com>, currently an
+employee of MySQL AB. Although the library went into stasis with 1.7.9,
+Sinisa continued to run the mailing list and support users through that
+mailing list.
+
+In August of 2004, Warren Young <mysqlpp@etr-usa.com> took over as
+library maintainer. The first release under his leadership was 1.7.10.
+
+For a fuller account of the library's history, see the first page of the
+reference manual, or the Doxygen comment at the end of lib/mysql++.h,
+from which that page is built.
+
+
+Other frequent contributors since 1.7.10 are:
+
+	Chris Frey <cdfrey@netdirect.ca>: Lots of GCC warning fixes for
+	the bleeding-edge compiler versions, and Gentoo ebuild support.
+	Also, if there were a "steering committee" for MySQL++, he'd be
+	on it.
+
+	Totte Karlsson <tkarlsson@qm.com>: Primary force behind Borland
+	C++ Builder support.
+
+	Evan Wies <evan@athenacr.com>: Contributed several C++ code
+	style cleanups.
+
+
+Here are the personal credits from the old 1.7.9 documentation,
+apparently written by Kevin Atkinson:
+
+	Chris Halverson - For helping me get it to compile under Solaris.
+
+	Fredric Fredricson - For a long talk about automatic conversions.
+
+	Michael Widenius - MySQL developer who has been very supportive of
+		my efforts.
+
+	Paul J. Lucas - For the original idea of treating the query object
+		like a stream.
+
+	Scott Barron - For helping me with the shared libraries.
+
+	Jools Enticknap - For giving me the Template Queries idea.
+
+	M. S. Sriram - For a detailed dission of how the Template Queries
+		should be implemented, the suggestion to throw exceptions on bad
+		queries, and the idea of having a back-end independent query
+		object (ie SQLQuery).
+
+	Sinisa Milivojevic - For becoming the new offical maintainer.
+
+	D. Hawkins and E. Loic for their autoconf + automake contribution.
+
+
+See the ChangeLog for further credits, and details about the differences
+between the many versions of this library.
+
+
+Please do not email any of these people with general questions about
+MySQL++. All of us who are still active in MySQL++ development read the
+mailing list, so questions sent there do get to us:
+
+	http://lists.mysql.com/plusplus
+
+The mailing list is superior to private email because the answers are
+archived for future questioners to find, and because you are likely to
+get answers from more people.

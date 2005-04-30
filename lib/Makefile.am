@@ -20,12 +20,12 @@ libmysqlpp_la_SOURCES = \
 	string_util.cpp
 
 include_HEADERS = \
-	bad_query.h coldata.h compare.h connection.h const_string.h \
-	convert.h custom.h custom-macros.h defs.h datetime.h exceptions.h \
-	field_names.h field_types.h fields.h manip.h myset.h mysql++.h \
-	mysql++.hh null.h platform.h query.h resiter.h result.h row.h \
-	sqlplus.hh sql_query.h sql_string.h stream2string.h string_util.h \
-	tiny_int.h type_info.h vallist.h
+	coldata.h compare.h connection.h const_string.h convert.h custom.h \
+	custom-macros.h defs.h datetime.h exceptions.h field_names.h \
+	field_types.h fields.h manip.h myset.h mysql++.h mysql++.hh null.h \
+	platform.h query.h resiter.h result.h row.h sqlplus.hh sql_query.h \
+	sql_string.h stream2string.h string_util.h tiny_int.h type_info.h \
+	vallist.h 
 
 all-local: custom.h
 
@@ -39,3 +39,9 @@ ctags:
 	ctags *.cpp *.h
 
 tags: ctags
+
+refman:
+	rm -rf ../doc/refman/html ../doc/refman/latex
+	doxygen
+	( cd ../doc/refman/latex && make pdf && mv refman.pdf ../../mysqlpp-refman.pdf ) 
+

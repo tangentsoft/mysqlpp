@@ -1,6 +1,12 @@
 #ifndef MYSQLPP_TYPE_INFO_H
 #define MYSQLPP_TYPE_INFO_H
 
+/// \file type_info.h
+/// \brief Declares classes that provide an interface between the SQL
+/// and C++ type systems.
+///
+/// These classes are mostly used internal to the library.
+
 #include "defs.h"
 
 #include <mysql.h>
@@ -13,6 +19,9 @@ namespace mysqlpp {
 class mysql_type_info;
 class mysql_ti_sql_type_info_lookup;
 
+/// \if INTERNAL
+// Doxygen will not generate documentation for this section.
+
 class mysql_ti_sql_type_info {
   friend class mysql_type_info;
   friend class mysql_ti_sql_type_info_lookup;
@@ -21,8 +30,7 @@ private:
   const std::type_info     *_c_type;
   const unsigned char  _base_type;
   const bool           _default;
-  // mysql_ti_sql_type_info (const mysql_ti_sql_type_info &b);           // can't do
-  mysql_ti_sql_type_info& operator=(const mysql_ti_sql_type_info &b); //  "    "
+  mysql_ti_sql_type_info& operator=(const mysql_ti_sql_type_info &b);
   mysql_ti_sql_type_info () : _base_type(0), _default(false) {} 
   // OEP - didn't init _base_type and _default mysql_ti_sql_type_info () {} 
   // all private, only mysql_type_info can
@@ -33,11 +41,17 @@ private:
     : _sql_name(s), _c_type(&t), _base_type(bt), _default(d) {}
 };
 
+/// \endif
+
+/// Documentation needed!
 struct type_info_cmp {
   bool operator() (const std::type_info *lhs, const std::type_info *rhs) const {
     return lhs->before(*rhs) != 0;
   }
 };
+
+/// \if INTERNAL
+// Doxygen will not generate documentation for this section.
 
 class mysql_ti_sql_type_info_lookup {
   friend class mysql_type_info;
@@ -53,7 +67,12 @@ private:
   }
 };
 
-//: Class that holds basic type information for ColData.
+/// \endif
+
+
+/// \brief Holds basic type information for ColData.
+///
+/// Class to hold basic type information for mysqlpp::ColData.
 class mysql_type_info {
 private:
   typedef mysql_ti_sql_type_info sql_type_info;
@@ -78,52 +97,79 @@ private:
   unsigned char num;
   inline const sql_type_info& deref() const;
 public:
-  //!dummy: static const unsigned char string_type;
-  //: The id of the string type.
-  mysql_type_info() {} //:
-  mysql_type_info(unsigned char n) : num(n) {} //:
+  mysql_type_info() { }
+
+  mysql_type_info(unsigned char n) : num(n) {}
+
   inline mysql_type_info(enum_field_types t,
 			 bool _unsigned, bool _null);
-  //:
+
   inline mysql_type_info(const MYSQL_FIELD &f);
-  //:
+
   mysql_type_info(const mysql_type_info &t) : num(t.num) {}
-  //:
+
   mysql_type_info(const std::type_info &t) {num = lookups[t]; }
-  //: 
+
   mysql_type_info& operator = (unsigned char n) {num=n; return *this;}
-  //:
+
   mysql_type_info& operator = (const mysql_type_info &t) 
     {num = t.num; return *this;}
-  //:
+
   mysql_type_info& operator = (const std::type_info &t)
     {num = lookups[t]; return *this;}
-  //:
-  inline const char*           name()      const;
-  //: Returns a implication defined name of the c++ type.
-  // Returns the name that would be returned by typeid().name() for the C++ type
-  // associated with the sql type.
-  inline const char*           sql_name()  const;
-  //: Returns the name for the sql type.
-  inline const std::type_info&      c_type()    const;
-	inline const unsigned int length() const;
-	inline const unsigned int max_length() const;
-  //: Returns the type_info for the C++ type associated with the sql type.
-  inline const mysql_type_info base_type() const;
-  //: Returns the type_info for the C++ type inside of the Null type.
-  // If the type is not null then this is the same as c_type() 
-         int                   id()        const {return num;}
-  //: Returns the id of the sql_type.
-  // Note: Do not ever use this id directly as it may change between versions.
 
+  /// \brief Returns an implementation-defined name of the C++ type.
+  ///
+  /// Returns the name that would be returned by typeid().name() for
+  /// the C++ type associated with the SQL type.
+  inline const char* name() const;
+
+  /// \brief Returns the name of the SQL type.
+  ///
+  /// Returns the SQL name for the type.
+  inline const char* sql_name() const;
+
+  /// \brief Returns the type_info for the C++ type associated with
+  /// the SQL type.
+  ///
+  /// Returns the C++ type_info record corresponding to the SQL type.
+  inline const std::type_info& c_type() const;
+  inline const unsigned int length() const;
+  inline const unsigned int max_length() const;
+
+  /// \brief Returns the type_info for the C++ type inside of the
+  /// mysqlpp::Null type.
+  ///
+  /// Returns the type_info for the C++ type inside the mysqlpp::Null
+  /// type.  If the type is not Null then this is the same as c_type().
+  inline const mysql_type_info base_type() const;
+
+  /// \brief Returns the ID of the SQL type.
+  ///
+  /// Returns the ID number MySQL uses for this type.  Note: Do not
+  /// depend on the value of this ID as it may change between MySQL
+  /// versions.
+  int id() const { return num; }
+
+  /// \brief Returns true if the SQL type is of a type that needs to
+  /// be quoted.
+  ///
+  /// \return true if the type needs to be quoted for syntactically
+  /// correct SQL.
   bool quote_q()  const;
-  //: Returns true if the sql type is of a type that needs to be quoted.
+
+  /// \brief Returns true if the SQL type is of a type that needs to
+  /// be escaped.
+  ///
+  /// \return true if the type needs to be escaped for syntactically
+  /// correct SQL.
   bool escape_q() const;
-  //: Returns true if the sql type is of a type that needs to be escaped.
   
+  /// \brief Provides a way to compare two types for sorting.
+  ///
+  /// Returns true if the SQL ID of this type is lower than that of
+  /// another.  Used by mysqlpp::type_info_cmp when comparing types.
   bool before(mysql_type_info &b) { return num < b.num; }
-  //: Provides ordering
-  // You can also use id() for the same purpose.
 };
 
 inline const mysql_type_info::sql_type_info& mysql_type_info::deref() const

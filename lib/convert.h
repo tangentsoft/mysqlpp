@@ -1,6 +1,12 @@
 #ifndef MYSQLPP_CONVERT_H
 #define MYSQLPP_CONVERT_H
 
+/// \file convert.h
+/// \brief Declares various string-to-integer type conversion templates.
+///
+/// These templates are the mechanism used within mysqlpp::ColData_Tmpl
+/// for its string-to-\e something conversions.
+
 #include "platform.h"
 
 #include "defs.h"
@@ -8,6 +14,9 @@
 #include <stdlib.h>
 
 namespace mysqlpp {
+
+/// \if INTERNAL
+// Doxygen will not generate documentation for this section.
 
 template <class Type> class mysql_convert;
 
@@ -75,6 +84,8 @@ mysql__convert(ulonglong, _strtoui64)
 #error Fix me! I need the "string to 64-bit int" function for your platform!
 #endif
 #endif // !defined(NO_LONG_LONGS)
+
+/// \endif
 
 } // end namespace mysqlpp
 

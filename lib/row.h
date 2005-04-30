@@ -1,6 +1,9 @@
 #ifndef MYSQLPP_ROW_H
 #define MYSQLPP_ROW_H
 
+/// \file row.h
+/// \brief Declares the classes for holding row data from a result set.
+
 #include "coldata.h"
 #include "exceptions.h"
 #include "resiter.h"
@@ -15,6 +18,8 @@ namespace mysqlpp {
 
 class FieldNames;
 class ResUse;
+
+/// Documentation needed!
 
 template <class ThisType, class Res>
 class RowTemplate {
@@ -230,7 +235,8 @@ public:
   virtual ~RowTemplate() {}
 };
 
-//: This class handles the actual rows in an intelligent manner.
+
+/// \brief Manages rows from a result set.
 class Row : public const_subscript_container<Row,ColData,const ColData>,
 	    public RowTemplate<Row, ResUse>
 {
@@ -258,22 +264,29 @@ public:
 			  is_nulls.insert(is_nulls.end(),d[i] ? false : true);
 			}
 		}
+  ~Row() {data.clear(); is_nulls.clear(); initialized = false;}	
+
+  /// \brief Return a const reference to this object.
   const Row& self() const {return *this;}
+
+  /// \brief Return a reference to this object.
   Row& self() {return *this;}
 
+  /// \brief Return a reference to our parent class.
   const ResUse&  parent() const {return *res;}
+
+  /// \brief Get the number of fields in the row.
   size_type     size() const;
-  //: Returns the number of columns.
+
+  /// \brief Get the value of a field given its index.
   const ColData   operator [] (size_type i) const;
-  //: Returns the value of the field with the index of i.
 
   const ColData lookup_by_name(const char*) const;
 
   const char *raw_data(int i) const {return data[i].data();}
 
+  /// \brief Returns true if there is data in the row.
   operator bool() const {return (data.size()) ? true : false;}
-  //: Returns true if there is data in the row.
-	~Row() {data.clear(); is_nulls.clear(); initialized = false;}	
 }; 
 
 } // end namespace mysqlpp

@@ -51,11 +51,11 @@ locked(false)
 	}
 }
 
+
 Connection::Connection(const char* db, const char* host,
 		const char* user, const char* passwd, uint port,
 		my_bool compress, unsigned int connect_timeout,
-		bool te, const char* socket_name,
-		unsigned client_flag) :
+		bool te, cchar* socket_name, unsigned int client_flag) :
 throw_exceptions(te),
 locked(false)
 {
@@ -76,7 +76,7 @@ locked(false)
 
 bool Connection::real_connect(cchar* db, cchar* host, cchar* user,
 		cchar* passwd, uint port, my_bool compress,
-		unsigned int connect_timeout, const char* socket_name,
+		unsigned int connect_timeout, cchar* socket_name,
 		unsigned int client_flag)
 {
 	mysql.options.compress = compress;

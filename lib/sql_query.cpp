@@ -39,7 +39,8 @@ char* SQLQuery::preview_char()
 	return s;
 }
 
-SQLString* pprepare(char option, SQLString& S, bool replace = true)
+static SQLString* pprepare(char option, SQLString& S,
+		bool replace = true)
 {
 	if (S.processed) {
 		return &S;
@@ -47,13 +48,12 @@ SQLString* pprepare(char option, SQLString& S, bool replace = true)
 
 	if (option == 'r' || (option == 'q' && S.is_string)) {
 		char *s = new char[S.size() * 2 + 1];
-		mysql_escape_string(s, const_cast < char *>(S.c_str()),
-							S.size());
+		mysql_escape_string(s, S.c_str(), (unsigned long) S.size());
 		SQLString *ss = new SQLString("'");
 		*ss += s;
 		*ss += "'";
 		delete[] s;
-		
+
 		if (replace) {
 			S = *ss;
 			S.processed = true;
@@ -64,7 +64,7 @@ SQLString* pprepare(char option, SQLString& S, bool replace = true)
 		}
 	}
 	else if (option == 'R' || (option == 'Q' && S.is_string)) {
-		SQLString* ss = new SQLString("'" + S + "'");
+		SQLString *ss = new SQLString("'" + S + "'");
 
 		if (replace) {
 			S = *ss;
@@ -96,14 +96,15 @@ void SQLQuery::proc(SQLQueryParms& p)
 		*this << i->before;
 		num = i->num;
 		if (num != -1) {
-			if (num < static_cast<int>(p.size()))
+			if (num < static_cast < int >(p.size()))
 				c = &p;
-			else if (num < static_cast<int>(def.size()))
+			else if (num < static_cast < int >(def.size()))
 				c = &def;
 			else {
 				*this << " ERROR";
-				throw SQLQueryNEParms(
-						"Not enough parameters to fill the template.");
+				throw
+					SQLQueryNEParms
+					("Not enough parameters to fill the template.");
 			}
 			ss = pprepare(i->option, (*c)[num], c->bound());
 			*this << *ss;
@@ -134,18 +135,17 @@ std::string SQLQuery::str(SQLQueryParms& p, query_reset r)
 	return tmp;
 }
 
-SQLQueryParms SQLQueryParms::operator+(const SQLQueryParms& other) const
+SQLQueryParms SQLQueryParms::operator +(const SQLQueryParms & other) const
 {
 	if (other.size() <= size()) {
 		return *this;
 	}
-
 	SQLQueryParms New = *this;
 	size_t i;
 	for (i = size(); i < other.size(); i++) {
 		New.push_back(other[i]);
 	}
-	
+
 	return New;
 }
 
@@ -193,8 +193,8 @@ void SQLQuery::parse()
 
 				if (*s == ':') {
 					s++;
-					for (/* */; (*s >= 'A' && *s <= 'Z') ||
-							*s == '_' || (*s >= 'a' && *s <= 'z'); s++) {
+					for ( /* */ ; (*s >= 'A' && *s <= 'Z') ||
+						 *s == '_' || (*s >= 'a' && *s <= 'z'); s++) {
 						name += *s;
 					}
 
@@ -202,17 +202,21 @@ void SQLQuery::parse()
 						s++;
 					}
 
-					if (n >= static_cast<long int> (parsed_names.size())) {
+					if (n >= static_cast <
+						long int >(parsed_names.size())) {
 						parsed_names.insert(parsed_names.end(),
-								static_cast<vector<string>::size_type>(n + 1) -
-									parsed_names.size(),
-								string());
+											static_cast < vector <
+											string >::size_type >
+											(n + 1) -
+											parsed_names.size(),
+											string());
 					}
 					parsed_names[n] = name;
 					parsed_nums[name] = n;
 				}
 
-				parsed.push_back(SQLParseElement(str, option, char(n)));
+				parsed.
+					push_back(SQLParseElement(str, option, char (n)));
 				str = "";
 				name = "";
 			}
@@ -230,4 +234,3 @@ void SQLQuery::parse()
 }
 
 } // end namespace mysqlpp
-

@@ -1,70 +1,130 @@
-This is the C++ API for MySQL.
+WHAT IT IS
 
-Starting with 1.7.10, this is maintained by Warren Young
-<mysqlpp@etr-usa.com>. It was maintained by Sinisa Milivojevic
-<sinisa@mysql.com> from version 1.2 to 1.7.9, and by Kevin Atkinson
-<kevinatk@home.com> prior to that.
+	MySQL++ is a C++ wrapper for MySQL's C API.
 
-Send feedback to the MySQL++ mailing list.  Its web page is:
-http://lists.mysql.com/plusplus/
+	For authorship credits, see the CREDITS file.
 
-To build and install the library on Unixy systems, the minimum build
-commands are:
+	Send feedback to the MySQL++ mailing list:
+			
+		http://lists.mysql.com/plusplus/
+
+
+BUILDING THE LIBRARY
+
+	To build and install the library on Unixy systems, the minimum
+	build commands are:
+
+		$ ./configure
+		$ make
+		$ su
+		# make install
+
+	If you're not on a Unixy system, see the other README files in
+	this directory.
+
+
+CONFIGURE OPTIONS
+
+	The configure script takes several interesting options. Say:
+
+		$ ./configure --help
+
+	to get a list.  Some of the more interesting flags are:
+
+	--includedir:
+
+		Because MySQL++ comes with a great many header
+		files -- some of which have some fairly generic
+		names -- I highly recommend you add something like
+		'--includedir=/usr/local/include/mysql++' to the configure
+		command. This puts the MySQL++ header files in their
+		own directory.
+
+	--prefix:
+
+		If you wish to install mysql++ in a root directory
+		other than /usr/local, run configure with
+		--prefix=/some/dir/name
+
+	--with-mysql*:
+
+		If you installed MySQL in an atypical location,
+		the configure script will not be able to find the
+		library and header files without help. The simplest
+		way to clue configure into where MySQL is installed
+		is with the --with-mysql option. Try something like
+		"--with-mysql=/usr/local/mysql", for instance. The
+		configure script will then try to guess which
+		subdirectories under the given directory contain the
+		library and include files.
+
+		If that still doesn't work, use --with-mysql-include and
+		--with-mysql-lib instead. As when given --with-mysql,
+		configure will try to guess (if necessary) which
+		subdirectory under the given directory contains the
+		needed files, so you don't necessarily have to give the
+		full path to these files.
+
+	--enable-thread-check:
+
+		If you with be using MySQL++ in a multi-threaded program,
+		you need to give the --enable-thread-check option to
+		the configure script. It will then try to determine
+		whether your system has a threads implementation it can
+		understand, and whether it can use the thread-safe MySQL
+		C library. If both of these aren't true, you won't get a
+		thread-safe MySQL++ library. Beware that a thread-aware
+		MySQL++ library requires that you link your program
+		differently, so if you depend on ABI stability and
+		have been using MySQL++ for some time, you will almost
+		certainly want to leave this option out.
+
+
+EXAMPLE PROGRAMS
+
+	You may want to try out the programs in the examples subdirectory
+	to ensure that the MySQL++ API and your MySQL database are both
+	working properly. Also, these examples give many examples of the
+	proper use of MySQL++.	See examples/README for further details.
+
+
+IF YOU WANT TO HACK ON MYSQL++...
+
+	If you intend to change the library source code, please read
+	the HACKERS file, which contains many useful bits of info.
+
+
+COMPATIBILITY FOCUS
 	
-	$ ./configure
-	$ make
-	$ su
-	# make install
+	The primary maintainers of this library are interested mainly in
+	GCC 3.x on Linux. There have been occasional reports of success
+	with GCC 3.x on other Unix flavors. We know of no outright
+	problems at the moment.
 
-(If you're not on a Unixy system, see the other README files in this
-directory.)
+	It's probably possible to make it work on GCC 2.95.x without
+	breaking forward compatibility, but since none of the primary
+	maintainers cares to do this, it'll be up to some interested
+	party to make the port. If you attempt this, be sure to test on
+	a recent GCC 3.x version after you are done, before submitting
+	your patch.
 
-The configure script takes several interesting options.  Say,
+	The only Windows compiler that gets anything approaching serious
+	attention from the MySQL++ maintainers is Visual C++. Currently
+	there is some effort towards making it compatible with Borland C++
+	Builder, but there are known flaws with it that aren't likely to
+	be worked around anytime soon. (BCB can't cope with the large
+	SSQLS macros.)
 
-	$ ./configure --help
+	There have been reports of problems using the library with MinGW.
+	This won't likely be fixed by the library maintainers, due to
+	lack of interest. I believe there has been better luck under
+	Cygwin. From the problem reports, it seems to me that the main
+	problem with MinGW is that it's a little too deep into that gray
+	area between Win32 and Unix for either platform's semantics to
+	completely work.
 
-to get a list.
+	All ports live or die solely as a function of interested
+	maintainers and outside contributions. Patches are always
+	thoughtfully considered. We will only refuse compatibility patches
+	if it breaks compatibility with another supported platform.
 
-Because MySQL++ comes with a great many header files -- some of which
-have some fairly generic names -- I highly recommend you add something
-like '--includedir=/usr/local/include/mysql++' to the configure command.
-This puts the MySQL++ header files in their own directory.
-
-If you wish to install mysql++ in a root directory other than /usr/local,
-run configure with --prefix=.....
-
-If you need thread support on your system, give the --enable-thread-check
-option to the configure script.  It will then try to determine whether
-your system has a threads implementation it can understand, and whether it
-can use the thread-safe MySQL C library.  If both of these aren't true,
-you won't get a thread-safe MySQL++ library.  Beware that a thread-aware
-MySQL++ library requires that you link your program differently, so if
-you depend on ABI stability and have been using MySQL++ for some time,
-you will almost certainly want to leave this option out.
-
-You may want to try out the programs in the examples subdirectory to
-ensure that the MySQL++ API and your MySQL database are both working
-properly.  See examples/README for further details.
-
-If you've got a fresh CVS checkout, you will need to say:
-
-	$ ./bootstrap [options]
-
-before running configure for the first time.  Any options given to the
-bootstrap script are passed to the configure script, which is run with
-the "maintainer mode" option.  Because we set the maintainer mode, the
-bootstrap script should only need to be run once in normal circumstances.
-Occasionally automake/autoconf gets confused and you have to run it again,
-but this only affects people tweaking these configuration files. (*.am,
-*.in, and everything in the config subdir, mostly.)
-
-At the moment, this project only builds under GCC 3.0 and higher. It's
-probably possible to make it work on 2.95.x versions without breaking
-forward compatibility, but I'll only go to that effort if demand is there.
-So far, it seems that most people are just upgrading to GCC 3.x where
-necessary.
-
-I only have access to GCC-based Linux systems, and Visual C++ on
-Windows. All other ports will live or die solely as a function of
-contributed patches. If you want support for a currently-unsupported
-system, you'll have to help out.

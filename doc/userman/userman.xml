@@ -1,0 +1,2699 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V4.2//EN"
+		"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+
+<article>
+<articleinfo>
+	<title>MySQL++ User Manual</title>
+	
+	<authorgroup>
+		<author>
+			<firstname>Kevin</firstname>
+			<surname>Atkinson</surname>
+		</author>
+
+		<author>
+			<firstname>Sinisa</firstname>
+			<surname>Miliojevic</surname>
+		</author>
+
+		<author>
+			<firstname>Monty</firstname>
+			<surname>Widenius</surname>
+		</author>
+
+		<author>
+			<firstname>Warren</firstname>
+			<surname>Young</surname>
+		</author>
+	</authorgroup>
+
+	<copyright>
+		<year>1998-2001, 2005</year>
+		<holder>Kevin Atkinson</holder>
+		<holder>MySQL AB</holder>
+		<holder>Educational Technology Resources</holder>
+	</copyright>
+
+	<pubdate role="rcs">$Date: 2005-04-30 06:52:56 -0600 (Sat, 30 Apr 2005) $</pubdate>
+</articleinfo>
+
+<sect1>
+	<title>Introduction</title>
+
+	<para>MySQL++ is a powerful C++ wrapper for MySQL's C API.
+	Its purpose is to make working with queries as easy as working
+	with STL containers.</para>
+
+	<para>The latest version of MySQL++ can be found at
+	<ulink url="http://tangentsoft.net/mysql++/">the official web
+	site</ulink>.</para>
+
+	<para>Support for MySQL++ can be had on <ulink
+	url="http://lists.mysql.com/plusplus">the mailing
+	list</ulink>. That page hosts the mailing list archives, and
+	tells you how you can subscribe.</para>
+</sect1>
+
+<sect1>
+	<title>Overview</title>
+
+	<para>MySQL++ has developed into a very complex and powerful
+	library, with many different ways to accomplish the same
+	task. Unfortunately, this means that figuring out how to perform
+	a simple task can be frustrating for new users. In this section
+	we will provide an overview of the most important user-facing
+	components of the library.</para>
+
+	<para>The overall process for using MySQL++ is similar to that of
+	most other database access APIs:</para>
+	
+	<orderedlist>
+		<listitem><para>Open the connection</para></listitem>
+		<listitem><para>Form and execute the query</para></listitem>
+		<listitem><para>Iterate through the result set</para></listitem>
+		<listitem><para>Go to 2 :)</para></listitem>
+	</orderedlist>
+
+	<para>There is, however, a lot of extra functionality along each
+	step of the way.</para>
+
+
+	<sect2>
+		<title>The Connection Object</title>
+
+		<para>A <ulink
+		url="../../refman/html/classmysqlpp_1_1Connection.html">Connection</ulink>
+		object manages the connection to the MySQL server. You
+		need at least one of these objects to do anything. A
+		Connection object can either create Query objects for
+		you, or you can execute queries directly through the
+		Connection object. The separate Query object is the
+		recommended way as it gives you far more power.</para>
+	</sect2>
+
+
+	<sect2>
+		<title>The Query Object</title>
+
+		<para>A <ulink
+		url="../../refman/html/classmysqlpp_1_1Query.html">Query</ulink>
+		object is the recommended way of building
+		and executing queries. It is subclassed from
+		<computeroutput>std::stringstream</computeroutput>
+		which means you can write to it like any other
+		C++ stream to form a query. The library includes
+		<ulink url="../../refman/html/manip_8h.html">stream
+		manipulators</ulink> that make it easy to generate
+		syntactically-correct SQL.</para>
+
+		<para>You can also set up template queries with this
+		class. Template queries work something like the C
+		<computeroutput>printf()</computeroutput> function:
+		you set up a fixed query string with tags inside that
+		indicate where to insert the variable parts. If you
+		have multiple queries that are structurally similar,
+		you simply set up one template query, and use that in
+		the various locations of your program.</para>
+
+		<para>A third method for building queries is to
+		use <xref linkend="ssqls"/> (SSQLS). This feature
+		presents your results as a C++ data structure, instead of
+		making you access the data through MySQL++ intermediary
+		classes. It also reduces the amount of embedded SQL code
+		your program needs.</para>
+	</sect2>
+
+
+	<sect2>
+		<title>Result Sets</title>
+
+		<para>The actual data elements in
+		a result set are stored in a special
+		<computeroutput>std::string</computeroutput>-like
+		class. Objects of this class can automatically convert
+		themselves to any of the basic C data types as well
+		as some additional MySQL++-specific types that are
+		designed to handle those MySQL that don't map well onto
+		the basic C types. For instance, you can convert a
+		MySQL <computeroutput>DATETIME</computeroutput>
+		field to a MySQL++ <ulink
+		url="../../refman/html/structmysqlpp_1_1DateTime.html">DateTime</ulink>
+		object automatically. If there is a problem in the
+		conversion it will either set a warning flag or throw an
+		exception, depending on how you set the library up.</para>
+
+		<para>MySQL++ has a number of different ways of representing
+		query results.</para>
+
+		<sect3>
+			<title>Queries That Do Not Return Data</title>
+
+			<para>Not all SQL queries return data. An
+			example is <computeroutput>CREATE
+			TABLE</computeroutput>. For these
+			types of queries, there is a <ulink
+			url="../../refman/html/classmysqlpp_1_1ResNSel.html">special
+			result type</ulink> that simply reports the
+			state resulting from the query: whether the
+			query was successful, how many rows it impacted
+			(if any), etc.</para>
+		</sect3>
+
+		<sect3>
+			<title>Queries That Return Data: Dynamic Method</title>
+
+			<para>The easiest way to
+			retrieve data from MySQL uses a <ulink
+			url="../../refman/html/classmysqlpp_1_1Result.html">Result</ulink>
+			object, which includes one or more <ulink
+			url="../../refman/html/classmysqlpp_1_1Row.html">Row</ulink>
+			objects. Because these classes are
+			<computeroutput>std::vector</computeroutput>-like
+			containers, you can treat the result set as a
+			two-dimensional array. For example you can get
+			the 5th item on the 2nd row by simply saying
+			<computeroutput>result[1][4]</computeroutput>. You
+			can also access row elements
+			by field name, like this:
+			<computeroutput>result[2].lookup_by_name("price")</computeroutput>.</para>
+
+			<para>An alternate way of accessing
+			your query results is through a <ulink
+			url="../../refman/html/classmysqlpp_1_1ResUse.html">ResUse</ulink>
+			object. This class acts more like an STL input
+			iterator than a container: you walk through
+			your result set one item at a time, always going
+			forward. You can't seek around in the result set,
+			and you can't know how many results are in the
+			set until you find the end. This method is more
+			efficient when there can be arbitrarily many
+			results, which could pose a memory allocation
+			problem with the previous technique.</para>
+		</sect3>
+
+		<sect3>
+			<title>Queries That Return Data: Static Method</title>
+
+			<para>The <xref linkend="ssqls"/> (SSQLS) feature
+			method above defines C++ structures that match the
+			table structures in your database schema.</para>
+
+			<para>We call it the "static" method because
+			the table structure is fixed at compile time;
+			if you change the database schema, you have to
+			change your SSQLS definitions and recompile. If
+			you fail to do this, your program will throw
+			an exception when you try to stuff a result set
+			into an outdated data structure.</para>
+
+			<para>The advantage of this method is that
+			your program will require very little embedded
+			SQL code. You can simply execute a query, and
+			receive your results as C++ data structures,
+			which can be accessed just as you would any
+			other structure. The results can be accessed
+			through the Row object, or you can ask the
+			library to dump the results into a sequential
+			or set-associative STL container for you. Consider
+			this:</para>
+
+			<programlisting>
+    vector&lt;mystruct&gt; v;
+    Query q = connection.query();
+    q &lt;&lt; "SELECT * FROM mytable";
+    q.storein(v);
+    for (vector&lt;mystruct&gt;::iterator it = v.begin(); it != v.end(); ++v) {
+        cout &lt;&lt; "Price: " &lt;&lt; v.price &lt;&lt; endl;
+    }</programlisting>
+
+			<para>Isn't that slick?</para>
+		</sect3>
+	</sect2>
+
+
+	<sect2>
+		<title>Exceptions</title>
+
+		<para>By default, the library throws <ulink
+		url="../../refman/html/exceptions_8h.html">exceptions</ulink>
+		derived from
+		<computeroutput>std::exception</computeroutput>
+		whenever it encounters an error. You can ask the library
+		to set an error flag instead, if you like, but the
+		exceptions carry more information. Not only do they
+		include a string member telling you why the exception
+		was thrown, there are several exception types, so you
+		can distinguish between several types of error within a
+		single <computeroutput>try</computeroutput> block.</para>
+	</sect2>
+</sect1>
+
+
+<sect1>
+	<title>Tutorial</title>
+
+	<para>This tutorial is meant to give you a jump start in using
+	MySQL++. While it is a very complicated and powerful library,
+	it's possible to make quite functional programs without tapping
+	but a fraction of its power. This section will introduce you to
+	the most useful fraction.</para>
+
+	<para>This tutorial assumes you know C++ fairly well,
+	in particuler the Standard Template Library (STL) and
+	exceptions.</para>
+
+
+	<sect2>
+		<title>Running the Examples</title>
+
+		<para>All of the examples are complete running
+		programs. They may or may not be built for you already,
+		depending on how you installed the library.</para>
+
+		<para>If you installed MySQL++ from the source
+		tarball on a Unixy system, the examples should
+		have been built along with the library. If not,
+		simply go into the examples directory and type
+		<computeroutput>make</computeroutput>.</para>
+
+		<para>If you installed the library via
+		RPM, the examples are in the mysql++-devel
+		RPM. After installing that, the examples are in
+		<computeroutput>/usr/src/mysql++/examples</computeroutput>.
+		To build them, go into that directory
+		and type <computeroutput>make -f
+		Makefile.simple</computeroutput>. See the file
+		<computeroutput>/usr/share/doc/mysql++-devel*/README.examples</computeroutput>
+		for more details.</para>
+
+		<para>If you are on a Windows system, the build process
+		for the library should have built the examples as
+		well. Where the programs are depends on which compiler
+		you're using. There should be a README.* file in the
+		distribution specific to your compiler with further
+		instructions.</para>
+
+		<para>Once you have the examples building, you need
+		to initialize the sample database by running the
+		<computeroutput>resetdb</computeroutput> example. The
+		usage of resetdb is as follows:</para>
+
+		<screen>	resetdb [host [user [password [port]]]]</screen>
+
+		<para>If you leave off host, localhost is assumed. If
+		you leave off user, your current username is assumed. If
+		you leave of the password, it is assumed that you don't
+		need one. And if you leave off the port, it will use
+		the standard MySQL port number.</para>
+
+		<para>The user you give resetdb needs to be an account
+		with permission to create databases. Once the database is
+		created you can use any account that has full permission
+		to the sample database mysql_cpp_data.</para>
+
+		<para>You may also have to re-run resetdb after
+		running some of the other examples, as they change the
+		database.</para>
+	</sect2>
+
+
+	<sect2>
+		<title>The Basics</title>
+
+		<sect3>
+			<title>A simple example</title>
+
+			<para>The following example demonstrates how
+			to open a connection, execute a simple query,
+			and display the results. The code can be found
+			in the file examples/simple1.cpp. Note that,
+			like most of the other examples, it requires
+			the common routines in examples/util.cpp; you
+			can't build it directly.</para>
+
+			<blockquote><programlisting>
+#include "util.h"
+
+#include &lt;mysql++.h&gt;
+
+#include &lt;iostream&gt;
+#include &lt;iomanip&gt;
+
+using namespace std;
+
+int
+main(int argc, char *argv[])
+{
+    try {
+        // Connect to the sample database
+        mysqlpp::Connection con(mysqlpp::use_exceptions);
+        if (!connect_to_db(argc, argv, con)) {
+            return 1;
+        }
+
+        // Create a query object that is bound to con.
+        mysqlpp::Query query = con.query();
+
+        // Print out the stock table
+        print_stock_table(query);
+    }
+    catch (mysqlpp::BadQuery&amp; er) {
+        // handle any connection or query errors that may come up
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; endl;
+        return -1;
+    }
+    catch (mysqlpp::BadConversion&amp; er) {
+        // handle bad conversions
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; "\"." &lt;&lt; endl
+            &lt;&lt; "retrieved data size: " &lt;&lt; er.retrieved
+            &lt;&lt; " actual data size: " &lt;&lt; er.actual_size &lt;&lt; endl;
+        return -1;
+    }
+    catch (exception &amp; er) {
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; endl;
+        return -1;
+    }
+
+    return 0;
+}
+			</programlisting></blockquote>
+
+			<para>Everything here should be fairly
+			obvious. Take particular notice of how we used
+			an iterator with the result set.</para>
+		</sect3>
+
+		<sect3>
+			<title>A slightly more complicated example</title>
+
+			<para>This example is almost like the previous
+			one, except that it uses exceptions and the
+			automatic conversion feature of ColData. Pay
+			particular notice to how exceptions are used.
+			This is examples/complic1.cpp:</para>
+
+			<blockquote><programlisting>
+#include "util.h"
+
+#include &lt;mysql++.h&gt;
+
+#include &lt;iostream&gt;
+#include &lt;iomanip&gt;
+
+using namespace std;
+using namespace mysqlpp;
+
+int
+main(int argc, char *argv[])
+{
+    try {
+        Connection con(use_exceptions);
+        if (!connect_to_db(argc, argv, con)) {
+            return 1;
+        }
+
+        Query query = con.query();
+
+        query &lt;&lt; "select * from stock";
+        cout &lt;&lt; "Query: " &lt;&lt; query.preview() &lt;&lt; endl;
+
+        Result res = query.store();
+        cout &lt;&lt; "Records Found: " &lt;&lt; res.size() &lt;&lt; endl &lt;&lt; endl;
+
+        Row row;
+        cout.setf(ios::left);
+        cout &lt;&lt; setw(17) &lt;&lt; "Item" &lt;&lt;
+                setw(4) &lt;&lt; "Num" &lt;&lt;
+                setw(7) &lt;&lt; "Weight" &lt;&lt;
+                setw(7) &lt;&lt; "Price" &lt;&lt; "Date" &lt;&lt; endl &lt;&lt; endl;
+
+        Result::iterator i;
+
+        cout.precision(3);
+        for (i = res.begin(); i != res.end(); i++) {
+            row = *i;
+            // Regarding the casts to double, we do this so that we can
+            // set the display precision.  ColData has the nice feature
+            // that it will convert to any of the basic C++ types.  If
+            // there is a problem in the conversion it will throw an
+            // exception (caught below).  To test it, try changing the
+            // row[2] to row[0] below.
+            cout &lt;&lt; setw(17) &lt;&lt; row.lookup_by_name("ITEM") &lt;&lt;
+                    setw(4) &lt;&lt; row[1] &lt;&lt;
+                    setw(7) &lt;&lt; double(row[2]) &lt;&lt;
+                    setw(7) &lt;&lt; double(row[3]);
+
+            // The ColData is implicitly converted to a date here.
+            Date date = row.lookup_by_name("SDATE");
+            cout.setf(ios::right);
+            cout.fill('0');
+            cout &lt;&lt; setw(2) &lt;&lt; date.month &lt;&lt; "-" &lt;&lt; setw(2) &lt;&lt;
+                    date.day &lt;&lt; endl;
+            cout.fill(' ');
+            cout.unsetf(ios::right);
+        }
+
+        return 0;
+    }
+    catch (BadQuery&amp; er) {
+        // Handle any connection or query errors that may come up
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; endl;
+        return -1;
+    }
+    catch (BadConversion&amp; er) {
+        // Handle bad conversions
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; "\"." &lt;&lt; endl
+            &lt;&lt; "retrieved data size: " &lt;&lt; er.retrieved
+            &lt;&lt; " actual data size: " &lt;&lt; er.actual_size &lt;&lt; endl;
+        return -1;
+    }
+    catch (exception&amp; er) {
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; endl;
+        return -1;
+    }
+}
+			</programlisting></blockquote>
+		</sect3>
+
+		<sect3>
+			<title>Notes on exceptions</title>
+
+			<para>Everything should be fairly obvious. A few notes about
+			exceptions, however:</para>
+
+			<orderedlist>
+				<listitem><para>When the use_exceptions flag is
+				set for a parent object it is also set for all
+				of the children it creates after the flag is
+				set. For example when the use_exceptions flag is
+				set for the con object, it is also set for the
+				query object. Please note that the use_exceptions
+				flag is not linked, it is copied. This means that
+				when you change the use_exceptions flag only
+				its new children are affected, not the ones it
+				already created.</para></listitem>
+
+				<listitem><para>ColData will always throw <ulink
+				url="../../refman/html/classmysqlpp_1_1BadConversion.html">an
+				exception</ulink> when it is unable to do
+				a requested conversion. A bad conversion is
+				defined as one where: a) all the charters from
+				the string are not yet processed, and b) the
+				remaining characters are something other than
+				whitespace, zeros (0), or periods (.). This
+				means that an exception is thrown when ``1.25''
+				is converted into an int, but not when ``1.00''
+				is converted into an int. In the latter case,
+				MySQL++ knows that it can safely throw away the
+				fractional part.</para></listitem>
+			</orderedlist>
+
+			<para>To see how the exceptions work, try creating an
+			error. Some good things to try would be misspelling the
+			table name or changing the double to an int.</para>
+		</sect3>
+
+		<sect3>
+			<title>Getting info about the fields</title>
+
+			<para>The following example demonstrates how to
+			get some basic information about the fields,
+			including the name of the field and the SQL
+			type. This is examples/fieldinf1.cpp:</para>
+
+			<blockquote><programlisting>
+#include "util.h"
+
+#include &lt;mysql++.h&gt;
+
+#include &lt;iostream&gt;
+#include &lt;iomanip&gt;
+
+using namespace std;
+using namespace mysqlpp;
+
+int
+main(int argc, char *argv[])
+{
+    try {
+        Connection con(use_exceptions);
+        if (!connect_to_db(argc, argv, con)) {
+            return 1;
+        }
+
+        Query query = con.query();
+        query &lt;&lt; "select * from stock";
+        cout &lt;&lt; "Query: " &lt;&lt; query.preview() &lt;&lt; endl;
+
+        Result res = query.store();
+        cout &lt;&lt; "Records Found: " &lt;&lt; res.size() &lt;&lt; endl &lt;&lt; endl;
+
+        cout &lt;&lt; "Query Info:\n";
+        cout.setf(ios::left);
+
+        for (unsigned int i = 0; i &lt; res.names().size(); i++) {
+            cout &lt;&lt; setw(2) &lt;&lt; i
+                    // this is the name of the field
+                    &lt;&lt; setw(15) &lt;&lt; res.names(i).c_str()
+                    // this is the SQL identifier name
+                    // Result::types(unsigned int) returns a mysql_type_info which in many
+                    // ways is like type_info except that it has additional sql type
+                    // information in it. (with one of the methods being sql_name())
+                    &lt;&lt; setw(15) &lt;&lt; res.types(i).sql_name()
+                    // this is the C++ identifier name which most closely resembles
+                    // the sql name (its is implementation defined and often not very readable)
+                    &lt;&lt; setw(20) &lt;&lt; res.types(i).name()
+                    &lt;&lt; endl;
+        }
+
+        cout &lt;&lt; endl;
+
+        if (res.types(0) == typeid(string)) {
+            // this is demonstrating how a mysql_type_info can be 
+            // compared with a C++ type_info.
+            cout &lt;&lt; "Field 'item' is of an SQL type which most "
+                    "closely resembles\nthe C++ string type\n";
+        }
+
+        if (res.types(1) == typeid(longlong)) {
+            cout &lt;&lt; "Field 'num' is of an SQL type which most "
+                    "closely resembles\nC++ long long int type\n";
+        }
+        else if (res.types(1).base_type() == typeid(longlong)) {
+            // you have to be careful as if it can be null the actual
+            // type is Null&lt;TYPE&gt; not TYPE.  So you should always use
+            // the base_type method to get at the underlying type.
+            // If the type is not null than this base type would be
+            // the same as its type.
+            cout &lt;&lt; "Field 'num' base type is of an SQL type which "
+                    "most closely\nresembles the C++ long long int type\n";
+        }
+
+        return 0;
+    }
+    catch (BadQuery&amp; er) {
+        // handle any connection or query errors that may come up
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; endl;
+        return -1;
+    }
+    catch (BadConversion&amp; er) {
+        // handle bad conversions
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; "\"." &lt;&lt; endl
+            &lt;&lt; "retrieved data size: " &lt;&lt; er.retrieved
+            &lt;&lt; " actual data size: " &lt;&lt; er.actual_size &lt;&lt; endl;
+        return -1;
+    }
+    catch (exception&amp; er) {
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; endl;
+        return -1;
+    }
+}
+
+			</programlisting></blockquote>
+		</sect3>
+	</sect2>
+
+
+	<sect2>
+		<title>Specialized SQL Structures</title>
+
+		<sect3>
+			<title>Retrieving data</title>
+
+			<para>The next example introduces one of
+			the most powerful features of MySQL++:
+			<xref linkend="ssqls"/> (SSQLS). This is
+			examples/custom1.cpp:</para>
+
+			<blockquote><programlisting>
+#include "util.h"
+
+#include &lt;mysql++.h&gt;
+#include &lt;custom.h&gt;
+
+#include &lt;iostream&gt;
+#include &lt;iomanip&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+using namespace mysqlpp;
+
+sql_create_5(stock,             // struct name, 
+             1, 5,              // I'll explain these latter
+             string, item,      // type, id
+             longlong, num,
+             double, weight,
+             double, price,
+             Date, sdate)
+
+// this is calling a very complex macro which will create a custom
+// struct "stock" which has the variables:
+//   string item
+//    int num
+//    ...
+//    Date sdate
+// defined as well methods to help populate the class from a mysql row
+// among other things that I'll get too in a latter example
+int
+main(int argc, char *argv[])
+{
+    try {                       // its in one big try block
+        Connection con(use_exceptions);
+        if (!connect_to_db(argc, argv, con)) {
+            return 1;
+        }
+
+        Query query = con.query();
+        query &lt;&lt; "select * from stock";
+
+        vector &lt; stock &gt; res;
+        query.storein(res);
+        // this is storing the results into a vector of the custom struct
+        // "stock" which was created my the macro above.
+
+        cout.setf(ios::left);
+        cout &lt;&lt; setw(17) &lt;&lt; "Item"
+            &lt;&lt; setw(4) &lt;&lt; "Num"
+            &lt;&lt; setw(7) &lt;&lt; "Weight"
+            &lt;&lt; setw(7) &lt;&lt; "Price" &lt;&lt; "Date" &lt;&lt; endl &lt;&lt; endl;
+
+        // Now we we iterate through the vector using an iterator and
+        // produce output similar to that using Row
+        // Notice how we call the actual variables in i and not an index
+        // offset.  This is because the macro at the begging of the file
+        // set up an *actual* struct of type stock which contains the 
+        // variables item, num, weight, price, and data.
+
+        cout.precision(3);
+        vector&lt;stock&gt;::iterator i;
+        for (i = res.begin(); i != res.end(); i++) {
+            cout &lt;&lt; setw(17) &lt;&lt; i-&gt;item.c_str()
+                // unfortunally the gnu string class does not respond to format
+                // modifers so I have to convert it to a conat char *.
+                &lt;&lt; setw(4) &lt;&lt; i-&gt;num
+                &lt;&lt; setw(7) &lt;&lt; i-&gt;weight
+                &lt;&lt; setw(7) &lt;&lt; i-&gt;price &lt;&lt; i-&gt;sdate &lt;&lt; endl;
+        }
+        return 0;
+
+    }
+    catch (BadQuery&amp; er) {
+        // handle any connection or query errors that may come up
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; endl;
+        return -1;
+    }
+    catch (BadConversion&amp; er) {
+        // handle bad conversions
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; "\"." &lt;&lt; endl
+            &lt;&lt; "retrieved data size: " &lt;&lt; er.retrieved
+            &lt;&lt; " actual data size: " &lt;&lt; er.actual_size &lt;&lt; endl;
+        return -1;
+    }
+    catch (exception &amp; er) {
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; endl;
+        return -1;
+    }
+}
+			</programlisting></blockquote>
+			
+			<para>As you can see, SSQLS is very powerful.</para>
+		</sect3>
+
+		<sect3>
+			<title>Adding data</title>
+
+			<para>SSQLS can also be used to add data to a table. This
+			is examples/custom2.cpp:</para>
+
+			<blockquote><programlisting>
+#include "util.h"
+
+#include &lt;mysql++.h&gt;
+#include &lt;custom.h&gt;
+
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+using namespace mysqlpp;
+
+sql_create_5(stock,
+            1, 5,
+            string, item,
+            longlong, num,
+            double, weight,
+            double, price,
+            Date, sdate)
+
+int
+main(int argc, char *argv[])
+{
+    try {
+        Connection con(use_exceptions);
+        if (!connect_to_db(argc, argv, con)) {
+            return 1;
+        }
+
+        Query query = con.query();
+
+        // create an empty stock object
+        stock row;
+
+        // populate stock
+        row.set("Hot Dogs", 100, 1.5, 1.75, "1998-09-25");
+
+        // form the query to insert the row
+        // the table name is the name of the struct by default
+        query.insert(row);
+
+        // show the query about to be executed
+        cout &lt;&lt; "Query : " &lt;&lt; query.preview() &lt;&lt; endl;
+
+        // execute a query that does not return a result set
+        query.execute();
+
+        // now print the new table;
+        print_stock_table(query);
+
+    }
+    catch (BadQuery&amp; er) {
+        // handle any connection or query errors that may come up
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; endl;
+        return -1;
+    }
+    catch (BadConversion&amp; er) { 
+        // handle bad conversions
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; "\"." &lt;&lt; endl
+            &lt;&lt; "retrieved data size: " &lt;&lt; er.retrieved
+            &lt;&lt; " actual data size: " &lt;&lt; er.actual_size &lt;&lt; endl;
+        return -1;
+    }
+    catch (exception&amp; er) {
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; endl;
+        return -1;
+    }
+
+    return 0;
+}
+
+
+			</programlisting></blockquote>
+
+			<para>That's all there is to it. Because this
+			example modifies the data you should run resetdb
+			after running the example code.</para>
+		</sect3>
+
+		<sect3>
+			<title>Modifying data</title>
+
+			<para>It almost as easy to modify data with
+			SSQLS. This is examples/custom3.cpp:</para>
+
+			<blockquote><programlisting>
+#include "util.h"
+
+#include &lt;mysql++.h&gt;
+#include &lt;custom.h&gt;
+
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+using namespace mysqlpp;
+
+sql_create_5(stock,
+            1, 5,
+            string, item,
+            longlong, num,
+            double, weight,
+            double, price,
+            Date, sdate)
+
+int
+main(int argc, char *argv[])
+{
+    try {
+        Connection con(use_exceptions);
+        if (!connect_to_db(argc, argv, con)) {
+            return 1;
+        }
+
+        Query query = con.query();
+        query &lt;&lt; "select * from stock where item = \"Nürnberger Brats\"";
+
+        // Is the query was successful?  If not throw a bad query.
+        Result res = query.store();
+        if (res.empty()) {
+            throw BadQuery("UTF-8 bratwurst item not found in "
+                    "table, run resetdb");
+        }
+
+        // Because there should only be one row in the result set, we
+        // don't need to use a vector.  Just store the first row
+        // directly in "row".  We can do this because one of the
+        // constructors for stock takes a Row as a parameter.
+        stock row = res[0];
+
+        // Create a copy so that the replace query knows what the
+        // original values are.
+        stock row2 = row;
+
+        // Change item column to use only 7-bit ASCII, and to
+        // deliberately be wider than normal column widths printed by
+        // print_stock_table().
+        row.item = "Nuerenberger Bratwurst";
+
+        // Form the query to replace the row.  The table name is the
+        // name of the struct by default.
+        query.update(row2, row);
+
+        // Show the query about to be executed.
+        cout &lt;&lt; "Query : " &lt;&lt; query.preview() &lt;&lt; endl;
+
+        // Call execute(), since the query won't return a result set.
+        query.execute();
+
+        // Now print the new table
+        print_stock_table(query);
+    }
+    catch (BadQuery&amp; er) {
+        // handle any connection or query errors that may come up
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; endl;
+        return -1;
+    }
+    catch (BadConversion&amp; er) {
+        // handle bad conversions
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; "\"." &lt;&lt; endl
+            &lt;&lt; "retrieved data size: " &lt;&lt; er.retrieved
+            &lt;&lt; " actual data size: " &lt;&lt; er.actual_size &lt;&lt; endl;
+        return -1;
+    }
+    catch (exception&amp; er) {
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; endl;
+        return -1;
+    }
+
+    return 0;
+}
+
+			</programlisting></blockquote>
+
+			<para>When you run the example you will notice
+			that in the WHERE clause only the 'item' field
+			is checked for. This is because SSQLS also also
+			less-than-comparable.</para>
+
+			<para>Don't forget to run resetdb after running
+			the example.</para>
+		</sect3>
+
+		<sect3>
+			<title>Less-than-comparable</title>
+
+			<para>SSQLS structures can be sorted and stored in
+			STL associative containers as demonstrated in the
+			next example. This is custom4.cpp:</para>
+
+			<blockquote><programlisting>
+#include "util.h"
+
+#include &lt;mysql++.h&gt;
+#include &lt;custom.h&gt;
+
+#include &lt;iostream&gt;
+#include &lt;iomanip&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+using namespace mysqlpp;
+
+sql_create_5(stock,
+    1,  // This number is used to make a SSQLS less-than-comparable.
+        // When comparing two SSQLS structures, the first N elements are
+        // compared.  In this instance, we are saying that we only want
+        // the first element ('item') to be used when comparing two
+        // stock structures.
+
+    5,  // Each SSQLS structure includes a number of constructors.  Some
+        // of these are fixed in nature, but one of these will have this
+        // number of arguments, one for each of the first N elements in
+        // the structure; it is an initialization ctor.  Since N is the
+        // same as the number of structure elements in this instance,
+        // that ctor will be able to fully initialize the structure. This
+        // behavior is not always wanted, however, so the macro allows
+        // you make the constructor take fewer parameters, leaving the
+        // remaining elements uninitialized.  An example of when this is
+        // necessary is when you have a structure containing only two
+        // integer elements: one of the other ctors defined for SSQLS
+        // structures takes two ints, so the compiler barfs if you pass
+        // 2 for this argument.  You would need to pass 0 here to get
+        // that SSQLS structure to compile.
+    string, item,
+    longlong, num,
+    double, weight,
+    double, price,
+    Date, sdate)
+
+int
+main(int argc, char *argv[])
+{
+    try {
+        Connection con(use_exceptions);
+        if (!connect_to_db(argc, argv, con)) {
+            return 1;
+        }
+
+        Query query = con.query();
+
+        query &lt;&lt; "select * from stock";
+
+        // here we are storing the elements in a set not a vector.
+        set &lt;stock&gt; res;
+        query.storein(res);
+
+        cout.setf(ios::left);
+        cout &lt;&lt; setw(17) &lt;&lt; "Item"
+            &lt;&lt; setw(4) &lt;&lt; "Num"
+            &lt;&lt; setw(7) &lt;&lt; "Weight"
+            &lt;&lt; setw(7) &lt;&lt; "Price" &lt;&lt; "Date" &lt;&lt; endl &lt;&lt; endl;
+
+        // Now we we iterate through the set.  Since it is a set the list will
+        // naturally be in order.
+        set&lt;stock&gt;::iterator i;
+        cout.precision(3);
+        for (i = res.begin(); i != res.end(); ++i) {
+            cout &lt;&lt; setw(17) &lt;&lt; i-&gt;item.c_str()
+                &lt;&lt; setw(4) &lt;&lt; i-&gt;num
+                &lt;&lt; setw(7) &lt;&lt; i-&gt;weight
+                &lt;&lt; setw(7) &lt;&lt; i-&gt;price &lt;&lt; i-&gt;sdate &lt;&lt; endl;
+        }
+
+        i = res.find(stock("Hamburger Buns"));
+        if (i != res.end()) {
+            cout &lt;&lt; "Hamburger Buns found.  Currently " &lt;&lt; i-&gt;num &lt;&lt;
+                    " in stock.\n";
+        }
+        else {
+            cout &lt;&lt; "Sorry no Hamburger Buns found in stock\n";
+        }
+
+        // Now we are using the set's find method to find out how many
+        // Hamburger Buns are in stock.
+
+        return 0;
+    }
+    catch (BadQuery&amp; er) {
+        // handle any connection or query errors that may come up
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; endl;
+        return -1;
+    }
+    catch (BadConversion&amp; er) {
+        // handle bad conversions
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; "\"." &lt;&lt; endl
+            &lt;&lt; "retrieved data size: " &lt;&lt; er.retrieved
+            &lt;&lt; " actual data size: " &lt;&lt; er.actual_size &lt;&lt; endl;
+        return -1;
+    }
+    catch (exception&amp; er) {
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; endl;
+        return -1;
+    }
+
+    return 0;
+}
+
+			</programlisting></blockquote>
+		</sect3>
+	</sect2>
+
+
+	<sect2>
+		<title>Which Query Type to Use?</title>
+
+		<para>There are three major ways to execute a query in MySQL++:
+		<computeroutput>Query::execute()</computeroutput>,
+		<computeroutput>Query::store()</computeroutput>, and
+		<computeroutput>Query::use()</computeroutput>. Which should you
+		use, and why?</para>
+
+		<para><computeroutput>execute()</computeroutput>
+		is for queries that do not return data <emphasis>per
+		se</emphasis>. For instance, <computeroutput>CREATE
+		INDEX</computeroutput>. You do get back some
+		information from the MySQL server, which
+		<computeroutput>execute()</computeroutput>
+		returns to its caller in a <ulink
+		url="../../refman/html/classmysqlpp_1_1ResNSel.html">ResNSel</ulink>
+		object. In addition to the obvious &mdash; a flag stating
+		whether the query succeeded or not &mdash; this object also
+		contains things like the number of rows that the query
+		affected. If you only need the success status, there's
+		<computeroutput>Query::exec()</computeroutput>, which
+		just returns bool.</para>
+
+		<para>If your query does pull data from
+		the database, the simplest option is
+		<computeroutput>store()</computeroutput>.
+		This returns a <ulink
+		url="../../refman/html/classmysqlpp_1_1Result.html">Result</ulink>
+		object, which contains an in-memory copy of
+		the result set. The nice thing about this is
+		that <computeroutput>Result</computeroutput>
+		is a sequential container, like
+		<computeroutput>std::vector</computeroutput>, so you
+		can iterate through it forwards and backwards, access
+		elements with subscript notation, etc. There are also
+		the <computeroutput>storein()</computeroutput> methods,
+		which actually put the result set into an STL container
+		of your choice. The downside of these methods is that
+		a sufficiently large result set will give your program
+		memory problems.</para>
+
+		<para>For these large result sets, you should
+		use the <computeroutput>use()</computeroutput>
+		method instead. This returns a <ulink
+		url="../../refman/html/classmysqlpp_1_1ResUse.html">ResUse</ulink>
+		object, which is similar to Result, but without all of
+		the random-access features. This is because a "use"
+		query tells the database server to send the results
+		back one row at a time, to be processed linearly. It's
+		analogous to a C++ stream's input iterator, as opposed
+		to a random-access iterator that a container like
+		vector offers. By accepting this limitation, you can process
+		arbitrarily large result sets.</para>
+	</sect2>
+
+
+	<sect2>
+		<title>Let's Do Something Useful</title>
+
+		<para>These next few examples demonstrate just how powerful
+		C++ can be, allowing you to do a lot of work in few lines of
+		code without losing efficiency.</para>
+
+		<para>Since the code is meant to be re-used as-is,
+		constants that can differ from one case to another have
+		been grouped in order to simplify editing. Also, all of
+		these examples have full error checking code, showing off
+		the power of MySQL++'s exception handling features.</para>
+
+		<sect3>
+			<title>Loading binary file in a BLOB column</title>
+
+			<para>Since MySQL 3.23, BLOB columns have
+			been available, but their use is sometimes not
+			straightforward. Besides showing how easy it
+			can be with MySQL++, this example demonstrates
+			several features of MySQL++. The program requires
+			one command line parameter, which is a full path
+			to the binary file. This is examples/load_file.cpp:</para>
+
+			<blockquote><programlisting>
+#include &lt;mysql++.h&gt;
+
+#include &lt;sys/stat.h&gt;
+
+#include &lt;fstream&gt;
+
+#include &lt;errno.h&gt;
+#include &lt;stdlib.h&gt;
+
+using namespace std;
+using namespace mysqlpp;
+
+const char MY_DATABASE[] = "telcent";
+const char MY_TABLE[] = "fax";
+const char MY_HOST[] = "localhost";
+const char MY_USER[] = "root";
+const char MY_PASSWORD[] = "";
+const char MY_FIELD[] = "fax";  // BLOB field
+
+int
+main(int argc, char *argv[])
+{
+    if (argc &lt; 2) {
+        cerr &lt;&lt; "Usage : load_file full_file_path" &lt;&lt; endl &lt;&lt; endl;
+        return -1;
+    }
+
+    Connection con(use_exceptions);
+    try {
+        con.real_connect(MY_DATABASE, MY_HOST, MY_USER, MY_PASSWORD, 3306,
+                         0, 60, NULL);
+        Query query = con.query();
+        ostringstream strbuf;
+        ifstream In(argv[1], ios::in | ios::binary);
+        struct stat for_len;
+        if ((In.rdbuf())-&gt;is_open()) {
+            if (stat(argv[1], &amp;for_len) == -1)
+                return -1;
+            unsigned int blen = for_len.st_size;
+            if (!blen)
+                return -1;
+            char *read_buffer = new char[blen];
+            In.read(read_buffer, blen);
+            string fill(read_buffer, blen);
+            strbuf &lt;&lt; "INSERT INTO " &lt;&lt; MY_TABLE &lt;&lt; " (" &lt;&lt; MY_FIELD &lt;&lt;
+                ") VALUES(\"" &lt;&lt; mysqlpp::escape &lt;&lt; fill &lt;&lt; "\")" &lt;&lt; ends;
+            query.exec(strbuf.str());
+            delete[]read_buffer;
+        }
+        else
+            cerr &lt;&lt; "Your binary file " &lt;&lt; argv[1] &lt;&lt;
+                "could not be open, errno = " &lt;&lt; errno;
+        return 0;
+
+    }
+    catch (BadQuery&amp; er) {
+        // handle any connection or query errors that may come up
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; " " &lt;&lt; con.errnum() &lt;&lt; endl;
+        return -1;
+    }
+    catch (BadConversion&amp; er) {
+        // handle bad conversions
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; "\"." &lt;&lt; endl
+            &lt;&lt; "retrieved data size: " &lt;&lt; er.retrieved
+            &lt;&lt; " actual data size: " &lt;&lt; er.actual_size &lt;&lt; endl;
+        return -1;
+    }
+    catch (exception&amp; er) {
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; endl;
+        return -1;
+    }
+}
+			</programlisting></blockquote>
+
+			<para>One of the features of
+			this example is the use of the <ulink
+			url="../../refman/html/namespacemysqlpp.html#escape_manip">escape
+			manipulator</ulink>. Although the library does
+			have automatic quoting and escaping, it is only
+			supported for ColData, as that class contains
+			the necessary type information. Rather than
+			force MySQL++ to scan the string to determine
+			whether quoting and escaping is necessary, it
+			was decided to leave the choice of quoting and
+			escaping to the user for all other types.</para>
+		</sect3>
+
+		<sect3>
+			<title>Displaying images in HTML from BLOB column</title>
+
+			<para>This example is also a very short
+			one, considering the function that it
+			performs. Although all modern versions of
+			MySQL have a command that dumps data from BLOB
+			column to a binary file, this example shows
+			how to do it in your code instead, without
+			requiring an temporary file on disk. This is
+			examples/cgi_image.cpp:</para>
+
+			<blockquote><programlisting>
+#include &lt;mysql++.h&gt;
+
+using namespace std;
+using namespace mysqlpp;
+
+#define MY_DATABASE "telcent"
+#define MY_TABLE    "fax"
+#define MY_HOST     "localhost"
+#define MY_USER     "root"
+#define MY_PASSWORD ""
+#define MY_FIELD    "fax"       // BLOB field
+#define MY_KEY      "datet"     // PRIMARY KEY
+
+int
+main(int argc, char *argv[])
+{
+    if (argc &lt; 2) {
+        cerr &lt;&lt; "Usage : cgi_image primary_key_value" &lt;&lt; endl &lt;&lt; endl;
+        return -1;
+    }
+
+    cout &lt;&lt; "Content-type: image/jpeg" &lt;&lt; endl;
+    Connection con(use_exceptions);
+    try {
+        con.real_connect(MY_DATABASE, MY_HOST, MY_USER, MY_PASSWORD, 3306,
+                         0, 60, NULL);
+        Query query = con.query();
+        query &lt;&lt; "SELECT " &lt;&lt; MY_FIELD &lt;&lt; " FROM " &lt;&lt; MY_TABLE &lt;&lt; " WHERE "
+            &lt;&lt; MY_KEY &lt;&lt; " = " &lt;&lt; argv[1];
+        ResUse res = query.use();
+        Row row = res.fetch_row();
+        long unsigned int *jj = res.fetch_lengths();
+        cout &lt;&lt; "Content-length: " &lt;&lt; *jj &lt;&lt; endl &lt;&lt; endl;
+        fwrite(row.raw_data(0), 1, *jj, stdout);
+        return 0;
+    }
+    catch (BadQuery&amp; er) {
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; " " &lt;&lt; con.errnum() &lt;&lt; endl;
+        return -1;
+    }
+    catch (exception&amp; er) {
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; endl;
+        return -1;
+    }
+}
+
+			</programlisting></blockquote>
+		</sect3>
+
+		<sect3>
+			<title>DELETE or UPDATE from SELECT</title>
+
+			<para>MySQL's SELECT statement has more power to
+			winnow out just the items of interest from the
+			database than do DELETE or UPDATE. Therefore,
+			many people have wanted the ability to execute a
+			SELECT statement that in fact deletes or updates
+			the rows matched, rather than returning them. This
+			example implements that feature in just a few
+			lines of code. It is examples/updel.cpp:</para>
+
+			<blockquote><programlisting>
+#include &lt;mysql++.h&gt;
+
+#include &lt;string&gt;
+
+using namespace std;
+using namespace mysqlpp;
+
+#define MY_DATABASE "telcent"
+#define MY_TABLE    "nazivi"
+#define MY_HOST     "localhost"
+#define MY_USER     "root"
+#define MY_PASSWORD ""
+#define MY_FIELD    "naziv"
+#define MY_QUERY    "SELECT URL from my_table as t1, my_table as t2 where t1.field = t2.field"
+
+int
+main()
+{
+    Connection con(use_exceptions);
+    try {
+        ostringstream strbuf;
+        unsigned int i = 0;
+        con.real_connect(MY_DATABASE, MY_HOST, MY_USER, MY_PASSWORD, 3306,
+                         0, 60, NULL);
+        Query query = con.query();
+        query &lt;&lt; MY_QUERY;
+        ResUse res = query.use();
+        Row row;
+        strbuf &lt;&lt; "delete from " &lt;&lt; MY_TABLE &lt;&lt; " where " &lt;&lt; MY_FIELD &lt;&lt;
+            " in (";
+        //  for UPDATE just replace the above DELETE FROM with UPDATE statement
+        for (; row = res.fetch_row(); i++)
+            strbuf &lt;&lt; row[0] &lt;&lt; ",";
+        if (!i)
+            return 0;
+        string output(strbuf.str());
+        output.erase(output.size() - 1, 1);
+        output += ")";
+        query.exec(output); // cout &lt;&lt; output &lt;&lt; endl;
+        return 0;
+    }
+    catch (BadQuery&amp; er) {
+        // handle any connection or query errors that may come up
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; " " &lt;&lt; con.errnum() &lt;&lt; endl;
+        return -1;
+    }
+    catch (BadConversion&amp; er) {
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; "\"." &lt;&lt; endl
+            &lt;&lt; "retrieved data size: " &lt;&lt; er.retrieved
+            &lt;&lt; " actual data size: " &lt;&lt; er.actual_size &lt;&lt; endl;
+        return -1;
+    }
+    catch (exception&amp; er) {
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; endl;
+        return -1;
+    }
+}
+			</programlisting></blockquote>
+
+			<para>Notice that the row values
+			used in the IN clause aren't escaped or
+			quoted. This is because row elements are <ulink
+			url="../../refman/html/classmysqlpp_1_1ColData__Tmpl.html">ColData</ulink>
+			types, so they have automatic escaping and
+			quoting, as appropriate to the type being
+			inserted. If you want to disable this feature,
+			it's easily done: click the ColData link for
+			the details.</para>
+
+			<para>Users of this example should beware that
+			one more check is required in order to run this
+			query safely: in some extreme cases, the size
+			of the query might grow larger than MySQL's
+			maximum allowed packet size. This check should
+			be added.</para>
+		</sect3>
+	</sect2>
+</sect1>
+
+<sect1>
+	<title>Template Queries</title>
+
+	<para>Another powerful feature of MySQL++ is being able
+	to set up template queries. These are kind of like C's
+	<computeroutput>printf()</computeroutput> facility: you
+	give MySQL++ a string containing the fixed parts of the
+	query and placeholders for the variable parts, and you can
+	later substitute in values into those placeholders.</para>
+
+	<para>The following example demonstrates how to use
+	this feature. This is the program you've run a few
+	times now if you've worked through all the examples,
+	resetdb.cpp:</para>
+
+	<blockquote><programlisting>
+#include "util.h"
+
+#include &lt;mysql++.h&gt;
+
+#include &lt;iostream&gt;
+
+using namespace std;
+
+int
+main(int argc, char *argv[])
+{
+    mysqlpp::Connection con(mysqlpp::use_exceptions);
+    try {
+        if (!connect_to_db(argc, argv, con, "")) {
+            return 1;
+        }
+    }
+    catch (exception&amp; er) {
+        cerr &lt;&lt; "Connection failed: " &lt;&lt; er.what() &lt;&lt; endl;
+        return 1;
+    }
+    
+    bool created = false;
+    try {
+        con.select_db(kpcSampleDatabase);
+    }
+    catch (mysqlpp::BadQuery &amp;) {
+        // Couldn't switch to the sample database, so assume that it
+        // doesn't exist and create it.  If that doesn't work, exit
+        // with an error.
+        if (con.create_db(kpcSampleDatabase)) {
+            cerr &lt;&lt; "Failed to create sample database: " &lt;&lt;
+                    con.error() &lt;&lt; endl;
+            return 1;
+        }
+        else if (!con.select_db(kpcSampleDatabase)) {
+            cerr &lt;&lt; "Failed to select sample database." &lt;&lt; endl;
+            return 1;
+        }
+        else {
+            created = true;
+        }
+    }
+
+    mysqlpp::Query query = con.query(); // create a new query object
+
+    try {
+        query.execute("drop table stock");
+    }
+    catch (mysqlpp::BadQuery&amp;) {
+        // ignore any errors
+    }
+
+    try {
+        // Send the query to create the table and execute it.
+        query &lt;&lt; "create table stock  (item char(20) not null, num bigint,"
+            &lt;&lt; "weight double, price double, sdate date)";
+        query.execute();
+
+        // Set up the template query to insert the data.  The parse
+        // call tells the query object that this is a template and
+        // not a literal query string.
+        query &lt;&lt; "insert into %5:table values (%0q, %1q, %2, %3, %4q)";
+        query.parse();
+
+        // This is setting the parameter named table to stock.
+        query.def["table"] = "stock";
+
+        // The last parameter "table" is not specified here.  Thus the
+        // default value for "table" is used, which is "stock".  Also
+        // notice that the first row is a UTF-8 encoded Unicode string!
+        // All you have to do to store Unicode data in recent versions
+        // of MySQL is use UTF-8 encoding.
+        query.execute("Nürnberger Brats", 92, 1.5, 8.79, "2005-03-10");
+        query.execute("Pickle Relish", 87, 1.5, 1.75, "1998-09-04");
+        query.execute("Hot Mustard", 75, .95, .97, "1998-05-25");
+        query.execute("Hotdog Buns", 65, 1.1, 1.1, "1998-04-23");
+
+        if (created) {
+            cout &lt;&lt; "Created";
+        }
+        else {
+            cout &lt;&lt; "Reinitialized";
+        }
+        cout &lt;&lt; " sample database successfully." &lt;&lt; endl;
+    }
+    catch (mysqlpp::BadQuery&amp; er) {
+        // Handle any connection or query errors that may come up
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; endl;
+        return 1;
+    }
+    catch (mysqlpp::BadConversion&amp; er) {
+        // Handle bad conversions
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; "\"." &lt;&lt; endl
+            &lt;&lt; "retrieved data size: " &lt;&lt; er.retrieved
+            &lt;&lt; " actual data size: " &lt;&lt; er.actual_size &lt;&lt; endl;
+        return 1;
+    }
+    catch (exception&amp; er) {
+        cerr &lt;&lt; "Error: " &lt;&lt; er.what() &lt;&lt; endl;
+        return 1;
+    }
+}
+
+	</programlisting></blockquote>
+
+	<para>The line just before the call to
+	<computeroutput>query.parse()</computeroutput> sets the
+	template, and the parse call puts it into effect. From
+	that point on, you can re-use this query by calling any
+	of several Query member functions that accept query
+	template parameters. In this example, we're using
+	<computeroutput>Query::execute()</computeroutput>.</para>
+
+	<para>Let's dig into this feature a little deeper.</para>
+
+
+	<sect2>
+		<title>Setting up template queries</title>
+
+		<para>To set up a template query, you simply insert it into
+		the Query object, using numbered placeholders wherever you
+		want to be able to change the query. Then, you call the
+		parse() function to tell the Query object that the query
+		string is a template query, and it needs to parse it:</para>
+
+		<programlisting>
+    query &lt;&lt; "select (%2:field1, %3:field2) from stock where
+            %1:wheref = %q0:what";
+    query.parse();</programlisting>
+
+		<para>The format of the placeholder is:</para>
+
+		<programlisting>
+    %(modifier)##(:name)(:)</programlisting>
+
+		<para>Where Modifier can be any one of the following:</para>
+
+		<blockquote>
+		<informaltable frame="none">
+		<tgroup cols="2">
+		<colspec colsep="1" rowsep="1"/>
+		<tbody>
+			<row>
+				<entry><emphasis role="bold">%</emphasis></entry>
+				<entry>Print an actual "%"</entry>
+			</row>
+			<row>
+				<entry><emphasis role="bold">""</emphasis></entry>
+				<entry>Don't quote or escape no matter what.</entry>
+			</row>
+			<row>
+				<entry><emphasis role="bold">q</emphasis></entry>
+				<entry>This will quote and escape
+				the item using the MySQL C API
+				function mysql_escape_string()
+				if it is a string or char *,
+				or another MySQL-specific type
+				that needs to be quoted.</entry>
+			</row>
+			<row>
+				<entry><emphasis role="bold">Q</emphasis></entry>
+				<entry>Quote but don't escape
+				based on the same rules as for 'q'. This
+				can save a bit of processing time if you
+				know the strings will never need
+				quoting</entry>
+			</row>
+			<row>
+				<entry><emphasis role="bold">r</emphasis></entry>
+				<entry>Always quote and escape
+				even if it is a number.</entry>
+			</row>
+			<row>
+				<entry><emphasis role="bold">R</emphasis></entry>
+				<entry>Always quote but
+				don't escape even if it is
+				a number.</entry>
+			</row>
+		</tbody>
+		</tgroup>
+		</informaltable>
+		</blockquote>
+
+		<para>## represents a number up to two digits. It is the
+		order of parameters given to a <ulink
+		url="../../refman/html/classmysqlpp_1_1SQLQueryParms.html">SQLQueryParms</ulink>
+		object, starting from 0.</para>
+
+		<para>":name" is for an optional name which aids
+		in filling SQLQueryParms. Name can contain any
+		alpha-numeric characters or the underscore. If
+		you add this, it must start with a letter. If this
+		is not the case, add a colon after the name. If
+		you need to represent an actual colon after the
+		name, follow the name with two colons. The first
+		one will end the name and the second one won't
+		be processed.</para>
+	</sect2>
+
+
+	<sect2>
+		<title>Setting the parameters at execution time</title>
+
+		<para>To specify the parameters when
+		you want to execute a query simply
+		use <computeroutput>Query::store(const
+		SQLString &amp;parm0, [..., const SQLString
+		&amp;parm11])</computeroutput>. This
+		type of multiple overload also exists for
+		<computeroutput>Query::use()</computeroutput> and
+		<computeroutput>Query::execute()</computeroutput>.
+		'parm0' corresponds to the first parameter,
+		etc. You may specify up to 12 parameters. For
+		example:</para>
+
+		<programlisting>
+    Result res = query.store("Dinner Rolls", "item", "item", "price")</programlisting>
+
+		<para>with the template query provided above
+		would produce:</para>
+
+		<programlisting>
+    select (item, price) from stock where item = "Dinner Rolls"</programlisting>
+
+		<para>The reason we didn't put the template parameters in
+		numeric order...</para>
+
+		<programlisting>
+    select (%0:field1, %1:field2) from stock where %2:wheref = %q3:what</programlisting>
+
+		<para>...will become apparent shortly.</para>
+	</sect2>
+
+
+	<sect2>
+		<title>Using defaults</title>
+
+		<para>You can also set the parameters one at
+		a time by means of class Query's public data
+		member def. To change the values of the def,
+		simply use the subscript operator. You can
+		refer to the parameters either by number or by
+		name. The following two examples have the same effect:</para>
+
+		<programlisting>
+    query.def[0] = "Dinner Rolls"; 
+    query.def[1] = "item"; 
+    query.def[2] = "item"; 
+    query.def[3] = "price";</programlisting>
+
+		<para>and</para>
+
+		<programlisting>
+    query.def["what"] = "Dinner Rolls"; 
+    query.def["wheref"] = "item"; 
+    query.def["field1"] = "item"; 
+    query.def["field2"] = "price";</programlisting>
+
+		<para>Once all the parameters are set simply
+		execute as you would have executed the query
+		before you knew about template queries:</para>
+
+		<programlisting>
+    Result res = query.store()</programlisting>
+	</sect2>
+
+
+	<sect2>
+		<title>Combining the two</title>
+
+		<para>You can also combine the use of
+		setting the parameters at execution time and
+		setting them via the def object by calling
+		<computeroutput>Query::store()</computeroutput>
+		(or <computeroutput>use()</computeroutput>
+		or <computeroutput>execute()</computeroutput>)
+		without passing the full number of parameters
+		that the template supports:</para>
+
+		<programlisting>
+    query.def["field1"] = "item"; 
+    query.def["field2"] = "price"; 
+    Result res1 = query.store("Hamburger Buns", "item"); 
+    Result res2 = query.store(1.25, "price"); </programlisting>
+
+		<para>Would store the query:</para>
+
+		<programlisting>
+    select (item, price) from stock where item = "Hamburger Buns" </programlisting>
+
+		<para>for res1 and</para>
+
+		<programlisting>
+    select (item, price) from stock where price = 1.25 </programlisting>
+
+		<para>for res2.</para>
+
+		<para>Now you see why we ordered the placeholders
+		in the template above as we did: we used positions
+		0 and 1 for the ones we want to change frequently,
+		and used 2 and 3 for the parameters that seldom
+		change.</para>
+
+		<para>One thing to watch out for, however,
+		is that <computeroutput>Query::store(const
+		char* q)</computeroutput> is also defined for
+		executing the query q. Therefore, when you call
+		<computeroutput>Query::store()</computeroutput>
+		(or <computeroutput>use()</computeroutput>,
+		or <computeroutput>execute()</computeroutput>)
+		with only one item and that item is a const
+		char*, you need to explicitly convert it into
+		a SQLString to get the right overload:</para>
+
+		<programlisting>
+    Result res = query.store(SQLString("Hamburger Buns")); </programlisting>
+		<para></para>
+	</sect2>
+
+
+	<sect2>
+		<title>Error Handling</title>
+
+		<para>If for some reason you did not specify all
+		the parameters when executing the query and the
+		remaining parameters do not have their values
+		set via def, the query object will throw a <ulink
+		url="../../refman/html/classmysqlpp_1_1SQLQueryNEParms.html">SQLQueryNEParms</ulink>
+		object. If this happens, you
+		can get an explanation of what
+		happened by checking the value of
+		<computeroutput>SQLQueryNEParms::string</computeroutput>,
+		like so:</para>
+
+		<programlisting>
+    query.def["field1"] = "item"; 
+    query.def["field2"] = "price"; 
+    Result res = query.store(1.25); </programlisting>
+
+		<para>This would throw
+		<computeroutput>SQLQueryNEParms</computeroutput>
+		because the wheref is not specified.</para>
+
+		<para>In theory, this exception should never be
+		thrown. If the exception is thrown it probably
+		a logic error in your program.</para>
+	</sect2>
+</sect1>
+
+
+<sect1>
+	<title id="ssqls" xreflabel="Specialized SQL Structures"
+			>Specialized SQL Structures</title>
+
+	<para>The Specialized SQL Structure (SSQLS) feature lets you
+	easily define C++ structures that match the form of your SQL
+	tables. Because of the extra functionality that this feature
+	builds into these structures, MySQL++ can populate them
+	automatically when retrieving data from the database; with
+	queries returning many records, you can ask MySQL++ to populate
+	an STL container of your SSQLS records with the results. When
+	updating the database, MySQL++ can use SSQLS structures to match
+	existing data, and it can insert SSQLS structures directly into
+	the database.</para>
+
+	<para>You define an SSQLS using one of several macros. (These
+	are in the file custom.h, and in the file that it includes,
+	custom-macros.h.) There are a bunch of different macros, for
+	different purposes. The following sections will discuss each
+	macro type separately, beginning with the easiest and most
+	generally useful.</para>
+
+
+	<sect2>
+		<title>sql_create</title>
+
+		<para>This is the most basic sort of SSQLS declaration:</para>
+
+		<programlisting>
+    sql_create_5(stock, 0, 0,     
+            string, item,
+            int, num,                  
+            double, weight,  
+            double, price,  
+            mysqlpp::Date, date)</programlisting>
+
+		<para>This creates a C++ structure called 'stock'
+		containing five member variables, along with some
+		constructors and other member functions useful with
+		MySQL++.</para>
+
+		<para>One of the generated constructors takes a reference
+		to a mysqlpp::Row object, allowing you to easily populate
+		a vector of stocks like so:</para>
+
+		<programlisting>
+    vector&lt;stock&gt; result; 
+    query.storein(result);</programlisting>
+
+		<para>That's all there is to it. The only requirements
+		are that the table structure be compatible with the
+		SSQLS's member variables, and that the fields are in
+		the same order.</para>
+
+		<para>The general format of this set of macros is:</para>
+
+		<programlisting>
+    sql_create_#(NAME, KEYS, INITPARMS, TYPE1, ITEM1, ... TYPE#, ITEM#)</programlisting>
+
+		<para>Where # is the number of member variables,
+		NAME is the name of the structure you wish to create,
+		TYPE<emphasis>x</emphasis> is the type name for a
+		member variable, and ITEM<emphasis>x</emphasis> is that
+		variable's name.</para>
+
+		<para>The KEYS and INITPARMS arguments can always be zero,
+		to keep things simple. We will discuss what happens if
+		you use different values in the next few sections.</para>
+	</sect2>
+
+
+	<sect2>
+		<title>sql_create with Compare</title>
+
+		<para>SSQLS structures can also have member functions that
+		allow you to compare one structure to another. You simply
+		change the first 0 in the previous example (KEYS) to a
+		higher value. If this number is N, then two structures
+		are considered equal if the first N members of each
+		are equal.</para>
+
+		<para>For example:</para>
+
+		<programlisting>
+    sql_create_5(stock, 1, 0,     
+            string, item,
+            int, num,                  
+            double, weight,  
+            double, price,  
+            mysqlpp::Date, date)</programlisting>
+
+		<para>Here we are saying that the 'item' field is a kind
+		of key field: it is always unique between any two 'stock'
+		items, so if two stock records have equal item values,
+		they are the same stock item.</para>
+
+		<para>That change adds the following members to the
+		SSQLS:</para>
+
+		<programlisting>
+    struct stock {
+      ...  
+      stock (const std::string &amp;p1); 
+      set (const std::string &amp;p1); 
+      bool operator == (const stock &amp;other) const;  
+      bool operator != (const stock &amp;other) const;   
+      bool operator &gt; (const stock &amp;other) const;   
+      bool operator &lt; (const stock &amp;other) const;   
+      bool operator &gt;= (const stock &amp;other) const;   
+      bool operator &lt;= (const stock &amp;other) const;   
+      int cmp (const stock &amp;other) const;  
+      int compare (const stock &amp;other) const;  
+    }  
+      
+    int compare (const stock &amp;x, const stock &amp;y);</programlisting>
+
+		<para>The global
+		<computeroutput>compare()</computeroutput>
+		function compares x to y and returns &lt;0 if
+		x &lt; y, 0 if x = y, and &gt;0 if x &gt; y.
+		<computeroutput>stock::cmp()</computeroutput> and
+		<computeroutput>stock::compare()</computeroutput>
+		are the same thing as <computeroutput>compare(*this,
+		other)</computeroutput>.</para>
+
+		<para>The additional constructor initializes the key
+		fields of the structure and leaves the other member
+		variables undefined. This is useful for creating temporary
+		objects to use for comparisons like <computeroutput>x
+		&lt;= stock("Hotdog")</computeroutput>.</para>
+
+		<para>Because stock is now less-than-comparable you
+		can store the query results in an STL associative
+		container:</para>
+
+		<programlisting>
+    std::set&lt;stock&gt; result;   
+    query.storein(result);</programlisting>
+
+		<para>And you can now use it like any other set:</para>
+
+		<programlisting>
+    cout &lt;&lt; result.lower_bound(stock("Hamburger"))-&gt;item &lt;&lt; endl;</programlisting>
+
+		<para>This will return the first item that begins with
+		"Hamburger".</para>
+
+		<para>You can also use it will any STL algorithm that
+		require the values to be less-than-comparable.</para>
+	</sect2>
+
+
+	<sect2>
+		<title>sql_create with Additional Initializers</title>
+
+		<para>If third parameter for this macro (INITPARMS) is
+		nonzero, the SSQLS will have two additional members
+		functions that make it easier to initialize the
+		structure's data members. For example:</para>
+
+		<programlisting>
+    sql_create_5(stock, 1, 5,   
+            string, item,
+            int, num,                  
+            double, weight,  
+            double, price,  
+            mysqlpp::Date, date)</programlisting>
+
+		<para>will add these functions to the structure relative to
+		that in the previous example:</para>
+
+		<programlisting>
+    struct stock {   
+      ...  
+      stock(const string&amp;, const int&amp;, const double&amp;,  
+            const double&amp;, const mysqlpp::Date&amp;);  
+      set(const string&amp;, const int&amp;, const double&amp;,  
+          const double&amp;, const mysqlpp::Date&amp;);  
+    }</programlisting>
+
+		<para>There is one trick with this: because each SSQLS
+		has at least one other constructor besides the one
+		defined by this feature, not every logical value for
+		INITPARMS results in working code. A simple example is
+		setting KEYS and INITPARMS to the same value: you get
+		two identical constructor definitions, so the compiler
+		refuses to compile the code. If you are getting compiler
+		errors having to do with duplicate definitions, try
+		changing this value to zero.</para>
+	</sect2>
+
+
+	<sect2>
+		<title>Additional Features of Specialized SQL Structures</title>
+		
+		<para>Up to this point, we haven't been using
+		all of the features in the SSQLS structures
+		we've been generating. We could have used the
+		<computeroutput>sql_create_basic_*</computeroutput>
+		macros instead, which would have worked just as well
+		for what we've seen so far, and the generated code would
+		have been smaller.</para>
+
+		<para>Why is it worth ignoring the "basic" variants of
+		these macros, then? Consider this:</para>
+
+		<programlisting>
+    query.insert(s);</programlisting>
+
+		<para>this does exactly what you think it does:
+		it inserts 's' into the database. this is possible
+		because a standard ssqls has functions that the
+		query object can call to get the list of fields
+		and such, which it uses to build an insert query.
+		<computeroutput>query::update()</computeroutput> and
+		<computeroutput>query::replace()</computeroutput> also
+		rely on this ssqls feature. a basic ssqls lacks these
+		functions.</para>
+
+		<para>another feature of standard ssqlses you might find
+		a use for is changing the table name used in queries. by
+		default, the table in the mysql database is assumed to
+		have the same name as the ssqls structure type.  but if
+		this is inconvenient, you can globally change the table
+		name used in queries like this:</para>
+
+		<programlisting>
+    stock::table() = "mystockdata";</programlisting>
+
+		<para>at this point, we've seen all the major aspects
+		of the ssqls feature. the following sections look at
+		some alternate methods for constructing ssqlses.</para>
+	</sect2>
+
+
+	<sect2>
+		<title>alternate creation methods</title>
+
+		<para>if for some reason you want your ssqls data members to
+		have different names than used in the mysql database, you can do
+		so like this:</para>
+
+		<programlisting>
+    sql_create_c_names_5(stock, 1, 5,        
+            string, item, "item",
+            int, num, "quantity",  
+            double, weight, "weight",  
+            double, price, "price"  
+            mysqlpp::Date, date, "shipment")</programlisting>
+
+		<para>If you want your SSQLS to have its data members
+		in a different order from those in the MySQL table,
+		you can do it like this:</para>
+
+		<programlisting>
+    sql_create_c_order_5(stock, 2, 5,   
+            mysqlpp::Date, date, 5,
+            double, price, 4,   
+            string, item, 1,    
+            int, num, 2,   
+            double, weight, 3)</programlisting>
+
+		<para>You can combine the custom names and custom ordering like
+		this:</para>
+
+		<programlisting>
+    sql_create_complete_5(stock, 2, 5,   
+            mysqlpp::date, date, "shipment", 5,
+            double, price, "price", 4,
+            string, item, "item", 1,
+            int, num, "quantity", 2,
+            double, weight, "weight", 3)</programlisting>
+
+		<para>all three of these macro types have "basic"
+		variants that work the same way. again, basic ssqlses
+		lack the features necessary for automatic insert, update
+		and replace query creation.</para>
+	</sect2>
+
+
+	<sect2>
+		<title>expanding ssqls macros</title>
+
+		<para>if you ever need to see the code that a given ssqls
+		declaration expands out to, use the utility
+		<computeroutput>doc/ssqls-pretty</computeroutput>, like so:</para>
+
+		<programlisting>
+    ssqls-pretty &lt; myprog.cpp |less</programlisting>
+
+		<para>This locates the first SSQLS declaration in that
+		file and uses the C++ preprocessor to expand that
+		macro. You may have to change the script to tell it
+		where your MySQL++ header files are.</para>
+	</sect2>
+
+
+	<sect2>
+		<title>Extending the SSQLS Mechanism</title>
+
+		<para>The SSQLS headers &mdash; custom.h and
+		custom-macros.h &mdash; are automatically generated
+		by the Perl script custom.pl. Although it is possible
+		to change this script to get additional functionality,
+		it's usually better to do that through inheritance.</para>
+		
+		<para>A regular user may find it helpful to change the the
+		limit on the maximum number of SSQLS data members allowed.
+		It's 25 out of the box. A smaller value may speed up
+		compile time, or you may require a higher value because
+		you have more complex tables than that. Simply change the
+		<computeroutput>max_data_members</computeroutput> variable
+		at the top of custom.pl and say 'make'. The limit for
+		Visual C++ is 31, according to one report. There doesn't
+		seem to be a practical limit with GCC 3.3 at least: I
+		set the limit to 100 and the only thing that happened is
+		that custom-macros.h went from 1.3 MB to 18 MB and the
+		build time for examples/custom.* got a lot longer.</para>
+	</sect2>
+</sect1>
+
+
+<sect1>
+	<title>Licensing</title>
+
+	<para>The primary copyright holders on MySQL++ are Kevin Atkinson
+	(1998), MySQL AB (1999 through 2001) and Educational Technology
+	Resources, Inc. (2004 through the date of this writing). This
+	library is released under the GNU Lesser General Public License
+	(LGPL), so all other contributions are also under the LGPL.</para>
+
+<sect2>
+	<title>GNU Lesser General Public License</title>
+	<subtitle>Version 2.1, February 1999</subtitle>
+
+	<para>Copyright (C) 1991, 1999 Free Software Foundation, Inc.
+	59 Temple Place, Suite 330, Boston, MA	02111-1307  USA Everyone
+	is permitted to copy and distribute verbatim copies of this
+	license document, but changing it is not allowed.</para>
+
+	<para>[This is the first released version of the Lesser GPL.
+	It also counts as the successor of the GNU Library Public License,
+	version 2, hence the version number 2.1.]</para>
+
+	<sect3>
+		<title>Preamble</title>
+
+		<para>The licenses for most software are designed to take
+		away your freedom to share and change it.  By contrast,
+		the GNU General Public Licenses are intended to guarantee
+		your freedom to share and change free software--to make
+		sure the software is free for all its users.</para>
+
+		<para>This license, the Lesser General Public License,
+		applies to some specially designated software
+		packages--typically libraries--of the Free Software
+		Foundation and other authors who decide to use it.  You
+		can use it too, but we suggest you first think carefully
+		about whether this license or the ordinary General Public
+		License is the better strategy to use in any particular
+		case, based on the explanations below.</para>
+
+		<para>When we speak of free software, we are referring to
+		freedom of use, not price.  Our General Public Licenses
+		are designed to make sure that you have the freedom to
+		distribute copies of free software (and charge for this
+		service if you wish); that you receive source code or can
+		get it if you want it; that you can change the software
+		and use pieces of it in new free programs; and that you
+		are informed that you can do these things.</para>
+
+		<para>To protect your rights, we need to make restrictions
+		that forbid distributors to deny you these rights or to
+		ask you to surrender these rights.  These restrictions
+		translate to certain responsibilities for you if you
+		distribute copies of the library or if you modify
+		it.</para>
+
+		<para>For example, if you distribute copies of the
+		library, whether gratis or for a fee, you must give the
+		recipients all the rights that we gave you.  You must make
+		sure that they, too, receive or can get the source code.
+		If you link other code with the library, you must provide
+		complete object files to the recipients, so that they
+		can relink them with the library after making changes
+		to the library and recompiling it.  And you must show
+		them these terms so they know their rights.</para>
+
+		<para>We protect your rights with a two-step method:
+		(1) we copyright the library, and (2) we offer you
+		this license, which gives you legal permission to copy,
+		distribute and/or modify the library.</para>
+
+		<para>To protect each distributor, we want to make it very
+		clear that there is no warranty for the free library.
+		Also, if the library is modified by someone else and
+		passed on, the recipients should know that what they
+		have is not the original version, so that the original
+		author's reputation will not be affected by problems
+		that might be introduced by others.</para>
+
+		<para>Finally, software patents pose a constant threat to
+		the existence of any free program.  We wish to make sure
+		that a company cannot effectively restrict the users of
+		a free program by obtaining a restrictive license from
+		a patent holder.  Therefore, we insist that any patent
+		license obtained for a version of the library must be
+		consistent with the full freedom of use specified in
+		this license.</para>
+
+		<para>Most GNU software, including some libraries,
+		is covered by the ordinary GNU General Public License.
+		This license, the GNU Lesser General Public License,
+		applies to certain designated libraries, and is quite
+		different from the ordinary General Public License.  We
+		use this license for certain libraries in order to permit
+		linking those libraries into non-free programs.</para>
+
+		<para>When a program is linked with a library, whether
+		statically or using a shared library, the combination of
+		the two is legally speaking a combined work, a derivative
+		of the original library.  The ordinary General Public
+		License therefore permits such linking only if the entire
+		combination fits its criteria of freedom.  The Lesser
+		General Public License permits more lax criteria for
+		linking other code with the library.</para>
+
+		<para>We call this license the "Lesser" General Public
+		License because it does Less to protect the user's
+		freedom than the ordinary General Public License.
+		It also provides other free software developers Less
+		of an advantage over competing non-free programs.
+		These disadvantages are the reason we use the ordinary
+		General Public License for many libraries.  However,
+		the Lesser license provides advantages in certain special
+		circumstances.</para>
+
+		<para>For example, on rare occasions, there may be a
+		special need to encourage the widest possible use of a
+		certain library, so that it becomes a de-facto standard.
+		To achieve this, non-free programs must be allowed to use
+		the library.  A more frequent case is that a free library
+		does the same job as widely used non-free libraries.
+		In this case, there is little to gain by limiting the
+		free library to free software only, so we use the Lesser
+		General Public License.</para>
+
+		<para>In other cases, permission to use a particular
+		library in non-free programs enables a greater number of
+		people to use a large body of free software.  For example,
+		permission to use the GNU C Library in non-free programs
+		enables many more people to use the whole GNU operating
+		system, as well as its variant, the GNU/Linux operating
+		system.</para>
+
+		<para>Although the Lesser General Public License is Less
+		protective of the users' freedom, it does ensure that
+		the user of a program that is linked with the Library
+		has the freedom and the wherewithal to run that program
+		using a modified version of the Library.</para>
+
+		<para>The precise terms and conditions for copying,
+		distribution and modification follow.  Pay close attention
+		to the difference between a "work based on the library"
+		and a "work that uses the library".  The former contains
+		code derived from the library, whereas the latter must
+		be combined with the library in order to run.</para>
+	</sect3>
+
+
+	<sect3>
+		<title>GNU LESSER GENERAL PUBLIC LICENSE</title>
+		<subtitle>TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND
+			MODIFICATION</subtitle>
+
+		<para>0. This License Agreement applies to any software
+		library or other program which contains a notice placed
+		by the copyright holder or other authorized party saying
+		it may be distributed under the terms of this Lesser
+		General Public License (also called "this License").
+		Each licensee is addressed as "you".</para>
+
+		<para>A "library" means a collection of software functions
+		and/or data prepared so as to be conveniently linked with
+		application programs (which use some of those functions
+		and data) to form executables.</para>
+
+		<para>The "Library", below, refers to any such software
+		library or work which has been distributed under these
+		terms.	A "work based on the Library" means either the
+		Library or any derivative work under copyright law: that
+		is to say, a work containing the Library or a portion
+		of it, either verbatim or with modifications and/or
+		translated straightforwardly into another language.
+		(Hereinafter, translation is included without limitation
+		in the term "modification".)</para>
+
+		<para>"Source code" for a work means the preferred form of
+		the work for making modifications to it.  For a library,
+		complete source code means all the source code for all
+		modules it contains, plus any associated interface
+		definition files, plus the scripts used to control
+		compilation and installation of the library.</para>
+
+		<para>Activities other than copying, distribution and
+		modification are not covered by this License; they are
+		outside its scope.  The act of running a program using
+		the Library is not restricted, and output from such a
+		program is covered only if its contents constitute a
+		work based on the Library (independent of the use of
+		the Library in a tool for writing it).	Whether that
+		is true depends on what the Library does and what the
+		program that uses the Library does.</para>
+
+		<para>1. You may copy and distribute verbatim copies
+		of the Library's complete source code as you receive
+		it, in any medium, provided that you conspicuously
+		and appropriately publish on each copy an appropriate
+		copyright notice and disclaimer of warranty; keep intact
+		all the notices that refer to this License and to the
+		absence of any warranty; and distribute a copy of this
+		License along with the Library.</para>
+
+		<para>You may charge a fee for the physical act of
+		transferring a copy, and you may at your option offer
+		warranty protection in exchange for a fee.</para>
+
+		<para>2. You may modify your copy or copies of the Library
+		or any portion of it, thus forming a work based on the
+		Library, and copy and distribute such modifications or
+		work under the terms of Section 1 above, provided that
+		you also meet all of these conditions:</para>
+
+		<blockquote>
+			<para>a) The modified work must itself be a
+			software library.</para>
+
+			<para>b) You must cause the files modified to
+			carry prominent notices stating that you changed
+			the files and the date of any change.</para>
+
+			<para>c) You must cause the whole of the work
+			to be licensed at no charge to all third parties
+			under the terms of this License.</para>
+
+			<para>d) If a facility in the modified Library
+			refers to a function or a table of data to
+			be supplied by an application program that
+			uses the facility, other than as an argument
+			passed when the facility is invoked, then you
+			must make a good faith effort to ensure that,
+			in the event an application does not supply such
+			function or table, the facility still operates,
+			and performs whatever part of its purpose remains
+			meaningful.</para>
+
+			<para>(For example, a function in a library
+			to compute square roots has a purpose that
+			is entirely well-defined independent of the
+			application.  Therefore, Subsection 2d requires
+			that any application-supplied function or table
+			used by this function must be optional: if the
+			application does not supply it, the square root
+			function must still compute square roots.)</para>
+		</blockquote>
+
+		<para>These requirements apply to the modified work as
+		a whole.  If identifiable sections of that work are not
+		derived from the Library, and can be reasonably considered
+		independent and separate works in themselves, then this
+		License, and its terms, do not apply to those sections
+		when you distribute them as separate works.  But when you
+		distribute the same sections as part of a whole which is a
+		work based on the Library, the distribution of the whole
+		must be on the terms of this License, whose permissions
+		for other licensees extend to the entire whole, and thus
+		to each and every part regardless of who wrote it.</para>
+
+		<para>Thus, it is not the intent of this section to claim
+		rights or contest your rights to work written entirely
+		by you; rather, the intent is to exercise the right to
+		control the distribution of derivative or collective
+		works based on the Library.</para>
+
+		<para>In addition, mere aggregation of another work
+		not based on the Library with the Library (or with a
+		work based on the Library) on a volume of a storage or
+		distribution medium does not bring the other work under
+		the scope of this License.</para>
+
+		<para>3. You may opt to apply the terms of the ordinary
+		GNU General Public License instead of this License to a
+		given copy of the Library.  To do this, you must alter
+		all the notices that refer to this License, so that
+		they refer to the ordinary GNU General Public License,
+		version 2, instead of to this License.	(If a newer
+		version than version 2 of the ordinary GNU General Public
+		License has appeared, then you can specify that version
+		instead if you wish.)  Do not make any other change in
+		these notices.</para>
+
+		<para>Once this change is made in a given copy, it is
+		irreversible for that copy, so the ordinary GNU General
+		Public License applies to all subsequent copies and
+		derivative works made from that copy.</para>
+
+		<para>This option is useful when you wish to copy part
+		of the code of the Library into a program that is not
+		a library.</para>
+
+		<para>4. You may copy and distribute the Library (or a
+		portion or derivative of it, under Section 2) in object
+		code or executable form under the terms of Sections 1 and
+		2 above provided that you accompany it with the complete
+		corresponding machine-readable source code, which must be
+		distributed under the terms of Sections 1 and 2 above on
+		a medium customarily used for software interchange.</para>
+
+		<para>If distribution of object code is made by offering
+		access to copy from a designated place, then offering
+		equivalent access to copy the source code from the same
+		place satisfies the requirement to distribute the source
+		code, even though third parties are not compelled to
+		copy the source along with the object code.</para>
+
+		<para>5. A program that contains no derivative of any
+		portion of the Library, but is designed to work with the
+		Library by being compiled or linked with it, is called a
+		"work that uses the Library".  Such a work, in isolation,
+		is not a derivative work of the Library, and therefore
+		falls outside the scope of this License.</para>
+
+		<para>However, linking a "work that uses the Library" with
+		the Library creates an executable that is a derivative
+		of the Library (because it contains portions of the
+		Library), rather than a "work that uses the library".
+		The executable is therefore covered by this License.
+		Section 6 states terms for distribution of such
+		executables.</para>
+
+		<para>When a "work that uses the Library" uses material
+		from a header file that is part of the Library, the
+		object code for the work may be a derivative work
+		of the Library even though the source code is not.
+		Whether this is true is especially significant if the
+		work can be linked without the Library, or if the work
+		is itself a library.  The threshold for this to be true
+		is not precisely defined by law.</para>
+
+		<para>If such an object file uses only numerical
+		parameters, data structure layouts and accessors, and
+		small macros and small inline functions (ten lines or
+		less in length), then the use of the object file is
+		unrestricted, regardless of whether it is legally a
+		derivative work.  (Executables containing this object
+		code plus portions of the Library will still fall under
+		Section 6.)</para>
+
+		<para>Otherwise, if the work is a derivative of the
+		Library, you may distribute the object code for the work
+		under the terms of Section 6.  Any executables containing
+		that work also fall under Section 6, whether or not they
+		are linked directly with the Library itself.</para>
+
+		<para>6. As an exception to the Sections above, you
+		may also combine or link a "work that uses the Library"
+		with the Library to produce a work containing portions
+		of the Library, and distribute that work under terms of
+		your choice, provided that the terms permit modification
+		of the work for the customer's own use and reverse
+		engineering for debugging such modifications.</para>
+
+		<para>You must give prominent notice with each copy of the
+		work that the Library is used in it and that the Library
+		and its use are covered by this License.  You must supply
+		a copy of this License.  If the work during execution
+		displays copyright notices, you must include the copyright
+		notice for the Library among them, as well as a reference
+		directing the user to the copy of this License.  Also,
+		you must do one of these things:</para>
+
+		<blockquote>
+			<para>a) Accompany the work with the complete
+			corresponding machine-readable source code for
+			the Library including whatever changes were
+			used in the work (which must be distributed
+			under Sections 1 and 2 above); and, if the work
+			is an executable linked with the Library, with
+			the complete machine-readable "work that uses
+			the Library", as object code and/or source code,
+			so that the user can modify the Library and then
+			relink to produce a modified executable containing
+			the modified Library.  (It is understood that
+			the user who changes the contents of definitions
+			files in the Library will not necessarily be
+			able to recompile the application to use the
+			modified definitions.)</para>
+
+			<para>b) Use a suitable shared library mechanism
+			for linking with the Library.  A suitable
+			mechanism is one that (1) uses at run time
+			a copy of the library already present on the
+			user's computer system, rather than copying
+			library functions into the executable, and (2)
+			will operate properly with a modified version of
+			the library, if the user installs one, as long as
+			the modified version is interface-compatible with
+			the version that the work was made with.</para>
+
+			<para>c) Accompany the work with a written offer,
+			valid for at least three years, to give the same
+			user the materials specified in Subsection 6a,
+			above, for a charge no more than the cost of
+			performing this distribution.</para>
+
+			<para>d) If distribution of the work is made
+			by offering access to copy from a designated
+			place, offer equivalent access to copy the above
+			specified materials from the same place.</para>
+
+			<para>e) Verify that the user has already
+			received a copy of these materials or that you
+			have already sent this user a copy.</para>
+		</blockquote>
+
+		<para>For an executable, the required form of the "work
+		that uses the Library" must include any data and utility
+		programs needed for reproducing the executable from it.
+		However, as a special exception, the materials to be
+		distributed need not include anything that is normally
+		distributed (in either source or binary form) with the
+		major components (compiler, kernel, and so on) of the
+		operating system on which the executable runs, unless
+		that component itself accompanies the executable.</para>
+
+		<para>It may happen that this requirement contradicts
+		the license restrictions of other proprietary libraries
+		that do not normally accompany the operating system.
+		Such a contradiction means you cannot use both them
+		and the Library together in an executable that you
+		distribute.</para>
+
+		<para>7. You may place library facilities that are a work
+		based on the Library side-by-side in a single library
+		together with other library facilities not covered by
+		this License, and distribute such a combined library,
+		provided that the separate distribution of the work
+		based on the Library and of the other library facilities
+		is otherwise permitted, and provided that you do these
+		two things:</para>
+
+		<blockquote>
+			<para>a) Accompany the combined library with
+			a copy of the same work based on the Library,
+			uncombined with any other library facilities.
+			This must be distributed under the terms of the
+			Sections above.</para>
+
+			<para>b) Give prominent notice with the combined
+			library of the fact that part of it is a work
+			based on the Library, and explaining where to
+			find the accompanying uncombined form of the
+			same work.</para>
+		</blockquote>
+
+		<para>8. You may not copy, modify, sublicense, link with,
+		or distribute the Library except as expressly provided
+		under this License.  Any attempt otherwise to copy,
+		modify, sublicense, link with, or distribute the Library
+		is void, and will automatically terminate your rights
+		under this License.  However, parties who have received
+		copies, or rights, from you under this License will not
+		have their licenses terminated so long as such parties
+		remain in full compliance.</para>
+
+		<para>9. You are not required to accept this License,
+		since you have not signed it.  However, nothing else
+		grants you permission to modify or distribute the Library
+		or its derivative works.  These actions are prohibited
+		by law if you do not accept this License.  Therefore,
+		by modifying or distributing the Library (or any work
+		based on the Library), you indicate your acceptance of
+		this License to do so, and all its terms and conditions
+		for copying, distributing or modifying the Library or
+		works based on it.</para>
+
+		<para>10. Each time you redistribute the Library (or any
+		work based on the Library), the recipient automatically
+		receives a license from the original licensor to copy,
+		distribute, link with or modify the Library subject to
+		these terms and conditions.  You may not impose any
+		further restrictions on the recipients' exercise of
+		the rights granted herein.  You are not responsible
+		for enforcing compliance by third parties with this
+		License.</para>
+
+		<para>11. If, as a consequence of a court judgment or
+		allegation of patent infringement or for any other reason
+		(not limited to patent issues), conditions are imposed on
+		you (whether by court order, agreement or otherwise) that
+		contradict the conditions of this License, they do not
+		excuse you from the conditions of this License.  If you
+		cannot distribute so as to satisfy simultaneously your
+		obligations under this License and any other pertinent
+		obligations, then as a consequence you may not distribute
+		the Library at all.  For example, if a patent license
+		would not permit royalty-free redistribution of the
+		Library by all those who receive copies directly or
+		indirectly through you, then the only way you could
+		satisfy both it and this License would be to refrain
+		entirely from distribution of the Library.</para>
+
+		<para>If any portion of this section is held invalid
+		or unenforceable under any particular circumstance,
+		the balance of the section is intended to apply, and
+		the section as a whole is intended to apply in other
+		circumstances.</para>
+
+		<para>It is not the purpose of this section to induce
+		you to infringe any patents or other property right
+		claims or to contest validity of any such claims;
+		this section has the sole purpose of protecting the
+		integrity of the free software distribution system
+		which is implemented by public license practices.
+		Many people have made generous contributions to the
+		wide range of software distributed through that system
+		in reliance on consistent application of that system;
+		it is up to the author/donor to decide if he or she is
+		willing to distribute software through any other system
+		and a licensee cannot impose that choice.</para>
+
+		<para>This section is intended to make thoroughly clear
+		what is believed to be a consequence of the rest of
+		this License.</para>
+
+		<para>12. If the distribution and/or use of the Library
+		is restricted in certain countries either by patents or
+		by copyrighted interfaces, the original copyright holder
+		who places the Library under this License may add an
+		explicit geographical distribution limitation excluding
+		those countries, so that distribution is permitted only
+		in or among countries not thus excluded.  In such case,
+		this License incorporates the limitation as if written
+		in the body of this License.</para>
+
+		<para>13. The Free Software Foundation may publish revised
+		and/or new versions of the Lesser General Public License
+		from time to time.  Such new versions will be similar in
+		spirit to the present version, but may differ in detail
+		to address new problems or concerns.</para>
+
+		<para>Each version is given a distinguishing version
+		number.  If the Library specifies a version number
+		of this License which applies to it and "any later
+		version", you have the option of following the terms
+		and conditions either of that version or of any later
+		version published by the Free Software Foundation.
+		If the Library does not specify a license version number,
+		you may choose any version ever published by the Free
+		Software Foundation.</para>
+
+		<para>14. If you wish to incorporate parts of the
+		Library into other free programs whose distribution
+		conditions are incompatible with these, write to the
+		author to ask for permission.  For software which is
+		copyrighted by the Free Software Foundation, write to the
+		Free Software Foundation; we sometimes make exceptions
+		for this.  Our decision will be guided by the two goals
+		of preserving the free status of all derivatives of our
+		free software and of promoting the sharing and reuse of
+		software generally.</para>
+
+		<para>NO WARRANTY</para>
+
+		<para>15. BECAUSE THE LIBRARY IS LICENSED FREE OF CHARGE,
+		THERE IS NO WARRANTY FOR THE LIBRARY, TO THE EXTENT
+		PERMITTED BY APPLICABLE LAW.  EXCEPT WHEN OTHERWISE
+		STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER
+		PARTIES PROVIDE THE LIBRARY "AS IS" WITHOUT WARRANTY OF
+		ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT
+		LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+		FITNESS FOR A PARTICULAR PURPOSE.  THE ENTIRE RISK AS TO
+		THE QUALITY AND PERFORMANCE OF THE LIBRARY IS WITH YOU.
+		SHOULD THE LIBRARY PROVE DEFECTIVE, YOU ASSUME THE COST
+		OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.</para>
+
+		<para>16. IN NO EVENT UNLESS REQUIRED BY APPLICABLE
+		LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER,
+		OR ANY OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE
+		THE LIBRARY AS PERMITTED ABOVE, BE LIABLE TO YOU FOR
+		DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR
+		CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY
+		TO USE THE LIBRARY (INCLUDING BUT NOT LIMITED TO LOSS OF
+		DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED
+		BY YOU OR THIRD PARTIES OR A FAILURE OF THE LIBRARY TO
+		OPERATE WITH ANY OTHER SOFTWARE), EVEN IF SUCH HOLDER
+		OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
+		SUCH DAMAGES.</para>
+
+		<para>END OF TERMS AND CONDITIONS</para>
+	</sect3>
+
+
+	<sect3>
+		<title>How to Apply These Terms to Your New
+		Libraries</title>
+
+		<para>If you develop a new library, and you want it to be
+		of the greatest possible use to the public, we recommend
+		making it free software that everyone can redistribute
+		and change.  You can do so by permitting redistribution
+		under these terms (or, alternatively, under the terms
+		of the ordinary General Public License).</para>
+
+		<para>To apply these terms, attach the following notices
+		to the library.  It is safest to attach them to the
+		start of each source file to most effectively convey
+		the exclusion of warranty; and each file should have at
+		least the "copyright" line and a pointer to where the
+		full notice is found.</para>
+
+		<blockquote>
+			<para>&lt;one line to give the library's name
+			and a brief idea of what it does.&gt;</para>
+
+			<para>Copyright &copy; &lt;year&gt; &lt;name
+			of author&gt;</para>
+
+			<para>This library is free software; you can
+			redistribute it and/or modify it under the
+			terms of the GNU Lesser General Public License
+			as published by the Free Software Foundation;
+			either version 2.1 of the License, or (at your
+			option) any later version.</para>
+
+			<para>This library is distributed in the
+			hope that it will be useful, but WITHOUT ANY
+			WARRANTY; without even the implied warranty of
+			MERCHANTABILITY or FITNESS FOR A PARTICULAR
+			PURPOSE.  See the GNU Lesser General Public
+			License for more details.</para>
+
+			<para>You should have received a copy of the GNU
+			Lesser General Public License along with this
+			library; if not, write to the Free Software
+			Foundation, Inc., 59 Temple Place, Suite 330,
+			Boston, MA 02111-1307 USA</para>
+		</blockquote>
+
+		<para>Also add information on how to contact you by
+		electronic and paper mail.</para>
+
+		<para>You should also get your employer (if you work
+		as a programmer) or your school, if any, to sign a
+		"copyright disclaimer" for the library, if necessary.
+		Here is a sample; alter the names:</para>
+
+		<blockquote>
+			<para>Yoyodyne, Inc., hereby disclaims all
+			copyright interest in the library `Frob' (a
+			library for tweaking knobs) written by James
+			Random Hacker.</para>
+
+			<para>&lt;signature of Ty Coon&gt;, 1 April
+			1990</para>
+
+			<para>Ty Coon, President of Vice</para>
+		</blockquote>
+
+		<para>That's all there is to it!</para>
+	</sect3>
+</sect2>
+</sect1>
+</article>
+

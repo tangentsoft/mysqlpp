@@ -83,6 +83,9 @@ const mysql_type_info::sql_type_info mysql_type_info::types[62] = {
 const mysql_type_info::sql_type_info_lookup
 		mysql_type_info::lookups(mysql_type_info::types, 62);
 
+/// \if INTERNAL
+// Doxygen will not generate documentation for this section.
+
 mysql_ti_sql_type_info_lookup::mysql_ti_sql_type_info_lookup(
 		const sql_type_info types[], const int size)
 {
@@ -92,6 +95,8 @@ mysql_ti_sql_type_info_lookup::mysql_ti_sql_type_info_lookup(
 		}
 	}
 }
+
+/// \endif
 
 unsigned char mysql_type_info::type(enum_field_types t,
 		bool _unsigned, bool _null) 

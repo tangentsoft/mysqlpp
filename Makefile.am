@@ -1,5 +1,27 @@
-EXTRA_DIST = bootstrap common.am doc devel LGPL *.spec *.ebuild \
-		Wishlist *.vcproj *.sln README.* config/*.m4
+EXTRA_DIST = \
+	CREDITS \
+	HACKERS \
+	LGPL \
+	README.* \
+	Wishlist \
+	bootstrap \
+	common.am \
+	config/*.m4 \
+	doc/mysqlpp-refman.pdf \
+	doc/mysqlpp-userman.pdf \
+	doc/README* \
+	doc/ssqls-pretty \
+	doc/refman/html \
+	doc/userman/*.in \
+	doc/userman/*.xml \
+	doc/userman/html \
+	doc/userman/findxsl \
+	doc/userman/Makefile \
+	doc/userman/README \
+	*.ebuild \
+	*.spec \
+	*.sln \
+	*.vcproj
 
 #SUBDIRS = lib examples doc
 SUBDIRS = lib @OPTIONAL_EXAMPLES@
@@ -24,3 +46,13 @@ ebuild: dist
 	cp $(distdir).tar.gz /usr/portage/distfiles
 	cp mysql++.ebuild /usr/portage/dev-db/mysql++/$(distdir).ebuild
 	ebuild /usr/portage/dev-db/mysql++/$(distdir).ebuild digest
+
+docs: doc/mysqlpp-refman.pdf doc/mysqlpp-userman.pdf
+
+
+doc/mysqlpp-refman.pdf: lib/*.h
+	( cd lib ; make refman )
+
+doc/mysqlpp-userman.pdf: doc/userman/userman.xml
+	( cd doc/userman ; make && make pdf )
+

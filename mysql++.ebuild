@@ -23,8 +23,7 @@ src_unpack() {
 src_compile() {
 	gnuconfig_update
 	local myconf
-	# we want C++ exceptions turned on
-	myconf="--enable-exception"
+	myconf="--disable-examples"
 	# We do this because of the large number of header files installed
 	# to the include directory
 	# This is a breakage compared to previous versions that installed
@@ -38,7 +37,7 @@ src_compile() {
 	# configure
 	CFLAGS="${CFLAGS}" CXXFLAGS="${CFLAGS} ${CXXFLAGS}" \
 	econf \
-		--enable-exception \
+		--disable-examples \
 		--includedir=/usr/include/mysql++ || die "econf failed"
 
 	emake || die "unable to make"

@@ -1,7 +1,12 @@
-////////////////////////////////////////////////////////////////////////
-// platform.h - This file includes things that help the rest of MySQL++
-//		remain unaware of platform differences.
-////////////////////////////////////////////////////////////////////////
+/// \file platform.h
+/// \brief This file includes things that help the rest of MySQL++
+//	remain unaware of platform differences.
+///
+/// This file includes all of the platform-specific definitions that
+/// allow the rest of the code to be aware only of platform features,
+/// rather than aware of specific platforms.  On Unixy systems, it
+/// #includes the autoconf-generated header config.h, and on all other
+/// platforms it includes the tests for platform features directly.
 
 #if defined(__WIN32__) || defined(_WIN32)
 	// Windows compiler support.  Tested with Microsoft Visual C++,

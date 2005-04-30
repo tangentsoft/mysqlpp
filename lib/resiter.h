@@ -1,6 +1,14 @@
 #ifndef MYSQLPP_RESITER_H
 #define MYSQLPP_RESITER_H
 
+/// \file resiter.h
+/// \brief Declares templates for adapting existing classes to
+/// be iteratable random-access containers.
+///
+/// The file name seems to tie it to the mysqlpp::Result class, which
+/// is so adapted, but these templates are also used to adapt the
+/// mysqlpp::Fields and mysqlpp::Row classes.
+
 #include "defs.h"
 
 #include <iterator>
@@ -10,46 +18,52 @@ namespace mysqlpp {
 template <class OnType, class ReturnType, class SizeType, class DiffType>
 class subscript_iterator;
 
-//: A container adapter to make a container into a Random Access Container.
-
-// The requirements are that the container has the member functions
-// *operator[] (SizeType)* _and_  *size()* defined. 
+/// \brief A base class that one derives from to become a random
+/// access container, which can be accessed with subscript notation.
+///
+/// OnType must have the member functions \c operator[](SizeType) and
+// \c size() defined for it.
 
 template <class OnType, class ValueType, class ReturnType = const ValueType&, class SizeType = unsigned int, class DiffType = int>
 class const_subscript_container {
 public:
   typedef const_subscript_container<OnType,ValueType,ReturnType,SizeType,DiffType>
-                                    this_type; //:
+		this_type;
 
   typedef subscript_iterator<const this_type, ReturnType, SizeType, DiffType> 
-                                                 iterator;   //:
-  typedef iterator                               const_iterator; //:
-  typedef const std::reverse_iterator<iterator>       reverse_iterator; //:
-  typedef const std::reverse_iterator<const_iterator> const_reverse_iterator; //:
+		iterator;
+  typedef iterator const_iterator;
+  typedef const std::reverse_iterator<iterator> reverse_iterator;
+  typedef const std::reverse_iterator<const_iterator> const_reverse_iterator;
   
-  typedef ValueType   value_type; //:
-  typedef value_type& reference;  //:
-  typedef value_type& const_reference; //:
-  typedef value_type* pointer; //:
-  typedef value_type* const_pointer; //:
+  typedef ValueType value_type;
+  typedef value_type& reference;
+  typedef value_type& const_reference;
+  typedef value_type* pointer;
+  typedef value_type* const_pointer;
   
-  typedef DiffType          difference_type; //:
-  typedef SizeType          size_type; //:
-  
-  virtual size_type  size() const = 0; //:
-  virtual ReturnType operator[] (SizeType i) const = 0; //:
+  typedef DiffType difference_type;
+  typedef SizeType size_type;
+ 
+  virtual size_type  size() const = 0;
+  virtual ReturnType operator[] (SizeType i) const = 0;
 
-  size_type max_size() const {return size();}    //:
-  bool      empty()    const {return size()==0;} //:
+  size_type max_size() const { return size(); }
+  bool empty() const { return size()==0; }
   
-  iterator  begin() const {return iterator(this, 0);}      //:
-  iterator  end()   const {return iterator(this, size());} //:
+  iterator begin() const { return iterator(this, 0); }
+  iterator end() const { return iterator(this, size()); }
   
-  reverse_iterator rbegin() const {return reverse_iterator(end());}   //:
-  reverse_iterator rend()   const {return reverse_iterator(begin());} //:
+  reverse_iterator rbegin() const { return reverse_iterator(end()); }
+  reverse_iterator rend() const { return reverse_iterator(begin()); }
 };
 
-//:
+
+/// \brief Iterator that can be subscripted.
+///
+/// This is the type of iterator used by the const_subscript_container
+/// template.
+
 template <class OnType, class ReturnType, class SizeType, class DiffType>
 class subscript_iterator : public std::iterator<ReturnType, SizeType>
 {
@@ -94,8 +108,9 @@ public:
 };
 
 template <class OnType, class ReturnType, class SizeType, class DiffType>
-inline subscript_iterator<OnType,ReturnType,SizeType,DiffType> operator + 
-(SizeType x, const subscript_iterator <OnType,ReturnType,SizeType,DiffType>& y) 
+inline subscript_iterator<OnType,ReturnType,SizeType,DiffType>
+operator +(SizeType x,
+		const subscript_iterator<OnType, ReturnType, SizeType, DiffType>& y) 
 {
   return y + x;
 }

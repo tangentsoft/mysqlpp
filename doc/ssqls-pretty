@@ -1,3 +1,4 @@
+#!/usr/bin/perl
 use FileHandle;
 use IPC::Open2;
 
@@ -7,6 +8,8 @@ if ($ARGV[0] =~ /^--command\=(.+)/) {
     $command = "g++ -E";
 }
 
+$command .= " -I /usr/include/mysql++/";
+
 $/ = undef;
 $orgcode = <STDIN>;
 
@@ -14,7 +17,7 @@ $orgcode = <STDIN>;
 
 $out = << "---";
 
-#include <sqlplusint/custom-macros.hh>
+#include <custom-macros.h>
 
 $macro
 

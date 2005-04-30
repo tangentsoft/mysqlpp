@@ -13,12 +13,25 @@ using namespace mysqlpp;
 
 sql_create_5(stock,
 	1,	// This number is used to make a SSQLS less-than-comparable.
-		// If this number is n then if the first n elements are the 
-		// same the two SSQLS are the same.  
-		// In this case if two two stock's "item" are the same then
-		// the two stock are the same.
-	5,	// This number should generally be the same as the number of
-	 	// elements in the list unless you have a good reason not to.
+		// When comparing two SSQLS structures, the first N elements are
+		// compared.  In this instance, we are saying that we only want
+		// the first element ('item') to be used when comparing two
+		// stock structures.
+
+	5,	// Each SSQLS structure includes a number of constructors.  Some
+		// of these are fixed in nature, but one of these will have this
+		// number of arguments, one for each of the first N elements in
+		// the structure; it is an initialization ctor.  Since N is the
+		// same as the number of structure elements in this instance,
+		// that ctor will be able to fully initialize the structure. This
+		// behavior is not always wanted, however, so the macro allows
+		// you make the constructor take fewer parameters, leaving the
+		// remaining elements uninitialized.  An example of when this is
+		// necessary is when you have a structure containing only two
+		// integer elements: one of the other ctors defined for SSQLS
+		// structures takes two ints, so the compiler barfs if you pass
+		// 2 for this argument.  You would need to pass 0 here to get
+		// that SSQLS structure to compile.
 	string, item,
 	longlong, num,
 	double, weight,

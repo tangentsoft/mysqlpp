@@ -24,6 +24,9 @@ bool Query::success()
 	}
 }
 
+/// \if INTERNAL
+// Doxygen will not generate documentation for this section.
+
 ResNSel Query::execute(const char* str)
 {
 	return mysql->execute(str);
@@ -56,6 +59,8 @@ Result Query::store(parms&  p)
 	query_reset r = parsed.size() ? DONT_RESET : RESET_QUERY;
 	return mysql->store(str(p, r));
 }
+
+/// \endif
 
 my_ulonglong Query::affected_rows() const
 {

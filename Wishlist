@@ -1,26 +1,26 @@
 Patches for any of these thoughtfully considered!
 
-New Feature Requests
---------------------
+New Feature Requests and ABI Changes
+------------------------------------
 
+	o Transaction support.  Considering block-level semantics: create
+	  a "transaction object" on the stack, which takes a ref to the
+	  Connection object (?) as a ctor parameter.  Transaction object's
+	  ctor calls a function on the conn telling it to tell the server to
+	  begin a transaction set.  When the transaction object is destroyed,
+	  it tells the conn object to commit everything.  Conn object in
+	  this situation must be created in a higher scope, or on the heap.
+	
 	o User-settable floating-point comparison precisions?  Something
 	  like this: http://lists.mysql.com/plusplus/3984
 	
-	o Overload SQLQuery::insert() to accept a pair of STL iterators
-	  for mass insertion of a range within a container.
-
 	o Look through my own code for uses of hand-rolled SQL queries, and
 	  try to reduce them to API features.
-
-	o Re-do reference manual using Doxygen or similar:
-	  http://sourceforge.net/projects/doxygen/
 
 	o Write a new tutorial, separate from the reference manual, but
 	  linking to it.  It should be built around the existing examples.
 	  Where insufficient examples exist to support the tutorial, write
 	  more.
-
-	o Get PDF documentation generation working.
 
 	o True thread-awareness in the library.  One place this could
 	  impact: Connection lock mechanism could use platform mutexes
@@ -38,41 +38,75 @@ New Feature Requests
 	  because Connection would have to derive from an interface class
 	  for the lock object to be able to call functions on it.
 
-	o Fold SQLQuery class into Query?  The only reason for the
-	  separation goes back to the dream of having MySQL++ be database-
-	  independent.  This is considered a new feature because it breaks
-	  the ABI.
+	o Do something similar to above with exception handling.  Derive
+	  from exception-disabling interface, and instantiate an exception
+	  disabler object that turns off exceptions until that object goes
+	  out of scope.
 
-	o Add a way to temporarily disable exceptions to various classes.
-	  (Make it an interface?)  This breaks ABI.
+	o Fold SQLQuery class into Query.  The separation goes back to the
+	  dream of making MySQL++ database-independent.
+	  
+	o With previous item done, it should be possible to use
+	  mysql_real_escape_string() instead of mysql_escape_string() within
+	  the pprepare() function.  Doing the same in manip.cpp will be more
+	  difficult.
+
+	o Consider giving combined Query+SQLQuery class all the members it
+	  needs to look like a std::stringstream and make them use a private
+	  stream data member instead of deriving from it.  C++ library
+	  classes were not designed to be subclassed.  Evidence is the
+	  dynamic_cast<>s required for VC++ in insert() and friends.
+
+	o Why is class ResUse separate from class Result?  They're declared
+	  in the same file, only Result derives from it, and it isn't clear
+	  that all of the other code that uses ResUse couldn't use Result
+	  directly.
+
+	o Same for mysql_date/Date and mysql_time/Time.  Some justification
+	  is that DateTime derives from their base classes, but why can't
+	  it be derived from the leaf classes instead?
+
+	o Add UTF-8 handling for VC++, in simple1 program?  Umlaut in
+	  first item shows as two high-ASCII characters when run in Win32
+	  console.  (Oddly enough, VC++'s editor understands UTF-8!)
+
+	o SSQLS structures include some static elements (_table and
+	  names[]), which are defined within the macro.  If you put an SSQLS
+	  declaration in a header file and #include that from multiple
+	  locations, you get a multiply-defined symbol warning.  Figure out
+	  some way to separate the definition from the declaration.  One
+	  idea is to give the SSQLS macros another parameter, to suppress
+	  static definition.  Another is to put them in another macro, which
+	  the user must instantiate once in a .cpp file.  (Similar to the
+	  way MFC message maps work.)
+
+	o Deprecate sql_create_basic_* ? They have less functionality and
+	  they're no easier to use than sql_create and friends, so
+	  why bother with them?  I suppose the code generated is a bit
+	  smaller, but *really*....  Only possible saving grace is if BC++
+	  can compile them due to the macro code being shorter.
 
 
 Bug Fix/Maintenance Items
 -------------------------
 
-	o Figure out what doc/sql++pretty is good for, and decide whether to
-	  document it or throw it away.  (Something to do with SSQLS, I
-	  think.)
-
+	o Move SQLQueryNEParms into exceptions.h?
+	
+	o Template ListInsert in lib/myset.h isn't being used within the
+	  library.  It could probably be used in place of SetInsert in the
+	  same file, which things like type_info.h do use now, but it isn't
+	  clear how one would go about doing that without changing the
+	  library code.  Document it or throw it away.
+	
 	o sql_cmp(double,double) is foolish.  One shouldn't do == comparison
 	  on floating point values.  Same for sql_cmp(float,float).  See
 	  also floating point precision item in previous section.
-
-	o custom2 and custom3 are broken under VC++.  Find out why.  It may
-	  be related to the ostringstream conversion of the query classes.
-	  These two are the only SSQLS examples that update the database.
-	  Is that significant?
 
 	o Attribution and licensing needs attention.  Note LGPL at top of
 	  all source files, and note copyrights where known.
 
 	o 64-bit integer support is not heavily tested.  It may yet have
 	  problems.
-
-	o SQLQuery shouldn't derive from std::stringstream.  It should
-	  have a private std::stringstream member, and add the function
-	  definitions it needs to look like a stringstream.  The Standard
-	  C++ library classes were not designed to be subclassed.
 
 	o Visual C++ project files should build a DLL version of the library
 	  only, for LGPL reasons.

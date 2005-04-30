@@ -1,6 +1,9 @@
 #ifndef MYSQLPP_VALLIST_H
 #define MYSQLPP_VALLIST_H
 
+/// \file vallist.h
+/// \brief Declares templates for holding lists of values.
+
 #include "manip.h"
 
 #include <string>
@@ -8,6 +11,7 @@
 
 namespace mysqlpp {
 
+/// Documentation needed!
 template <class Seq, class Manip>
 struct value_list_b {
   const Seq          *list;
@@ -18,6 +22,7 @@ struct value_list_b {
     : list(&s), fields(f), delem(d), manip(m) {}
 };
 
+/// Documentation needed!
 template <class Seq1, class Seq2, class Manip>
 struct equal_list_b {
   const Seq1         *list1;
@@ -31,6 +36,8 @@ struct equal_list_b {
     : list1(&s1), list2(&s2), fields(f), delem(d), equl(e), manip(m) {}
 };
 
+/// Documentation needed!
+
 template <class Seq, class Manip>
 struct value_list_ba {
   const Seq          *list;
@@ -39,6 +46,8 @@ struct value_list_ba {
   value_list_ba(const Seq &s, const char* d, Manip m) 
     : list(&s), delem(d), manip(m) {}
 };
+
+/// Documentation needed!
 
 template <class Seq1, class Seq2, class Manip>
 struct equal_list_ba {
@@ -110,6 +119,7 @@ std::ostream& operator << (std::ostream &o, const equal_list_ba<Seq1, Seq2, Mani
   return o;
 }
 
+/// Documentation needed!
 template <class Iter>
 class simp_list_b {
 public:

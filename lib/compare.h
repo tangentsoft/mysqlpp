@@ -1,12 +1,17 @@
 #ifndef MYSQLPP_COMPARE_H
 #define MYSQLPP_COMPARE_H
 
+/// \file compare.h
+/// Documentation needed!
+
 #include "row.h"
 
 #include <cstring>
 #include <functional>
 
 namespace mysqlpp {
+
+/// Documentation needed!
 
 template <class BinaryPred, class CmpType>
 class MysqlCmp : public std::unary_function<const Row&, bool>
@@ -20,6 +25,9 @@ public:
   bool operator () (const Row& cmp1) const {return func(cmp2,cmp1[this->index]);}
 };
 
+
+/// Documentation needed!
+
 template <class BinaryPred>
 class MysqlCmpCStr : public MysqlCmp<BinaryPred, const char *>
 {
@@ -30,10 +38,20 @@ public:
 			MysqlCmp<BinaryPred, const char*>::cmp2, cmp1[this->index]);}
 };
 
-//: A special function for using in find_if function where i is the field index number.
-// This is a more generic form of mysql_cmp_cstr will work with any
-// CmpType that MysqlString can convert to.  However, this is not
-// neary as effecent.  Only use when obsoletely nessary.
+/// \brief For comparing any two objects, as long as they can be
+/// converted to SQLString.
+///
+/// This template is for creating predicate objects for use with
+/// STL algorithms like std::find_if().
+///
+/// This is a more generic form of mysql_cmp_cstr() which will work
+/// with any C++ type that can be converted to mysqlpp::SQLString.
+/// This is not nearly as efficient as that function, so use this only
+/// when absolutely necessary.
+///
+/// \param i field index number
+/// \param func one of the functors in compare.h, or any compatible functor
+/// \param cmp2 what to compare to
 template <class BinaryPred, class CmpType>
 MysqlCmp <BinaryPred, CmpType>
 mysql_cmp(uint i, const BinaryPred &func, const CmpType &cmp2)
@@ -43,36 +61,64 @@ mysql_cmp(uint i, const BinaryPred &func, const CmpType &cmp2)
 
 typedef std::binary_function<const char*, const char*, bool> bin_char_pred;
 
+/// \brief Documentation needed!
+///
+/// Document me!
 struct cstr_equal_to : bin_char_pred {
   bool operator () (const char *x, const char *y) const
     {return !std::strcmp(x,y);}
 };
+
+/// \brief Documentation needed!
+///
+/// Document me!
 struct cstr_not_equal_to : bin_char_pred {
   bool operator () (const char *x, const char *y) const
     {return std::strcmp(x,y) != 0;}
 };
+
+/// \brief Documentation needed!
+///
+/// Document me!
 struct cstr_less : bin_char_pred {
   bool operator () (const char *x, const char *y) const
     {return std::strcmp(x,y) > 0; }
 };
+
+/// \brief Documentation needed!
+///
+/// Document me!
 struct cstr_less_equal : bin_char_pred {
   bool operator () (const char *x, const char *y) const
     {return std::strcmp(x,y) >= 0; }
 };
+
+/// \brief Documentation needed!
+///
+/// Document me!
 struct cstr_greater : bin_char_pred {
   bool operator () (const char *x, const char *y) const
     {return std::strcmp(x,y) < 0; }
 };
+
+/// \brief Documentation needed!
+///
+/// Document me!
 struct cstr_greater_equal : bin_char_pred {
   bool operator () (const char *x, const char *y) const
     {return std::strcmp(x,y) <= 0; }
 };
 
-//:A special function for using in find_if fucntion where i is the field index
-//:number.
-//
-// func should be one of cstr_equal_to(), cstr_not_equal_to(),
-// cstr_less(), cstr_less_equal(), cstr_less_equal(), cstr_less_equal().
+/// \brief For comparing anything to a <tt>const char*</tt>.
+///
+/// This template is for creating predicate objects for use with
+/// STL algorithms like std::find_if().
+///
+/// \param i field index number
+/// \param func one of \c cstr_equal_to(), \c cstr_not_equal_to(),
+///		\c cstr_less(), \c cstr_less_equal(), \c cstr_less_equal(), or
+///		\c cstr_less_equal().
+/// \param cmp2 what to compare to
 template <class BinaryPred>
 MysqlCmpCStr <BinaryPred>
 mysql_cmp_cstr (uint i, const BinaryPred &func, const char *cmp2) {

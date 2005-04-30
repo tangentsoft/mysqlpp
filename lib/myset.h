@@ -1,6 +1,10 @@
 #ifndef MYSQLPP_MYSET_H
 #define MYSQLPP_MYSET_H
 
+/// \file myset.h
+/// \brief Declares templates for generating custom containers used
+/// elsewhere in the library.
+
 #include "defs.h"
 
 #include "coldata.h"
@@ -11,6 +15,9 @@
 #include <vector>
 
 namespace mysqlpp {
+
+/// \if INTERNAL
+// Doxygen will not generate documentation for this section.
 
 template <class T, class value_type = typename T::value_type>
 class ListInsert {
@@ -45,23 +52,29 @@ inline ListInsert<std::vector<T> > set_insert(std::vector<T> *o)
 template <class Insert>
 void set2container (const char *str, Insert insert);
 
-//: A Special Set for holding mysql sets.
+/// \endif
+
+
+/// \brief A special std::set derivative for holding MySQL data sets.
 template <class Container = std::set<std::string> >
 class Set : public Container {
 public:
-  Set(const char* str) {set2container(str,set_insert(this));}           //:
-  Set(const std::string &str) {set2container(str.c_str(),set_insert(this));} //:
-  Set(const ColData &str) 
-    {set2container(str.c_str(),set_insert(this));}                      //:
+  Set(const char* str) { set2container(str, set_insert(this)); }
+  Set(const std::string &str)
+  {
+    set2container(str.c_str(), set_insert(this));
+  }
+  Set(const ColData& str) 
+  {
+  	set2container(str.c_str(), set_insert(this));
+  }
   
   std::ostream& out_stream(std::ostream &s) const;
   
   operator std::string ();
 };
 
-//! with_class = Set
 
-//:
 template <class Container>
 inline std::ostream& operator << (std::ostream &s, const Set<Container> &d)
 { 

@@ -1,6 +1,13 @@
 #ifndef MYSQLPP_COLDATA_H
 #define MYSQLPP_COLDATA_H
 
+/// \file coldata.h
+/// \brief Declares classes for converting string data to any of 
+/// the basic C types.
+///
+/// Roughly speaking, this defines classes that are the inverse of
+/// mysqlpp::SQLString.
+
 #include "platform.h"
 
 #include "const_string.h"
@@ -20,33 +27,31 @@
 
 namespace mysqlpp {
 
-//!  with_class = ColData_Tmpl
+/// \brief Base class for auto-converting column data.  Do not use directly. 
+///
+/// A smart string. It will automatically convert itself to any of the
+/// basic C types. 
+///
+/// When used with binary operators it will automatically convert itself
+/// to the type used on the other side of the operator if it is a basic
+/// type.  However, be careful when using it like this:
+/// 
+/// \code ColData("12.86") + 2 \endcode
+/// 
+/// will return 14 because 2 is an integer. To get the result you
+/// wanted, you must say:
+///
+/// \code ColData("12.86") + 2.0 \endcode
+///
+/// If this type of thing scares you, define the micro NO_BINARY_OPERS
+/// to disable this behavior.
+///
+/// This class also has some basic information about the type of data
+/// stored in it.
+///
+/// <b>Do not use this class directly.</b> Use the typedef ColData or
+/// MutableColData instead.
 
-//: Base class for auto-converting column data.  Do not use directly. 
-//
-// A smart string. It will automatically convert it self to any of the
-// basic C types. 
-//
-// When used with binary operators it will
-// automatically convert it self to the type used on the other side of
-// the operator if it is a basic type.
-//
-// However, be careful when using it with binary operators as. 
-// 
-// MysqlStr("12.86") + 2
-// 
-// will return 14 because 2 is an integer. What you wanted to say was 
-//
-// MysqlStr("12.86") + 2.0
-//
-// If this type of thing scares you define the micro NO_BINARY_OPERS
-// to turn of this behavior.
-//
-// This class also has some basic information about the type of data
-// stored in it.
-//
-// <bf>Do not use this class directly.</bf>
-//  Use the typedef ColData or MutableColData instead.
 template <class Str>
 class ColData_Tmpl : public Str {
 private:
@@ -54,33 +59,38 @@ private:
 	std::string buf;
 	bool _null;
 public:
-  explicit ColData_Tmpl (bool n, mysql_type_info t = mysql_type_info::string_type) 
-    : _type(t), _null(n) {}
-  explicit ColData_Tmpl (const char *str, 
-		 mysql_type_info t = mysql_type_info::string_type, bool n = false)
-    : Str(str), _type(t), _null(n) {buf=str;}
-  ColData_Tmpl () {}
-  mysql_type_info type() {return _type;}
-  //: Returns the current mysql type of current item
+  explicit ColData_Tmpl(bool n,
+  		mysql_type_info t = mysql_type_info::string_type) :
+  _type(t),
+  _null(n)
+  {
+  }
 
-  bool quote_q() const {return _type.quote_q();}
-  //: Returns true or false depending on if the data is of a type that
-  //: should be quoted
+  explicit ColData_Tmpl(const char *str, 
+		 mysql_type_info t = mysql_type_info::string_type,
+		 bool n = false) :
+  Str(str),
+  _type(t),
+  _null(n)
+  {
+  	buf=str;
+  }
 
-  bool escape_q() const {return _type.escape_q();}
-  //: Returns true of false depending on if the data is of a type that
-  //: should be escaped
+  ColData_Tmpl() { }
+
+  /// \brief Get this object's current MySQL type.
+  mysql_type_info type() { return _type; }
+
+  /// \brief Returns true if data of this type should be quoted, false
+  /// otherwise.
+  bool quote_q() const { return _type.quote_q(); }
+
+  /// \brief Returns true if data of this type should be escaped, false
+  /// otherwise.
+  bool escape_q() const { return _type.escape_q(); }
   
-  template<class Type> Type conv (Type dummy) const;
+  template<class Type> Type conv(Type dummy) const;
 
-  //!dummy: operator TYPE() const;
-  //: Converts the column data to TYPE.
-  // If all the charters are not read during the conversion to TYPE it
-  // will through BadConversion.
-  //
-  // TYPE is defined for all the build in types.
-  //
-  // (Note, This is not an actual template)
   void it_is_null (void) {_null=true;}
 	inline const bool is_null(void) const {return _null;}
 	inline const std::string&  get_string(void) const {return buf;}
@@ -101,14 +111,13 @@ public:
   template <class T, class B> operator Null<T,B> () const;
 };
 
-//: The Type that is returned by constant rows
+/// \typedef ColData_Tmpl<const_string> ColData
+/// \brief The type that is returned by constant rows
 typedef ColData_Tmpl<const_string> ColData;
-//: The Type that is returned by mutable rows
-typedef ColData_Tmpl<std::string>       MutableColData;
-//: For backwards compatibility. Do not use.
-typedef ColData MysqlString;
-//: For backwards compatibility. Do not use.
-typedef ColData MysqlStr;
+
+/// \typedef ColData_Tmpl<std::string> MutableColData
+/// \brief The type that is returned by mutable rows
+typedef ColData_Tmpl<std::string> MutableColData;
 
 
 

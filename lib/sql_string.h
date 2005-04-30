@@ -1,6 +1,15 @@
 #ifndef MYSQLPP_SQL_STRING_H
 #define MYSQLPP_SQL_STRING_H
 
+/// \file sql_string.h
+/// \brief Declares an \c std::string derivative that adds some things
+/// needed within the library.
+///
+/// This class adds some flags needed by other parts of MySQL++, and it
+/// adds conversion functions from any primitive type.  This helps in
+/// inserting these primitive types into the database, because we need
+/// everything in string form to build SQL queries.
+
 #include "defs.h"
 
 #include <stdio.h>
@@ -8,7 +17,8 @@
 
 namespace mysqlpp {
 
-// A specialized std::string that will convert from any valid MySQL type.
+/// \brief A specialized \c std::string that will convert from any
+/// valid MySQL type.
 
 class SQLString : public std::string {
 public:

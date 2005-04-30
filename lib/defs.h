@@ -1,11 +1,17 @@
 #ifndef MYSQLPP_DEFS_H
 #define MYSQLPP_DEFS_H
 
+/// \file defs.h
+/// \brief Standard definitions used all across the library,
+/// particularly things that don't fit well anywhere else.
+
 #include "platform.h"
 
 #include <mysql.h>
 
 namespace mysqlpp {
+
+const bool use_exceptions = true;
 
 enum sql_cmp_type {sql_use_compare};
 
@@ -26,8 +32,6 @@ typedef longlong longgint;
 #ifndef uint
 typedef unsigned int uint;
 #endif
-
-const bool use_exceptions = true;
 
 } // end namespace mysqlpp
 

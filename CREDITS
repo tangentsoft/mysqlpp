@@ -1,7 +1,7 @@
 MySQL++ was created by Kevin Atkinson <kevinatk@home.com> during 1998.
 
 From version 1.0 (released in June 1999) through 1.7.9 (May 2001), the
-primary maintainer was Sinisa Miliojevic <sinisa@mysql.com>, currently an
+primary maintainer was Sinisa Milivojevic <sinisa@mysql.com>, currently an
 employee of MySQL AB. Although the library went into stasis with 1.7.9,
 Sinisa continued to run the mailing list and support users through that
 mailing list.

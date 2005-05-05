@@ -99,7 +99,7 @@ MYSQLPP_LIB = $(top_builddir)/lib/libmysqlpp.la
 AM_CXXFLAGS = @PTHREAD_CFLAGS@
 LDADD = $(MYSQLPP_LIB) @PTHREAD_LIBS@
 
-EXTRA_DIST = custom.pl *.bpf *.bpr *.bpg
+EXTRA_DIST = custom.pl Doxyfile *.bpf *.bpr *.bpg
 
 lib_LTLIBRARIES = libmysqlpp.la
 

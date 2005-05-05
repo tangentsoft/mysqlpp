@@ -89,8 +89,8 @@ public:
   typedef void value_type;
 public:
   Null () : is_null(false) { } 
-  Null (const null_type &n) : is_null(true) { } 
-  Null& operator = (const null_type &n) { is_null = true; return *this; }
+  Null (const null_type &) : is_null(true) { } 
+  Null& operator = (const null_type &) { is_null = true; return *this; }
 };
 
 /// \endif

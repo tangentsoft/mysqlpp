@@ -14,7 +14,7 @@
 
 		<author>
 			<firstname>Sinisa</firstname>
-			<surname>Miliojevic</surname>
+			<surname>Milivojevic</surname>
 		</author>
 
 		<author>
@@ -35,7 +35,7 @@
 		<holder>Educational Technology Resources</holder>
 	</copyright>
 
-	<pubdate role="rcs">$Date: 2005-04-30 06:52:56 -0600 (Sat, 30 Apr 2005) $</pubdate>
+	<pubdate role="rcs">$Date: 2005-05-04 14:25:07 -0600 (Wed, 04 May 2005) $</pubdate>
 </articleinfo>
 
 <sect1>
@@ -53,7 +53,71 @@
 	url="http://lists.mysql.com/plusplus">the mailing
 	list</ulink>. That page hosts the mailing list archives, and
 	tells you how you can subscribe.</para>
+
+
+	<sect2>
+		<title>A Brief History of MySQL++</title>
+
+		<para>MySQL++ was created in 1998 by Kevin Atkinson. It
+		started out MySQL-specific, but there were early efforts
+		to try and make it database-independent, and call it
+		SQL++. This is where the old library name "sqlplus"
+		came from. This is also why the old versions prefixed
+		some class names with "Mysql" but not others: the others
+		were supposed to be the database-independent parts.</para>
+
+		<para>Then in 1999, Sinisa Milivojevic unofficially took
+		over maintenance of the library, releasing versions
+		1.0 and 1.1. (All of Kevin's releases were pre-1.0
+		point releases.) Kevin gave over maintenance to Sinisa
+		officially with 1.2, and Sinisa went on to maintain the
+		library through 1.7.9, released in mid-2001. Since Sinisa
+		is an employee of <ulink url="http://www.mysql.com/">MySQL
+		AB</ulink>, it seems to be during this time that the
+		dream of multiple-database compatibility died.</para>
+
+		<para>With version 1.7.9, MySQL++ went into a period of
+		stasis, lasting over three years. During this time, Sinisa
+		ran the MySQL++ mailing list and supported its users, but
+		made no new releases. There were many patches submitted
+		during this period, some of which were ignored, others
+		which were just put on the MySQL++ web site for people to
+		try. A lot of these patches were mutually-incompatible,
+		and not all of them gave a fully-functional copy of
+		MySQL++. Most of them centered on GCC compatibility,
+		because GCC 3 was created around this same time. The
+		continual tightening of the rules starting with GCC 3.0
+		exposed a lot of places in MySQL++ that used deprecated
+		and non-conforming facilities.</para>
+
+		<para>In early August of 2004, the current maintainer
+		(Warren Young) got fed up with this situation and took
+		over. He released 1.7.10 later that month.</para>
+	</sect2>
+
+
+	<sect2>
+		<title>If You Have Questions...</title>
+
+		<para>If you want to email someone to ask questions about
+		this library, we greatly prefer that you send mail to
+		the <ulink url="http://lists.mysql.com/plusplus">MySQL++
+		mailing list</ulink>. The mailing list is archived,
+		so if you have questions, do a search to see if the
+		question has been asked before.</para>
+
+		<para>You may find people's individual email addresses in
+		various files within the MySQL++ distribution. Please do
+		not send mail to them unless you are sending something
+		that is inherently personal. Questions that are about
+		MySQL++ usage may well be ignored if you send them to
+		our personal email accounts. Those of us still active
+		in MySQL++ development monitor the mailing list, so you
+		aren't getting any extra "coverage" by sending messages
+		to those addresses in addition to the mailing list.</para>
+	</sect2>
 </sect1>
+
 
 <sect1>
 	<title>Overview</title>
@@ -2041,6 +2105,218 @@ main(int argc, char *argv[])
 		that custom-macros.h went from 1.3 MB to 18 MB and the
 		build time for examples/custom.* got a lot longer.</para>
 	</sect2>
+</sect1>
+
+
+<sect1>
+	<title>Using Unicode with MySQL++</title>
+
+	<sect2>
+		<title>A Short History of Unicode</title>
+		<subtitle>...with a focus on relevance to MySQL++</subtitle>
+
+		<para>In the old days, computer operating systems
+		only dealt with 8-bit character sets. This only gives
+		you 256 possible characters, but the modern Western
+		languages have more than that by themselves. Add in
+		all the other lanauges of the world, plus the various
+		symbols people use, and you have a real mess! Since no
+		standards body held sway over things like international
+		character encoding in the early days of computing, many
+		different character sets were invented. These character
+		sets weren't even standardized between operating systems,
+		so heaven help you if you needed to move localized Greek
+		text on a Windows machine to a Russian Macintosh! The only
+		way we got any international communication done at all
+		was to build standards on the common 7-bit ASCII subset.
+		Either people used approximations like a plain "c" instead
+		of the French "&ccedil;", or they invented things like
+		HTML entities ("&amp;ccedil;" in this case) to encode
+		these additional characters using only 7-bit ASCII.</para>
+
+		<para>Unicode solves this problem. It encodes every
+		character in the world, using up to 4 bytes per
+		character. The subset covering the most economically
+		valuable cases takes two bytes per character, so most
+		Unicode-aware programs limit themselves to this set,
+		for efficiency.</para>
+
+		<para>Unfortunately, Unicode came about 20 years
+		too late for Unix and C. Converting the Unix
+		system call interface to Unicode would break all
+		existing programs. The ISO lashed a wide character <ulink
+		url="http://www.jargon.net/jargonfile/s/sidecar.html">sidecar</ulink>
+		onto C in 1995, but in common practice C is still tied
+		to 8-bit characters.</para>
+
+		<para>As Unicode began to take off in the early 1990s,
+		it became clear that some sort of accommodation
+		with Unicode was needed in legacy systems like
+		Unix and C. During the development of the <ulink
+		url="http://en.wikipedia.org/wiki/Plan_9_from_Bell_Labs">Plan
+		9</ulink> operating system (a kind
+		of successor to Unix) Ken Thompson <ulink
+		url="http://www.cl.cam.ac.uk/~mgk25/ucs/utf-8-history.txt">invented</ulink>
+		the <ulink url="http://en.wikipedia.org/wiki/UTF-8">UTF-8
+		encoding</ulink>. Since UTF-8 is a superset of 7-bit
+		ASCII, many programs that deal in text actually get by
+		okay without any explicit support for UTF-8.</para>
+
+		<para>The MySQL database server comes out of the
+		Unix/C tradition, so it only supports 8-bit characters
+		natively. UTF-8 data is compatible with C strings, so all
+		versions of MySQL could store UTF-8 data, but sometimes
+		the database actually needs to understand the data.
+		When sorting, for instance. To support this, explicit
+		UTF-8 support was added to MySQL in version 4.1.</para>
+
+		<para>Because MySQL++ does not need to know
+		anything about the flowing through it, it
+		doesn't have explicit UTF-8 support.  C++'s
+		<computeroutput>std::string</computeroutput> stores
+		UTF-8 data just fine. But, your program probably
+		<emphasis>does</emphasis> care about the data coming
+		from MySQL++. The remainder of this chapter covers the
+		choices you have for dealing with UTF-8 encoded Unicode
+		data.</para>
+	</sect2>
+
+
+	<sect2>
+		<title>Unicode and Unix</title>
+
+		<para>Modern Unices support UTF-8 natively. Red Hat Linux,
+		for instance, has had system-wide UTF-8 support since
+		version 8. This continues in the commercial and Fedora
+		forks of Red Hat Linux, of course.</para>
+
+		<para>On such a Unix, the terminal I/O code understands
+		UTF-8 encoded data, so your program doesn't require any
+		special code to correctly display a UTF-8 string. If you
+		aren't sure whether your system supports UTF-8 natively,
+		just run the simple1 example: if the first item has
+		two high-ASCII characters in place of the "&uuml;" in
+		"N&uuml;rnberger Brats", you know it's not handling
+		UTF-8.</para>
+
+		<para>If your Unix doesn't support UTF-8 natively,
+		it likely doesn't support any form of Unicode at all,
+		for the historical reasons I gave above. Therefore,
+		you will have to convert the UTF-8 data to the
+		local 8-bit character set. The standard Unix
+		function <computeroutput>iconv()</computeroutput>
+		can help here. If your system doesn't have the
+		<computeroutput>iconv()</computeroutput> facility, there
+		is <ulink url="http://www.gnu.org/software/libiconv/">a
+		free implementation</ulink> available from the GNU
+		Project. Another library you might check out is IBM's
+		<ulink url="http://icu.sourceforge.net/">ICU</ulink>. This
+		is rather heavy-weight, so if you just need basic
+		conversions, <computeroutput>iconv()</computeroutput>
+		should suffice.</para>
+	</sect2>
+
+
+	<sect2>
+		<title>Unicode and Win32</title>
+
+		<para>Each Win32 API function that takes
+		a string actually has two two versions. One
+		version supports only 1-byte "ANSI" characters (a
+		superset of ASCII), so they end in 'A'. Win32 also
+		supports the 2-byte subset of Unicode called <ulink
+		url="http://en.wikipedia.org/wiki/UCS-2">UCS-2</ulink>.
+		Some call these "wide" characters, so the other
+		set of functions end in 'W'. The <computeroutput><ulink
+		url="http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/dialogboxes/dialogboxreference/dialogboxfunctions/messagebox.asp">MessageBox</ulink>()</computeroutput>
+		API, for instance, is actually a macro,
+		not a real function. If you define the
+		<computeroutput>UNICODE</computeroutput>
+		macro when building your program, the
+		<computeroutput>MessageBox()</computeroutput>
+		macro evaluates to
+		<computeroutput>MessageBoxW()</computeroutput>; otherwise,
+		to <computeroutput>MessageBoxA()</computeroutput>.</para>
+
+		<para>Since MySQL uses UTF-8 and Win32 uses UCS-2,
+		you must convert data going between the Win32
+		API and MySQL++. Since there's no point in trying
+		for portability &mdash; no other OS I'm aware of
+		uses UCS-2 &mdash; you might as well use native
+		Win32 functions for doing this translation. The following code
+		is distilled from <computeroutput>utf8_to_win32_ansi()</computeroutput>
+		in <computeroutput>examples/util.cpp</computeroutput>:</para>
+
+		<blockquote><programlisting>
+void utf8_to_win32_ansi(const char* utf8_str, char* ansi_str, int ansi_len)
+{
+    wchar_t ucs2_buf[100];
+    static const int ub_chars = sizeof(ucs2_buf) / sizeof(ucs2_buf[0]);
+
+    MultiByteToWideChar(CP_UTF8, 0, utf8_str, -1, ucs2_buf, ub_chars);
+    CPINFOEX cpi;
+    GetCPInfoEx(CP_OEMCP, 0, &amp;cpi);
+    WideCharToMultiByte(cpi.CodePage, 0, ucs2_buf, -1,
+            ansi_str, ansi_len, 0, 0);
+}</programlisting></blockquote>
+
+		<para>To see this in action, uncomment
+		"<computeroutput>#define USE_WIN32_UCS2</computeroutput>"
+		at the top of util.cpp, build the example programs, and
+		run simple1 in a console window (a.k.a. "DOS box"). The
+		first item should be "N&uuml;rnberger Brats". If not,
+		see the last paragraph in this section.</para>
+
+		<para><computeroutput>utf8_to_win32_ansi()</computeroutput>
+		converts <computeroutput>utf8_str</computeroutput>
+		from UTF-8 to UCS-2, and from there to the local <ulink
+		url="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/intl/unicode_81rn.asp">code
+		page</ulink>. "Waitaminnit," you shout! "I thought we
+		were trying to get away from the problem of local code
+		pages!" The console is one of the few Win32 facilities
+		that doesn't support UCS-2 by default. It can be <ulink
+		url="http://www.answers.com/topic/win32-console">put
+		into UCS-2 mode</ulink>, but that seems like more
+		work than we'd like to go to in a portable example
+		program.  Since the default code page in most versions
+		of Windows includes the "&uuml;" character used in the
+		sample database, this conversion works out fine for our
+		purposes.</para>
+		
+		<para>If your program is using the GUI to display
+		text, you don't need the second conversion. Prove
+		this to yourself by adding the following to
+		<computeroutput>utf8_to_win32_ansi()</computeroutput>
+		after the
+		<computeroutput>MultiByteToWideChar()</computeroutput>
+		call:</para>
+
+		<programlisting>
+	MessageBox(0, ucs2_buf, "UCS-2 version of Item", MB_OK);</programlisting>
+
+		<para>All of this assumes you're using Windows NT or one
+		of its direct descendants: Windows 2000, Windows XP,
+		Windows 2003 Server, and someday "Longhorn". Windows
+		95/98/ME and Windows CE do not support UCS-2. They
+		still have the 'W' APIs for compatibility, but they
+		just smash the data down to 8-bit and call the 'A'
+		version for you.</para>
+	</sect2>
+
+
+	<sect2>
+		<title>For More Information</title>
+			<para>The <ulink
+			url="http://www.unicode.org/faq/">Unicode
+			FAQs</ulink> page has copious information on
+			this complex topic.</para>
+
+			<para>When it comes to Unix
+			and UTF-8 specific items, the <ulink
+			url="http://www.cl.cam.ac.uk/~mgk25/unicode.html">UTF-8
+			and Unicode FAQ for Unix/Linux</ulink> is a
+			quicker way to find basic information.</para>
+		</sect2>
 </sect1>
 
 

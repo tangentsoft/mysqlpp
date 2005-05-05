@@ -48,7 +48,7 @@ static SQLString* pprepare(char option, SQLString& S,
 
 	if (option == 'r' || (option == 'q' && S.is_string)) {
 		char *s = new char[S.size() * 2 + 1];
-		mysql_escape_string(s, S.c_str(), (unsigned long) S.size());
+		mysql_escape_string(s, S.c_str(), static_cast <unsigned long> (S.size()));
 		SQLString *ss = new SQLString("'");
 		*ss += s;
 		*ss += "'";

@@ -9,6 +9,8 @@
 /// platforms it includes the tests for platform features directly.
 
 #if defined(__WIN32__) || defined(_WIN32)
+#	define MYSQLPP_PLATFORM_WINDOWS
+
 	// Windows compiler support.  Tested with Microsoft Visual C++,
 	// Borland C++ Builder, and MinGW GCC.
 #	include <winsock.h>
@@ -27,21 +29,12 @@
 		// Call _snprintf() for VC++ version of snprintf() function
 #		define snprintf _snprintf
 #	endif
-#else
-	// If not Windows, we assume some sort of Unixy build environment,
-	// where autotools is used.  (This includes Cygwin!)  #include the
-	// config.h file only if this file was included from a non-header
-	// file, because headers must not be dependent on config.h.
-#	if defined(MYSQLPP_NOT_HEADER)
-#		include "config.h"
-#	endif
-#endif
 
-// Define DLL import/export tags for Windows compilers, where we build
-// the library into a DLL, for LGPL license compatibility reasons.
-// (This is based on a similar mechanism in wxWindows, which inspired
-// this code, but which does things quite differently.)
-#if defined(__WIN32__) || defined(_WIN32)
+	// Define DLL import/export tags for Windows compilers, where we build
+	// the library into a DLL, for LGPL license compatibility reasons.
+	// (This is based on a similar mechanism in wxWindows, which inspired
+	// this code, but which does things quite differently.)
+
 	#ifdef MYSQLPP_MAKING_DLL
 		// When making the DLL, export tagged symbols, so they appear
 		// in the import library.
@@ -53,8 +46,15 @@
 		#define MYSQLPP_DLLEXPORT_DATA(type) __declspec(dllimport) type
 	#endif
 #else
-	// Not on a platform where DLL is made, so make everything a no-op.
+	// If not Windows, we assume some sort of Unixy build environment,
+	// where autotools is used.  (This includes Cygwin!)  #include the
+	// config.h file only if this file was included from a non-header
+	// file, because headers must not be dependent on config.h.
+#	if defined(MYSQLPP_NOT_HEADER)
+#		include "config.h"
+#	endif
+
+	// Make DLL stuff a no-op on this platform.
 	#define MYSQLPP_DLLEXPORT
 	#define MYSQLPP_DLLEXPORT_DATA(type) type
 #endif
-

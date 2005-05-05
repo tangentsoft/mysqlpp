@@ -315,7 +315,7 @@ public:
 		// See above comment for cast rationale
 		dynamic_cast<std::stringstream&>(*this) << "INSERT INTO " <<
 				first->table() << " (" << first->field_list() <<
-				") VALUES (" << fist->value_list() << ')';
+				") VALUES (" << first->value_list() << ')';
 
 		Iter it = first + 1;
 		while (it != last) {

@@ -1,6 +1,6 @@
 dnl Standard autotools stuff
 AC_INIT(lib/mysql++.h)
-AM_INIT_AUTOMAKE(mysql++, 1.7.34)	# Change this in mysql++.spec, too!
+AM_INIT_AUTOMAKE(mysql++, 1.7.35)	# Change this in mysql++.spec, too!
 AM_CONFIG_HEADER(config.h)
 AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL

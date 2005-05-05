@@ -86,10 +86,21 @@ New Feature Requests and ABI Changes
 	  smaller, but *really*....  Only possible saving grace is if BC++
 	  can compile them due to the macro code being shorter.
 
+	o Classes with virtual functions need virtual dtors.  GCC 4.0 warns
+	  about this.  It's easy to fix, but it breaks the ABI, so it will
+	  have to wait for 1.8 or 2.0.  It should be done with some thought
+	  as well: go through class looking for any code that allocates
+	  memory or other resources, and make sure they're released in the
+	  dtor.  This concern over releasing resources is why the warning
+	  exists in the first place.
+
 
 Bug Fix/Maintenance Items
 -------------------------
 
+	o Add nmake Makefiles for the project, for those using only the
+	  free command-line tools.
+	
 	o Move SQLQueryNEParms into exceptions.h?
 	
 	o Template ListInsert in lib/myset.h isn't being used within the
@@ -103,7 +114,8 @@ Bug Fix/Maintenance Items
 	  also floating point precision item in previous section.
 
 	o Attribution and licensing needs attention.  Note LGPL at top of
-	  all source files, and note copyrights where known.
+	  all source files, and note copyrights where known.  Also, a
+	  license needs to be picked for the new documentation. 
 
 	o 64-bit integer support is not heavily tested.  It may yet have
 	  problems.

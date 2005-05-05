@@ -1,4 +1,31 @@
-1.7.34, 2005.04.30
+1.7.35, 2005.05.05 The "Cinco de Mayo" release (r601)
+
+	o Added a "how to use Unicode with MySQL++" chapter to the user
+	  manual.  (Too bad "Cinco de Mayo" doesn't have any accented
+	  characters.  That would be just _too_ precious.)
+
+	o VC++ examples now use the Unicode Win32 APIs, so they can display
+	  Unicode data from MySQL++.
+
+	o Added an optional conversion function to examples/util.cpp to
+	  handle the conversion from UTF-8 to UCS-2 on Win32.
+
+	o Moved "brief history of MySQL++" from intro section of refman to
+	  intro section of userman.
+
+	o Lots of small bits of documentation polishing.
+	
+	o Made some minor constness fixes.  Thanks to "Erwin" (erwin at 
+	  leastwanted dot nl) for this patch.
+	
+	o Made some warning fixes for GCC 4.0.  Not all warnings are fixed,
+	  because some of the needed changes would break the ABI.  Thanks
+	  to Chris Frey for this patch.
+
+	o Added lib/Doxyfile to distribution.
+	
+
+1.7.34, 2005.04.30 (r573)
 
 	o Added a multiple-insert method for Query, which lets you insert
 	  a range of records from an STL container (or the whole thing,
@@ -26,9 +53,9 @@
 	o Some more small doucmentation improvements.
 
 
-1.7.33, 2005.04.29
+1.7.33, 2005.04.29 (r555)
 
-	o Worked aroudn an overloaded operator lookup bug in VC++ 7.1
+	o Worked around an overloaded operator lookup bug in VC++ 7.1
 	  that caused SSQLS insert, replace and update queries to get
 	  mangled.  (Symptom was that custom2 and custom3 examples didn't
 	  work right.)  Thanks to Mark Meredino for digging up the
@@ -60,7 +87,7 @@
 	  features.
 
 
-1.7.32, 2005.03.10
+1.7.32, 2005.03.10 (r479)
 
 	o Example building may now be skipped with --disable-examples
 	  configure script flag.
@@ -85,7 +112,7 @@
 	  any Windows compiler.  Fixed.
 	
 
-1.7.31, 2005.03.05 The "Inevitable Point-one Followup" release
+1.7.31, 2005.03.05 The "Inevitable Point-one Followup" release (r462)
 
 	o Check for threads support must now be explicitly requested via
 	  configure script's new --enable-thread-check flag.
@@ -104,7 +131,7 @@
 	  one of the inner try blocks.
 
 	o Improvements to Connection class's handling of locking mechanism.
-	  Some patches by Rongjun Mu, plus improvements by Warren Young.
+	  Concept based on patches by Rongjun Mu.
 
 	o Implemented the declared-but-never-defined Query::lock().  Thanks
 	  to Rongjun Mu for this patch.
@@ -114,7 +141,7 @@
 	  code path in the if side instead of the else.
 
 
-1.7.30, 2005.02.28 The "Power of Round Numbers" release
+1.7.30, 2005.02.28 The "Power of Round Numbers" release (r443)
 
 	o bootstrap script now accepts a 'pedantic' argument, which sets a
 	  bunch of CFLAGS that make g++ very picky about the code it
@@ -137,7 +164,7 @@
 	  exception stuff removed.
 
 	o Row::lookup_by_name() will throw the new BadFieldName exception if
-	  you pass an bad field name.  Thanks for this patch to Chris Frey.
+	  you pass a bad field name.  Thanks for this patch to Chris Frey.
 
 	o Row::operator[] will throw a Standard C++ out of bounds exception
 	  by way of std::vector::at() if you pass it a bad index.  Thanks
@@ -155,7 +182,7 @@
 	  be platform-independent, finally.
 
 
-1.7.28, 2005.02.04
+1.7.28, 2005.02.04 (r403)
 
 	o --with-mysql* flags to configure script now try the given
 	  directory explicitly, and only if that fails do they try
@@ -169,7 +196,7 @@
 	  by making that part of the library truly optional.
 
 
-1.7.27, 2005.01.12
+1.7.27, 2005.01.12 (r395)
 
 	o configure check for libmysqlclient now halts configuration if the
 	  library isn't found.  Previously, it would just be flagged as
@@ -187,7 +214,7 @@
 	o Worked around a BCBuilder C++ syntax processing bug in row.h.
 
 
-1.7.26, 2004.12.17
+1.7.26, 2004.12.17 (r382)
 
 	o Moved all of the SQLString definitions out of the header and into
 	  a new .cpp file, reformatted it all, and made the integer
@@ -223,7 +250,7 @@
 	  recompiles after running bootstrap script.
 
 
-1.7.25, 2004.12.09
+1.7.25, 2004.12.09 (r360)
 
 	o Yet more fixes to the --with-mysql-lib and --with-mysql-include
 	  flags.
@@ -238,7 +265,7 @@
 	o Some style changes (mostly whitespace) in header files.
 
 
-1.7.24, 2004.12.08
+1.7.24, 2004.12.08 (r343)
 
 	o Fixed the --with-mysql-lib and --with-mysql-include flags'
 	  behavior, and extended their search ability to handle one other
@@ -258,7 +285,7 @@
 	o Reformatted all of lib/*.cc.
 
 
-1.7.23, 2004.11.20
+1.7.23, 2004.11.20 (r333)
 
 	o Query::reset() now empties the stored query string.  If you
 	  subsequently stored a longer query in the object, you'd overwrite
@@ -312,7 +339,7 @@
 	o Some VC++ type warnings squished.  Some remain.
 	
 
-1.7.22, 2004.11.17
+1.7.22, 2004.11.17 (r302)
 
 	o Applied patches by Zahroof Mohammed to allow it to build under GCC
 	  3.4.2.  Tested on MinGW and Fedora Core 3 systems.
@@ -337,7 +364,7 @@
 	  just a nicety for those running in 'maintainer mode'.
 
 
-1.7.21, 2004.11.05
+1.7.21, 2004.11.05 (r273)
 
 	o Generating a main mysql++ RPM containing just the library files
 	  and basic documentation, and the -devel package containing
@@ -356,7 +383,7 @@
 	  build-time dependencies and shortening compile times.
 
 
-1.7.20, 2004.11.03
+1.7.20, 2004.11.03 (r258)
 
 	o Collapsed all numbered *.hh headers into a single *.h file.  For
 	  example, the contents of row1.hh, row2.hh and row3.hh are now in
@@ -396,7 +423,7 @@
 	o Beautified the example programs.
 
 
-1.7.19, 2004.10.25
+1.7.19, 2004.10.25 (r186)
 
 	o Fixed an infinite loop in the query mechanism resulting from the
 	  strstream change in the previous version.  There is an overloaded
@@ -425,7 +452,7 @@
 	  c:\program files\mysql.)
 
 
-1.7.18, 2004.10.01
+1.7.18, 2004.10.01 (r177)
 
 	o Changed all the strstream (and friends) stuff to stringstream type
 	  classes.  Let there be much rejoicing.
@@ -444,7 +471,7 @@
 	  current.  Ooops....
 
 
-1.7.17, 2004.09.16
+1.7.17, 2004.09.16 (r170)
 
 	o Reverted one of the VC++ warning fix changes from 1.7.16 that
 	  caused crashes on Linux.
@@ -454,7 +481,7 @@
 	  5.0.1.
 
 
-1.7.16, 2004.09.13
+1.7.16, 2004.09.13 (r160)
 
 	o Building VC++ version with DLL version of C runtime libraries, and
 	  at warning level 3 with no warnings emitted.
@@ -463,7 +490,7 @@
 	  the Wishlist for further thoughts on this.
 
 
-1.7.15, 2004.09.02
+1.7.15, 2004.09.02 (r144)
 
 	o Renamed Configure file to common.am, to avoid file name conflict
 	  with configure script on case-sensitive file systems.
@@ -475,7 +502,7 @@
 	  Initial idea by Chris Frey, improvements by Warren Young.
 
 
-1.7.14, 2004.08.26
+1.7.14, 2004.08.26 (r130)
 
 	o Builds with Visual C++ 7.1.
 
@@ -483,7 +510,7 @@
 	  GCC 3.4.  (X_cus_value_list ctor definition was broken.)
 
 
-1.7.13, 2004.08.23
+1.7.13, 2004.08.23 (r92)
 
 	o Removed USL CC support.  (System V stock system compiler.)  Use
 	  GCC on these platforms instead.
@@ -504,7 +531,7 @@
 	  Thanks to Totte Karlsson for these.
 
 
-1.7.12, 2004.08.19
+1.7.12, 2004.08.19 (r63)
 
 	o Many Standard C++ fixes, most from the GCC 3.4 patch by
 	  Rune Kleveland.
@@ -519,7 +546,7 @@
 	o Fixed the idempotency guard in datetime1.hh.
 
 
-1.7.11, 2004.08.17
+1.7.11, 2004.08.17 (r50)
 
 	o Renamed mysql++, defs and define_short files, adding .hh to the
 	  end of each.  (They're header files!)  This shouldn't impact
@@ -540,7 +567,7 @@
 	  versions of libtool.
 
 
-1.7.10, 2004.08.16
+1.7.10, 2004.08.16 (r27)
 
 	o Maintenance taken over by Warren Young (mysqlpp at etr dash usa
 	  dot com.) See http://lists.mysql.com/plusplus/3326 for details.

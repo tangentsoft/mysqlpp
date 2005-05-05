@@ -16,7 +16,6 @@ FO_SS=fo.xsl
 EX_TXT=cgi_image.txt complic1.txt custom1.txt custom2.txt \
 		custom3.txt custom4.txt fieldinf1.txt load_file.txt \
 		resetdb.txt simple1.txt updel.txt 
-EX_SRC=$(EX_TXT:.txt=.cpp)
 
 
 ## ------------------------
@@ -52,13 +51,8 @@ html/index.html: $(DOCFILE) $(HTML_SS)
 ## Dependency rules
 ## ------------------------
 
-.SUFFIXES: .txt
-
-.cpp.txt:
-	cat $< | sed -e 's/&/\&amp;/g' | sed -e 's/</\&lt;/g' | sed -e 's/>/\&gt;/g' > $@
-
-$(EX_SRC):
-	expand -t4 < ../../examples/$@ > $@
+$(EX_TXT):
+	expand -t4 < `echo ../../examples/$@ | sed -e s/txt/cpp/` | sed -e 's/&/\&amp;/g' | sed -e 's/</\&lt;/g' | sed -e 's/>/\&gt;/g' > $@
 
 $(HTML_SS): $(HTML_SS).in
 	./findxsl

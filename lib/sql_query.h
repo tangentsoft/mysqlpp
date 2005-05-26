@@ -1,6 +1,3 @@
-#ifndef MYSQLPP_SQL_QUERY_H
-#define MYSQLPP_SQL_QUERY_H
-
 /// \file sql_query.h
 /// \brief Declares the base class for mysqlpp::Query, plus some
 /// utility classes to be used with it.
@@ -17,6 +14,33 @@
 /// class. This will probably happen in the next major release, when
 /// major ABI breakage is acceptable.
 
+/***********************************************************************
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
+ MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ Others may also hold copyrights on code in this file.  See the CREDITS
+ file in the top directory of the distribution for details.
+
+ This file is part of MySQL++.
+
+ MySQL++ is free software; you can redistribute it and/or modify it
+ under the terms of the GNU Lesser General Public License as published
+ by the Free Software Foundation; either version 2.1 of the License, or
+ (at your option) any later version.
+
+ MySQL++ is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+ License for more details.
+
+ You should have received a copy of the GNU Lesser General Public
+ License along with MySQL++; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
+ USA
+***********************************************************************/
+
+#ifndef MYSQLPP_SQL_QUERY_H
+#define MYSQLPP_SQL_QUERY_H
+
 #include "defs.h"
 #include "sql_string.h"
 #include "tiny_int.h"
@@ -25,6 +49,7 @@
 #include <vector>
 #include <map>
 
+/// \brief Used to define many similar functions in class SQLQuery.
 #define mysql_query_define0(RETURN, FUNC)\
   RETURN FUNC (ss a)\
     {return FUNC (parms() << a);}\
@@ -62,23 +87,31 @@ class SQLQuery;
 /// template queries. 
 class SQLQueryParms : public std::vector<SQLString>
 {
+private:
 	friend class Query;
 
-private:
-	typedef const SQLString & ss;
+	typedef const SQLString& ss;
 	SQLQuery *parent;
 
 public:
+	/// \brief Default constructor
 	SQLQueryParms() :
-	parent(NULL)
+	parent(0)
 	{
 	}
 	
-	SQLQueryParms(SQLQuery * p) :
+	/// \brief Create object
+	///
+	/// \param p pointer to the query object these parameters are tied
+	/// to
+	SQLQueryParms(SQLQuery* p) :
 	parent(p)
 	{
 	}
 	
+	/// \brief Returns true if we are bound to a query object.
+	///
+	/// Basically, this tells you which of the two ctors were called.
 	bool bound()
 	{
 		return parent != 0;
@@ -124,12 +157,19 @@ public:
 		return *this;
 	}
 
+	/// \brief Build a composite of two parameter lists
+	///
+	/// If this list is (a, b) and \c other is (c, d, e, f, g), then
+	/// the returned list will be (a, b, e, f, g).  That is, all of this
+	/// list's parameters are in the returned list, plus any from the
+	/// other list that are in positions beyond what exist in this list.
+	///
+	/// If the two lists are the same length or this list is longer than
+	/// the \c other list, a copy of this list is returned.
 	SQLQueryParms operator +(const SQLQueryParms& other) const;
 
-	/// \brief Set the template query parameters.
-	///
-	/// Sets element 0 to a, element 1 to b, etc. May specify up to a
-	/// dozen parameters.
+#if !defined(DOXYGEN_IGNORE)
+// Doxygen will not generate documentation for this section.
 	void set(ss a)
 	{
 		clear();
@@ -187,6 +227,13 @@ public:
 		clear();
 		*this << a << b << c << d << e << f << g << h << i << j << k;
 	}
+#endif // !defined(DOXYGEN_IGNORE)
+
+	/// \brief Set the template query parameters.
+	///
+	/// Sets parameter 0 to a, parameter 1 to b, etc. There are
+	/// overloaded versions of this function that take anywhere from
+	/// one to a dozen parameters.
 	void set(ss a, ss b, ss c, ss d, ss e, ss f, ss g, ss h, ss i,
 			 ss j, ss k, ss l)
 	{
@@ -201,13 +248,44 @@ public:
 enum query_reset { DONT_RESET, RESET_QUERY };
 
 
-/// Documentation needed!
+/// \brief Used within SQLQuery to hold elements for parameterized
+/// queries.
+///
+/// Each element has three parts:
+///
+/// The concept behind the \c before variable needs a little explaining.
+/// When a template query is parsed, each parameter is parsed into one
+/// of these SQLParseElement objects, but the non-parameter parts of the
+/// template also have to be stored somewhere.  MySQL++ chooses to
+/// attach the text leading up to a parameter to that parameter.  So,
+/// the \c before string is simply the text copied literally into the
+/// finished query before we insert a value for the parameter.
+///
+/// The \c option character is currently one of 'q', 'Q', 'r', 'R' or
+/// ' '.  See the "Template Queries" chapter in the user manual for
+/// details.
+///
+/// The position value (\c num) allows a template query to have its
+/// parameters in a different order than in the Query method call.
+/// An example of how this can be helpful is in the "Template Queries"
+/// chapter of the user manual.
+
 struct SQLParseElement {
-	SQLParseElement(std::string b, char o, char n):before(b),
-		option(o), num(n) {
-	} std::string before;
-	char option;
-	char num;
+	/// \brief Create object
+	///
+	/// \param b the 'before' value
+	/// \param o the 'option' value
+	/// \param n the 'num' value
+	SQLParseElement(std::string b, char o, char n) :
+	before(b),
+	option(o),
+	num(n)
+	{
+	}
+	
+	std::string before;		///< string inserted before the parameter
+	char option;			///< the parameter option, or blank if none
+	char num;				///< the parameter position to use
 };
 
 
@@ -233,24 +311,33 @@ struct SQLParseElement {
 
 class SQLQuery : public std::stringstream
 {
+private:
 	friend class SQLQueryParms;
 
-private:
 	char *preview_char();
 
 protected:
-	bool Success;
-	char *errmsg;
-	std::vector < SQLParseElement > parsed;
-	std::vector < std::string > parsed_names;
-	std::map < std::string, int >parsed_nums;
-	typedef const SQLString & ss;
-	typedef SQLQueryParms parms;
+	bool Success;					///< if true, last query succeeded
+	char* errmsg;					///< string explaining last query error
+
+	/// \brief List of template query parameters
+	std::vector<SQLParseElement> parsed;
+
+	/// \brief Maps template parameter position values to the
+	/// corresponding parameter name.
+	std::vector<std::string> parsed_names;
+
+	/// \brief Maps template parameter names to their position value.
+	std::map<std::string, int> parsed_nums;
+
+	typedef const SQLString& ss;	///< to keep parameters lists short
+	typedef SQLQueryParms parms;	///< abstraction; remove when Query and SQLQuery merge
 
 	/// \brief Process a parameterized query list.
-	void proc(SQLQueryParms & p);
+	void proc(SQLQueryParms& p);
 
 public:
+	/// \brief Default constructor
 	SQLQuery() :
 	std::stringstream(),
 	Success(false),
@@ -259,22 +346,39 @@ public:
 	{
 	}
 	
-	SQLQuery(const SQLQuery & q);
+	/// \brief Create a query as a copy of another
+	SQLQuery(const SQLQuery& q);
 
 	/// \brief The default template parameters
 	///
 	/// Used for filling in parameterized queries.
 	SQLQueryParms def;
 
+	/// \brief Treat the contents of the query string as a template
+	/// query.
+	///
+	/// This method sets up the internal structures used by all of the
+	/// other members that accept template query parameters.  See the
+	/// "Template Queries" chapter in the user manual for more
+	/// information.
 	void parse();
 
+	/// \brief Return the last error message that was set
+	///
+	/// This function has no real meaning at this level.  It's
+	/// overridden with useful behavior in the Query subclass.
 	std::string error() const
 	{
 		return errmsg;
 	}
 	
+	/// \brief Return true if the last query was successful
 	bool success() const { return Success; }
+
+	/// \brief Return true if the last query was successful
 	operator bool() { return success(); }
+
+	/// \brief Return true if the last query failed
 	bool operator !() { return !success(); }
 
 	/// \brief Reset the query object so that it can be reused.
@@ -283,9 +387,16 @@ public:
 	/// query element list.
 	void reset();
 
-	template <class T> SQLQuery& update(const T& o, const T& n)
+	/// \brief Build an UPDATE SQL query
+	///
+	/// \param o SSQLS containing data to match in table
+	/// \param n SSQLS that will replace any records in \c o.table() that
+	/// match \c o
+	template <class T>
+	SQLQuery& update(const T& o, const T& n)
 	{
 		reset();
+
 		// Cast required for VC++ 2003 due to error in overloaded operator
 		// lookup logic.  For an explanation of the problem, see:
 		// http://groups-beta.google.com/group/microsoft.public.vc.stl/browse_thread/thread/9a68d84644e64f15
@@ -295,9 +406,14 @@ public:
 		return *this;
 	}
 
-	template <class T> SQLQuery& insert(const T& v)
+	/// \brief Build an INSERT SQL query for one record
+	///
+	/// \param v SSQLS which will be inserted into \c v.table()
+	template <class T>
+	SQLQuery& insert(const T& v)
 	{
 		reset();
+
 		// See above comment for cast rationale
 		dynamic_cast<std::stringstream&>(*this) << "INSERT INTO " <<
 				v.table() << " (" << v.field_list() << ") VALUES (" <<
@@ -305,7 +421,13 @@ public:
 		return *this;
 	}
 
-	template <class Iter> SQLQuery& insert(Iter first, Iter last)
+	/// \brief Build an INSERT SQL query for multiple records
+	///
+	/// \param first iterator pointing to first SSQLS to insert
+	/// \param last iterator pointing to record past last SSQLS to
+	/// insert
+	template <class Iter>
+	SQLQuery& insert(Iter first, Iter last)
 	{
 		reset();
 		if (first == last) {
@@ -327,9 +449,16 @@ public:
 		return *this;
 	} 
 
-	template <class T> SQLQuery& replace(const T& v)
+	/// \brief Build a REPLACE SQL query
+	///
+	/// \param v SSQLS containing data to insert into the table, or
+	/// which will replace an existing record if this record matches
+	/// another on a unique index
+	template <class T>
+	SQLQuery& replace(const T& v)
 	{
 		reset();
+
 		// See above comment for cast rationale
 		dynamic_cast<std::stringstream&>(*this) << "REPLACE INTO " <<
 				v.table() << " (" << v.field_list() << ") VALUES (" <<
@@ -337,35 +466,56 @@ public:
 		return *this;
 	}
 
+	/// \brief Get built query as a null-terminated C++ string
 	std::string str()
 	{
 		return str(def);
 	}
+
+	/// \brief Get built query as a null-terminated C++ string
+	///
+	/// \param r if equal to \c RESET_QUERY, query object is cleared
+	/// after this call
 	std::string str(query_reset r)
 	{
 		return str(def, r);
 	}
+
+	/// \brief Get built query as a null-terminated C++ string
+	///
+	/// \param p template query parameters to use, overriding the ones
+	/// this object holds, if any
 	std::string str(SQLQueryParms& p);
+
+	/// \brief Get built query as a null-terminated C++ string
+	///
+	/// \param p template query parameters to use, overriding the ones
+	/// this object holds, if any
+	/// \param r if equal to \c RESET_QUERY, query object is cleared
+	/// after this call
 	std::string str(SQLQueryParms& p, query_reset r);
 
+#if !defined(DOXYGEN_IGNORE)
+	// Make Doxygen ignore this macro; declaration below is sufficient.
 	mysql_query_define0(std::string, str);
+#endif // !defined(DOXYGEN_IGNORE)
 };
 
 
-inline SQLString& SQLQueryParms::operator [](const char *str)
+inline SQLString& SQLQueryParms::operator [](const char* str)
 {
 	if (parent) {
 		return operator [](parent->parsed_nums[str]);
 	}
-	throw;					// only here temporary 
+	throw; // only here temporary 
 }
 
-inline const SQLString& SQLQueryParms::operator[] (const char *str) const
+inline const SQLString& SQLQueryParms::operator[] (const char* str) const
 {
 	if (parent) {
 		return operator [](parent->parsed_nums[str]);
 	}
-	throw;					// only here temporary 
+	throw; // only here temporary 
 }
 
 } // end namespace mysqlpp

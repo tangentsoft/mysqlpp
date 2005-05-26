@@ -1,5 +1,34 @@
 #!/usr/bin/perl
 
+########################################################################
+# custom.pl - Generates custom.h and custom-macros.h, as these files
+#	contain many near-duplicate classes, varying only in the number of
+#	SQL table columns they support.
+#
+# Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
+# MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+# Others may also hold copyrights on code in this file.  See the CREDITS
+# file in the top directory of the distribution for details.
+#
+# This file is part of MySQL++.
+#
+# MySQL++ is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as published
+# by the Free Software Foundation; either version 2.1 of the License, or
+# (at your option) any later version.
+#
+# MySQL++ is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+# License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with MySQL++; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
+# USA
+########################################################################
+
+
 # This is the limit on the number of SSQLS data members.  Higher values
 # will make custom-macros.h exponentially larger, increase compile
 # times, and possibly even expose limits in your compiler.  Increase it
@@ -376,10 +405,10 @@ $enums
   				  const NAME##_cus_value_list<Manip>&); */
   public:
     const NAME *obj;
-    cchar *delem;
-    Manip manip;
     std::vector<bool> *include;
     bool del_vector;
+    cchar *delem;
+    Manip manip;
   public: 
     ~NAME##_cus_value_list () {if (del_vector) delete include;} 
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, $cusparms11);
@@ -394,10 +423,10 @@ $enums
      				  const NAME##_cus_field_list<Manip>&); */
   public:
     const NAME *obj; 
-    cchar *delem;
-    Manip manip;
     std::vector<bool> *include; 
     bool del_vector; 
+    cchar *delem;
+    Manip manip;
   public: 
     ~NAME##_cus_field_list () {if (del_vector) delete include;} 
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, $cusparms11); 
@@ -770,6 +799,24 @@ $cus_equal_list
 							 $cusparms22) const { 
     return NAME##_cus_equal_list<Manip> (this, d, c, m, $cusparmsv); 
   } 
+
+  template <class Manip>
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,
+                                                       std::vector<bool> *i) const {
+    return NAME##_cus_value_list<Manip> (this, d, m, i);
+  }
+
+  template <class Manip>
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,
+                                                       std::vector<bool> *i) const {
+    return NAME##_cus_field_list<Manip> (this, d, m, i);
+  }
+
+  template <class Manip>
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,
+                                                       std::vector<bool> *i) const {
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);
+  }
 
   template <class Manip>
   inline NAME##_cus_value_list<Manip> 

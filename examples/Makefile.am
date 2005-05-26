@@ -1,3 +1,18 @@
+# This file is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as published
+# by the Free Software Foundation; either version 2.1 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+# USA.
+
 include $(top_srcdir)/common.am
 
 AM_CXXFLAGS = @PTHREAD_CFLAGS@
@@ -6,7 +21,7 @@ LDADD = $(MYSQLPP_LIB) @PTHREAD_LIBS@
 EXTRA_DIST = *.vcproj *.bpf *.bpr *.bpg Makefile.simple
 
 noinst_PROGRAMS = resetdb simple1 custom1 custom2 custom3 custom4 \
-		complic1 fieldinf1 dbinfo updel load_file cgi_image
+		custom5 fieldinf1 dbinfo updel load_file cgi_image
 
 noinst_HEADERS = util.h
 
@@ -34,8 +49,8 @@ custom3_DEPENDENCIES = $(MYSQLPP_LIB)
 custom4_SOURCES = custom4.cpp util.cpp
 custom4_DEPENDENCIES = $(MYSQLPP_LIB)
 
-complic1_SOURCES = complic1.cpp util.cpp
-complic1_DEPENDENCIES = $(MYSQLPP_LIB)
+custom5_SOURCES = custom5.cpp util.cpp
+custom5_DEPENDENCIES = $(MYSQLPP_LIB)
 
 fieldinf1_SOURCES = fieldinf1.cpp util.cpp
 fieldinf1_DEPENDENCIES = $(MYSQLPP_LIB)

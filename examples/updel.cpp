@@ -1,3 +1,30 @@
+/***********************************************************************
+ updel.cpp - Example showing how to UPDATE or DELETE rows in a database
+ 	while using the power of MySQL's SELECT filtering ability.
+
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
+ MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ Others may also hold copyrights on code in this file.  See the CREDITS
+ file in the top directory of the distribution for details.
+
+ This file is part of MySQL++.
+
+ MySQL++ is free software; you can redistribute it and/or modify it
+ under the terms of the GNU Lesser General Public License as published
+ by the Free Software Foundation; either version 2.1 of the License, or
+ (at your option) any later version.
+
+ MySQL++ is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+ License for more details.
+
+ You should have received a copy of the GNU Lesser General Public
+ License along with MySQL++; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
+ USA
+***********************************************************************/
+
 #include <mysql++.h>
 
 #include <string>
@@ -36,22 +63,26 @@ main()
 		string output(strbuf.str());
 		output.erase(output.size() - 1, 1);
 		output += ")";
-		query.exec(output);	// cout << output << endl;
-		return 0;
+		query.exec(output);
+		//cout << output << endl;
 	}
 	catch (BadQuery& er) {
-		// handle any connection or query errors that may come up
+		// Handle any connection or query errors
 		cerr << "Error: " << er.what() << " " << con.errnum() << endl;
 		return -1;
 	}
 	catch (BadConversion& er) {
+		// Handle bad conversions
 		cerr << "Error: " << er.what() << "\"." << endl
 			<< "retrieved data size: " << er.retrieved
 			<< " actual data size: " << er.actual_size << endl;
 		return -1;
 	}
 	catch (exception& er) {
+		// Catch-all for any other standard C++ exceptions
 		cerr << "Error: " << er.what() << endl;
 		return -1;
 	}
+
+	return 0;
 }

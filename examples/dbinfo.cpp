@@ -1,3 +1,30 @@
+/***********************************************************************
+ dbinfo.cpp - Example showing how to request information about the
+	database schema, such as table names, column types, etc.
+
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
+ MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ Others may also hold copyrights on code in this file.  See the CREDITS
+ file in the top directory of the distribution for details.
+
+ This file is part of MySQL++.
+
+ MySQL++ is free software; you can redistribute it and/or modify it
+ under the terms of the GNU Lesser General Public License as published
+ by the Free Software Foundation; either version 2.1 of the License, or
+ (at your option) any later version.
+
+ MySQL++ is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+ License for more details.
+
+ You should have received a copy of the GNU Lesser General Public
+ License along with MySQL++; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
+ USA
+***********************************************************************/
+
 #include "util.h"
 
 #include <mysql++.h>
@@ -136,7 +163,7 @@ main(int argc, char* argv[])
 		}
 	}
 	catch (BadQuery& er) {
-		// handle any connection or query errors that may come up
+		// Handle any connection or query errors
 		cerr << "Error: " << er.what() << " " << con.errnum() << endl;
 		return -1;
 	}
@@ -144,14 +171,17 @@ main(int argc, char* argv[])
 		// Handle bad conversions.  We still need to catch bad
 		// conversions in case something goes wrong when the data
 		// is converted into stock.
-		cerr << "Error: " << er.what() << "\"." << endl
-			<< "retrieved data size: " << er.retrieved
-			<< " actual data size: " << er.actual_size << endl;
+		cerr << "Error: " << er.what() << "\"." << endl << 
+				"retrieved data size: " << er.retrieved <<
+				" actual data size: " << er.actual_size << endl;
 		return -1;
 	}
 	catch (exception& er) {
+		// Catch-all for any other standard C++ exceptions
 		cerr << "Error: " << er.what() << endl;
 		return -1;
 	}
+
+	return 0;
 }
 

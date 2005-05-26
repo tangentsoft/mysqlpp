@@ -1,3 +1,30 @@
+/***********************************************************************
+ vallist.cpp - Implements utility functions for building value lists.
+	This is internal functionality used within the library.
+
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
+ MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ Others may also hold copyrights on code in this file.  See the CREDITS
+ file in the top directory of the distribution for details.
+
+ This file is part of MySQL++.
+
+ MySQL++ is free software; you can redistribute it and/or modify it
+ under the terms of the GNU Lesser General Public License as published
+ by the Free Software Foundation; either version 2.1 of the License, or
+ (at your option) any later version.
+
+ MySQL++ is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+ License for more details.
+
+ You should have received a copy of the GNU Lesser General Public
+ License along with MySQL++; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
+ USA
+***********************************************************************/
+
 #include "vallist.h"
 
 #include "result.h"
@@ -8,7 +35,7 @@ using std::string;
 namespace mysqlpp {
 
 void
-create_vector(int size, std::vector<bool> &v, bool t0, bool t1, bool t2,
+create_vector(int size, std::vector<bool>& v, bool t0, bool t1, bool t2,
 		bool t3, bool t4, bool t5, bool t6, bool t7, bool t8, bool t9,
 		bool ta, bool tb, bool tc)
 {
@@ -53,11 +80,13 @@ create_vector(int size, std::vector<bool> &v, bool t0, bool t1, bool t2,
 	v.push_back(tc);
 }
 
-template<class Container>
-void create_vector(const Container& c, std::vector<bool>& v, string s0,
-		string s1, string s2, string s3, string s4, string s5,
-		string s6, string s7, string s8, string s9, string sa,
-		string sb, string sc)
+
+template <class Container>
+void create_vector(const Container& c, std::vector<bool>& v,
+		std::string s0, std::string s1, std::string s2, std::string s3,
+		std::string s4, std::string s5, std::string s6, std::string s7,
+		std::string s8, std::string s9, std::string sa, std::string sb,
+		std::string sc)
 {
 	v.insert(v.begin(), c.size(), false);
 
@@ -100,11 +129,21 @@ void create_vector(const Container& c, std::vector<bool>& v, string s0,
 	v[c.parent().field_num(sc)] = true;
 }
 
+
+/// \if INTERNAL
+// Doxygen will not generate documentation for this section.
+
+// Instantiate above template.  Not sure why this is necessary.  Either
+// find out, document and remove it from the INTERNAL section; or remove
+// it.
+
 template void
 create_vector(const Row& c, std::vector<bool>& v, string s0,
 		string s1, string s2, string s3, string s4, string s5,
 		string s6, string s7, string s8, string s9, string sa,
 		string sb, string sc);
+
+/// \endif
 
 } // end namespace mysqlpp
 

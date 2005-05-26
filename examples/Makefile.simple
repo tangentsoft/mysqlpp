@@ -2,6 +2,23 @@
 ## mysql++ source tree, using the MySQL++ library and headers installed
 ## into the system directories.
 
+
+# This file is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as published
+# by the Free Software Foundation; either version 2.1 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+# USA.
+
+
 # --- Things you might need to change:
 
 CXX=g++
@@ -15,12 +32,11 @@ LDFLAGS=-lmysqlpp -lmysqlclient
 
 # --- No user-serviceable parts below :)
 
-BINARIES=resetdb simple1 complic1 custom1 custom2 custom3 custom4 \
+BINARIES=resetdb simple1 custom1 custom2 custom3 custom4 \
 	fieldinf1 dbinfo cgi_image load_file updel
 
 RESETDB_OBJS=resetdb.o util.o
 SIMPLE1_OBJS=simple1.o util.o
-COMPLIC1_OBJS=complic1.o util.o
 CUSTOM1_OBJS=custom1.o util.o
 CUSTOM2_OBJS=custom2.o util.o
 CUSTOM3_OBJS=custom3.o util.o
@@ -48,9 +64,6 @@ resetdb: $(RESETDB_OBJS)
 
 simple1: $(SIMPLE1_OBJS)
 	$(LD) $(SIMPLE1_OBJS) -o $@ $(LDFLAGS)
-
-complic1: $(COMPLIC1_OBJS)
-	$(LD) $(COMPLIC1_OBJS) -o $@ $(LDFLAGS)
 
 custom1: $(CUSTOM1_OBJS)
 	$(LD) $(CUSTOM1_OBJS) -o $@ $(LDFLAGS)
@@ -82,7 +95,6 @@ updel: $(UPDEL_OBJS)
 
 resetdb.o: resetdb.cpp util.h
 simple1.o: simple1.cpp util.h
-complic1.o: complic1.cpp util.h
 custom1.o: custom1.cpp util.h
 custom2.o: custom2.cpp util.h
 custom3.o: custom3.cpp util.h

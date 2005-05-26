@@ -1,12 +1,36 @@
-#ifndef MYSQLPP_COLDATA_H
-#define MYSQLPP_COLDATA_H
-
 /// \file coldata.h
 /// \brief Declares classes for converting string data to any of 
 /// the basic C types.
 ///
 /// Roughly speaking, this defines classes that are the inverse of
 /// mysqlpp::SQLString.
+
+/***********************************************************************
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
+ MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ Others may also hold copyrights on code in this file.  See the CREDITS
+ file in the top directory of the distribution for details.
+
+ This file is part of MySQL++.
+
+ MySQL++ is free software; you can redistribute it and/or modify it
+ under the terms of the GNU Lesser General Public License as published
+ by the Free Software Foundation; either version 2.1 of the License, or
+ (at your option) any later version.
+
+ MySQL++ is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+ License for more details.
+
+ You should have received a copy of the GNU Lesser General Public
+ License along with MySQL++; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
+ USA
+***********************************************************************/
+
+#ifndef MYSQLPP_COLDATA_H
+#define MYSQLPP_COLDATA_H
 
 #include "platform.h"
 
@@ -28,23 +52,28 @@
 namespace mysqlpp {
 
 /// \brief Template for string data that can convert itself to any
-/// standard C data type.  Do not use directly. 
+/// standard C data type.
 ///
-/// This template is used to construct std::string-like classes with
-/// additional MySQL-related smarts. It is for taking data from the
-/// MySQL database, which is always in string form, and converting it to
-/// any of the basic C types. 
+/// Do not use this class directly. Use the typedef ColData or
+/// MutableColData instead. ColData is a \c ColData_Tmpl<const
+/// \c std::string> and MutableColData is a
+/// \c ColData_Tmpl<std::string>.
 ///
-/// These conversions are implicit, so you can do things like this:
+/// The ColData types add to the C++ string type the ability to
+/// automatically convert the string data to any of the basic C types.
+/// This is important with SQL, because all data coming from the
+/// database is in string form.  MySQL++ uses this class internally
+/// to hold the data it receives from the server, so you can use it
+/// naturally, because it does the conversions implicitly:
 ///
 /// \code ColData("12.86") + 2.0 \endcode
 ///
-/// But be careful.  If you had said this instead:
+/// That works fine, but be careful.  If you had said this instead:
 /// 
 /// \code ColData("12.86") + 2 \endcode
 /// 
-/// the result would be 14 because 2 is an integer, so the string data
-/// is converted to that same type before the binary operator is applied.
+/// the result would be 14 because 2 is an integer, and C++'s type
+/// conversion rules put the ColData object in an integer context.
 ///
 /// If these automatic conversions scare you, define the micro
 /// NO_BINARY_OPERS to disable this behavior.
@@ -52,9 +81,6 @@ namespace mysqlpp {
 /// This class also has some basic information about the type of data
 /// stored in it, to allow it to do the conversions more intelligently
 /// than a trivial implementation would allow.
-///
-/// <b>Do not use this class directly.</b> Use the typedef ColData or
-/// MutableColData instead.
 
 template <class Str> class ColData_Tmpl : public Str
 {
@@ -64,13 +90,35 @@ private:
 	bool _null;
 
 public:
+	/// \brief Default constructor
+	///
+	/// Null flag is set to false, type data is not set, and string
+	/// data is left empty.
+	///
+	/// It's probably a bad idea to use this ctor, becuase there's no
+	/// way to set the type data once the object's constructed.
+	ColData_Tmpl() :
+	_null(false)
+	{
+	}
+
+	/// \brief Constructor allowing you to set the null flag and the
+	/// type data.
+	///
+	/// \param n if true, data is a SQL null
+	/// \param t MySQL type information for data being stored
 	explicit ColData_Tmpl(bool n,
 			mysql_type_info t = mysql_type_info::string_type) :
 	_type(t),
 	_null(n)
 	{
 	}
-	
+
+	/// \brief Full constructor.
+	///
+	/// \param str the string this object represents
+	/// \param t MySQL type information for data within str
+	/// \param n if true, str is a SQL null
 	explicit ColData_Tmpl(const char* str,
 			mysql_type_info t = mysql_type_info::string_type,
 			bool n = false) :
@@ -79,12 +127,6 @@ public:
 	_null(n)
 	{
 		buf = str;
-	}
-
-	/// \brief Default constructor
-	ColData_Tmpl() :
-	_null(false)
-	{
 	}
 
 	/// \brief Get this object's current MySQL type.
@@ -175,7 +217,11 @@ typedef ColData_Tmpl < const_string > ColData;
 typedef ColData_Tmpl < std::string > MutableColData;
 
 
-#ifndef NO_BINARY_OPERS
+#if !defined(NO_BINARY_OPERS) && !defined(DOXYGEN_IGNORE)
+// Ignore this section is NO_BINARY_OPERS is defined, or if this section
+// is being parsed by Doxygen.  In the latter case, it's ignored because
+// Doxygen doesn't understand it correctly, and we can't be bothered to
+// explain it to Doxygen.
 
 #define oprsw(opr, other, conv) \
   template<class Str> \
@@ -215,8 +261,15 @@ operator_binary_int(unsigned long int, unsigned long int)
 
 operator_binary_int(longlong, longlong)
 operator_binary_int(ulonglong, ulonglong)
-#endif							// NO_BINARY_OPERS
+#endif // NO_BINARY_OPERS
 
+/// \endif
+
+/// \brief Converts this object to a SQL null
+///
+/// Returns null directly if the string data held by the object is
+/// exactly equal to "NULL".  Else, it 
+/// data.
 template <class Str> template<class T, class B>
 ColData_Tmpl<Str>::operator Null<T, B>() const
 {

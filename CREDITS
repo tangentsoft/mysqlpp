@@ -9,9 +9,8 @@ mailing list.
 In August of 2004, Warren Young <mysqlpp@etr-usa.com> took over as
 library maintainer. The first release under his leadership was 1.7.10.
 
-For a fuller account of the library's history, see the first page of the
-reference manual, or the Doxygen comment at the end of lib/mysql++.h,
-from which that page is built.
+For a fuller account of the library's history, see the first chapter of
+the user manual.
 
 
 Other frequent contributors since 1.7.10 are:
@@ -23,6 +22,11 @@ Other frequent contributors since 1.7.10 are:
 
 	Totte Karlsson <tkarlsson@qm.com>: Primary force behind Borland
 	C++ Builder support.
+
+	Mark Meredino <Mark_Merendino@cnt.com>: Several fixes and
+	additions, including a lot of work on Microsoft Visual C++
+	compatibility, and discoveries made while spelunking in the
+	library.
 
 	Evan Wies <evan@athenacr.com>: Contributed several C++ code
 	style cleanups.

@@ -1,3 +1,29 @@
+/***********************************************************************
+ connection.cpp - Implements the Connection class.
+
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
+ MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ Others may also hold copyrights on code in this file.  See the CREDITS
+ file in the top directory of the distribution for details.
+
+ This file is part of MySQL++.
+
+ MySQL++ is free software; you can redistribute it and/or modify it
+ under the terms of the GNU Lesser General Public License as published
+ by the Free Software Foundation; either version 2.1 of the License, or
+ (at your option) any later version.
+
+ MySQL++ is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+ License for more details.
+
+ You should have received a copy of the GNU Lesser General Public
+ License along with MySQL++; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
+ USA
+***********************************************************************/
+
 #define MYSQLPP_NOT_HEADER
 #include "platform.h"
 
@@ -81,7 +107,7 @@ bool Connection::real_connect(cchar* db, cchar* host, cchar* user,
 {
 	mysql.options.compress = compress;
 	mysql.options.connect_timeout = connect_timeout;
-	locked = true;			//mysql.options.my_cnf_file="my";
+	locked = true;
 
 	mysql_options(&mysql, MYSQL_READ_DEFAULT_FILE, "my");
 
@@ -98,13 +124,10 @@ bool Connection::real_connect(cchar* db, cchar* host, cchar* user,
 		}
 	}
 
-	if (!Success) {
-		return Success;
-	}
-	if (db && db[0]) {
-		// db is not empty
+	if (Success && db && db[0]) {
 		Success = select_db(db);
 	}
+
 	return Success;
 }
 
@@ -149,12 +172,11 @@ bool Connection::shutdown()
 bool Connection::connect(cchar* db, cchar* host, cchar* user,
 		cchar* passwd)
 {
-	locked = true;			// mysql.options.my_cnf_file="my";
-
+	locked = true;
+	
 	mysql_options(&mysql, MYSQL_READ_DEFAULT_FILE, "my");
 
-	if (mysql_real_connect
-		(&mysql, host, user, passwd, db, 3306, NULL, 0)) {
+	if (mysql_real_connect(&mysql, host, user, passwd, db, 3306, NULL, 0)) {
 		locked = false;
 		Success = is_connected = true;
 	}
@@ -164,21 +186,23 @@ bool Connection::connect(cchar* db, cchar* host, cchar* user,
 			throw BadQuery(error());
 		Success = is_connected = false;
 	}
-	//  mysql.options.my_cnf_file=0;
-	if (!Success)
-		return Success;
-	if (db && db[0])		// if db is not empty
+
+	if (Success && db && db[0]) {
 		Success = select_db(db);
+	}
+
 	return Success;
 }
 
 string Connection::info()
 {
-	const char *i = mysql_info(&mysql);
-	if (!i)
+	const char* i = mysql_info(&mysql);
+	if (!i) {
 		return string();
-	else
+	}
+	else {
 		return string(i);
+	}
 }
 
 ResNSel Connection::execute(const string& str, bool throw_excptns)

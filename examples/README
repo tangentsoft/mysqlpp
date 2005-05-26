@@ -34,7 +34,7 @@ General Instructions
 	You can give as few of the parameters as you want, but they must
 	be in that order.  That is, if you want to give a user name,
 	you must give the host first.  It defaults to localhost with
-	your user name and no password.
+	your user name, no password, and the default MySQL port (3306).
 
 
 	The following examples use the database set up by resetdb,
@@ -43,12 +43,10 @@ General Instructions
 		simple1: Gets all records in the table resetdb set up and
 			displays them.  Try this one if you do nothing else.
 
-		complic1: Similar to simple1, only more complicated. :)
-
 		fieldinf1: Shows how to get information about the fields in
 			a result set.  (Types, etc.)
 
-		custom1-4: Demonstrates the SQLSS features.  (See the docs.)
+		custom1-5: Demonstrates the SQLSS features.  (See the docs.)
 
 		dbinfo: Dumps a bunch of information about the database
 			server and the tables in its 'mysql' database.
@@ -62,4 +60,6 @@ General Instructions
 		load_file, cgi_image: Shows how to use a BLOB field to store
 			a file, and how to retrieve the file from the DB.
 
-		updel: I'm not sure what this one does...
+		updel: Shows how to use the power of the matching syntax
+			available in MySQL's SELECT statement to do fine-grained
+			UPDATE or DELETE queries.

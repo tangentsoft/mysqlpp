@@ -7555,10 +7555,10 @@
   				  const NAME##_cus_value_list<Manip>&); */\
   public:\
     const NAME *obj;\
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include;\
     bool del_vector;\
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_value_list () {if (del_vector) delete include;} \
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, bool i1);\
@@ -7572,10 +7572,10 @@
      				  const NAME##_cus_field_list<Manip>&); */\
   public:\
     const NAME *obj; \
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include; \
     bool del_vector; \
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_field_list () {if (del_vector) delete include;} \
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, bool i1); \
@@ -7915,6 +7915,21 @@
     return NAME##_cus_equal_list<Manip> (this, d, c, m, i1); \
   } \
   template <class Manip>\
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_value_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_field_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);\
+  }\
+  template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
   NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
@@ -8024,10 +8039,10 @@
   				  const NAME##_cus_value_list<Manip>&); */\
   public:\
     const NAME *obj;\
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include;\
     bool del_vector;\
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_value_list () {if (del_vector) delete include;} \
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2);\
@@ -8041,10 +8056,10 @@
      				  const NAME##_cus_field_list<Manip>&); */\
   public:\
     const NAME *obj; \
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include; \
     bool del_vector; \
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_field_list () {if (del_vector) delete include;} \
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2); \
@@ -8416,6 +8431,21 @@
     return NAME##_cus_equal_list<Manip> (this, d, c, m, i1, i2); \
   } \
   template <class Manip>\
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_value_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_field_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);\
+  }\
+  template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
   NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
@@ -8529,10 +8559,10 @@
   				  const NAME##_cus_value_list<Manip>&); */\
   public:\
     const NAME *obj;\
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include;\
     bool del_vector;\
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_value_list () {if (del_vector) delete include;} \
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3);\
@@ -8546,10 +8576,10 @@
      				  const NAME##_cus_field_list<Manip>&); */\
   public:\
     const NAME *obj; \
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include; \
     bool del_vector; \
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_field_list () {if (del_vector) delete include;} \
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3); \
@@ -8950,6 +8980,21 @@
     return NAME##_cus_equal_list<Manip> (this, d, c, m, i1, i2, i3); \
   } \
   template <class Manip>\
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_value_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_field_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);\
+  }\
+  template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
   NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
@@ -9067,10 +9112,10 @@
   				  const NAME##_cus_value_list<Manip>&); */\
   public:\
     const NAME *obj;\
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include;\
     bool del_vector;\
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_value_list () {if (del_vector) delete include;} \
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4);\
@@ -9084,10 +9129,10 @@
      				  const NAME##_cus_field_list<Manip>&); */\
   public:\
     const NAME *obj; \
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include; \
     bool del_vector; \
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_field_list () {if (del_vector) delete include;} \
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4); \
@@ -9517,6 +9562,21 @@
     return NAME##_cus_equal_list<Manip> (this, d, c, m, i1, i2, i3, i4); \
   } \
   template <class Manip>\
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_value_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_field_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);\
+  }\
+  template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
   NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
@@ -9638,10 +9698,10 @@
   				  const NAME##_cus_value_list<Manip>&); */\
   public:\
     const NAME *obj;\
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include;\
     bool del_vector;\
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_value_list () {if (del_vector) delete include;} \
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5);\
@@ -9655,10 +9715,10 @@
      				  const NAME##_cus_field_list<Manip>&); */\
   public:\
     const NAME *obj; \
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include; \
     bool del_vector; \
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_field_list () {if (del_vector) delete include;} \
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5); \
@@ -10117,6 +10177,21 @@
     return NAME##_cus_equal_list<Manip> (this, d, c, m, i1, i2, i3, i4, i5); \
   } \
   template <class Manip>\
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_value_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_field_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);\
+  }\
+  template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
   NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
@@ -10242,10 +10317,10 @@
   				  const NAME##_cus_value_list<Manip>&); */\
   public:\
     const NAME *obj;\
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include;\
     bool del_vector;\
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_value_list () {if (del_vector) delete include;} \
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6);\
@@ -10259,10 +10334,10 @@
      				  const NAME##_cus_field_list<Manip>&); */\
   public:\
     const NAME *obj; \
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include; \
     bool del_vector; \
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_field_list () {if (del_vector) delete include;} \
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6); \
@@ -10750,6 +10825,21 @@
     return NAME##_cus_equal_list<Manip> (this, d, c, m, i1, i2, i3, i4, i5, i6); \
   } \
   template <class Manip>\
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_value_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_field_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);\
+  }\
+  template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
   NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
@@ -10879,10 +10969,10 @@
   				  const NAME##_cus_value_list<Manip>&); */\
   public:\
     const NAME *obj;\
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include;\
     bool del_vector;\
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_value_list () {if (del_vector) delete include;} \
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7);\
@@ -10896,10 +10986,10 @@
      				  const NAME##_cus_field_list<Manip>&); */\
   public:\
     const NAME *obj; \
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include; \
     bool del_vector; \
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_field_list () {if (del_vector) delete include;} \
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7); \
@@ -11416,6 +11506,21 @@
     return NAME##_cus_equal_list<Manip> (this, d, c, m, i1, i2, i3, i4, i5, i6, i7); \
   } \
   template <class Manip>\
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_value_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_field_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);\
+  }\
+  template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
   NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
@@ -11549,10 +11654,10 @@
   				  const NAME##_cus_value_list<Manip>&); */\
   public:\
     const NAME *obj;\
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include;\
     bool del_vector;\
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_value_list () {if (del_vector) delete include;} \
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8);\
@@ -11566,10 +11671,10 @@
      				  const NAME##_cus_field_list<Manip>&); */\
   public:\
     const NAME *obj; \
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include; \
     bool del_vector; \
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_field_list () {if (del_vector) delete include;} \
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8); \
@@ -12115,6 +12220,21 @@
     return NAME##_cus_equal_list<Manip> (this, d, c, m, i1, i2, i3, i4, i5, i6, i7, i8); \
   } \
   template <class Manip>\
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_value_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_field_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);\
+  }\
+  template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
   NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
@@ -12252,10 +12372,10 @@
   				  const NAME##_cus_value_list<Manip>&); */\
   public:\
     const NAME *obj;\
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include;\
     bool del_vector;\
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_value_list () {if (del_vector) delete include;} \
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9);\
@@ -12269,10 +12389,10 @@
      				  const NAME##_cus_field_list<Manip>&); */\
   public:\
     const NAME *obj; \
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include; \
     bool del_vector; \
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_field_list () {if (del_vector) delete include;} \
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9); \
@@ -12847,6 +12967,21 @@
     return NAME##_cus_equal_list<Manip> (this, d, c, m, i1, i2, i3, i4, i5, i6, i7, i8, i9); \
   } \
   template <class Manip>\
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_value_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_field_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);\
+  }\
+  template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
   NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
@@ -12988,10 +13123,10 @@
   				  const NAME##_cus_value_list<Manip>&); */\
   public:\
     const NAME *obj;\
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include;\
     bool del_vector;\
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_value_list () {if (del_vector) delete include;} \
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10);\
@@ -13005,10 +13140,10 @@
      				  const NAME##_cus_field_list<Manip>&); */\
   public:\
     const NAME *obj; \
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include; \
     bool del_vector; \
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_field_list () {if (del_vector) delete include;} \
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10); \
@@ -13612,6 +13747,21 @@
     return NAME##_cus_equal_list<Manip> (this, d, c, m, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10); \
   } \
   template <class Manip>\
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_value_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_field_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);\
+  }\
+  template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
   NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
@@ -13757,10 +13907,10 @@
   				  const NAME##_cus_value_list<Manip>&); */\
   public:\
     const NAME *obj;\
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include;\
     bool del_vector;\
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_value_list () {if (del_vector) delete include;} \
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11);\
@@ -13774,10 +13924,10 @@
      				  const NAME##_cus_field_list<Manip>&); */\
   public:\
     const NAME *obj; \
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include; \
     bool del_vector; \
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_field_list () {if (del_vector) delete include;} \
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11); \
@@ -14410,6 +14560,21 @@
     return NAME##_cus_equal_list<Manip> (this, d, c, m, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11); \
   } \
   template <class Manip>\
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_value_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_field_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);\
+  }\
+  template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
   NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
@@ -14559,10 +14724,10 @@
   				  const NAME##_cus_value_list<Manip>&); */\
   public:\
     const NAME *obj;\
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include;\
     bool del_vector;\
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_value_list () {if (del_vector) delete include;} \
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12);\
@@ -14576,10 +14741,10 @@
      				  const NAME##_cus_field_list<Manip>&); */\
   public:\
     const NAME *obj; \
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include; \
     bool del_vector; \
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_field_list () {if (del_vector) delete include;} \
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12); \
@@ -15241,6 +15406,21 @@
     return NAME##_cus_equal_list<Manip> (this, d, c, m, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12); \
   } \
   template <class Manip>\
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_value_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_field_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);\
+  }\
+  template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
   NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
@@ -15394,10 +15574,10 @@
   				  const NAME##_cus_value_list<Manip>&); */\
   public:\
     const NAME *obj;\
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include;\
     bool del_vector;\
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_value_list () {if (del_vector) delete include;} \
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13);\
@@ -15411,10 +15591,10 @@
      				  const NAME##_cus_field_list<Manip>&); */\
   public:\
     const NAME *obj; \
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include; \
     bool del_vector; \
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_field_list () {if (del_vector) delete include;} \
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13); \
@@ -16105,6 +16285,21 @@
     return NAME##_cus_equal_list<Manip> (this, d, c, m, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13); \
   } \
   template <class Manip>\
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_value_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_field_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);\
+  }\
+  template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
   NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
@@ -16262,10 +16457,10 @@
   				  const NAME##_cus_value_list<Manip>&); */\
   public:\
     const NAME *obj;\
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include;\
     bool del_vector;\
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_value_list () {if (del_vector) delete include;} \
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14);\
@@ -16279,10 +16474,10 @@
      				  const NAME##_cus_field_list<Manip>&); */\
   public:\
     const NAME *obj; \
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include; \
     bool del_vector; \
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_field_list () {if (del_vector) delete include;} \
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14); \
@@ -17002,6 +17197,21 @@
     return NAME##_cus_equal_list<Manip> (this, d, c, m, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14); \
   } \
   template <class Manip>\
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_value_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_field_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);\
+  }\
+  template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
   NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
@@ -17163,10 +17373,10 @@
   				  const NAME##_cus_value_list<Manip>&); */\
   public:\
     const NAME *obj;\
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include;\
     bool del_vector;\
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_value_list () {if (del_vector) delete include;} \
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15);\
@@ -17180,10 +17390,10 @@
      				  const NAME##_cus_field_list<Manip>&); */\
   public:\
     const NAME *obj; \
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include; \
     bool del_vector; \
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_field_list () {if (del_vector) delete include;} \
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15); \
@@ -17932,6 +18142,21 @@
     return NAME##_cus_equal_list<Manip> (this, d, c, m, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15); \
   } \
   template <class Manip>\
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_value_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_field_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);\
+  }\
+  template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
   NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
@@ -18097,10 +18322,10 @@
   				  const NAME##_cus_value_list<Manip>&); */\
   public:\
     const NAME *obj;\
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include;\
     bool del_vector;\
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_value_list () {if (del_vector) delete include;} \
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16);\
@@ -18114,10 +18339,10 @@
      				  const NAME##_cus_field_list<Manip>&); */\
   public:\
     const NAME *obj; \
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include; \
     bool del_vector; \
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_field_list () {if (del_vector) delete include;} \
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16); \
@@ -18895,6 +19120,21 @@
     return NAME##_cus_equal_list<Manip> (this, d, c, m, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16); \
   } \
   template <class Manip>\
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_value_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_field_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);\
+  }\
+  template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
   NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
@@ -19064,10 +19304,10 @@
   				  const NAME##_cus_value_list<Manip>&); */\
   public:\
     const NAME *obj;\
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include;\
     bool del_vector;\
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_value_list () {if (del_vector) delete include;} \
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17);\
@@ -19081,10 +19321,10 @@
      				  const NAME##_cus_field_list<Manip>&); */\
   public:\
     const NAME *obj; \
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include; \
     bool del_vector; \
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_field_list () {if (del_vector) delete include;} \
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17); \
@@ -19891,6 +20131,21 @@
     return NAME##_cus_equal_list<Manip> (this, d, c, m, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16, i17); \
   } \
   template <class Manip>\
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_value_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_field_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);\
+  }\
+  template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
   NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
@@ -20064,10 +20319,10 @@
   				  const NAME##_cus_value_list<Manip>&); */\
   public:\
     const NAME *obj;\
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include;\
     bool del_vector;\
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_value_list () {if (del_vector) delete include;} \
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17, bool i18);\
@@ -20081,10 +20336,10 @@
      				  const NAME##_cus_field_list<Manip>&); */\
   public:\
     const NAME *obj; \
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include; \
     bool del_vector; \
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_field_list () {if (del_vector) delete include;} \
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17, bool i18); \
@@ -20920,6 +21175,21 @@
     return NAME##_cus_equal_list<Manip> (this, d, c, m, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16, i17, i18); \
   } \
   template <class Manip>\
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_value_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_field_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);\
+  }\
+  template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
   NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
@@ -21097,10 +21367,10 @@
   				  const NAME##_cus_value_list<Manip>&); */\
   public:\
     const NAME *obj;\
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include;\
     bool del_vector;\
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_value_list () {if (del_vector) delete include;} \
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17, bool i18, bool i19);\
@@ -21114,10 +21384,10 @@
      				  const NAME##_cus_field_list<Manip>&); */\
   public:\
     const NAME *obj; \
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include; \
     bool del_vector; \
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_field_list () {if (del_vector) delete include;} \
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17, bool i18, bool i19); \
@@ -21982,6 +22252,21 @@
     return NAME##_cus_equal_list<Manip> (this, d, c, m, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16, i17, i18, i19); \
   } \
   template <class Manip>\
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_value_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_field_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);\
+  }\
+  template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
   NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
@@ -22163,10 +22448,10 @@
   				  const NAME##_cus_value_list<Manip>&); */\
   public:\
     const NAME *obj;\
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include;\
     bool del_vector;\
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_value_list () {if (del_vector) delete include;} \
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17, bool i18, bool i19, bool i20);\
@@ -22180,10 +22465,10 @@
      				  const NAME##_cus_field_list<Manip>&); */\
   public:\
     const NAME *obj; \
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include; \
     bool del_vector; \
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_field_list () {if (del_vector) delete include;} \
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17, bool i18, bool i19, bool i20); \
@@ -23077,6 +23362,21 @@
     return NAME##_cus_equal_list<Manip> (this, d, c, m, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16, i17, i18, i19, i20); \
   } \
   template <class Manip>\
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_value_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_field_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);\
+  }\
+  template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
   NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
@@ -23262,10 +23562,10 @@
   				  const NAME##_cus_value_list<Manip>&); */\
   public:\
     const NAME *obj;\
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include;\
     bool del_vector;\
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_value_list () {if (del_vector) delete include;} \
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17, bool i18, bool i19, bool i20, bool i21);\
@@ -23279,10 +23579,10 @@
      				  const NAME##_cus_field_list<Manip>&); */\
   public:\
     const NAME *obj; \
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include; \
     bool del_vector; \
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_field_list () {if (del_vector) delete include;} \
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17, bool i18, bool i19, bool i20, bool i21); \
@@ -24205,6 +24505,21 @@
     return NAME##_cus_equal_list<Manip> (this, d, c, m, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16, i17, i18, i19, i20, i21); \
   } \
   template <class Manip>\
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_value_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_field_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);\
+  }\
+  template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
   NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
@@ -24394,10 +24709,10 @@
   				  const NAME##_cus_value_list<Manip>&); */\
   public:\
     const NAME *obj;\
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include;\
     bool del_vector;\
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_value_list () {if (del_vector) delete include;} \
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17, bool i18, bool i19, bool i20, bool i21, bool i22);\
@@ -24411,10 +24726,10 @@
      				  const NAME##_cus_field_list<Manip>&); */\
   public:\
     const NAME *obj; \
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include; \
     bool del_vector; \
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_field_list () {if (del_vector) delete include;} \
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17, bool i18, bool i19, bool i20, bool i21, bool i22); \
@@ -25366,6 +25681,21 @@
     return NAME##_cus_equal_list<Manip> (this, d, c, m, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16, i17, i18, i19, i20, i21, i22); \
   } \
   template <class Manip>\
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_value_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_field_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);\
+  }\
+  template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
   NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
@@ -25559,10 +25889,10 @@
   				  const NAME##_cus_value_list<Manip>&); */\
   public:\
     const NAME *obj;\
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include;\
     bool del_vector;\
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_value_list () {if (del_vector) delete include;} \
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17, bool i18, bool i19, bool i20, bool i21, bool i22, bool i23);\
@@ -25576,10 +25906,10 @@
      				  const NAME##_cus_field_list<Manip>&); */\
   public:\
     const NAME *obj; \
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include; \
     bool del_vector; \
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_field_list () {if (del_vector) delete include;} \
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17, bool i18, bool i19, bool i20, bool i21, bool i22, bool i23); \
@@ -26560,6 +26890,21 @@
     return NAME##_cus_equal_list<Manip> (this, d, c, m, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16, i17, i18, i19, i20, i21, i22, i23); \
   } \
   template <class Manip>\
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_value_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_field_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);\
+  }\
+  template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
   NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
@@ -26757,10 +27102,10 @@
   				  const NAME##_cus_value_list<Manip>&); */\
   public:\
     const NAME *obj;\
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include;\
     bool del_vector;\
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_value_list () {if (del_vector) delete include;} \
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17, bool i18, bool i19, bool i20, bool i21, bool i22, bool i23, bool i24);\
@@ -26774,10 +27119,10 @@
      				  const NAME##_cus_field_list<Manip>&); */\
   public:\
     const NAME *obj; \
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include; \
     bool del_vector; \
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_field_list () {if (del_vector) delete include;} \
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17, bool i18, bool i19, bool i20, bool i21, bool i22, bool i23, bool i24); \
@@ -27787,6 +28132,21 @@
     return NAME##_cus_equal_list<Manip> (this, d, c, m, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16, i17, i18, i19, i20, i21, i22, i23, i24); \
   } \
   template <class Manip>\
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_value_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_field_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);\
+  }\
+  template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
   NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\
     sql_compare_type_def_##CMP (NAME, value, NUM);\
@@ -27988,10 +28348,10 @@
   				  const NAME##_cus_value_list<Manip>&); */\
   public:\
     const NAME *obj;\
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include;\
     bool del_vector;\
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_value_list () {if (del_vector) delete include;} \
     NAME##_cus_value_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17, bool i18, bool i19, bool i20, bool i21, bool i22, bool i23, bool i24, bool i25);\
@@ -28005,10 +28365,10 @@
      				  const NAME##_cus_field_list<Manip>&); */\
   public:\
     const NAME *obj; \
-    cchar *delem;\
-    Manip manip;\
     std::vector<bool> *include; \
     bool del_vector; \
+    cchar *delem;\
+    Manip manip;\
   public: \
     ~NAME##_cus_field_list () {if (del_vector) delete include;} \
     NAME##_cus_field_list (const NAME *o, cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17, bool i18, bool i19, bool i20, bool i21, bool i22, bool i23, bool i24, bool i25); \
@@ -29046,6 +29406,21 @@
 							 NAME##_enum i1, NAME##_enum i2, NAME##_enum i3, NAME##_enum i4, NAME##_enum i5, NAME##_enum i6, NAME##_enum i7, NAME##_enum i8, NAME##_enum i9, NAME##_enum i10, NAME##_enum i11, NAME##_enum i12, NAME##_enum i13, NAME##_enum i14, NAME##_enum i15, NAME##_enum i16, NAME##_enum i17, NAME##_enum i18, NAME##_enum i19, NAME##_enum i20, NAME##_enum i21, NAME##_enum i22, NAME##_enum i23, NAME##_enum i24, NAME##_enum i25) const { \
     return NAME##_cus_equal_list<Manip> (this, d, c, m, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16, i17, i18, i19, i20, i21, i22, i23, i24, i25); \
   } \
+  template <class Manip>\
+  inline NAME##_cus_value_list<Manip> NAME::value_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_value_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_field_list<Manip> NAME::field_list(cchar *d, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_field_list<Manip> (this, d, m, i);\
+  }\
+  template <class Manip>\
+  inline NAME##_cus_equal_list<Manip> NAME::equal_list(cchar *d, cchar *c, Manip m,\
+                                                       std::vector<bool> *i) const {\
+    return NAME##_cus_equal_list<Manip> (this, d, c, m, i);\
+  }\
   template <class Manip>\
   inline NAME##_cus_value_list<Manip> \
   NAME::value_list(cchar *d, Manip m, sql_cmp_type /*sc*/) const {\

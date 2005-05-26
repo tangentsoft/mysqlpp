@@ -1,11 +1,12 @@
 /***********************************************************************
- simple1.cpp - Example showing the simplest way to get the contents of
- 	a table with MySQL++.
-
+ custom5.cpp - Example showing how to use the equal_list() member of
+ 	some SSQLS types to build SELECT queries with custom WHERE clauses.
+ 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the CREDITS
- file in the top directory of the distribution for details.
+ MySQL AB, (c) 2004, 2005 by Educational Technology Resources, Inc., and
+ (c) 2005 by Chris Frey.  Others may also hold copyrights on code in
+ this file.  See the CREDITS file in the top directory of the
+ distribution for details.
 
  This file is part of MySQL++.
 
@@ -28,35 +29,57 @@
 #include "util.h"
 
 #include <mysql++.h>
+#include <custom.h>
 
 #include <iostream>
 #include <iomanip>
+#include <vector>
 
 using namespace std;
+using namespace mysqlpp;
+
+sql_create_5(stock,
+			 1, 5,
+			 string, item,
+			 longlong, num,
+			 double, weight,
+			 double, price,
+			 Date, sdate)
 
 int
 main(int argc, char *argv[])
 {
-	// Wrap all MySQL++ interactions in one big try block, so any
-	// errors are handled gracefully.
 	try {
-		// Connect to the sample database
-		mysqlpp::Connection con(mysqlpp::use_exceptions);
+		Connection con(use_exceptions);
 		if (!connect_to_db(argc, argv, con)) {
 			return 1;
 		}
 
-		// Retrieve the entire stock table from the database server
-		// we're connected to, and print its contents out.
-		mysqlpp::Query query = con.query();
-		print_stock_table(query);
+		// Get all the rows in the stock table.
+		Query query = con.query();
+		query << "select * from stock";
+		vector<stock> res;
+		query.storein(res);
+
+		if (res.size() > 0) {
+			// Build a select query using the data from the first row
+			// returned by our previous query.
+			query.reset();
+			query << "select * from stock where " <<
+				res[0].equal_list(" and ", stock_weight, stock_price);
+
+			// Display the finished query.
+			cout << "Custom query:\n" << query.preview() << endl;
+		}
+
+		return 0;
 	}
-	catch (mysqlpp::BadQuery& er) {
-		// Handle any connection or query errors that
+	catch (BadQuery& er) {
+		// Handle any connection or query errors
 		cerr << "Error: " << er.what() << endl;
 		return -1;
 	}
-	catch (mysqlpp::BadConversion& er) {
+	catch (BadConversion& er) {
 		// Handle bad conversions
 		cerr << "Error: " << er.what() << "\"." << endl <<
 				"retrieved data size: " << er.retrieved <<
@@ -68,6 +91,5 @@ main(int argc, char *argv[])
 		cerr << "Error: " << er.what() << endl;
 		return -1;
 	}
-
-	return 0;
 }
+

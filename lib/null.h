@@ -1,12 +1,36 @@
-#ifndef MYSQLPP_NULL_H
-#define MYSQLPP_NULL_H
-
 /// \file null.h
 /// \brief Declares classes that implement SQL "null" semantics within
 /// C++'s type system.
 ///
 /// This is required because C++'s own NULL type is not semantically
 /// the same as SQL nulls.
+
+/***********************************************************************
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
+ MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ Others may also hold copyrights on code in this file.  See the CREDITS
+ file in the top directory of the distribution for details.
+
+ This file is part of MySQL++.
+
+ MySQL++ is free software; you can redistribute it and/or modify it
+ under the terms of the GNU Lesser General Public License as published
+ by the Free Software Foundation; either version 2.1 of the License, or
+ (at your option) any later version.
+
+ MySQL++ is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+ License for more details.
+
+ You should have received a copy of the GNU Lesser General Public
+ License along with MySQL++; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
+ USA
+***********************************************************************/
+
+#ifndef MYSQLPP_NULL_H
+#define MYSQLPP_NULL_H
 
 #include "exceptions.h"
 
@@ -19,90 +43,233 @@ namespace mysqlpp {
 ///
 /// This class is for internal use only.  Normal code should use
 /// Null instead.
-class null_type {
+class null_type
+{
 public:
-  template <class Type> operator Type () {throw BadNullConversion();}
+#if !defined(DOXYGEN_IGNORE)
+// Doxygen will not generate documentation for this section.
+	template <class Type> operator Type()
+	{
+		throw BadNullConversion();
+	}
+#endif // !defined(DOXYGEN_IGNORE)
 };
 
+/// \brief Global 'null' instance.  Use wherever you need a SQL null.
+/// (As opposed to a C++ language null pointer or null character.)
 const null_type null = null_type();
 
-/// \brief Used for the behavior parameter for template Null
-struct NullisNull {
-  static null_type null_is() {return null_type();}
-  static std::ostream&  null_ostr(std::ostream& o) {o << "(NULL)"; return o;}
+
+/// \brief Class for objects that define SQL null in terms of
+/// MySQL++'s null_type.
+///
+/// Returns a null_type instance when you ask what null is, and is
+/// "(NULL)" when you insert it into a C++ stream.
+///
+/// Used for the behavior parameter for template Null
+struct NullisNull
+{
+#if !defined(DOXYGEN_IGNORE)
+// Doxygen will not generate documentation for this section.
+	static null_type null_is() { return null_type(); }
+
+	static std::ostream& null_ostr(std::ostream& o)
+	{
+		o << "(NULL)";
+		return o;
+	}
+#endif // !defined(DOXYGEN_IGNORE)
 };
 
-/// \brief Used for the behavior parameter for template Null
-struct NullisZero {
-  static int   null_is() {return 0;}
-  static std::ostream& null_ostr(std::ostream &o) {o << 0; return o;}
+
+/// \brief Class for objects that define SQL null as 0.
+///
+/// Returns 0 when you ask what null is, and is zero when you insert it
+/// into a C++ stream.
+///
+/// Used for the behavior parameter for template Null
+struct NullisZero
+{
+#if !defined(DOXYGEN_IGNORE)
+// Doxygen will not generate documentation for this section.
+	static int null_is() { return 0; }
+	
+	static std::ostream& null_ostr(std::ostream& o)
+	{
+		o << 0;
+		return o;
+	}
+#endif // !defined(DOXYGEN_IGNORE)
 };
 
-/// \brief Used for the behavior parameter for template Null
-struct NullisBlank {
-  static const char * null_is() {return "";}
-  static std::ostream& null_ostr(std::ostream &o) {o << ""; return o;}
+/// \brief Class for objects that define SQL null as a blank C string.
+///
+/// Returns "" when you ask what null is, and is empty when you insert
+/// it into a C++ stream.
+///
+/// Used for the behavior parameter for template Null
+struct NullisBlank
+{
+#if !defined(DOXYGEN_IGNORE)
+// Doxygen will not generate documentation for this section.
+	static const char *null_is() { return ""; }
+	
+	static std::ostream& null_ostr(std::ostream& o)
+	{
+		o << "";
+		return o;
+	}
+#endif // !defined(DOXYGEN_IGNORE)
 };
 
 
-/// \brief Container class for holding SQL nulls.
+/// \brief Class for holding data from a SQL column with the NULL
+/// attribute.
 ///
 /// This template is necessary because there is nothing in the C++ type
-/// system with the same semantics as SQL's null.  (No, NULL from
-/// stddef.h is not the same!)
-template <class Type, class Behavior = NullisNull>
-class Null {
+/// system with the same semantics as SQL's null.  In SQL, a column can
+/// have the optional 'NULL' attribute, so there is a difference in 
+/// type between, say an \c int column that can be null and one that
+/// cannot be.  C++'s NULL constant does not have these features.
+///
+/// It's important to realize that this class doesn't hold nulls,
+/// it holds data that \e can \e be null.  It can hold a non-null
+/// value, you can then assign null to it (using MySQL++'s global
+/// \c null object), and then assign a regular value to it again; the
+/// object will behave as you expect throughout this process.
+///
+/// Because one of the template parameters is a C++ type, the typeid()
+/// for a null \c int is different than for a null \c string, to pick
+/// two random examples.  See type_info.cpp for the table SQL types that
+/// can be null.
+template <class Type, class Behavior = NullisNull> class Null
+{
 public:
-  Type data;
-  bool is_null;
-  typedef Type value_type;
-public:
-  Null () {}
-  Null (Type x) : data(x), is_null(false) {} 
+	/// \brief The object's value, when it is not SQL null
+	Type data;
+	
+	/// \brief If set, this object is considered equal to SQL null.
+	///
+	/// This flag affects how the Type() and << operators work.
+	bool is_null;
 
-  /// \brief Gives Null the null value
-  ///
-  /// The global const \c null (not to be confused with C's NULL type)
-  /// is of type null_type, so you can say something like:
-  /// \code
-  /// Null<Type> foo = null;
-  /// \endcode
-  Null (const null_type &n) : is_null(true) {} 
+	/// \brief Type of the data stored in this object, when it is not
+	/// equal to SQL null.
+	typedef Type value_type;
 
-  operator Type& () { 
-    if (is_null) return data = Behavior::null_is();
-    else return data; } 
+	/// \brief Default constructor
+	///
+	/// This ctor doesn't initialize any of the object's data members!
+	Null()
+	{
+	}
 
-  Null& operator = (const Type &x) {data = x; is_null = false; return *this;}
+	/// \brief Initialize the object with a particular value.
+	///
+	/// The object is marked as "not null" if you use this ctor.  This
+	/// behavior exists because the class doesn't encode nulls, but
+	/// rather data which \e can \e be null.  The distinction is
+	/// necessary because 'NULL' is an optional attribute of SQL
+	/// columns.
+	Null(Type x) :
+	data(x),
+	is_null(false)
+	{
+	}
 
-  Null& operator = (const null_type &n) {is_null = true; return *this;}
+	/// \brief Construct a Null equal to SQL null
+	///
+	/// This is typically used with the global \c null object. (Not to
+	/// be confused with C's NULL type.)  You can say something like...
+	/// \code
+	/// Null<int> foo = null;
+	/// \endcode
+	/// ...to get a null \c int.
+	Null(const null_type& n) :
+	is_null(true)
+	{
+	}
+
+	/// \brief Converts this object to Type
+	///
+	/// If is_null is set, returns whatever we consider that null "is",
+	/// according to the Behavior parameter you used when instantiating
+	/// this template.  See NullisNull, NullisZero and NullisBlank.
+	///
+	/// Otherwise, just returns the 'data' member.
+	operator Type&()
+	{
+		if (is_null)
+			return data = Behavior::null_is();
+		else
+			return data;
+	}
+
+	/// \brief Assign a value to the object.
+	///
+	/// This marks the object as "not null" as a side effect.
+	Null& operator =(const Type& x)
+	{
+		data = x;
+		is_null = false;
+		return *this;
+	}
+
+	/// \brief Assign SQL null to this object.
+	///
+	/// This just sets the is_null flag; the data member is not
+	/// affected until you call the Type() operator on it.
+	Null& operator =(const null_type& n)
+	{
+		is_null = true;
+		return *this;
+	}
 };
 
 
-/// \if INTERNAL
+#if !defined(DOXYGEN_IGNORE)
 // Doxygen will not generate documentation for this section.
 
 // Specialization the Null template for \c void
-template <> class Null<void> {
+template <> class Null<void>
+{
 public:
-  bool is_null;
-  typedef void value_type;
-public:
-  Null () : is_null(false) { } 
-  Null (const null_type &) : is_null(true) { } 
-  Null& operator = (const null_type &) { is_null = true; return *this; }
+	bool is_null;
+	typedef void value_type;
+
+	Null() :
+	is_null(false)
+	{
+	}
+	
+	Null(const null_type&) :
+	is_null(true)
+	{
+	}
+
+	Null& operator =(const null_type&)
+	{
+		is_null = true;
+		return *this;
+	}
 };
 
-/// \endif
- 
+#endif // !defined(DOXYGEN_IGNORE)
 
+
+/// \brief Inserts null-able data into a C++ stream if it is not
+/// actually null.  Otherwise, insert something appropriate for null
+/// data.
 template <class Type, class Behavior>
-inline std::ostream& operator << (std::ostream &o, const Null<Type,Behavior> &n) {
-  if (n.is_null) return Behavior::null_ostr(o);
-  else return o << n.data;
+inline std::ostream& operator <<(std::ostream& o,
+		const Null<Type, Behavior>& n)
+{
+	if (n.is_null)
+		return Behavior::null_ostr(o);
+	else
+		return o << n.data;
 }
 
 } // end namespace mysqlpp
 
 #endif
-

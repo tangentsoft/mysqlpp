@@ -1,3 +1,116 @@
+1.7.40, 2005.05.26 (r719)
+
+	o Multiple item form of insert() now works if you're using the
+	  SQLQuery class, or its derivative, Query.  Thanks to Mark
+	  Meredino for this patch.
+
+	o Fixed a bug in const_string::compare(), in which MySQL++
+	  would walk off the end of the shorter of the two strings.
+	  All was well if the two were the same length.
+
+	o ResUse::operator=() now fully updates the object, so it's more
+	  like the behavior of the full ctor.
+
+	o All source files now contain a license and copyright statement
+	  somewhere within them.
+
+	o Optimized mysql++.h a bit: it now #includes only the minimum set
+	  of files required, and there is now an idempotency guard.
+	  This improves compile times a smidge, but mainly it was
+	  done to clean up the generated #include file graph in the
+	  reference manual.  Before, it was a frightful tangle because
+	  we #included everything except custom*.h.
+
+	o Constness fix in MySQL++ date/time classes to avoid compiler
+	  warnings with SSQLS.	Thanks to Wolfram Arnold for this patch.
+
+	o Fixed some compiler warnings in custom*.h.  Thanks to Chris Frey
+	  for this patch.
+
+	o Added "Submitting Patches" and "Maintaining a Private CVS
+	  Repository" sections to the HACKERS file.  Thanks to Chris
+	  Frey for the source material for these sections.  The HACKERS
+	  file was improved in several other ways at the same time.
+
+	o PDF version of user manual no longer has links to the reference
+	  manual.  They were ugly, and they were broken anyway due to the
+	  way we move the PDFs after generating them.  If you want
+	  interlinked manuals, use the HTML version.
+
+	o PDF version of user manual now has hard page breaks between
+	  chapters.
+
+	o Removed complic1 example.  Wasn't pulling its own weight.
+	  Everything it is supposed to demonstrate is shown in other
+	  examples already.
+
+	o Refactored print_stock_table() in examples/util module to be
+	  four functions, and made all the examples use various of
+	  these functions where appropriate.  Before, several of
+	  the examples had one-off stock table printing code because
+	  print_stock_table() wasn't exactly the right thing, for one
+	  reason or another.  One practical problem with this is that
+	  some of the examples missed out on the recent Unicode updates;
+	  now such a change affects all examples the same way.
+
+	o Since so many of the examples rely on the util module, the user
+	  manual now covers it.  The simple1 example in the user manual
+	  didn't make much sense before, in particular, because it's
+	  really just a driver for the util module.
+
+	o Added custom5 example.  It shows how to use the equal_list()
+	  functionality of SSQLS.  Thanks to Chris Frey for the original
+	  version of this program.  (I simplified it quite a bit after
+	  accepting it.)
+
+	o New user manual now covers the value_list(), equal_list() and
+	  field_list() stuff that the old manual covered but which was
+	  left out in previous versions of the new manaul.  Most of the
+	  examples are the same, but the prose is almost completely new.
+	  This new section includes the custom5 example.
+
+	o Every declaration in MySQL++ is now documented in the reference
+	  manual, or explicitly treated as "internal only".
+
+	o Improved docs for MySQL++'s mechanism to map between MySQL
+	  server types and C++ types.  Initial doc patch by Chris Frey,
+	  which I greatly reworked.
+
+	o Improved a lot of existing reference manual documentation while
+	  adding the new stuff.
+
+	o Expanded greatly on the exception handling discussion in the user
+	  manual.
+
+	o Added all-new "Quoting and Escaping" section to the user
+	  manual's Tutorial chapter.  Moved some existing comments on
+	  quoting and escaping around and added some new ones to other
+	  sections as a result.
+
+	o Added all-new "Handling SQL Nulls" section to the user manual's
+	  Tutorial chapter.
+
+	o Many improvements to the Overview section of the user manual.
+
+	o Row::operator[] reference now explains the right and wrong way to
+	  use the values it returns.  This is in response to a mailing list
+	  post where someone was incorrectly using this feature and getting
+	  a bunch of dangling pointers.
+
+	o Updated Doxyfile so 1.3.19.1 parses it without warnings.  Still
+	  works with versions back to 1.2.18, at least.  (These are
+	  the versions shipped with Fedora Core 3 and Red Hat Linux 9,
+	  respectively.)
+
+	o Using a superior method to make Doxygen ignore certain sections
+	  of the source code.  Between this change and the fact that
+	  everything not so ignored is documented, Doxygen no longer
+	  generates any warnings.
+
+	o Lots of code style updates.  Everything should now be consistently
+	  formatted.
+
+
 1.7.35, 2005.05.05 The "Cinco de Mayo" release (r601)
 
 	o Added a "how to use Unicode with MySQL++" chapter to the user
@@ -84,7 +197,8 @@
 		o Documentation is now being built in HTML and PDF forms.
 
 	o ebuild file updated to take advantage of recent configure script
-	  features.
+	  features.  Thanks to Chris Frey for this patch.
+
 
 
 1.7.32, 2005.03.10 (r479)
@@ -122,7 +236,7 @@
 
 	o Example programs using standard command line format now accept a
 	  fourth optional parameter, a port number for the server.  Thanks
-	  for Chris Frey for this patch.
+	  to Chris Frey for this patch.
 
 	o One more g++ 3.4 pedantic warning fix by Chris Frey.
 

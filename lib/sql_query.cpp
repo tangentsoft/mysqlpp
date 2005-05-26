@@ -1,3 +1,29 @@
+/***********************************************************************
+ sql_query.cpp - Implements the SQLQuery class.
+
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
+ MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ Others may also hold copyrights on code in this file.  See the CREDITS
+ file in the top directory of the distribution for details.
+
+ This file is part of MySQL++.
+
+ MySQL++ is free software; you can redistribute it and/or modify it
+ under the terms of the GNU Lesser General Public License as published
+ by the Free Software Foundation; either version 2.1 of the License, or
+ (at your option) any later version.
+
+ MySQL++ is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+ License for more details.
+
+ You should have received a copy of the GNU Lesser General Public
+ License along with MySQL++; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
+ USA
+***********************************************************************/
+
 #define MYSQLPP_NOT_HEADER
 #include "platform.h"
 
@@ -48,7 +74,8 @@ static SQLString* pprepare(char option, SQLString& S,
 
 	if (option == 'r' || (option == 'q' && S.is_string)) {
 		char *s = new char[S.size() * 2 + 1];
-		mysql_escape_string(s, S.c_str(), static_cast <unsigned long> (S.size()));
+		mysql_escape_string(s, S.c_str(),
+				static_cast<unsigned long>(S.size()));
 		SQLString *ss = new SQLString("'");
 		*ss += s;
 		*ss += "'";
@@ -96,9 +123,9 @@ void SQLQuery::proc(SQLQueryParms& p)
 		*this << i->before;
 		num = i->num;
 		if (num != -1) {
-			if (num < static_cast < int >(p.size()))
+			if (num < static_cast<int>(p.size()))
 				c = &p;
-			else if (num < static_cast < int >(def.size()))
+			else if (num < static_cast<int>(def.size()))
 				c = &def;
 			else {
 				*this << " ERROR";
@@ -184,7 +211,7 @@ void SQLQuery::parse()
 					num[1] = 0;
 				}
 
-				n = strtol(num, NULL, 10);
+				n = strtol(num, 0, 10);
 				option = ' ';
 
 				if (*s == 'q' || *s == 'Q' || *s == 'r' || *s == 'R') {
@@ -202,21 +229,17 @@ void SQLQuery::parse()
 						s++;
 					}
 
-					if (n >= static_cast <
-						long int >(parsed_names.size())) {
+					if (n >= static_cast<long int>(parsed_names.size())) {
 						parsed_names.insert(parsed_names.end(),
-											static_cast < vector <
-											string >::size_type >
-											(n + 1) -
-											parsed_names.size(),
-											string());
+								static_cast<vector<string>::size_type>(
+										n + 1) - parsed_names.size(),
+								string());
 					}
 					parsed_names[n] = name;
 					parsed_nums[name] = n;
 				}
 
-				parsed.
-					push_back(SQLParseElement(str, option, char (n)));
+				parsed.push_back(SQLParseElement(str, option, char(n)));
 				str = "";
 				name = "";
 			}

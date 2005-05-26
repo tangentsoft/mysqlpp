@@ -1,18 +1,74 @@
-If you are going to hack on the autotools files (*.am, *.in and everything
-in the config subdir), run the command:
+If you are going to make any changes to MySQL++, this file has some
+hints and commentary you may find helpful.
 
-	$ ./bootstrap [options]
 
-in order to enable "maintainer mode".  This sets up the build system so
-that if you change any of these files in the future, their dependents
-will be re-generated automatically.  Occasionally automake/autoconf gets
-confused and you have to run it again, but this is rare.
+SUBMITTING PATCHES
 
-The bootstrap script also accepts a 'pedantic' argument, which tells it to
-turn on a bunch of GCC-specific flags which make the compiler much pickier
-about the source code it will accept without warnings.  It is useful to
-enable this mode whenever you are making large changes to the library, to
-ensure that you haven't done something silly.  We strive to keep MySQL++
-in a state where it never gives compiler warnings in pedantic mode.
-We're not 100% there yet with all compilers, but we're trying...
+	If you wish to submit a patch to the library, please send it to
+	the mailing list.  We want it in unified diff format.  The most
+	complete command for this is:
+
+		$ diff -ruN mysql++-olddir mysql++-newdir
+
+	The diff command is part of every Unix and Linux system, and
+	should be installed by default.  If you're on a Windows machine,
+	GNU diff is part of Cygwin (http://cygwin.com/).  There are no
+	excuses for not being able to make unified diffs.  :)
+
+
+MAINTAINING A PRIVATE CVS REPOSITORY
+
+	You may find it helpful to maintain your own CVS repository.
+	Whenever there is a new MySQL++ release, import it on the vendor
+	branch like this:
+
+		$ cvs import -m "Version 1.7.35" software/mysql++ mysql++ mysql++-1_7_35
+
+	(This assumes that you have your CVSROOT environment variable
+	set properly.)
+
+	Update the HEAD branch like this:
+
+		$ cd mysql++
+		$ cvs update -PdA
+		$ cvs update -j HEAD -j mysql++-1_7_35 -Pd
+		$ cvs ci -m "merged 1.7.35 into HEAD"
+		$ cvs tag mysql++-1_7_35-merged
+
+	Then any changes you make can easily be tracked, and diffs can
+	be produced with rdiff:
+
+		$ cvs rdiff -ru mysql++-1_7_35 -r mysql++-1_7_35_equal_list \
+			$(cat CVS/Repository) > equal_list.patch
+
+
+ON MANIPULATING THE AUTOTOOLS INPUT FILES
+
+	If you are going to hack on the autotools files (*.am, *.in and
+	everything in the config subdir), run the command:
+
+		$ ./bootstrap [pedantic] [options]
+
+	The primary purpose of this command is to rebuild all the
+	autotools output files, and to enable "maintainer mode".
+	In maintainer mode, the build system is set up such that if you
+	change any of these autotools input files in the future, their
+	dependents will be re-generated automatically.	Occasionally
+	automake/autoconf gets confused and you have to run it again,
+	but this is rare.
+
+	If the first argument to the bootstrap script is 'pedantic'
+	(without the quotes) it will turn on a bunch of GCC-specific
+	flags which make the compiler much pickier about the source
+	code it will accept without warnings.  It is useful to enable
+	this mode whenever you are making large changes to the library,
+	to ensure that you haven't done something silly.  We strive to
+	keep MySQL++ in a state where it never gives compiler warnings
+	in pedantic mode.  We're not 100% there yet with all compilers,
+	but we're trying...
+
+	Anything after the optional pedantic argument is passed as
+	arguments to the configure script.  See the README file in
+	this directory for more information about the flags that the
+	script accepts.
 

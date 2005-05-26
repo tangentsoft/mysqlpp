@@ -27,9 +27,26 @@ New Feature Requests and ABI Changes
 	  where available.  Enable via configure script flag on Unixy
 	  systems.
 
-	o Why does Connection::create_db() return true on failure?
-	  (This is in this section, because changing it would break a lot of
-	  code.  This sort of thing should be put off to v1.8 or v2.0.)
+	o Change Connection::create_db() and drop_db() to return true on
+	  success.  They're the other way 'round now, but changing it would
+	  break a lot of code, so put it off to the next major version.
+
+	o Connection::create_db(), drop_db() and select_db() should take
+	  their arguments by reference, and be const.
+
+	o Why does Connection::infoo() exist?  Remove it if there is
+	  no good reason.
+
+	o Rename Connection::read_options() to set_option()?  Much more
+	  accurate w.r.t. what the function actually does.
+
+	o Why is there a duplicate query interface in Connection?  Sure,
+	  it means you can get by without using a Query object, but is
+	  that a big enough advantage to justify the extra complexity?
+	  Everything in the tutorial uses Query objects, so I'd be stunned
+	  if there's a significant body of end-user code that actually uses
+	  the Connection query interface directly.  (Hell, I'd be surprised
+	  if there was _any_ such code.)
 
 	o Connection lock mechanism should be extracted into a separate
 	  class, instances of which could be created on the stack so
@@ -46,6 +63,9 @@ New Feature Requests and ABI Changes
 	o Fold SQLQuery class into Query.  The separation goes back to the
 	  dream of making MySQL++ database-independent.
 	  
+	o Fold RowTemplate class into Row.  This is probably another
+	  obsolete bid for database-independence.
+	  
 	o With previous item done, it should be possible to use
 	  mysql_real_escape_string() instead of mysql_escape_string() within
 	  the pprepare() function.  Doing the same in manip.cpp will be more
@@ -56,6 +76,14 @@ New Feature Requests and ABI Changes
 	  stream data member instead of deriving from it.  C++ library
 	  classes were not designed to be subclassed.  Evidence is the
 	  dynamic_cast<>s required for VC++ in insert() and friends.
+
+	o There are operator<<(SQLQuery&, ColData...) functions in addition
+	  to the normal (ostream&, ColData) ones.  (See manip.h)  It looks
+	  like a workaround for a compiler's type system weakness.  If this
+	  is no longer needed, the obvious change plays into the decision for
+	  the previous item: if Query is no longer an ostream, those
+	  separate operators still need to exist, but the casts in the
+	  implementation will break things.
 
 	o Why is class ResUse separate from class Result?  They're declared
 	  in the same file, only Result derives from it, and it isn't clear
@@ -94,28 +122,124 @@ New Feature Requests and ABI Changes
 	  dtor.  This concern over releasing resources is why the warning
 	  exists in the first place.
 
+	o mysql_type_info in type_info.h has multiple public and private
+	  sections.  Collapse into one of each.  This will break the ABI.
+
+	o mysql_type_info::types is arguably brittle, as it uses hard-coded
+	  integer values which mostly-but-not-quite map onto the values
+	  in the enum_field_types enum in the MySQL C API.  It might be
+	  better to use the MySQL C API enum constants here instead of bare
+	  integers so that we will follow any changes in the C API.  Doing
+	  so will break the ABI and a lot of infrastructure logic, though,
+	  so this change should not be done casually.
+
+	o Collapse store(string&) and store(string&, bool) into a single
+	  function by making bool argument default to false.  Same for
+	  use() and execute().
+
+	o Collapse mysql_* date and time classes into their subclasses,
+	  Date, Time, and DateTime.
+
+	o Remove simp_list_b from vallist.h.  It doesn't seem to be used
+	  anywhere, and it doesn't seem to be useful for end-user code.
+
+	o Null's copy ctor should take its parameter by reference.
+
+	o It's not helpful for Connection to have both connect() and
+	  real_connect().  That's a result of weaknesses in the C API
+	  leaking through.  Because C++ allows default parameters,
+	  real_connect() effectively presents a superset of the
+	  connect() interface.	Drop connect() and rename real_connect()
+	  to connect().
+
+	o Exception objects are a hodge-podge.	Hoist all common
+	  functionality up into a superclass.  This will eliminate all
+	  of the interface differences between these classes.
+
+	o Several of the value_list* and related functions can be
+	  collapsed into one by use of default parameters.  These are
+	  in vallist.h, and also in RowTemplate, defined in row.h.
+	  This will change the ABI, but a conservative refactoring need
+	  not change the API.  It may be that aggressive refactoring is
+	  indicated, however.
+
+	o Create a mixin class that provides a standard way to disable
+	  exceptions on errors.  Currently there is some variation, and
+	  some classes that throw exceptions have no way to disable
+	  exceptions at all.  This could be done just by adding a
+	  standardized set of methods to all these clases, so it wouldn't
+	  have to break the ABI, but this really is a "new version" type
+	  of feature.
+
+	o Isn't the field name form of field_list() kind of silly?
+
+	o Some field_list() functions use the do_nothing manipulator by
+	  default, while some use quote.  The former makes more sense to
+	  me, as field names should never have to be quoted or escaped.
+	  If someone really needs the quote manipulator, that's available
+	  explicitly through other versions of the function.
+
+	o Row::Row should take the MYSQL_ROW parameter by const reference.
+
+	o Can SQLQueryParams::set() overloads all be collapsed into a
+	  single member by suitable use of default parameters?
+
+	o Swap the definitions of Row::operator[] and lookup_by_name()?
+	  That is, have the operator take a field name, and define a
+	  function (at()?) that takes a field index.  The original problem
+	  solved in 1.7.10 still exists, in that modern compilers won't
+	  let you overload the operator on both strings and integers,
+	  but the string form probably is the most useful.
+
 
 Bug Fix/Maintenance Items
 -------------------------
 
+	o It may be possible to optimize the use of ColData in the return
+	  from Row::operator[]. Currently, that operator returns
+	  a temporary ColData object, which contains a std::string
+	  buffer which is initialized by a const char* pointer to
+	  data within the Row object.  Since the ColData object is
+	  temporary, you currently must copy the data a second time to
+	  store it when using Row::operator[].	If the end user just
+	  wants a const char*, this double copy could be prevented.
+	  See http://lists.mysql.com/plusplus/4451 for the proposal.
+
+	o Connection::execute() should probably use mysql_real_query()
+	  instead of mysql_query() so it could handle binary data.
+
+	o Shouldn't ColData_Tmpl default ctor set type information to some
+	  default?
+
+	o There are comments in sql_query.h saying "only here temporary".
+	  They've been there for literally years.  Time to decide what
+	  to do about them!
+
+	o Have resetdb also create a table that load_file and
+	  cgi_image can use.  Remove "fax"ness from these examples,
+	  and encourage people to load up JPEGs or something else that
+	  a browser can display, so one can easily drop cgi_image into
+	  a cgi-bin directory to try it out.  Make load_image use the
+	  standard command line parameters, so you can manually load up
+	  some images for cgi_image to retrieve.
+
 	o Add nmake Makefiles for the project, for those using only the
 	  free command-line tools.
-	
-	o Move SQLQueryNEParms into exceptions.h?
-	
-	o Template ListInsert in lib/myset.h isn't being used within the
-	  library.  It could probably be used in place of SetInsert in the
-	  same file, which things like type_info.h do use now, but it isn't
-	  clear how one would go about doing that without changing the
-	  library code.  Document it or throw it away.
-	
-	o sql_cmp(double,double) is foolish.  One shouldn't do == comparison
-	  on floating point values.  Same for sql_cmp(float,float).  See
-	  also floating point precision item in previous section.
 
-	o Attribution and licensing needs attention.  Note LGPL at top of
-	  all source files, and note copyrights where known.  Also, a
-	  license needs to be picked for the new documentation. 
+	o Move SQLQueryNEParms into exceptions.h.
+
+	o Template ListInsert in lib/myset.h isn't being used within the
+	  library.  It could probably be used in place of SetInsert
+	  in the same file, which things like type_info.h do use now,
+	  but it isn't clear how one would go about doing that without
+	  changing the library code.  Document it or throw it away.
+
+	o sql_cmp(double,double) is foolish.  One shouldn't do ==
+	  comparison on floating point values.	Same for
+	  sql_cmp(float,float).  See also floating point precision item
+	  in previous section.
+
+	o Settle on new license for documentation, or make LGPL explicit.
 
 	o 64-bit integer support is not heavily tested.  It may yet have
 	  problems.
@@ -127,3 +251,8 @@ Bug Fix/Maintenance Items
 	  reorganization in 1.7.20: if you move everything from row.cc to
 	  a new row2.h file and include it in a few strategic locations, it
 	  works.  But, this is a bogus fix.  Find the right one.
+
+	o Define CSS stylesheet for userman to try and match its appearance
+	  to that of the refman.  Perhaps we can just copy the stylesheet
+	  from Doxygen?
+

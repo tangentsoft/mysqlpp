@@ -47,8 +47,7 @@ main()
 	try {
 		ostringstream strbuf;
 		unsigned int i = 0;
-		con.real_connect(MY_DATABASE, MY_HOST, MY_USER, MY_PASSWORD, 3306,
-						 0, 60, NULL);
+		con.connect(MY_DATABASE, MY_HOST, MY_USER, MY_PASSWORD);
 		Query query = con.query();
 		query << MY_QUERY;
 		ResUse res = query.use();
@@ -57,7 +56,7 @@ main()
 			" in (";
 		//  for UPDATE just replace the above DELETE FROM with UPDATE statement
 		for (; row = res.fetch_row(); i++)
-			strbuf << row[0] << ",";
+			strbuf << row.at(0) << ",";
 		if (!i)
 			return 0;
 		string output(strbuf.str());
@@ -66,20 +65,20 @@ main()
 		query.exec(output);
 		//cout << output << endl;
 	}
-	catch (BadQuery& er) {
-		// Handle any connection or query errors
-		cerr << "Error: " << er.what() << " " << con.errnum() << endl;
+	catch (const BadQuery& er) {
+		// Handle any query errors
+		cerr << "Query error: " << er.what() << endl;
 		return -1;
 	}
-	catch (BadConversion& er) {
+	catch (const BadConversion& er) {
 		// Handle bad conversions
-		cerr << "Error: " << er.what() << "\"." << endl
-			<< "retrieved data size: " << er.retrieved
-			<< " actual data size: " << er.actual_size << endl;
+		cerr << "Conversion error: " << er.what() << endl <<
+				"\tretrieved data size: " << er.retrieved <<
+				", actual size: " << er.actual_size << endl;
 		return -1;
 	}
-	catch (exception& er) {
-		// Catch-all for any other standard C++ exceptions
+	catch (const Exception& er) {
+		// Catch-all for any other MySQL++ exceptions
 		cerr << "Error: " << er.what() << endl;
 		return -1;
 	}

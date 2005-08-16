@@ -8,17 +8,38 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
-# USA.
+# You should have received a copy of the GNU Lesser General Public
+# License along with MySQL++; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
+# USA
 
+
+dnl Don't forget to change libtool version below, plus the version
+dnl numbers in ChangeLog and mysql++.spec.
+AC_INIT(mysql++, 2.0.0, plusplus@lists.mysql.com, mysql++)
+
+# Libtool version scheme is: interface:change:age.  Interface number
+# goes up any time the library interface changes.  Change number goes up
+# any time library changes without affecting interface.  Age goes up any
+# time interface changes without breaking backwards compatibility, such
+# as by adding new functions; must always be less than interface number.
+AC_SUBST(MYSQLPP_LIBTOOL_VERSION, [2:0:0])
+
+dnl Break package version up into major, minor and bugfix components.
+dnl Avoid temptation to use these to define MYSQLPP_LIBTOOL_VERSION:
+dnl only in the x.0.0 case do these two schemes take the same values!
+MYSQLPP_VERSION_MAJOR=`echo $PACKAGE_VERSION | cut -f1 -d.`
+AC_SUBST(MYSQLPP_VERSION_MAJOR)
+MYSQLPP_VERSION_MINOR=`echo $PACKAGE_VERSION | cut -f2 -d.`
+AC_SUBST(MYSQLPP_VERSION_MINOR)
+MYSQLPP_VERSION_BUGFIX=`echo $PACKAGE_VERSION | cut -f3 -d.`
+AC_SUBST(MYSQLPP_VERSION_BUGFIX)
 
 dnl Standard autotools stuff
-AC_INIT(lib/mysql++.h)
-AM_INIT_AUTOMAKE(mysql++, 1.7.40)	# Change this in mysql++.spec, too!
+AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
 AC_PROG_MAKE_SET
+AC_DISABLE_STATIC
 AC_PROG_LIBTOOL
 AM_MAINTAINER_MODE
 
@@ -84,4 +105,6 @@ AC_SUBST([OPTIONAL_EXAMPLES])
 #
 # Done with checks!
 #
-AC_OUTPUT(Makefile lib/Makefile examples/Makefile)
+AC_OUTPUT([Makefile mysql++.spec lib/mysql++.h lib/Makefile lib/Doxyfile examples/Makefile])
+
+./makemake.sh simple gcc

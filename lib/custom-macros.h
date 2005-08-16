@@ -7503,7 +7503,7 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]); \
+    s->I1 = static_cast<T1>(row.at(O1)); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -7946,7 +7946,7 @@
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
+    s->I1 = static_cast<T1>(row.at(O1));\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -7985,8 +7985,8 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]); \
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2)); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -8462,8 +8462,8 @@
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -8503,9 +8503,9 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]); \
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3)); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -9011,9 +9011,9 @@
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -9054,10 +9054,10 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]); \
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4)); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -9593,10 +9593,10 @@
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -9638,11 +9638,11 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]); \
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5)); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -10208,11 +10208,11 @@
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -10255,12 +10255,12 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]); \
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6)); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -10856,12 +10856,12 @@
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -10905,13 +10905,13 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]); \
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7)); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -11537,13 +11537,13 @@
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -11588,14 +11588,14 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]); \
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8)); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -12251,14 +12251,14 @@
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -12304,15 +12304,15 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]); \
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9)); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -12998,15 +12998,15 @@
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -13053,16 +13053,16 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]); \
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10)); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -13778,16 +13778,16 @@
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -13835,17 +13835,17 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]); \
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11)); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -14591,17 +14591,17 @@
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -14650,18 +14650,18 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]); \
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12)); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -15437,18 +15437,18 @@
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -15498,19 +15498,19 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]); \
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13)); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -16316,19 +16316,19 @@
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]);\
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13));\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -16379,20 +16379,20 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]);\
-    s->I14 = static_cast<T14>(row[ O14 ]); \
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13));\
+    s->I14 = static_cast<T14>(row.at(O14)); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -17228,20 +17228,20 @@
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]);\
-    s->I14 = static_cast<T14>(row[ O14 ]);\
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13));\
+    s->I14 = static_cast<T14>(row.at(O14));\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -17293,21 +17293,21 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]);\
-    s->I14 = static_cast<T14>(row[ O14 ]);\
-    s->I15 = static_cast<T15>(row[ O15 ]); \
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13));\
+    s->I14 = static_cast<T14>(row.at(O14));\
+    s->I15 = static_cast<T15>(row.at(O15)); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -18173,21 +18173,21 @@
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]);\
-    s->I14 = static_cast<T14>(row[ O14 ]);\
-    s->I15 = static_cast<T15>(row[ O15 ]);\
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13));\
+    s->I14 = static_cast<T14>(row.at(O14));\
+    s->I15 = static_cast<T15>(row.at(O15));\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -18240,22 +18240,22 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]);\
-    s->I14 = static_cast<T14>(row[ O14 ]);\
-    s->I15 = static_cast<T15>(row[ O15 ]);\
-    s->I16 = static_cast<T16>(row[ O16 ]); \
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13));\
+    s->I14 = static_cast<T14>(row.at(O14));\
+    s->I15 = static_cast<T15>(row.at(O15));\
+    s->I16 = static_cast<T16>(row.at(O16)); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -19151,22 +19151,22 @@
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]);\
-    s->I14 = static_cast<T14>(row[ O14 ]);\
-    s->I15 = static_cast<T15>(row[ O15 ]);\
-    s->I16 = static_cast<T16>(row[ O16 ]);\
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13));\
+    s->I14 = static_cast<T14>(row.at(O14));\
+    s->I15 = static_cast<T15>(row.at(O15));\
+    s->I16 = static_cast<T16>(row.at(O16));\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -19220,23 +19220,23 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]);\
-    s->I14 = static_cast<T14>(row[ O14 ]);\
-    s->I15 = static_cast<T15>(row[ O15 ]);\
-    s->I16 = static_cast<T16>(row[ O16 ]);\
-    s->I17 = static_cast<T17>(row[ O17 ]); \
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13));\
+    s->I14 = static_cast<T14>(row.at(O14));\
+    s->I15 = static_cast<T15>(row.at(O15));\
+    s->I16 = static_cast<T16>(row.at(O16));\
+    s->I17 = static_cast<T17>(row.at(O17)); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -20162,23 +20162,23 @@
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]);\
-    s->I14 = static_cast<T14>(row[ O14 ]);\
-    s->I15 = static_cast<T15>(row[ O15 ]);\
-    s->I16 = static_cast<T16>(row[ O16 ]);\
-    s->I17 = static_cast<T17>(row[ O17 ]);\
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13));\
+    s->I14 = static_cast<T14>(row.at(O14));\
+    s->I15 = static_cast<T15>(row.at(O15));\
+    s->I16 = static_cast<T16>(row.at(O16));\
+    s->I17 = static_cast<T17>(row.at(O17));\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -20233,24 +20233,24 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]);\
-    s->I14 = static_cast<T14>(row[ O14 ]);\
-    s->I15 = static_cast<T15>(row[ O15 ]);\
-    s->I16 = static_cast<T16>(row[ O16 ]);\
-    s->I17 = static_cast<T17>(row[ O17 ]);\
-    s->I18 = static_cast<T18>(row[ O18 ]); \
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13));\
+    s->I14 = static_cast<T14>(row.at(O14));\
+    s->I15 = static_cast<T15>(row.at(O15));\
+    s->I16 = static_cast<T16>(row.at(O16));\
+    s->I17 = static_cast<T17>(row.at(O17));\
+    s->I18 = static_cast<T18>(row.at(O18)); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -21206,24 +21206,24 @@
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]);\
-    s->I14 = static_cast<T14>(row[ O14 ]);\
-    s->I15 = static_cast<T15>(row[ O15 ]);\
-    s->I16 = static_cast<T16>(row[ O16 ]);\
-    s->I17 = static_cast<T17>(row[ O17 ]);\
-    s->I18 = static_cast<T18>(row[ O18 ]);\
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13));\
+    s->I14 = static_cast<T14>(row.at(O14));\
+    s->I15 = static_cast<T15>(row.at(O15));\
+    s->I16 = static_cast<T16>(row.at(O16));\
+    s->I17 = static_cast<T17>(row.at(O17));\
+    s->I18 = static_cast<T18>(row.at(O18));\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -21279,25 +21279,25 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]);\
-    s->I14 = static_cast<T14>(row[ O14 ]);\
-    s->I15 = static_cast<T15>(row[ O15 ]);\
-    s->I16 = static_cast<T16>(row[ O16 ]);\
-    s->I17 = static_cast<T17>(row[ O17 ]);\
-    s->I18 = static_cast<T18>(row[ O18 ]);\
-    s->I19 = static_cast<T19>(row[ O19 ]); \
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13));\
+    s->I14 = static_cast<T14>(row.at(O14));\
+    s->I15 = static_cast<T15>(row.at(O15));\
+    s->I16 = static_cast<T16>(row.at(O16));\
+    s->I17 = static_cast<T17>(row.at(O17));\
+    s->I18 = static_cast<T18>(row.at(O18));\
+    s->I19 = static_cast<T19>(row.at(O19)); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -22283,25 +22283,25 @@
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]);\
-    s->I14 = static_cast<T14>(row[ O14 ]);\
-    s->I15 = static_cast<T15>(row[ O15 ]);\
-    s->I16 = static_cast<T16>(row[ O16 ]);\
-    s->I17 = static_cast<T17>(row[ O17 ]);\
-    s->I18 = static_cast<T18>(row[ O18 ]);\
-    s->I19 = static_cast<T19>(row[ O19 ]);\
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13));\
+    s->I14 = static_cast<T14>(row.at(O14));\
+    s->I15 = static_cast<T15>(row.at(O15));\
+    s->I16 = static_cast<T16>(row.at(O16));\
+    s->I17 = static_cast<T17>(row.at(O17));\
+    s->I18 = static_cast<T18>(row.at(O18));\
+    s->I19 = static_cast<T19>(row.at(O19));\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -22358,26 +22358,26 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]);\
-    s->I14 = static_cast<T14>(row[ O14 ]);\
-    s->I15 = static_cast<T15>(row[ O15 ]);\
-    s->I16 = static_cast<T16>(row[ O16 ]);\
-    s->I17 = static_cast<T17>(row[ O17 ]);\
-    s->I18 = static_cast<T18>(row[ O18 ]);\
-    s->I19 = static_cast<T19>(row[ O19 ]);\
-    s->I20 = static_cast<T20>(row[ O20 ]); \
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13));\
+    s->I14 = static_cast<T14>(row.at(O14));\
+    s->I15 = static_cast<T15>(row.at(O15));\
+    s->I16 = static_cast<T16>(row.at(O16));\
+    s->I17 = static_cast<T17>(row.at(O17));\
+    s->I18 = static_cast<T18>(row.at(O18));\
+    s->I19 = static_cast<T19>(row.at(O19));\
+    s->I20 = static_cast<T20>(row.at(O20)); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -23393,26 +23393,26 @@
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]);\
-    s->I14 = static_cast<T14>(row[ O14 ]);\
-    s->I15 = static_cast<T15>(row[ O15 ]);\
-    s->I16 = static_cast<T16>(row[ O16 ]);\
-    s->I17 = static_cast<T17>(row[ O17 ]);\
-    s->I18 = static_cast<T18>(row[ O18 ]);\
-    s->I19 = static_cast<T19>(row[ O19 ]);\
-    s->I20 = static_cast<T20>(row[ O20 ]);\
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13));\
+    s->I14 = static_cast<T14>(row.at(O14));\
+    s->I15 = static_cast<T15>(row.at(O15));\
+    s->I16 = static_cast<T16>(row.at(O16));\
+    s->I17 = static_cast<T17>(row.at(O17));\
+    s->I18 = static_cast<T18>(row.at(O18));\
+    s->I19 = static_cast<T19>(row.at(O19));\
+    s->I20 = static_cast<T20>(row.at(O20));\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -23470,27 +23470,27 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]);\
-    s->I14 = static_cast<T14>(row[ O14 ]);\
-    s->I15 = static_cast<T15>(row[ O15 ]);\
-    s->I16 = static_cast<T16>(row[ O16 ]);\
-    s->I17 = static_cast<T17>(row[ O17 ]);\
-    s->I18 = static_cast<T18>(row[ O18 ]);\
-    s->I19 = static_cast<T19>(row[ O19 ]);\
-    s->I20 = static_cast<T20>(row[ O20 ]);\
-    s->I21 = static_cast<T21>(row[ O21 ]); \
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13));\
+    s->I14 = static_cast<T14>(row.at(O14));\
+    s->I15 = static_cast<T15>(row.at(O15));\
+    s->I16 = static_cast<T16>(row.at(O16));\
+    s->I17 = static_cast<T17>(row.at(O17));\
+    s->I18 = static_cast<T18>(row.at(O18));\
+    s->I19 = static_cast<T19>(row.at(O19));\
+    s->I20 = static_cast<T20>(row.at(O20));\
+    s->I21 = static_cast<T21>(row.at(O21)); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -24536,27 +24536,27 @@
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]);\
-    s->I14 = static_cast<T14>(row[ O14 ]);\
-    s->I15 = static_cast<T15>(row[ O15 ]);\
-    s->I16 = static_cast<T16>(row[ O16 ]);\
-    s->I17 = static_cast<T17>(row[ O17 ]);\
-    s->I18 = static_cast<T18>(row[ O18 ]);\
-    s->I19 = static_cast<T19>(row[ O19 ]);\
-    s->I20 = static_cast<T20>(row[ O20 ]);\
-    s->I21 = static_cast<T21>(row[ O21 ]);\
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13));\
+    s->I14 = static_cast<T14>(row.at(O14));\
+    s->I15 = static_cast<T15>(row.at(O15));\
+    s->I16 = static_cast<T16>(row.at(O16));\
+    s->I17 = static_cast<T17>(row.at(O17));\
+    s->I18 = static_cast<T18>(row.at(O18));\
+    s->I19 = static_cast<T19>(row.at(O19));\
+    s->I20 = static_cast<T20>(row.at(O20));\
+    s->I21 = static_cast<T21>(row.at(O21));\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -24615,28 +24615,28 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]);\
-    s->I14 = static_cast<T14>(row[ O14 ]);\
-    s->I15 = static_cast<T15>(row[ O15 ]);\
-    s->I16 = static_cast<T16>(row[ O16 ]);\
-    s->I17 = static_cast<T17>(row[ O17 ]);\
-    s->I18 = static_cast<T18>(row[ O18 ]);\
-    s->I19 = static_cast<T19>(row[ O19 ]);\
-    s->I20 = static_cast<T20>(row[ O20 ]);\
-    s->I21 = static_cast<T21>(row[ O21 ]);\
-    s->I22 = static_cast<T22>(row[ O22 ]); \
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13));\
+    s->I14 = static_cast<T14>(row.at(O14));\
+    s->I15 = static_cast<T15>(row.at(O15));\
+    s->I16 = static_cast<T16>(row.at(O16));\
+    s->I17 = static_cast<T17>(row.at(O17));\
+    s->I18 = static_cast<T18>(row.at(O18));\
+    s->I19 = static_cast<T19>(row.at(O19));\
+    s->I20 = static_cast<T20>(row.at(O20));\
+    s->I21 = static_cast<T21>(row.at(O21));\
+    s->I22 = static_cast<T22>(row.at(O22)); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -25712,28 +25712,28 @@
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]);\
-    s->I14 = static_cast<T14>(row[ O14 ]);\
-    s->I15 = static_cast<T15>(row[ O15 ]);\
-    s->I16 = static_cast<T16>(row[ O16 ]);\
-    s->I17 = static_cast<T17>(row[ O17 ]);\
-    s->I18 = static_cast<T18>(row[ O18 ]);\
-    s->I19 = static_cast<T19>(row[ O19 ]);\
-    s->I20 = static_cast<T20>(row[ O20 ]);\
-    s->I21 = static_cast<T21>(row[ O21 ]);\
-    s->I22 = static_cast<T22>(row[ O22 ]);\
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13));\
+    s->I14 = static_cast<T14>(row.at(O14));\
+    s->I15 = static_cast<T15>(row.at(O15));\
+    s->I16 = static_cast<T16>(row.at(O16));\
+    s->I17 = static_cast<T17>(row.at(O17));\
+    s->I18 = static_cast<T18>(row.at(O18));\
+    s->I19 = static_cast<T19>(row.at(O19));\
+    s->I20 = static_cast<T20>(row.at(O20));\
+    s->I21 = static_cast<T21>(row.at(O21));\
+    s->I22 = static_cast<T22>(row.at(O22));\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -25793,29 +25793,29 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]);\
-    s->I14 = static_cast<T14>(row[ O14 ]);\
-    s->I15 = static_cast<T15>(row[ O15 ]);\
-    s->I16 = static_cast<T16>(row[ O16 ]);\
-    s->I17 = static_cast<T17>(row[ O17 ]);\
-    s->I18 = static_cast<T18>(row[ O18 ]);\
-    s->I19 = static_cast<T19>(row[ O19 ]);\
-    s->I20 = static_cast<T20>(row[ O20 ]);\
-    s->I21 = static_cast<T21>(row[ O21 ]);\
-    s->I22 = static_cast<T22>(row[ O22 ]);\
-    s->I23 = static_cast<T23>(row[ O23 ]); \
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13));\
+    s->I14 = static_cast<T14>(row.at(O14));\
+    s->I15 = static_cast<T15>(row.at(O15));\
+    s->I16 = static_cast<T16>(row.at(O16));\
+    s->I17 = static_cast<T17>(row.at(O17));\
+    s->I18 = static_cast<T18>(row.at(O18));\
+    s->I19 = static_cast<T19>(row.at(O19));\
+    s->I20 = static_cast<T20>(row.at(O20));\
+    s->I21 = static_cast<T21>(row.at(O21));\
+    s->I22 = static_cast<T22>(row.at(O22));\
+    s->I23 = static_cast<T23>(row.at(O23)); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -26921,29 +26921,29 @@
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]);\
-    s->I14 = static_cast<T14>(row[ O14 ]);\
-    s->I15 = static_cast<T15>(row[ O15 ]);\
-    s->I16 = static_cast<T16>(row[ O16 ]);\
-    s->I17 = static_cast<T17>(row[ O17 ]);\
-    s->I18 = static_cast<T18>(row[ O18 ]);\
-    s->I19 = static_cast<T19>(row[ O19 ]);\
-    s->I20 = static_cast<T20>(row[ O20 ]);\
-    s->I21 = static_cast<T21>(row[ O21 ]);\
-    s->I22 = static_cast<T22>(row[ O22 ]);\
-    s->I23 = static_cast<T23>(row[ O23 ]);\
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13));\
+    s->I14 = static_cast<T14>(row.at(O14));\
+    s->I15 = static_cast<T15>(row.at(O15));\
+    s->I16 = static_cast<T16>(row.at(O16));\
+    s->I17 = static_cast<T17>(row.at(O17));\
+    s->I18 = static_cast<T18>(row.at(O18));\
+    s->I19 = static_cast<T19>(row.at(O19));\
+    s->I20 = static_cast<T20>(row.at(O20));\
+    s->I21 = static_cast<T21>(row.at(O21));\
+    s->I22 = static_cast<T22>(row.at(O22));\
+    s->I23 = static_cast<T23>(row.at(O23));\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -27004,30 +27004,30 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]);\
-    s->I14 = static_cast<T14>(row[ O14 ]);\
-    s->I15 = static_cast<T15>(row[ O15 ]);\
-    s->I16 = static_cast<T16>(row[ O16 ]);\
-    s->I17 = static_cast<T17>(row[ O17 ]);\
-    s->I18 = static_cast<T18>(row[ O18 ]);\
-    s->I19 = static_cast<T19>(row[ O19 ]);\
-    s->I20 = static_cast<T20>(row[ O20 ]);\
-    s->I21 = static_cast<T21>(row[ O21 ]);\
-    s->I22 = static_cast<T22>(row[ O22 ]);\
-    s->I23 = static_cast<T23>(row[ O23 ]);\
-    s->I24 = static_cast<T24>(row[ O24 ]); \
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13));\
+    s->I14 = static_cast<T14>(row.at(O14));\
+    s->I15 = static_cast<T15>(row.at(O15));\
+    s->I16 = static_cast<T16>(row.at(O16));\
+    s->I17 = static_cast<T17>(row.at(O17));\
+    s->I18 = static_cast<T18>(row.at(O18));\
+    s->I19 = static_cast<T19>(row.at(O19));\
+    s->I20 = static_cast<T20>(row.at(O20));\
+    s->I21 = static_cast<T21>(row.at(O21));\
+    s->I22 = static_cast<T22>(row.at(O22));\
+    s->I23 = static_cast<T23>(row.at(O23));\
+    s->I24 = static_cast<T24>(row.at(O24)); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -28163,30 +28163,30 @@
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]);\
-    s->I14 = static_cast<T14>(row[ O14 ]);\
-    s->I15 = static_cast<T15>(row[ O15 ]);\
-    s->I16 = static_cast<T16>(row[ O16 ]);\
-    s->I17 = static_cast<T17>(row[ O17 ]);\
-    s->I18 = static_cast<T18>(row[ O18 ]);\
-    s->I19 = static_cast<T19>(row[ O19 ]);\
-    s->I20 = static_cast<T20>(row[ O20 ]);\
-    s->I21 = static_cast<T21>(row[ O21 ]);\
-    s->I22 = static_cast<T22>(row[ O22 ]);\
-    s->I23 = static_cast<T23>(row[ O23 ]);\
-    s->I24 = static_cast<T24>(row[ O24 ]);\
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13));\
+    s->I14 = static_cast<T14>(row.at(O14));\
+    s->I15 = static_cast<T15>(row.at(O15));\
+    s->I16 = static_cast<T16>(row.at(O16));\
+    s->I17 = static_cast<T17>(row.at(O17));\
+    s->I18 = static_cast<T18>(row.at(O18));\
+    s->I19 = static_cast<T19>(row.at(O19));\
+    s->I20 = static_cast<T20>(row.at(O20));\
+    s->I21 = static_cast<T21>(row.at(O21));\
+    s->I22 = static_cast<T22>(row.at(O22));\
+    s->I23 = static_cast<T23>(row.at(O23));\
+    s->I24 = static_cast<T24>(row.at(O24));\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\
@@ -28248,31 +28248,31 @@
   }; \
   template <sql_dummy_type dummy> \
     void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]);\
-    s->I14 = static_cast<T14>(row[ O14 ]);\
-    s->I15 = static_cast<T15>(row[ O15 ]);\
-    s->I16 = static_cast<T16>(row[ O16 ]);\
-    s->I17 = static_cast<T17>(row[ O17 ]);\
-    s->I18 = static_cast<T18>(row[ O18 ]);\
-    s->I19 = static_cast<T19>(row[ O19 ]);\
-    s->I20 = static_cast<T20>(row[ O20 ]);\
-    s->I21 = static_cast<T21>(row[ O21 ]);\
-    s->I22 = static_cast<T22>(row[ O22 ]);\
-    s->I23 = static_cast<T23>(row[ O23 ]);\
-    s->I24 = static_cast<T24>(row[ O24 ]);\
-    s->I25 = static_cast<T25>(row[ O25 ]); \
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13));\
+    s->I14 = static_cast<T14>(row.at(O14));\
+    s->I15 = static_cast<T15>(row.at(O15));\
+    s->I16 = static_cast<T16>(row.at(O16));\
+    s->I17 = static_cast<T17>(row.at(O17));\
+    s->I18 = static_cast<T18>(row.at(O18));\
+    s->I19 = static_cast<T19>(row.at(O19));\
+    s->I20 = static_cast<T20>(row.at(O20));\
+    s->I21 = static_cast<T21>(row.at(O21));\
+    s->I22 = static_cast<T22>(row.at(O22));\
+    s->I23 = static_cast<T23>(row.at(O23));\
+    s->I24 = static_cast<T24>(row.at(O24));\
+    s->I25 = static_cast<T25>(row.at(O25)); \
   } \
   inline NAME::NAME (const Row &row) \
     {populate_##NAME<sql_dummy>(this, row);} \
@@ -29438,31 +29438,31 @@
   }\
   template <sql_dummy_type dummy> \
   void populate_##NAME (NAME *s, const Row &row) { \
-    s->I1 = static_cast<T1>(row[ O1 ]);\
-    s->I2 = static_cast<T2>(row[ O2 ]);\
-    s->I3 = static_cast<T3>(row[ O3 ]);\
-    s->I4 = static_cast<T4>(row[ O4 ]);\
-    s->I5 = static_cast<T5>(row[ O5 ]);\
-    s->I6 = static_cast<T6>(row[ O6 ]);\
-    s->I7 = static_cast<T7>(row[ O7 ]);\
-    s->I8 = static_cast<T8>(row[ O8 ]);\
-    s->I9 = static_cast<T9>(row[ O9 ]);\
-    s->I10 = static_cast<T10>(row[ O10 ]);\
-    s->I11 = static_cast<T11>(row[ O11 ]);\
-    s->I12 = static_cast<T12>(row[ O12 ]);\
-    s->I13 = static_cast<T13>(row[ O13 ]);\
-    s->I14 = static_cast<T14>(row[ O14 ]);\
-    s->I15 = static_cast<T15>(row[ O15 ]);\
-    s->I16 = static_cast<T16>(row[ O16 ]);\
-    s->I17 = static_cast<T17>(row[ O17 ]);\
-    s->I18 = static_cast<T18>(row[ O18 ]);\
-    s->I19 = static_cast<T19>(row[ O19 ]);\
-    s->I20 = static_cast<T20>(row[ O20 ]);\
-    s->I21 = static_cast<T21>(row[ O21 ]);\
-    s->I22 = static_cast<T22>(row[ O22 ]);\
-    s->I23 = static_cast<T23>(row[ O23 ]);\
-    s->I24 = static_cast<T24>(row[ O24 ]);\
-    s->I25 = static_cast<T25>(row[ O25 ]);\
+    s->I1 = static_cast<T1>(row.at(O1));\
+    s->I2 = static_cast<T2>(row.at(O2));\
+    s->I3 = static_cast<T3>(row.at(O3));\
+    s->I4 = static_cast<T4>(row.at(O4));\
+    s->I5 = static_cast<T5>(row.at(O5));\
+    s->I6 = static_cast<T6>(row.at(O6));\
+    s->I7 = static_cast<T7>(row.at(O7));\
+    s->I8 = static_cast<T8>(row.at(O8));\
+    s->I9 = static_cast<T9>(row.at(O9));\
+    s->I10 = static_cast<T10>(row.at(O10));\
+    s->I11 = static_cast<T11>(row.at(O11));\
+    s->I12 = static_cast<T12>(row.at(O12));\
+    s->I13 = static_cast<T13>(row.at(O13));\
+    s->I14 = static_cast<T14>(row.at(O14));\
+    s->I15 = static_cast<T15>(row.at(O15));\
+    s->I16 = static_cast<T16>(row.at(O16));\
+    s->I17 = static_cast<T17>(row.at(O17));\
+    s->I18 = static_cast<T18>(row.at(O18));\
+    s->I19 = static_cast<T19>(row.at(O19));\
+    s->I20 = static_cast<T20>(row.at(O20));\
+    s->I21 = static_cast<T21>(row.at(O21));\
+    s->I22 = static_cast<T22>(row.at(O22));\
+    s->I23 = static_cast<T23>(row.at(O23));\
+    s->I24 = static_cast<T24>(row.at(O24));\
+    s->I25 = static_cast<T25>(row.at(O25));\
   } \
   inline NAME::NAME (const Row &row) \
                                         {populate_##NAME<sql_dummy>(this, row);}\

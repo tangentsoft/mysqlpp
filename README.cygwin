@@ -1,0 +1,42 @@
+Limitations
+~~~~~~~~~~~
+	At the moment, Cygwin can only build a static version
+	of MySQL++.  Unless you're one of the few that have a
+	commercial Cygwin license, this isn't likely to matter to you,
+	since without this, your program is under the GPL anyway.
+	(See http://www.redhat.com/software/cygwin/ for details.)
+
+	If you're making a closed-source program and do not have a
+	commercial Cygwin license, I recommend that you use either
+	Visual C++ (preferred) or MinGW.  See README.vc or README.mingw
+	for details.
+
+
+Building the Library and Example Programs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	Before you can build MySQL++, you need to build the MySQL
+	client-side library from source. I recommend that you use
+	MySQL v4.1.x at this time. The best instructions I've found
+	for that are here:
+
+		http://cygwin.com/ml/cygwin/2004-11/msg00159.html
+
+	Skip the step changing the pthread stuff in my_thr_init.c,
+	as it isn't necessary in newer versions of MySQL. With those
+	changes applied, build and install MySQL like so:
+
+	$ autoreconf --install --verbose --force
+	$ ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var \
+	    --infodir=/usr/share/info --mandir=/usr/share/man \
+        --disable-shared --without-{debug,readline,libedit,server}
+	$ make && make install
+
+	Now that the MySQL client library is built and installed,
+	you need to configure MySQL++ to build statically:
+
+	$ ./bootstrap --disable-shared [other options]
+
+	The "other options" are passed to the configure script. See
+	README.unix for some suggestions.
+
+	Beyond that, it's the old "make && make install" bit.

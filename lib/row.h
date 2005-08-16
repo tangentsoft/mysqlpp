@@ -30,6 +30,7 @@
 
 #include "coldata.h"
 #include "exceptions.h"
+#include "noexceptions.h"
 #include "resiter.h"
 #include "vallist.h"
 
@@ -43,62 +44,126 @@ namespace mysqlpp {
 class FieldNames;
 class ResUse;
 
-/// \brief Base class for class Row
-
-template <class ThisType, class Res>
-class RowTemplate
+/// \brief Manages rows from a result set.
+class Row :
+		public const_subscript_container<Row, ColData, const ColData>,
+		public OptionalExceptions
 {
-protected:
-	/// \brief Return a pointer to this object.
-	///
-	/// Not sure what value this has over the 'this' pointer, but...
-	virtual ThisType& self() = 0;
-
-	/// \brief Return a const pointer to this object, for calls in
-	/// const context.
-	virtual const ThisType& self() const = 0;
-
 public:
-	/// \brief Destroy object
-	virtual ~RowTemplate() { }
-
-	/// \brief Get a reference to our "parent" class.
+	/// \brief Default constructor
+	Row() :
+	res_(0),
+	initialized_(false)
+	{
+	}
+	
+	/// \brief Create a row object
 	///
-	/// The meaning of this function is up to whatever class derives
-	/// from this one.
-	virtual const Res& parent() const = 0;
+	/// \param d MySQL C API row data
+	/// \param r result set that the row comes from
+	/// \param jj length of each item in d
+	/// \param te if true, throw exceptions on errors
+	MYSQLPP_EXPORT Row(const MYSQL_ROW& d, const ResUse* r,
+			unsigned long* jj, bool te = true);
+
+	/// \brief Destroy object
+	MYSQLPP_EXPORT ~Row();
+
+	/// \brief Get a reference to our parent class.
+	const ResUse& parent() const
+	{
+		return *res_;
+	}
+
+	/// \brief Get the number of fields in the row.
+	MYSQLPP_EXPORT size_type size() const;
+
+	/// \brief Get the value of a field given its name.
+	///
+	/// If the field does not exist in this row, we throw a BadFieldName
+	/// exception.
+	///
+	/// Note that we return the
+	/// \link mysqlpp::ColData_Tmpl ColData \endlink object by value.
+	/// The purpose of ColData is to make it easy to convert the string
+	/// data returned by the MySQL server to some more appropriate type,
+	/// so you're almost certain to use this operator in a construct
+	/// like this:
+	///
+	/// \code
+	///  string s = row["myfield"];
+	/// \endcode
+	///
+	/// That accesses myfield within the row, returns a temporary
+	/// ColData object, which is then automatically converted to a
+	/// \c std::string and copied into \c s.  That works fine, but
+	/// beware of this similar but incorrect construct:
+	///
+	/// \code
+	///  const char* pc = row["myfield"];
+	/// \endcode
+	///
+	/// This one line of code does what you expect, but \c pc is then a
+	/// dangling pointer: it points to memory owned by the temporary
+	/// ColData object, which will have been destroyed by the time you
+	/// get around to actually \e using the pointer.
+	///
+	/// This function is rather inefficient.  If that is a concern for
+	/// you, use at(), operator[](size_type) or the SSQLS mechanism
+	/// instead.
+	MYSQLPP_EXPORT const ColData operator [](const char* field) const;
+
+	/// \brief Get the value of a field given its index.
+	///
+	/// If the index value is bad, the underlying std::vector is
+	/// supposed to throw an exception, according to the Standard.
+	///
+	/// This function is just syntactic sugar, wrapping the at() method.
+	/// The at() method is the only way to get at the first field by
+	/// index, as row[0] is ambiguous: it could call either overload.
+	///
+	/// See operator[](const char*) for more caveats.
+	const ColData operator [](size_type i) const
+	{
+		return at(i);
+	}
+
+	/// \brief Get the value of a field given its index.
+	///
+	/// If the index is out-of-bounds, the underlying vector is supposed
+	/// to throw an exception according to the C++ Standard.  Whether it
+	/// actually does this is implementation-dependent.
+	MYSQLPP_EXPORT const ColData at(size_type i) const;
+
+	/// \brief Return the value of a field given its index, in raw form.
+	///
+	/// This is the same thing as operator[], except that the data isn't
+	/// converted to a ColData object first.  Also, this method does not
+	/// check for out-of-bounds array indices.
+	const char* raw_data(int i) const
+	{
+		return data_[i].data();
+	}
+
+	/// \brief Returns true if there is data in the row.
+	operator bool() const
+	{
+		return data_.size();
+	}
 
 	/// \brief Get a list of the values in this row
 	///
 	/// When inserted into a C++ stream, the delimiter 'd' will be used
-	/// between the items, and items will be quoted and escaped.
-	value_list_ba<ThisType, quote_type0> value_list(
-			const char* d = ",") const
-	{
-		return value_list_ba<ThisType, quote_type0>(self(), d, quote);
-	}
-	
-	/// \brief Get a list of the values in this row
+	/// between the items, and the quoting and escaping rules will be
+	/// set by the manipulator 'm' you choose.
 	///
 	/// \param d delimiter to use between values
 	/// \param m manipulator to use when inserting values into a stream
 	template <class Manip>
-	value_list_ba<ThisType, Manip> value_list(const char *d,
-			Manip m) const {
-		return value_list_ba<ThisType, Manip>(self(), d, m);
-	}
-	
-	/// \brief Get a list of the values in this row
-	///
-	/// \param d delimiter to use between values
-	/// \param m manipulator to use when inserting values into a stream
-	/// \param vb for each true item in this list, add that value to the
-	/// returned list; ignore the others
-	template <class Manip>
-	value_list_b<ThisType, Manip> value_list(const char *d, Manip m,
-			const std::vector<bool>& vb) const
+	value_list_ba<Row, Manip> value_list(const char* d = ",",
+			Manip m = quote) const
 	{
-		return value_list_b<ThisType, Manip>(self(), vb, d, m);
+		return value_list_ba<Row, Manip>(*this, d, m);
 	}
 	
 	/// \brief Get a list of the values in this row
@@ -106,13 +171,12 @@ public:
 	/// \param d delimiter to use between values
 	/// \param vb for each true item in this list, add that value to the
 	/// returned list; ignore the others
-	///
-	/// Items will be quoted and escaped when inserted into a C++
-	/// stream.
-	value_list_b<ThisType, quote_type0>
-	value_list(const char* d, const std::vector<bool>& vb) const
+	/// \param m manipulator to use when inserting values into a stream
+	template <class Manip>
+	value_list_b<Row, Manip> value_list(const char *d,
+			const std::vector<bool>& vb, Manip m = quote) const
 	{
-		return value_list_b<ThisType, quote_type0>(self(), vb, d, quote);
+		return value_list_b<Row, Manip>(*this, vb, d, m);
 	}
 	
 	/// \brief Get a list of the values in this row
@@ -122,10 +186,10 @@ public:
 	///
 	/// Items will be quoted and escaped when inserted into a C++ stream,
 	/// and a comma will be used as a delimiter between the items.
-	value_list_b<ThisType, quote_type0> value_list(
+	value_list_b<Row, quote_type0> value_list(
 			const std::vector<bool> &vb) const
 	{
-		return value_list_b<ThisType, quote_type0>(self(), vb, ",", quote);
+		return value_list_b<Row, quote_type0>(*this, vb, ",", quote);
 	}
 	
 	/// \brief Get a list of the values in this row
@@ -135,16 +199,16 @@ public:
 	/// into a C++ stream, the delimiter 'd' will be placed between the
 	/// items, and the manipulator 'm' used before each item.
 	template <class Manip>
-	value_list_b<ThisType, Manip> value_list(const char *d, Manip m,
+	value_list_b<Row, Manip> value_list(const char *d, Manip m,
 			bool t0, bool t1 = false, bool t2 = false, bool t3 = false,
 			bool t4 = false, bool t5 = false, bool t6 = false,
 			bool t7 = false, bool t8 = false, bool t9 = false,
 			bool ta = false, bool tb = false, bool tc = false) const
 	{
 		std::vector<bool> vb;
-		create_vector(self().size(), vb, t0, t1, t2, t3, t4, t5, t6,
+		create_vector(size(), vb, t0, t1, t2, t3, t4, t5, t6,
 				t7, t8, t9, ta, tb, tc);
-		return value_list_b<ThisType, Manip>(self(), vb, d, m);
+		return value_list_b<Row, Manip>(*this, vb, d, m);
 	}
 	
 	/// \brief Get a list of the values in this row
@@ -153,7 +217,7 @@ public:
 	/// row is added to the returned list.  When the list is inserted
 	/// into a C++ stream, the delimiter 'd' will be placed between the
 	/// items, and items will be quoted and escaped.
-	value_list_b <ThisType, quote_type0>
+	value_list_b <Row, quote_type0>
 	value_list(const char *d, bool t0, bool t1 = false, bool t2 = false,
 			bool t3 = false, bool t4 = false, bool t5 = false,
 			bool t6 = false, bool t7 = false, bool t8 = false,
@@ -161,9 +225,9 @@ public:
 			bool tc = false) const
 	{
 		std::vector<bool> vb;
-		create_vector(self().size(), vb, t0, t1, t2, t3, t4, t5, t6,
+		create_vector(size(), vb, t0, t1, t2, t3, t4, t5, t6,
 				t7, t8, t9, ta, tb, tc);
-		return value_list_b<ThisType, quote_type0>(self(), vb, d, quote);
+		return value_list_b<Row, quote_type0>(*this, vb, d, quote);
 	}
 	
 	/// \brief Get a list of the values in this row
@@ -172,16 +236,16 @@ public:
 	/// row is added to the returned list.  When the list is inserted
 	/// into a C++ stream, the a comma will be placed between the items,
 	/// as a delimiter, and items will be quoted and escaped.
-	value_list_b<ThisType, quote_type0> value_list(bool t0,
+	value_list_b<Row, quote_type0> value_list(bool t0,
 			bool t1 = false, bool t2 = false, bool t3 = false,
 			bool t4 = false, bool t5 = false, bool t6 = false,
 			bool t7 = false, bool t8 = false, bool t9 = false,
 			bool ta = false, bool tb = false, bool tc = false) const
 	{
 		std::vector<bool> vb;
-		create_vector(self().size(), vb, t0, t1, t2, t3, t4, t5, t6,
+		create_vector(size(), vb, t0, t1, t2, t3, t4, t5, t6,
 				t7, t8, t9, ta, tb, tc);
-		return value_list_b<ThisType, quote_type0>(self(), vb, ",", quote);
+		return value_list_b<Row, quote_type0>(*this, vb, ",", quote);
 	}
 	
 	/// \brief Get a list of the values in this row
@@ -191,7 +255,7 @@ public:
 	/// 'd' will be placed between the items, and the manipulator 'm'
 	/// will be inserted before each item.
 	template <class Manip>
-	value_list_b<ThisType, Manip> value_list(const char *d, Manip m,
+	value_list_b<Row, Manip> value_list(const char *d, Manip m,
 			std::string s0, std::string s1 = "", std::string s2 = "",
 			std::string s3 = "", std::string s4 = "",
 			std::string s5 = "", std::string s6 = "",
@@ -200,9 +264,9 @@ public:
 			std::string sb = "", std::string sc = "") const
 	{
 		std::vector<bool> vb;
-		create_vector(self(), vb, s0, s1, s2, s3, s4, s5, s6, s7, s8,
+		create_vector(*this, vb, s0, s1, s2, s3, s4, s5, s6, s7, s8,
 				s9, sa, sb, sc);
-		return value_list_b<ThisType, Manip>(self(), vb, d, m);
+		return value_list_b<Row, Manip>(*this, vb, d, m);
 	}
 	
 	/// \brief Get a list of the values in this row
@@ -211,7 +275,8 @@ public:
 	/// returned list.  When inserted into a C++ stream, the delimiter
 	/// 'd' will be placed between the items, and items will be quoted
 	/// and escaped.
-	value_list_b<ThisType, quote_type0> value_list(const char *d,
+	value_list_b<Row, quote_type0> value_list(
+			const char *d,
 			std::string s0, std::string s1 = "", std::string s2 = "",
 			std::string s3 = "", std::string s4 = "",
 			std::string s5 = "", std::string s6 = "",
@@ -220,9 +285,9 @@ public:
 			std::string sb = "", std::string sc = "") const
 	{
 		std::vector<bool> vb;
-		create_vector(self(), vb, s0, s1, s2, s3, s4, s5, s6, s7, s8,
+		create_vector(*this, vb, s0, s1, s2, s3, s4, s5, s6, s7, s8,
 				s9, sa, sb, sc);
-		return value_list_b<ThisType, quote_type0>(self(), vb, d, quote);
+		return value_list_b<Row, quote_type0>(*this, vb, d, quote);
 	}
 	
 	/// \brief Get a list of the values in this row
@@ -231,7 +296,8 @@ public:
 	/// returned list.  When inserted into a C++ stream, a comma will be
 	/// placed between the items as a delimiter, and items will be
 	/// quoted and escaped.
-	value_list_b<ThisType, quote_type0> value_list(std::string s0,
+	value_list_b<Row, quote_type0> value_list(
+			std::string s0,
 			std::string s1 = "", std::string s2 = "",
 			std::string s3 = "", std::string s4 = "",
 			std::string s5 = "", std::string s6 = "",
@@ -240,22 +306,18 @@ public:
 			std::string sb = "", std::string sc = "") const
 	{
 		std::vector<bool> vb;
-		create_vector(self(), vb, s0, s1, s2, s3, s4, s5, s6, s7, s8,
+		create_vector(*this, vb, s0, s1, s2, s3, s4, s5, s6, s7, s8,
 				s9, sa, sb, sc);
-		return value_list_b<ThisType, quote_type0>(self(), vb, ",", quote);
+		return value_list_b<Row, quote_type0>(*this, vb, ",", quote);
 	}
 
 	/// \brief Get a list of the field names in this row
 	///
 	/// When inserted into a C++ stream, the delimiter 'd' will be used
 	/// between the items, and no manipulator will be used on the items.
-	value_list_ba<FieldNames, do_nothing_type0> field_list(
-			const char* d = ",") const
-	{
-		return value_list_ba<FieldNames, do_nothing_type0>
-				(parent().names(), d, do_nothing);
-	}
-	
+	MYSQLPP_EXPORT value_list_ba<FieldNames, do_nothing_type0>
+			field_list(const char* d = ",") const;
+
 	/// \brief Get a list of the field names in this row
 	///
 	/// \param d delimiter to place between the items when the list is
@@ -263,12 +325,9 @@ public:
 	/// \param m manipulator to use before each item when the list is
 	/// inserted into a C++ stream
 	template <class Manip>
-	value_list_ba<FieldNames, Manip> field_list(const char *d,
-			Manip m) const
-	{
-		return value_list_ba<FieldNames, Manip>(parent().names(), d, m);
-	}
-	
+	value_list_ba<FieldNames, Manip> field_list(const char* d,
+			Manip m) const;
+
 	/// \brief Get a list of the field names in this row
 	///
 	/// \param d delimiter to place between the items when the list is
@@ -278,12 +337,9 @@ public:
 	/// \param vb for each true item in this list, add that field name
 	/// to the returned list; ignore the others
 	template <class Manip>
-	value_list_b<FieldNames, Manip> field_list(const char *d, Manip m,
-			const std::vector<bool>& vb) const
-	{
-		return value_list_b<FieldNames, Manip>(parent().names(), vb, d, m);
-	}
-	
+	value_list_b<FieldNames, Manip> field_list(const char* d, Manip m,
+			const std::vector<bool>& vb) const;
+
 	/// \brief Get a list of the field names in this row
 	///
 	/// \param d delimiter to place between the items when the list is
@@ -293,13 +349,9 @@ public:
 	///
 	/// Field names will be quoted and escaped when inserted into a C++
 	/// stream.
-	value_list_b<FieldNames, quote_type0> field_list(const char *d,
-			const std::vector<bool> &vb) const
-	{
-		return value_list_b<FieldNames, quote_type0>(parent().names(),
-				vb, d, quote);
-	}
-	
+	MYSQLPP_EXPORT value_list_b<FieldNames, quote_type0> field_list(
+			const char* d, const std::vector<bool>& vb) const;
+
 	/// \brief Get a list of the field names in this row
 	///
 	/// \param vb for each true item in this list, add that field name
@@ -307,13 +359,9 @@ public:
 	///
 	/// Field names will be quoted and escaped when inserted into a C++
 	/// stream, and a comma will be placed between them as a delimiter.
-	value_list_b<FieldNames, quote_type0> field_list(
-			const std::vector<bool> &vb) const
-	{
-		return value_list_b<FieldNames, quote_type0>(parent().names(),
-				vb, ",", quote);
-	}
-	
+	MYSQLPP_EXPORT value_list_b<FieldNames, quote_type0> field_list(
+			const std::vector<bool>& vb) const;
+
 	/// \brief Get a list of the field names in this row
 	///
 	/// For each true parameter, the field name in that position within
@@ -321,19 +369,14 @@ public:
 	/// inserted into a C++ stream, the delimiter 'd' will be placed
 	/// between the items as a delimiter, and the manipulator 'm' used
 	/// before each item.
-	template <class Manip> value_list_b<FieldNames, Manip> field_list(
-			const char *d, Manip m, bool t0, bool t1 = false,
-			bool t2 = false, bool t3 = false, bool t4 = false,
-			bool t5 = false, bool t6 = false, bool t7 = false,
-			bool t8 = false, bool t9 = false, bool ta = false,
-			bool tb = false, bool tc = false) const
-	{
-		std::vector<bool> vb;
-		create_vector(parent().names().size(), vb, t0, t1, t2, t3, t4,
-				t5, t6, t7, t8, t9, ta, tb, tc);
-		return value_list_b<FieldNames, Manip>(parent().names(), vb, d, m);
-	}
-	
+	template <class Manip>
+	value_list_b<FieldNames, Manip> field_list(const char *d, Manip m,
+			bool t0,
+			bool t1 = false, bool t2 = false, bool t3 = false,
+			bool t4 = false, bool t5 = false, bool t6 = false,
+			bool t7 = false, bool t8 = false, bool t9 = false,
+			bool ta = false, bool tb = false, bool tc = false) const;
+
 	/// \brief Get a list of the field names in this row
 	///
 	/// For each true parameter, the field name in that position within
@@ -341,113 +384,34 @@ public:
 	/// inserted into a C++ stream, the delimiter 'd' will be placed
 	/// between the items as a delimiter, and the items will be quoted
 	/// and escaped.
-	value_list_b<FieldNames, quote_type0> field_list(const char *d,
-			bool t0, bool t1 = false, bool t2 = false, bool t3 = false,
+	MYSQLPP_EXPORT value_list_b<FieldNames, quote_type0> field_list(
+			const char *d, bool t0,
+			bool t1 = false, bool t2 = false, bool t3 = false,
 			bool t4 = false, bool t5 = false, bool t6 = false,
 			bool t7 = false, bool t8 = false, bool t9 = false,
-			bool ta = false, bool tb = false, bool tc = false) const
-	{
-		std::vector<bool> vb;
-		create_vector(parent().names().size(), vb, t0, t1, t2, t3, t4,
-				t5, t6, t7, t8, t9, ta, tb, tc);
-		return value_list_b<FieldNames, quote_type0>(parent().names(),
-				vb, d, quote);
-	}
-	
+			bool ta = false, bool tb = false, bool tc = false) const;
+
 	/// \brief Get a list of the field names in this row
 	///
 	/// For each true parameter, the field name in that position within
 	/// the row is added to the returned list.  When the list is
 	/// inserted into a C++ stream, a comma will be placed between the
 	/// items as a delimiter, and the items will be quoted and escaped.
-	value_list_b<FieldNames, quote_type0> field_list(bool t0,
+	MYSQLPP_EXPORT value_list_b<FieldNames, quote_type0> field_list(
+			bool t0,
 			bool t1 = false, bool t2 = false, bool t3 = false,
 			bool t4 = false, bool t5 = false, bool t6 = false,
 			bool t7 = false, bool t8 = false, bool t9 = false,
-			bool ta = false, bool tb = false, bool tc = false) const
-	{
-		std::vector<bool> vb;
-		create_vector(parent().names().size(), vb, t0, t1, t2, t3, t4,
-				t5, t6, t7, t8, t9, ta, tb, tc);
-		return value_list_b<FieldNames, quote_type0>(parent().names(),
-				vb, ",", quote);
-	}
-	
-	/// \brief Get a list of the field names in this row
-	///
-	/// The 's' parameters name the field names that will be added to
-	/// the returned list.  When inserted into a C++ stream, the
-	/// delimiter 'd' will be placed between the items, and the
-	/// manipulator 'm' will be inserted before each item.
-	template <class Manip> value_list_b<FieldNames, Manip> field_list(
-			const char *d, Manip m, std::string s0, std::string s1 = "",
-			std::string s2 = "", std::string s3 = "",
-			std::string s4 = "", std::string s5 = "",
-			std::string s6 = "", std::string s7 = "",
-			std::string s8 = "", std::string s9 = "",
-			std::string sa = "", std::string sb = "",
-			std::string sc = "") const
-	{
-		std::vector<bool> vb;
-		create_vector(parent().names(), vb, s0, s1, s2, s3, s4, s5, s6,
-				s7, s8, s9, sa, sb, sc);
-		return value_list_b<FieldNames, Manip>(parent().names(), vb, d, m);
-	}
-	
-	/// \brief Get a list of the field names in this row
-	///
-	/// The 's' parameters name the field names that will be added to
-	/// the returned list.  When inserted into a C++ stream, the
-	/// delimiter 'd' will be placed between the items, and the items
-	/// will be quoted and escaped.
-	value_list_b<FieldNames, quote_type0> field_list(const char *d,
-			std::string s0, std::string s1 = "", std::string s2 = "",
-			std::string s3 = "", std::string s4 = "",
-			std::string s5 = "", std::string s6 = "",
-			std::string s7 = "", std::string s8 = "",
-			std::string s9 = "", std::string sa = "",
-			std::string sb = "", std::string sc = "") const
-	{
-		std::vector<bool> vb;
-		create_vector(parent().names(), vb, s0, s1, s2, s3, s4, s5, s6,
-				s7, s8, s9, sa, sb, sc);
-		return value_list_b<FieldNames, quote_type0>(parent().names(),
-				vb, d, quote);
-	}
-	
-	/// \brief Get a list of the field names in this row
-	///
-	/// The 's' parameters name the field names that will be added to
-	/// the returned list.  When inserted into a C++ stream, a comma
-	/// will be used as a delimiter between the items, and the items
-	/// will be quoted and escaped.
-	value_list_b<FieldNames, quote_type0> field_list(std::string s0,
-			std::string s1 = "", std::string s2 = "",
-			std::string s3 = "", std::string s4 = "",
-			std::string s5 = "", std::string s6 = "",
-			std::string s7 = "", std::string s8 = "",
-			std::string s9 = "", std::string sa = "",
-			std::string sb = "", std::string sc = "") const
-	{
-		std::vector<bool> vb;
-		create_vector(parent().names(), vb, s0, s1, s2, s3, s4, s5, s6,
-				s7, s8, s9, sa, sb, sc);
-		return value_list_b<FieldNames, quote_type0>(parent().names(),
-				vb, ",", quote);
-	}
+			bool ta = false, bool tb = false, bool tc = false) const;
 
 	/// \brief Get an "equal list" of the fields and values in this row
 	///
 	/// When inserted into a C++ stream, the delimiter 'd' will be used
 	/// between the items, " = " is the relationship operator, and items
 	/// will be quoted and escaped.
-	equal_list_ba<FieldNames, ThisType, quote_type0> equal_list(
-			const char* d = ",", const char* e = " = ") const
-	{
-		return equal_list_ba<FieldNames, ThisType, quote_type0>(
-				parent().names(), self(), d, e, quote);
-	}
-	
+	MYSQLPP_EXPORT equal_list_ba<FieldNames, Row, quote_type0>
+			equal_list(const char* d = ",", const char* e = " = ") const;
+
 	/// \brief Get an "equal list" of the fields and values in this row
 	///
 	/// This method's parameters govern how the returned list will
@@ -469,142 +433,14 @@ public:
 	/// Notice how the single quote was 'escaped' in the SQL way to
 	/// avoid a syntax error.
 	template <class Manip>
-	equal_list_ba<FieldNames, ThisType, Manip> equal_list(const char* d,
-			const char* e, Manip m) const 
-	{
-		return equal_list_ba<FieldNames, ThisType, Manip>(
-				parent().names(), self(), d, e, m);
-	}
-};
+	equal_list_ba<FieldNames, Row, Manip> equal_list(const char* d,
+			const char* e, Manip m) const;
 
-
-/// \brief Manages rows from a result set.
-class Row : public const_subscript_container<Row, ColData,
-		const ColData>, public RowTemplate<Row, ResUse>
-{
 private:
-	std::vector<std::string> data;
-	std::vector<bool> is_nulls;
-	const ResUse* res;
-	bool throw_exceptions;
-	bool initialized;
-
-public:
-	/// \brief Default constructor
-	Row() { }
-	
-	/// \brief Create a row object
-	///
-	/// \param d MySQL C API row data
-	/// \param r result set that the row comes from
-	/// \param jj length of each item in d
-	/// \param te if true, throw exceptions on errors
-	Row(MYSQL_ROW d, const ResUse* r, unsigned long* jj, bool te = false) :
-	res(r),
-	throw_exceptions(te),
-	initialized(false)
-	{
-		if (!d || !r) {
-			if (throw_exceptions) {
-				throw BadQuery("ROW or RES is NULL");
-			}
-			else {
-				return;
-			}
-		}
-		data.clear();
-		is_nulls.clear();
-		initialized = true;
-		for (unsigned int i = 0; i < size(); i++) {
-			data.insert(data.end(),
-					(d[i] ?  std::string(d[i], jj[i]) : std::string("NULL")));
-			is_nulls.insert(is_nulls.end(), d[i] ? false : true);
-		}
-	}
-
-	/// \brief Destroy object
-	~Row()
-	{
-		data.clear();
-		is_nulls.clear();
-		initialized = false;
-	}
-
-	/// \brief Get a const reference to this object.
-	const Row & self() const
-	{
-		return *this;
-	}
-
-	/// \brief Get a reference to this object.
-	Row& self()
-	{
-		return *this;
-	}
-
-	/// \brief Get a reference to our parent class.
-	const ResUse& parent() const
-	{
-		return *res;
-	}
-
-	/// \brief Get the number of fields in the row.
-	size_type size() const;
-
-	/// \brief Get the value of a field given its index.
-	///
-	/// If the array index is out of bounds, the C++ standard says that
-	/// the underlying vector container should throw an exception.
-	/// Whether it actually does is probably implementation-dependent.
-	///
-	/// Note that we return the
-	/// \link mysqlpp::ColData_Tmpl ColData \endlink object by value.
-	/// The purpose of ColData is to make it easy to convert the string
-	/// data returned by the MySQL server to some more appropriate type,
-	/// so you're almost certain to use this operator in a construct
-	/// like this:
-	///
-	/// \code
-	///  string s = row[2];
-	/// \endcode
-	///
-	/// That accesses the third field in the row, returns a temporary
-	/// ColData object, which is then automatically converted to a
-	/// \c std::string and copied into \c s.  That works fine, but
-	/// beware of this similar but incorrect construct:
-	///
-	/// \code
-	///  const char* pc = row[2];
-	/// \endcode
-	///
-	/// This one line of code does what you expect, but \c pc is then a
-	/// dangling pointer: it points to memory owned by the temporary
-	/// ColData object, which will have been destroyed by the time you
-	/// get around to actually \e using the pointer.
-	const ColData operator [](size_type i) const;
-
-	/// \brief Get the value of a field given its field name.
-	///
-	/// This function is rather inefficient.  You should use operator[]
-	/// if you're using Rows directly, or SSQLS for efficient named
-	/// access to row elements.
-	const ColData lookup_by_name(const char*) const;
-
-	/// \brief Return the value of a field given its index, in raw form.
-	///
-	/// This is the same thing as operator[], except that the data isn't
-	/// converted to a ColData object first.  Also, this method does not
-	/// check for out-of-bounds array indices.
-	const char* raw_data(int i) const
-	{
-		return data[i].data();
-	}
-
-	/// \brief Returns true if there is data in the row.
-	operator bool() const
-	{
-		return data.size();
-	}
+	std::vector<std::string> data_;
+	std::vector<bool> is_nulls_;
+	const ResUse* res_;
+	bool initialized_;
 };
 
 } // end namespace mysqlpp

@@ -2,9 +2,11 @@
 /// \brief Declares the Connection class.
 ///
 /// Every program using MySQL++ must create a Connection object, which
-/// manages information about the connection to the MySQL database.  In
-/// addition, this class controls things like whether exceptions are
-/// thrown when errors are encountered.
+/// manages information about the connection to the MySQL database, and
+/// performs connection-related operations once the connection is up.
+/// Subordinate classes, such as Query and Row take their defaults as
+/// to whether exceptions are thrown when errors are encountered from
+/// the Connection object that created them, directly or indirectly.
 
 /***********************************************************************
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
@@ -35,24 +37,15 @@
 
 #include "platform.h"
 
-#include "exceptions.h"
-#include "result.h"
+#include "defs.h"
+
+#include "lockable.h"
+#include "noexceptions.h"
 
 #include <mysql.h>
 
-#include <vector>
 #include <deque>
-#include <list>
-#include <set>
-#include <map>
-
-#ifdef HAVE_EXT_SLIST
-#  include <ext/slist>
-#else
-#  ifdef HAVE_STD_SLIST
-#      include <slist>
-#  endif
-#endif
+#include <string>
 
 namespace mysqlpp {
 
@@ -60,56 +53,72 @@ class Query;
 
 /// \brief Manages the connection to the MySQL database.
 
-class Connection
+class Connection : public OptionalExceptions, public Lockable
 {
-private:
-	friend class ResNSel;
-	friend class ResUse;
-	friend class Query;
-
-	bool throw_exceptions;
-	MYSQL mysql;
-	bool is_connected;
-	bool locked;
-	bool Success;
-
 public:
+	/// \brief Legal types of option arguments
+	enum OptionArgType {
+		opt_type_none,
+		opt_type_string,
+		opt_type_integer,
+		opt_type_boolean
+	};
+
+	/// \brief Per-connection options you can set with set_option()
+	///
+	/// This is currently a combination of the MySQL C API
+	/// \c mysql_option and \c enum_mysql_set_option enums.  It may
+	/// be extended in the future.
+	enum Option 
+	{
+		// Symbolic "first" option, before real options.  Never send
+		// this to set_option()!
+		opt_FIRST = -1,
+		
+		opt_connect_timeout = 0,
+		opt_compress,
+		opt_named_pipe,
+		opt_init_command,
+		opt_read_default_file,
+		opt_read_default_group,
+		opt_set_charset_dir,
+		opt_set_charset_name,
+		opt_local_infile,
+		opt_protocol,
+		opt_shared_memory_base_name,
+		opt_read_timeout,
+		opt_write_timeout,
+		opt_use_result,
+		opt_use_remote_connection,
+		opt_use_embedded_connection,
+		opt_guess_connection,
+		opt_set_client_ip,
+		opt_secure_auth,
+
+		// Set multi-query statement support; no argument
+		opt_multi_statements,
+
+		// Set reporting of data truncation errors
+		opt_report_data_truncation,
+
+		// Number of options supported.  Never send this to
+		// set_option()!
+		opt_COUNT
+	};
+
 	/// \brief Create object without connecting it to the MySQL server.
 	///
-	/// Use real_connect() method to establish the connection.
-	Connection();
-
-	/// Same as
-	/// \link mysqlpp::Connection::Connection() default ctor \endlink
-	/// except that it allows you to choose whether exceptions are enabled.
-	///
 	/// \param te if true, exceptions are thrown on errors
-	Connection(bool te);
+	MYSQLPP_EXPORT Connection(bool te = true);
 
-	/// \brief For connecting to database without any special options.
-	///
-	/// This constructor takes the minimum parameters needed for most
-	/// programs' use of MySQL.  There is a <a href="#a3">more complicated</a>
-	/// constructor that lets you specify everything that the C API
-	/// function \c mysql_real_connect() does.
-	///
-	/// \param db name of database to use
-	/// \param host host name or IP address of MySQL server, or 0
-	/// 	if server is running on the same host as your program
-	/// \param user user name to log in under, or 0 to use the user
-	///		name this program is running under
-	/// \param passwd password to use when logging in
-	/// \param te if true, throw exceptions on errors
-	Connection(const char* db, const char* host = "",
-			const char* user = "", const char* passwd = "",
-			bool te = true);
-
-	/// \brief Connect to database, allowing you to specify all
-	/// connection parameters.
+	/// \brief Create object and connect to database server in one step.
 	///
 	/// This constructor allows you to most fully specify the options
 	/// used when connecting to the MySQL database.  It is the thinnest
-	/// layer in MySQL++ over the MySQL C API function \c mysql_real_connect().
+	/// layer in MySQL++ over the MySQL C API function
+	/// \c mysql_real_connect().  The correspondence isn't exact as
+	/// we have some additional parameters you'd have to set with
+	/// \c mysql_option() when using the C API.
 	///
 	/// \param db name of database to use
 	/// \param host host name or IP address of MySQL server, or 0
@@ -123,40 +132,29 @@ public:
 	///		connection, to save bandwidth at the expense of CPU time
 	/// \param connect_timeout max seconds to wait for server to
 	///		respond to our connection attempt
-	/// \param te if true, throw exceptions on errors
 	/// \param socket_name Unix domain socket server is using, if
 	///		connecting to MySQL server on the same host as this program
 	///		running on, or 0 to use default name
 	///	\param client_flag special connection flags. See MySQL C API
 	///		documentation for \c mysql_real_connect() for details.
-	Connection(const char* db, const char* host, const char* user,
-			const char* passwd, uint port, my_bool compress = 0,
-			unsigned int connect_timeout = 60, bool te = true,
-			cchar* socket_name = 0, unsigned int client_flag = 0);
+	MYSQLPP_EXPORT Connection(const char* db, const char* host = "",
+			const char* user = "", const char* passwd = "",
+			uint port = 0, my_bool compress = 0,
+			unsigned int connect_timeout = 60, cchar* socket_name = 0,
+			unsigned int client_flag = 0);
 
-	~Connection();
-
-	/// \brief Open connection to MySQL database
-	///
-	/// Open connection to the MySQL server, using defaults for all but the
-	/// most common parameters.  It's better to use one of the
-	/// connect-on-create constructors if you can.
-	///
-	/// See <a href="#a2">this</a> for parameter documentation.
-	bool connect(cchar* db = "", cchar* host = "", cchar* user = "",
-			cchar* passwd = "");
+	/// \brief Destroy connection object
+	MYSQLPP_EXPORT ~Connection();
 
 	/// \brief Connect to database after object is created.
 	///
-	/// It's better to use one of the connect-on-create constructors
-	/// if you can.
+	/// It's better to use the connect-on-create constructor if you can.
+	/// See its documentation for the meaning of these parameters.
 	///
-	/// Despite the name, this function is not a direct wrapper for the
-	/// MySQL C API function \c mysql_real_connect(). It also sets some
-	/// connection-related options using \c mysql_options().
-	///
-	/// See <a href="#a3">this</a> for parameter documentation.
-	bool real_connect(cchar* db = "", cchar* host = "",
+	/// If you call this method on an object that is already connected
+	/// to a database server, the previous connection is dropped and a
+	/// new connection is established.
+	MYSQLPP_EXPORT bool connect(cchar* db = "", cchar* host = "",
 			cchar* user = "", cchar* passwd = "", uint port = 0,
 			my_bool compress = 0, unsigned int connect_timeout = 60,
 			cchar* socket_name = 0, unsigned int client_flag = 0);
@@ -166,47 +164,27 @@ public:
 	/// Closes the connection to the MySQL server.
 	void close()
 	{
-		mysql_close(&mysql);
-		is_connected = false;
+		mysql_close(&mysql_);
+		is_connected_ = false;
 	}
 	
 	/// \brief Calls MySQL C API function \c mysql_info() and returns
 	/// result as a C++ string.
-	std::string info();
+	MYSQLPP_EXPORT std::string info();
 
 	/// \brief return true if connection was established successfully
 	///
 	/// \return true if connection was established successfully
 	bool connected() const
 	{
-		return is_connected;
+		return is_connected_;
 	}
 
 	/// \brief Return true if the last query was successful
 	bool success() const
 	{
-		return Success;
+		return success_;
 	}
-
-	/// \brief Lock the object.
-	///
-	/// Apparently supposed to prevent multiple simultaneous connections
-	/// since only connection-related functions change the lock status
-	/// but it's never actually checked!  See Wishlist for plan to fix
-	/// this.
-	bool lock()
-	{
-		if (locked) {
-			return true;
-		}
-		locked = true;
-		return false;
-	}
-
-	/// \brief Unlock the object
-	///
-	/// See lock() documentation for caveats.
-	void unlock() { locked = false; }
 
 	/// \brief Alias for close()
 	void purge() { close(); }
@@ -218,7 +196,7 @@ public:
 	/// \link mysqlpp::Query::execute() execute() \endlink
 	/// on that object, the query is sent to the server this object
 	/// is connected to.
-	Query query();
+	MYSQLPP_EXPORT Query query();
 
 	/// \brief Alias for success()
 	///
@@ -241,13 +219,16 @@ public:
 	/// this connection.
 	///
 	/// Simply wraps \c mysql_error() in the C API.
-	const char *error() { return mysql_error(&mysql); }
+	const char* error()
+	{
+		return mysql_error(&mysql_);
+	}
 
 	/// \brief Return last MySQL error number associated with this
 	/// connection
 	///
 	/// Simply wraps \c mysql_errno() in the C API.
-	int errnum() { return mysql_errno(&mysql); }
+	int errnum() { return mysql_errno(&mysql_); }
 
 	/// \brief Wraps MySQL C API function \c mysql_refresh()
 	///
@@ -259,7 +240,7 @@ public:
 	/// supposed to be used by regular end-user programs.
 	int refresh(unsigned int refresh_options)
 	{
-		return mysql_refresh(&mysql, refresh_options);
+		return mysql_refresh(&mysql_, refresh_options);
 	}
 
 	/// \brief "Pings" the MySQL database
@@ -272,14 +253,17 @@ public:
 	/// not re-establish the connection
 	///
 	/// Simply wraps \c mysql_ping() in the C API.
-	int ping() { return mysql_ping(&mysql); }
+	int ping() { return mysql_ping(&mysql_); }
 
 	/// \brief Kill a MySQL server thread
 	///
 	/// \param pid ID of thread to kill
 	///
 	/// Simply wraps \c mysql_kill() in the C API.
-	int kill(unsigned long pid) { return mysql_kill(&mysql, pid); }
+	int kill(unsigned long pid)
+	{
+		return mysql_kill(&mysql_, pid);
+	}
 
 	/// \brief Get MySQL client library version
 	///
@@ -297,7 +281,7 @@ public:
 	/// Simply wraps \c mysql_get_host_info() in the C API.
 	std::string host_info()
 	{
-		return std::string(mysql_get_host_info(&mysql));
+		return std::string(mysql_get_host_info(&mysql_));
 	}
 
 	/// \brief Returns version number of MySQL protocol this connection
@@ -306,7 +290,7 @@ public:
 	/// Simply wraps \c mysql_get_proto_info() in the C API.
 	int proto_info() 
 	{
-		return mysql_get_proto_info(&mysql);
+		return mysql_get_proto_info(&mysql_);
 	}
 
 	/// \brief Get the MySQL server's version number
@@ -314,7 +298,7 @@ public:
 	/// Simply wraps \c mysql_get_server_info() in the C API.
 	std::string server_info()
 	{
-		return std::string(mysql_get_server_info(&mysql));
+		return std::string(mysql_get_server_info(&mysql_));
 	}
 
 	/// \brief Returns information about MySQL server status
@@ -323,137 +307,33 @@ public:
 	/// \c status command.  Among other things, it contains uptime 
 	/// in seconds, and the number of running threads, questions
 	/// and open tables.
-	std::string stat() { return std::string(mysql_stat(&mysql)); }
-
-	/// \brief Execute a query that can return a result set
-	///
-	/// This function returns the entire result set immediately.  This
-	/// is useful if you actually need all of the records at once, but
-	/// if not, consider using use() instead, which returns the results
-	/// one at a time.  As a result of this difference, use() doesn't
-	/// need to allocate as much memory as store().
-	///
-	/// You must use store(), storein() or use() for \c SELECT, \c SHOW,
-	/// \c DESCRIBE and \c EXPLAIN queries.  You can use these functions
-	/// with other query types, but since they don't return a result
-	/// set, exec() and execute() are more efficient.
-	///
-	/// The name of this method comes from the MySQL C API function it
-	/// is implemented in terms of, \c mysql_store_result().
-	///
-	/// \return Result object containing entire result set
-	///
-	/// \sa exec(), execute(), storein(), and use()
-	Result store(const std::string& str)
+	std::string stat()
 	{
-		return store(str, throw_exceptions);
+		return std::string(mysql_stat(&mysql_));
 	}
-
-	/// \brief Execute a query that can return a result set
-	/// 
-	/// Unlike store(), this function does not return the result set
-	/// directly.  Instead, it returns an object that can walk through
-	/// the result records one by one.  This is superior to store()
-	/// when there are a large number of results; store() would have to
-	/// allocate a large block of memory to hold all those records,
-	/// which could cause problems.
-	///
-	/// A potential downside of this method is that MySQL database
-	/// resources are tied up until the result set is completely
-	/// consumed.  Do your best to walk through the result set as
-	/// expeditiously as possible.
-	///
-	/// The name of this method comes from the MySQL C API function
-	/// that initiates the retrieval process, \c mysql_use_result().
-	/// This method is implemented in terms of that function.
-	///
-	/// \return ResUse object that can walk through result set serially
-	///
-	/// \sa exec(), execute(), store() and storein()
-	ResUse use(const std::string& str)
-	{
-		return use(str, throw_exceptions);
-	}
-
-	/// \brief Execute a query
-	///
-	/// Use this function if you don't expect the server to return a
-	/// result set.  For instance, a DELETE query.  The returned ResNSel
-	/// object contains status information from the server, such as
-	/// whether the query succeeded, and if so how many rows were
-	/// affected.
-	///
-	/// \param str the query to execute
-	///
-	/// \return ResNSel status information about the query
-	///
-	/// \sa exec(), store(), storein(), and use()
-	ResNSel execute(const std::string& str)
-	{
-		return execute(str, throw_exceptions);
-	}
-
-	/// \brief Execute a query
-	///
-	/// Same as execute(), except that it only returns a flag indicating
-	/// whether the query succeeded or not.  It is basically a thin
-	/// wrapper around the C API function \c mysql_query().
-	///
-	/// \param str the query to execute
-	///
-	/// \return true if query was executed successfully
-	///
-	/// \sa execute(), store(), storein(), and use()
-	bool exec(const std::string& str);
-
-	/// \brief Same as store(str) except that it allows you to turn off
-	/// exceptions for this query
-	///
-	/// \param str query to execute
-	/// \param te if true, no exceptions will be thrown on errors.
-	Result store(const std::string& str, bool te);
-
-	/// \brief Same as use(str) except that it allows you to turn off
-	/// exceptions for this query
-	///
-	/// \param str query to execute
-	/// \param te if true, no exceptions will be thrown on errors.
-	ResUse use(const std::string& str, bool te);
-
-	/// \brief Same as execute(str) except that it allows you to turn off
-	/// exceptions for this query
-	///
-	/// \param str query to execute
-	/// \param te if true, no exceptions will be thrown on errors.
-	ResNSel execute(const std::string& str, bool te);
 
 	/// \brief Create a database
 	///
 	/// \param db name of database to create
 	///
-	/// \return \e false if database was created successfully. (Yes,
-	/// false! This behavior will change in the next major version.)
-	bool create_db(std::string db)
-	{
-		return !execute("CREATE DATABASE " + db);
-	}
+	/// \return true if database was created successfully
+	MYSQLPP_EXPORT bool create_db(const std::string& db);
 
 	/// \brief Drop a database
 	///
 	/// \param db name of database to destroy
 	///
-	/// \return \e false if database was created successfully. (Yes,
-	/// false! This behavior will change in the next major version.)
-	bool drop_db(std::string db)
+	/// \return true if database was created successfully
+	MYSQLPP_EXPORT bool drop_db(const std::string& db);
+
+	/// \brief Change to a different database
+	bool select_db(const std::string& db)
 	{
-		return !execute("DROP DATABASE " + db);
+		return select_db(db.c_str());
 	}
 
 	/// \brief Change to a different database
-	bool select_db(std::string db) { return select_db(db.c_str()); }
-
-	/// \brief Change to a different database
-	bool select_db(const char* db);
+	MYSQLPP_EXPORT bool select_db(const char* db);
 
 	/// \brief Ask MySQL server to reload the grant tables
 	/// 
@@ -462,41 +342,87 @@ public:
 	/// Simply wraps \c mysql_reload() in the C API.  Since that
 	/// function is deprecated, this one is, too.  The MySQL++
 	/// replacement is execute("FLUSH PRIVILEGES").
-	bool reload();
+	MYSQLPP_EXPORT bool reload();
 	
 	/// \brief Ask MySQL server to shut down.
 	///
 	/// User must have the "shutdown" privilege.
 	///
 	/// Simply wraps \c mysql_shutdown() in the C API.
-	bool shutdown();
-
-	/// \brief Alias for info()
-	///
-	/// This probably shouldn't exist.  It will be removed in the next
-	/// major version of the library unless a good justification is
-	/// found.
-	std::string infoo() { return info(); }
+	MYSQLPP_EXPORT bool shutdown();
 
 	/// \brief Return the connection options object
-	st_mysql_options get_options() const { return mysql.options; }
-
-	/// \brief Sets the given MySQL connection option
-	///
-	/// Not sure why this is named as it is; set_option() would be a
-	/// better name.  It may change in the next major version of the
-	/// library.
-	///
-	/// Simply wraps \c mysql_option() in the C API.
-	int read_options(enum mysql_option option, const char* arg)
+	st_mysql_options get_options() const
 	{
-		return mysql_options(&mysql, option, arg);
+		return mysql_.options;
 	}
+
+	/// \brief Sets a connection option, with no argument
+	///
+	/// \param option any of the Option enum constants
+	///
+	/// Based on the option you give, this function calls either
+	/// \c mysql_options() or \c mysql_set_server_option() in the C API.
+	///
+	/// There are several overloaded versions of this function.  The
+	/// others take an additional argument for the option and differ
+	/// only by the type of the option.  Unlike with the underlying C
+	/// API, it does matter which of these overloads you call: if you
+	/// use the wrong argument type or pass an argument where one is
+	/// not expected (or vice versa), the call will either throw an
+	/// exception or return false, depending on the object's "throw
+	/// exceptions" flag.
+	///
+	/// This mechanism parallels the underlying C API structure fairly
+	/// closely, but do not expect this to continue in the future.
+	/// Its very purpose is to 'paper over' the differences among the
+	/// C API's option setting mechanisms, so it may become further
+	/// abstracted from these mechanisms.
+	///
+	/// \retval true if option was successfully set
+	///
+	/// If exceptions are enabled, a false return means the C API
+	/// rejected the option, or the connection is not established and
+	/// so the option was queued for later processing.  If exceptions
+	/// are disabled, false can also mean that the argument was of the
+	/// wrong type (wrong overload was called), the option value was out
+	/// of range, or the option is not supported by the C API, most
+	/// because it isn't a high enough version. These latter cases will
+	/// cause BadOption exceptions otherwise.
+	MYSQLPP_EXPORT bool set_option(Option option);
+
+	/// \brief Sets a connection option, with string argument
+	MYSQLPP_EXPORT bool set_option(Option option, const char* arg);
+
+	/// \brief Sets a connection option, with integer argument
+	MYSQLPP_EXPORT bool set_option(Option option, unsigned int arg);
+
+	/// \brief Sets a connection option, with Boolean argument
+	MYSQLPP_EXPORT bool set_option(Option option, bool arg);
+
+	/// \brief Enable SSL-encrypted connection.
+	///
+	/// \param key the pathname to the key file
+	/// \param cert the pathname to the certificate file
+	/// \param ca the pathname to the certificate authority file
+	/// \param capath directory that contains trusted SSL CA
+	///        certificates in pem format.
+    /// \param cipher list of allowable ciphers to use
+	///
+	/// Must be called before connection is established.
+	///
+	/// Wraps \c mysql_ssl_set() in MySQL C API.
+	MYSQLPP_EXPORT void enable_ssl(const char* key = 0,
+			const char* cert = 0, const char* ca = 0,
+			const char* capath = 0, const char* cipher = 0);
 
 	/// \brief Return the number of rows affected by the last query
 	///
 	/// Simply wraps \c mysql_affected_rows() in the C API.
-	my_ulonglong affected_rows() { return mysql_affected_rows(&mysql); }
+	my_ulonglong affected_rows()
+	{
+		return mysql_affected_rows(&mysql_);
+	}
 
 	/// \brief Get ID generated for an AUTO_INCREMENT column in the
 	/// previous INSERT query.
@@ -504,126 +430,121 @@ public:
 	/// \retval 0 if the previous query did not generate an ID.  Use
 	/// the SQL function LAST_INSERT_ID() if you need the last ID
 	/// generated by any query, not just the previous one.
-	my_ulonglong insert_id() { return mysql_insert_id(&mysql); }
-
-	/// \brief Execute a query, storing the result set in an STL
-	/// sequence container.
-	///
-	/// This function works much like store() from the caller's
-	/// perspective, because it returns the entire result set at once.
-	/// It's actually implemented in terms of use(), however, so that
-	/// memory for the result set doesn't need to be allocated twice.
-	///
-	/// \param con any STL sequence container, such as \c std::vector
-	/// \param s query string to execute
-	///
-	/// \sa exec(), execute(), store(), and use()
-	template <class Sequence>
-	void storein_sequence(Sequence& con, const std::string& s);
-
-	/// \brief Execute a query, storing the result set in an STL
-	/// associative container.
-	///
-	/// \param con any STL associative container, such as \c std::set
-	/// \param s query string to execute
-	///
-	/// The same thing as storein_sequence(), except that it's used with
-	/// associative STL containers, such as \c std::set.  Other than
-	/// that detail, that method's comments apply equally well to this
-	/// one.
-	template <class Set>
-	void storein_set(Set& con, const std::string& s);
-
-	/// \brief Specialization of storein_sequence() for \c std::vector
-	template <class T>
-	void storein(std::vector<T>& con, const std::string& s)
+	my_ulonglong insert_id()
 	{
-		storein_sequence(con, s);
+		return mysql_insert_id(&mysql_);
 	}
 
-	/// \brief Specialization of storein_sequence() for \c std::deque
-	template <class T>
-	void storein(std::deque<T>& con, const std::string& s)
-	{
-		storein_sequence(con, s);
-	}
-
-	/// \brief Specialization of storein_sequence() for \c std::list
-	template <class T>
-	void storein(std::list<T>& con, const std::string& s)
-	{
-		storein_sequence(con, s);
-	}
-
-#if defined(HAVE_EXT_SLIST)
-	/// \brief Specialization of storein_sequence() for g++ STL
-	/// extension \c slist
-	template <class T>
-	void storein(__gnu_cxx::slist<T>& con, const std::string& s)
-	{
-		storein_sequence(con, s);
-	}
-#elif defined(HAVE_STD_SLIST)
-	/// \brief Specialization of storein_sequence() for STL
-	/// extension \c slist
+	/// \brief Insert C API version we're linked against into C++ stream
 	///
-	/// This is primarily for older versions of g++, which didn't put
-	/// \c slist in a private namespace.  This is a common language
-	/// extension, so this may also work for other compilers.
-	template <class T>
-	void storein(slist<T>& con, const std::string& s)
-	{
-		storein_sequence(con, s);
-	}
+	/// Version will be of the form X.Y.Z, where X is the major version
+	/// number, Y the minor version, and Z the bug fix number.
+	std::ostream& api_version(std::ostream& os);
+
+protected:
+	/// \brief Drop the connection to the database server
+	///
+	/// This method is protected because it should only be used within
+	/// the library.  Unless you use the default constructor, this
+	/// object should always be connected.
+	MYSQLPP_EXPORT void disconnect();
+
+	/// \brief Returns true if the given option is to be set once
+	/// connection comes up.
+	///
+	/// \param option option to check for in queue
+	/// \param arg argument to match against
+	bool option_pending(Option option, bool arg) const;
+
+	/// \brief For each option in pending option queue, call
+	/// set_option()
+	///
+	/// Called within connect() method after connection is established.
+	/// Despools options in the order given to set_option().
+	void apply_pending_options();
+
+	/// \brief Generic wrapper for bad_option_*()
+	bool bad_option(Option option, OptionArgType type);
+
+	/// \brief Handles call of incorrect set_option() overload
+	bool bad_option_type(Option option);
+
+	/// \brief Handles bad option values sent to set_option()
+	bool bad_option_value(Option option);
+
+	/// \brief Given option value, return its proper argument type
+	OptionArgType option_arg_type(Option option);
+
+	/// \brief Set MySQL C API connection option
+	///
+	/// Wraps \c mysql_options() in C API.  This is an internal
+	/// implementation detail, to be used only by the public overloads
+	/// above.
+	bool set_option_impl(mysql_option moption, const void* arg = 0);
+
+#if MYSQL_VERSION_ID >= 40101
+	/// \brief Set MySQL C API connection option
+	///
+	/// Wraps \c mysql_set_server_option() in C API.  This is an
+	/// internal implementation detail, to be used only by the public
+	/// overloads above.
+	bool set_option_impl(enum_mysql_set_option msoption);
 #endif
 
-	/// \brief Specialization of storein_set() for \c std::set
-	template <class T>
-	void storein(std::set<T>& con, const std::string& s)
-	{
-		storein_set(con, s);
-	}
+private:
+	friend class ResNSel;
+	friend class ResUse;
+	friend class Query;
 
-	/// \brief Specialization of storein_set() for \c std::multiset
-	template <class T>
-	void storein(std::multiset<T>& con, const std::string& s)
-	{
-		storein_set(con, s);
-	}
+	struct OptionInfo {
+		Option option;
+		OptionArgType arg_type;
+		std::string str_arg;
+		unsigned int int_arg;
+		bool bool_arg;
+
+		OptionInfo(Option o) :
+		option(o),
+		arg_type(opt_type_none),
+		int_arg(0),
+		bool_arg(false)
+		{
+		}
+
+		OptionInfo(Option o, const char* a) :
+		option(o),
+		arg_type(opt_type_string),
+		str_arg(a),
+		int_arg(0),
+		bool_arg(false)
+		{
+		}
+
+		OptionInfo(Option o, unsigned int a) :
+		option(o),
+		arg_type(opt_type_integer),
+		int_arg(a),
+		bool_arg(false)
+		{
+		}
+
+		OptionInfo(Option o, bool a) :
+		option(o),
+		arg_type(opt_type_boolean),
+		int_arg(0),
+		bool_arg(a)
+		{
+		}
+	};
+
+	MYSQL mysql_;
+	bool is_connected_;
+	bool connecting_;
+	bool success_;
+	std::deque<OptionInfo> pending_options_;
+	static OptionArgType legal_opt_arg_types_[];
 };
 
-
-template <class Sequence>
-void Connection::storein_sequence(Sequence& con, const std::string& s)
-{
-	ResUse result = use(s);
-	while (1) {
-		MYSQL_ROW d = mysql_fetch_row(result.mysql_result());
-		if (!d)
-			break;
-		Row row(d, &result, mysql_fetch_lengths(result.mysql_result()),
-				true);
-		if (!row)
-			break;
-		con.push_back(typename Sequence::value_type(row));
-	}
-}
-
-template <class Set>
-void Connection::storein_set(Set& con, const std::string& s)
-{
-	ResUse result = use(s);
-	while (1) {
-		MYSQL_ROW d = mysql_fetch_row(result.mysql_result());
-		if (!d)
-			return;
-		Row row(d, &result, mysql_fetch_lengths(result.mysql_result()),
-				true);
-		if (!row)
-			break;
-		con.insert(typename Set::value_type(row));
-	}
-}
 
 } // end namespace mysqlpp
 

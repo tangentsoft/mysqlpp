@@ -26,7 +26,7 @@
  USA
 ***********************************************************************/
 
-#ifndef MYSQLPP_DEFS_H
+#if !defined(MYSQLPP_DEFS_H)
 #define MYSQLPP_DEFS_H
 
 #include "platform.h"
@@ -39,21 +39,28 @@ namespace mysqlpp {
 /// readable.
 const bool use_exceptions = true;
 
-/// \brief Appears to be unused!  Remove?
+/// \brief Used to disambiguate overloads of equal_list() in SSQLSes.
 enum sql_cmp_type {sql_use_compare};
 
+#if !defined(DOXYGEN_IGNORE)
+// Figure out how to get large integer support on this system.  Suppress
+// refman documentation for these typedefs, as they're system-dependent.
 #if defined(NO_LONG_LONGS)
+// Alias "longlong" and "ulonglong" to the regular "long" counterparts
 typedef unsigned long ulonglong;
 typedef long longlong;
-#elif !defined(__GNUC__) && (defined(__WIN32__) || defined(_WIN32))
+#elif defined(_MSC_VER)
+// It's VC++, so we'll use Microsoft's 64-bit integer types
 typedef unsigned __int64 ulonglong;
 typedef __int64 longlong;
-#else
-/// \brief unsigned 64-bit integer type for GCC-based systems
+#elif defined(__GNUC__)
+// It's g++ so use GNU convention of "long long" for large integers.
 typedef unsigned long long ulonglong;
-/// \brief signed 64-bit integer type for GCC-based systems
 typedef long long longlong;
+#else
+#	error Unknown large integer type. Define NO_LONG_LONGS or add support for your system to defs.h.
 #endif
+#endif // !defined(DOXYGEN_IGNORE)
 
 /// \brief Alias for MYSQL_FIELD
 typedef MYSQL_FIELD Field;

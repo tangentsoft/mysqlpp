@@ -1,0 +1,49 @@
+CONFIGURE OPTIONS
+
+	The configure script takes several interesting options. Say:
+
+		$ ./configure --help
+
+	to get a list.  Some of the more interesting flags are:
+
+	--prefix:
+
+		If you wish to install mysql++ in a root directory
+		other than /usr/local, run configure with
+		--prefix=/some/dir/name
+
+	--with-mysql*:
+
+		If you installed MySQL in an atypical location,
+		the configure script will not be able to find the
+		library and header files without help. The simplest
+		way to clue configure into where MySQL is installed
+		is with the --with-mysql option. Try something like
+		"--with-mysql=/usr/local/mysql", for instance. The
+		configure script will then try to guess which
+		subdirectories under the given directory contain the
+		library and include files.
+
+		If that still doesn't work, use --with-mysql-include and
+		--with-mysql-lib instead. As when given --with-mysql,
+		configure will try to guess (if necessary) which
+		subdirectory under the given directory contains the
+		needed files, so you don't necessarily have to give the
+		full path to these files.
+
+	--enable-thread-check:
+
+		If you with be using MySQL++ in a multi-threaded program,
+		you need to give the --enable-thread-check option to
+		the configure script. It will then try to determine
+		whether your system has a threads implementation it can
+		understand, and whether it can use the thread-safe MySQL
+		C library. If both of these aren't true, you won't get a
+		thread-safe MySQL++ library. Beware that a thread-aware
+		MySQL++ library requires that you link your program
+		differently, so if you depend on ABI stability and
+		have been using MySQL++ for some time, you will almost
+		certainly want to leave this option out.
+
+
+

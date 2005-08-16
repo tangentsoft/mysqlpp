@@ -27,6 +27,8 @@
 
 #include "manip.h"
 
+#include "query.h"
+
 using namespace std;
 
 // Manipulator stuff is _always_ in namespace mysqlpp.
@@ -61,7 +63,8 @@ SQLQueryParms& operator <<(quote_type2 p, SQLString& in)
 		}
 		else {
 			char* s = new char[in.size() * 2 + 1];
-			mysql_escape_string(s, in.c_str(), in.size());
+			mysql_escape_string(s, in.c_str(),
+					static_cast<unsigned long>(in.size()));
 			SQLString in2 = SQLString('\'') + s + '\'';
 			in2.processed = true;
 			*p.qparms << in2;
@@ -101,9 +104,9 @@ ostream& operator <<(quote_type1 o, const string& in)
 template <>
 ostream& operator <<(quote_type1 o, const char* const& in)
 {
-	unsigned int size = strlen(in);
+	size_t size = strlen(in);
 	char* s = new char[size * 2 + 1];
-	mysql_escape_string(s, in, size);
+	mysql_escape_string(s, in, static_cast<unsigned long>(size));
 	*o.ostr << '\'' << s << '\'';
 	delete[] s;
 	return *o.ostr;
@@ -117,7 +120,8 @@ inline ostream& _manip(quote_type1 o, const ColData_Tmpl<Str>& in)
 {
 	if (in.escape_q()) {
 		char* s = new char[in.size() * 2 + 1];
-		mysql_escape_string(s, in.c_str(), in.size());
+		mysql_escape_string(s, in.c_str(),
+				static_cast<unsigned long>(in.size()));
 		if (in.quote_q())
 			*o.ostr << '\'' << s << '\'';
 		else
@@ -177,7 +181,8 @@ ostream& operator <<(ostream& o, const ColData_Tmpl<string>& in)
 
 	if (in.escape_q()) {
 		char* s = new char[in.size() * 2 + 1];
-		mysql_escape_string(s, in.c_str(), in.size());
+		mysql_escape_string(s, in.c_str(),
+				static_cast<unsigned long>(in.size()));
 		if (in.quote_q())
 			o << '\'' << s << '\'';
 		else
@@ -233,7 +238,7 @@ ostream& operator <<(ostream& o, const ColData_Tmpl<const_string>& in)
 /// compiler's implementation of the C++ type system.  See Wishlist for
 /// current plan on what to do about this.
 
-SQLQuery& operator <<(SQLQuery& o, const ColData_Tmpl<string>& in)
+Query& operator <<(Query& o, const ColData_Tmpl<string>& in)
 {
 	if (dont_quote_auto) {
 		o << in.get_string();
@@ -241,7 +246,8 @@ SQLQuery& operator <<(SQLQuery& o, const ColData_Tmpl<string>& in)
 	}
 	if (in.escape_q()) {
 		char* s = new char[in.size() * 2 + 1];
-		mysql_escape_string(s, in.c_str(), in.size());
+		mysql_escape_string(s, in.c_str(),
+				static_cast<unsigned long>(in.size()));
 		if (in.quote_q())
 			static_cast<ostream&>(o) << '\'' << s << '\'';
 		else
@@ -264,7 +270,7 @@ SQLQuery& operator <<(SQLQuery& o, const ColData_Tmpl<string>& in)
 /// compiler's implementation of the C++ type system.  See Wishlist for
 /// current plan on what to do about this.
 
-SQLQuery& operator <<(SQLQuery& o, const ColData_Tmpl<const_string>& in)
+Query& operator <<(Query& o, const ColData_Tmpl<const_string>& in)
 {
 	if (dont_quote_auto) {
 		o << in.get_string();
@@ -411,7 +417,8 @@ SQLQueryParms& operator <<(escape_type2 p, SQLString& in)
 {
 	if (in.is_string && ! in.dont_escape) {
 		char* s = new char[in.size() * 2 + 1];
-		mysql_escape_string(s, in.c_str(), in.size());
+		mysql_escape_string(s, in.c_str(), 
+				static_cast<unsigned long>(in.size()));
 		SQLString in2 = s;
 		in2.processed = true;
 		*p.qparms << in2;
@@ -453,9 +460,9 @@ std::ostream& operator <<(escape_type1 o, const std::string& in)
 template <>
 ostream& operator <<(escape_type1 o, const char* const& in)
 {
-	unsigned int size = strlen(in);
+	size_t size = strlen(in);
 	char* s = new char[size * 2 + 1];
-	mysql_escape_string(s, in, size);
+	mysql_escape_string(s, in, static_cast<unsigned long>(size));
 	*o.ostr << s;
 	delete[] s;
 	return *o.ostr;
@@ -469,7 +476,8 @@ inline ostream& _manip(escape_type1 o, const ColData_Tmpl<Str>& in)
 {
 	if (in.escape_q()) {
 		char* s = new char[in.size() * 2 + 1];
-		mysql_escape_string(s, in.c_str(), in.size());
+		mysql_escape_string(s, in.c_str(),
+				static_cast<unsigned long>(in.size()));
 		delete[] s;
 	}
 	else {
@@ -503,6 +511,25 @@ template <>
 std::ostream& operator <<(escape_type1 o, const ColData_Tmpl<const_string>& in)
 {
 	return _manip(o, in);
+}
+
+
+/// \brief Inserts a SQLString into a stream, with no escaping or
+/// quoting.
+
+SQLQueryParms& operator <<(do_nothing_type2 p, SQLString& in)
+{
+	in.processed = true;
+	return *p.qparms << in;
+}
+
+
+/// \brief Inserts a SQLString into a stream, with no escaping or
+/// quoting, and without marking the string as having been "processed".
+
+SQLQueryParms& operator <<(ignore_type2 p, SQLString& in)
+{
+	return *p.qparms << in;
 }
 
 } // end namespace mysqlpp

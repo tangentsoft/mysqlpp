@@ -58,7 +58,7 @@ AC_DEFUN([MYSQL_API_LOCATION],
 
 	if test -z "$MYSQL_libdir"
 	then
-		AC_MSG_ERROR([Didn't find the mysql library dir in '$MYSQL_dir_check'])
+		AC_MSG_ERROR([Didn't find $MYSQL_C_LIB library in '$MYSQL_lib_check'])
 	fi
 
 	case "$MYSQL_libdir" in
@@ -90,7 +90,7 @@ AC_DEFUN([MYSQL_API_LOCATION],
 
 	if test -z "$MYSQL_incdir"
 	then
-		AC_MSG_ERROR([Didn't find the mysql include dir in '$MYSQL_inc_check'])
+		AC_MSG_ERROR([Didn't find the MySQL include dir in '$MYSQL_inc_check'])
 	fi
 
 	case "$MYSQL_incdir" in

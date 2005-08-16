@@ -2,18 +2,49 @@ If you are going to make any changes to MySQL++, this file has some
 hints and commentary you may find helpful.
 
 
+SUBVERSION ACCESS
+
+	To check out the current development version from the Gna!
+	Subversion repository, say:
+
+		$ svn co svn://svn.gna.org/svn/mysqlpp/trunk mysqlpp
+
+	If you're a MySQL++ committer, use svn over ssh instead:
+	
+		$ svn co svn+ssh://LOGIN@svn.gna.org/svn/mysqlpp/trunk mysqlpp
+
+	where LOGIN is your Gna! login name.  You will have to have your
+	ssh public key registered with Gna! for this to work.
+
+
 SUBMITTING PATCHES
 
 	If you wish to submit a patch to the library, please send it to
-	the mailing list.  We want it in unified diff format.  The most
-	complete command for this is:
+	the MySQL++ mailing list.  We want it in unified diff format.
 
-		$ diff -ruN mysql++-olddir mysql++-newdir
+	The easiest way to do this is to check out a copy of the current
+	MySQL++ tree as described in the previous section.  Then make
+	your change, cd to the root directory of the project, and ask
+	Subversion to generate the diff for you:
+
+		$ svn diff > mychange.patch
+
+	If your patch adds new files to the distribution, you can say
+	"svn add newfile" before you do the diff, which will include
+	the contents of that file in the patch.  (You can do this even
+	when you've checked out the tree anonymously.)	Then say "svn
+	revert newfile" to make Subversion forget about the new file.
+
+	If you're making a patch against a MySQL++ distribution tarball,
+	then you can generate the diff this way:
+
+		$ diff -ruN mysql++-olddir mysql++-newdir > mychange.patch
 
 	The diff command is part of every Unix and Linux system, and
 	should be installed by default.  If you're on a Windows machine,
-	GNU diff is part of Cygwin (http://cygwin.com/).  There are no
-	excuses for not being able to make unified diffs.  :)
+	GNU diff is part of Cygwin (http://cygwin.com/).  Subversion is
+	also available for all of these systems.  There are no excuses
+	for not being able to make unified diffs.  :)
 
 
 MAINTAINING A PRIVATE CVS REPOSITORY

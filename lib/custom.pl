@@ -262,7 +262,7 @@ foreach $i (1..$max_data_members) {
 	$parm_simple2c_b .= ", " unless $j == $i;
 	$defs  .= "    T$j I$j;";
 	$defs  .= "\n" unless $j == $i;
-	$popul .= "    s->I$j = static_cast<T$j>(row[ O$j ]);";
+	$popul .= "    s->I$j = static_cast<T$j>(row.at(O$j));";
 	$popul .= "\n" unless $j == $i;
         $names .= "    N$j ";
 	$names .= ",\n" unless $j == $i;

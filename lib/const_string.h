@@ -48,9 +48,6 @@ namespace mysqlpp {
 /// object that wraps it.
 class const_string
 {
-private:
-	const char* str_data;
-
 public:
 	/// \brief Type of the data stored in this object, when it is not
 	/// equal to SQL null.
@@ -80,20 +77,20 @@ public:
 
 	/// \brief Create empty string
 	const_string() :
-	str_data("")
+	str_data_("")
 	{
 	}
 	
 	/// \brief Initialize string from existing C string
 	const_string(const char* str) :
-	str_data(str)
+	str_data_(str)
 	{
 	}
 	
 	/// \brief Assignment operator
 	const_string& operator=(const char* str)
 	{
-		str_data = str;
+		str_data_ = str;
 		return *this;
 	}
 
@@ -101,7 +98,7 @@ public:
 	size_type size() const
 	{
 		register int i = 0;
-		while (str_data[i])
+		while (str_data_[i])
 			 i++;
 		 return i;
 	}
@@ -110,14 +107,14 @@ public:
 	/// the string
 	const_iterator begin() const
 	{
-		return str_data;
+		return str_data_;
 	}
 	
 	/// \brief Return iterator pointing to one past the last character
 	/// of the string.
 	const_iterator end() const
 	{
-		return str_data + size();
+		return str_data_ + size();
 	}
 	
 	/// \brief Return number of characters in the string
@@ -139,7 +136,7 @@ public:
 	/// \brief Return a reference to a character within the string.
 	const_reference operator [](size_type pos) const
 	{
-		return str_data[pos];
+		return str_data_[pos];
 	}
 	
 	/// \brief Return a reference to a character within the string.
@@ -151,20 +148,20 @@ public:
 		if (pos >= size())
 			throw std::out_of_range("");
 		else
-			return str_data[pos];
+			return str_data_[pos];
 	}
 	
 	/// \brief Return a const pointer to the string data,
 	/// null-terminated.
 	const char* c_str() const
 	{
-		return str_data;
+		return str_data_;
 	}
 	
 	/// \brief Alias for c_str()
 	const char* data() const
 	{
-		return str_data;
+		return str_data_;
 	}
 	
 	/// \brief Lexically compare this string to another.
@@ -176,14 +173,17 @@ public:
 	/// \retval >0 if str1 is lexically "greater than" str2
 	int compare(const const_string& str) const
 	{
-		const char* str1 = str_data;
-		const char* str2 = str.str_data;
+		const char* str1 = str_data_;
+		const char* str2 = str.str_data_;
 		while (*str1 == *str2 && (*str1 && *str2)) {
 			str1++;
 			str2++;
 		}
 		return *str1 - *str2;
 	}
+
+private:
+	const char* str_data_;
 };
 
 

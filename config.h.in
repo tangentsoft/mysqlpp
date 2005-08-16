@@ -3,8 +3,11 @@
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
-/* Define if <ext/slist> exists on your system */
+/* Define if you have __gnu_cxx:slist container in <ext/slist> */
 #undef HAVE_EXT_SLIST
+
+/* Define if you have ::slist container in <slist> */
+#undef HAVE_GLOBAL_SLIST
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
@@ -36,7 +39,7 @@
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
 
-/* Define if <slist> exists on your system */
+/* Define if you have std::slist container in <slist> */
 #undef HAVE_STD_SLIST
 
 /* Define to 1 if you have the <strings.h> header file. */

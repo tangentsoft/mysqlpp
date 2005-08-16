@@ -11,40 +11,53 @@ FOPDIR=/usr/local/fop
 
 BASENAME=userman
 DOCFILE=$(BASENAME).xml
-HTML_SS=html.xsl
+PDFFILE=$(BASENAME).pdf
+FOFILE=$(BASENAME).fo
+COMMON_SS=common.xsl
 FO_SS=fo.xsl
+HTML_SS=html.xsl
 EX_TXT=cgi_image.txt custom1.txt custom2.txt custom3.txt custom4.txt \
 		custom5.txt fieldinf1.txt load_file.txt resetdb.txt \
-		simple1.txt updel.txt util.txt
-
-
-## ------------------------
-## Standard Makefile targets
-## ------------------------
-
-all: $(EX_TXT) $(HTML_SS) $(FO_SS) html/index.html
-
-clean:
-	rm -rf html *.aux *.cpp *.fo *.log *.out *.pdf *.txt
+		simple1.txt simple2.txt updel.txt util.txt
 
 
 ## ------------------------
 ## Major output rules
 ## ------------------------
 
-pdf:
-	$(FOPDIR)/fop.sh -q -xml $(DOCFILE) -xsl $(FO_SS) $(BASENAME).pdf
-	mv $(BASENAME).pdf ../mysqlpp-$(BASENAME).pdf
+html: html/index.html
 
-oldpdf:
-	xsltproc $(FO_SS) $(DOCFILE) > $(BASENAME).fo
-	pdfxmltex $(BASENAME).fo 2>&1 > /dev/null
-	mv $(BASENAME).pdf ../mysqlpp-$(BASENAME).pdf
+pdf: $(PDFFILE)
 
-html/index.html: $(DOCFILE)
-	@xmllint --valid --noout $(DOCFILE)
+
+## ------------------------
+## Standard Makefile targets
+## ------------------------
+
+# Notice that this is not the first target in the file, as is standard.
+# PDF generation takes longer than HTML generation, so to keep the code-
+# test-debug-rebuild cycle short, we generate only the HTML manual by
+# default.  You can explicitly say "make pdf" or "make all" when you're
+# sure the DocBook file's contents are correct.
+all: html pdf
+
+clean:
+	rm -f tags *.fo html/*.html *.log *.out *.pdf *.txt
+
+
+## ------------------------
+## How to make output files
+## ------------------------
+
+$(PDFFILE): $(DOCFILE) $(FO_SS) $(COMMON_SS)
+	xsltproc --xinclude $(FO_SS) $(DOCFILE) > $(FOFILE)
+	$(FOPDIR)/fop.sh -q -fo $(FOFILE) $(PDFFILE)
+	cp $(PDFFILE) ../mysqlpp-$(PDFFILE)
+
+html/index.html: $(DOCFILE) $(EX_TXT) $(HTML_SS) $(COMMON_SS)
 	@mkdir -p html
-	xsltproc -o html/ $(HTML_SS) $(DOCFILE)
+	@xmllint --xinclude --postvalid --noent --noout $(DOCFILE)
+	xsltproc --xinclude -o html/ $(HTML_SS) $(DOCFILE)
 
 
 ## ------------------------
@@ -52,11 +65,4 @@ html/index.html: $(DOCFILE)
 ## ------------------------
 
 $(EX_TXT):
-	expand -t4 < `echo ../../examples/$@ | sed -e s/txt/cpp/` | sed -e 's/&/\&amp;/g' | sed -e 's/</\&lt;/g' | sed -e 's/>/\&gt;/g' > $@
-
-$(HTML_SS): $(HTML_SS).in
-	./findxsl
-
-$(FO_SS): $(FO_SS).in
-	./findxsl
-
+	@./mktxt $@

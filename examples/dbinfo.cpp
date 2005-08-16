@@ -69,7 +69,7 @@ main(int argc, char* argv[])
 		Result::iterator i;
 		for (i = res.begin(); i != res.end(); ++i) {
 			row = *i;
-			cout << endl << '\t' << setw(17) << row[0];
+			cout << endl << '\t' << setw(17) << row.at(0);
 		}
 		cout << separator;
 		
@@ -86,8 +86,8 @@ main(int argc, char* argv[])
 		cout.setf(ios::left);
 		for (i = res.begin(); i != res.end(); ++i) {
 			row = *i;
-			string xx(row[0]);
-			cout << endl << '\t' << setw(17) << row[0];
+			string xx(row.at(0));
+			cout << endl << '\t' << setw(17) << row.at(0);
 			yy.push_back(xx);
 		}
 		cout << separator;
@@ -133,7 +133,7 @@ main(int argc, char* argv[])
 				for (counter = 0; counter < columns; counter++) {
 					if (widths[counter]) {
 						cout << ' ' << setw(widths[counter]) <<
-								row[counter] << ' ';
+								row.at(counter) << ' ';
 					}
 				}
 				cout << endl;
@@ -151,37 +151,34 @@ main(int argc, char* argv[])
 		int columns = res.num_fields();
 		cout << "fields = " << res.num_fields() << ", rows = " <<
 				res.size() << endl;
-		volatile MYSQL_RES *ress = res.mysql_result();
+		volatile MYSQL_RES* ress = res.raw_result();
 		if (!ress)
 			return -1;
 		for (i = res.begin(); i != res.end(); ++i) {
 			row = *i;
 			for (int counter = 0; counter < columns; counter++) {
-				cout << row[counter] << "  ";
+				cout << row.at(counter) << "  ";
 			}
 			cout << endl;
 		}
 	}
-	catch (BadQuery& er) {
-		// Handle any connection or query errors
-		cerr << "Error: " << er.what() << " " << con.errnum() << endl;
+	catch (const BadQuery& er) {
+		// Handle any query errors
+		cerr << "Query error: " << er.what() << endl;
 		return -1;
 	}
-	catch (BadConversion& er) {
-		// Handle bad conversions.  We still need to catch bad
-		// conversions in case something goes wrong when the data
-		// is converted into stock.
-		cerr << "Error: " << er.what() << "\"." << endl << 
-				"retrieved data size: " << er.retrieved <<
-				" actual data size: " << er.actual_size << endl;
+	catch (const BadConversion& er) {
+		// Handle bad conversions
+		cerr << "Conversion error: " << er.what() << endl <<
+				"\tretrieved data size: " << er.retrieved <<
+				", actual size: " << er.actual_size << endl;
 		return -1;
 	}
-	catch (exception& er) {
-		// Catch-all for any other standard C++ exceptions
+	catch (const Exception& er) {
+		// Catch-all for any other MySQL++ exceptions
 		cerr << "Error: " << er.what() << endl;
 		return -1;
 	}
 
 	return 0;
 }
-

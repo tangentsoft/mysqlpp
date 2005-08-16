@@ -11,120 +11,54 @@ WHAT IT IS
 
 BUILDING THE LIBRARY
 
-	To build and install the library on Unixy systems, the minimum
-	build commands are:
+	MySQL++ has two supported build systems.
+
+	The first is based on the GNU autotools (autoconf, automake,
+	and libtool), and is primarily for Unixy[*] systems.  To build
+	the library on such a system, the minimum build commands are:
 
 		$ ./configure
 		$ make
 		$ su
 		# make install
 
-	If you're not on a Unixy system, see the other README files in
-	this directory.
+	See README.unix for further details, including useful flags for
+	the configure script.
+
+	[*] Unixy = Linux, Mac OS X, Cygwin, and the "real" Unices.
+	Does not include MinGW, MKS, or Microsoft SFU.
 
 
-CONFIGURE OPTIONS
+	For Win32-based systems other than Cygwin, use makemake.bat.
+	If your platform is one of those supported, it will have a
+	secondary README file in this directory with more details.
 
-	The configure script takes several interesting options. Say:
 
-		$ ./configure --help
-
-	to get a list.  Some of the more interesting flags are:
-
-	--includedir:
-
-		Because MySQL++ comes with a great many header
-		files -- some of which have some fairly generic
-		names -- I highly recommend you add something like
-		'--includedir=/usr/local/include/mysql++' to the configure
-		command. This puts the MySQL++ header files in their
-		own directory.
-
-	--prefix:
-
-		If you wish to install mysql++ in a root directory
-		other than /usr/local, run configure with
-		--prefix=/some/dir/name
-
-	--with-mysql*:
-
-		If you installed MySQL in an atypical location,
-		the configure script will not be able to find the
-		library and header files without help. The simplest
-		way to clue configure into where MySQL is installed
-		is with the --with-mysql option. Try something like
-		"--with-mysql=/usr/local/mysql", for instance. The
-		configure script will then try to guess which
-		subdirectories under the given directory contain the
-		library and include files.
-
-		If that still doesn't work, use --with-mysql-include and
-		--with-mysql-lib instead. As when given --with-mysql,
-		configure will try to guess (if necessary) which
-		subdirectory under the given directory contains the
-		needed files, so you don't necessarily have to give the
-		full path to these files.
-
-	--enable-thread-check:
-
-		If you with be using MySQL++ in a multi-threaded program,
-		you need to give the --enable-thread-check option to
-		the configure script. It will then try to determine
-		whether your system has a threads implementation it can
-		understand, and whether it can use the thread-safe MySQL
-		C library. If both of these aren't true, you won't get a
-		thread-safe MySQL++ library. Beware that a thread-aware
-		MySQL++ library requires that you link your program
-		differently, so if you depend on ABI stability and
-		have been using MySQL++ for some time, you will almost
-		certainly want to leave this option out.
+	If your system isn't supported by the autotools or makemake.bat
+	systems, you will have to either add that support, or find some
+	way to build the library yourself.  We welcome patches to add new
+	platform support on the mailing list.  We would much prefer to
+	have extensions to the existing build systems than completely
+	new systems, such as project files for proprietary IDEs.
+	We may accept such files, but the project's history shows that
+	they tend to be neglected as new library features are added.
+	We're therefore reluctant to accept these.
 
 
 EXAMPLE PROGRAMS
 
 	You may want to try out the programs in the examples subdirectory
 	to ensure that the MySQL++ API and your MySQL database are both
-	working properly. Also, these examples give many examples of the
+	working properly.  Also, these examples give many examples of the
 	proper use of MySQL++.	See examples/README for further details.
 
 
 IF YOU WANT TO HACK ON MYSQL++...
 
-	If you intend to change the library source code, please read
-	the HACKERS file, which contains many useful bits of info.
+	If you intend to change the library or example code, please read
+	the HACKERS file.
 
+	If you want to change the user manual, read doc/userman/README.
 
-COMPATIBILITY FOCUS
-	
-	The primary maintainers of this library are interested mainly in
-	GCC 3.x on Linux. There have been occasional reports of success
-	with GCC 3.x on other Unix flavors. We know of no outright
-	problems at the moment.
-
-	It's probably possible to make it work on GCC 2.95.x without
-	breaking forward compatibility, but since none of the primary
-	maintainers cares to do this, it'll be up to some interested
-	party to make the port. If you attempt this, be sure to test on
-	a recent GCC 3.x version after you are done, before submitting
-	your patch.
-
-	The only Windows compiler that gets anything approaching serious
-	attention from the MySQL++ maintainers is Visual C++. Currently
-	there is some effort towards making it compatible with Borland C++
-	Builder, but there are known flaws with it that aren't likely to
-	be worked around anytime soon. (BCB can't cope with the large
-	SSQLS macros.)
-
-	There have been reports of problems using the library with MinGW.
-	This won't likely be fixed by the library maintainers, due to
-	lack of interest. I believe there has been better luck under
-	Cygwin. From the problem reports, it seems to me that the main
-	problem with MinGW is that it's a little too deep into that gray
-	area between Win32 and Unix for either platform's semantics to
-	completely work.
-
-	All ports live or die solely as a function of interested
-	maintainers and outside contributions. Patches are always
-	thoughtfully considered. We will only refuse compatibility patches
-	if it breaks compatibility with another supported platform.
-
+	If you want to change the reference manual, see the Doxygen
+	manual: http://www.stack.nl/~dimitri/doxygen/manual.html

@@ -1,9 +1,8 @@
 /// \file exceptions.h
 /// \brief Declares the MySQL++-specific exception classes.
 ///
-/// When exceptions are enabled for a given
-/// \ref mysqlpp::Connection "Connection" object, any of these exceptions
-/// can be thrown as a result of operations done through that connection.
+/// When exceptions are enabled for a given mysqlpp::OptionalExceptions
+/// derivative, any of these exceptions can be thrown on error.
 
 /***********************************************************************
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
@@ -32,49 +31,66 @@
 #ifndef MYSQLPP_EXCEPTIONS_H
 #define MYSQLPP_EXCEPTIONS_H
 
+#include "connection.h"
+
 #include <exception>
 #include <string>
 
 namespace mysqlpp {
 
-/// \brief Exception thrown when MySQL encounters a problem while
-/// processing your query.
-///
-/// This is the most generic MySQL++ exception. It is thrown when your
-/// SQL syntax is incorrect, or a field you requested doesn't exist in
-/// the database, or....
+/// \brief Base class for all MySQL++ custom exceptions
 
-class BadQuery : public std::exception
+class Exception : public std::exception
 {
 public:
-	/// \brief Create exception object
-	BadQuery(const std::string & er = "") :
-	error(er)
+	/// \brief Create exception object as copy of another
+	Exception(const Exception& e) throw() :
+	std::exception(e),
+	what_(e.what_)
 	{
+	}
+
+	/// \brief Assign another exception object's contents to this one
+	Exception& operator=(const Exception& rhs) throw()
+	{
+		what_ = rhs.what_;
+		return *this;
 	}
 
 	/// \brief Destroy exception object
-	~BadQuery() throw()
+	~Exception() throw() { }
+
+	/// \brief Returns explanation of why exception was thrown
+	virtual const char* what() const throw()
+	{
+		return what_.c_str();
+	}
+
+protected:
+	/// \brief Create exception object
+	Exception(const char* w = "") throw() :
+	what_(w)
 	{
 	}
 
-	/// \brief Returns the error message
-	virtual const char* what() const throw() { return error.c_str(); }
+	/// \brief Create exception object
+	Exception(const std::string& w) throw() :
+	what_(w)
+	{
+	}
 
-	const std::string error;	///< explanation of why query was bad
+	/// \brief explanation of why exception was thrown
+	std::string what_;
 };
 
 
 /// \brief Exception thrown when a bad type conversion is attempted.
 
-class BadConversion : public std::exception
+class BadConversion : public Exception
 {
-private:
-	const std::string _what;
-
 public:
 	const char* type_name;	///< name of type we tried to convert to
-	const std::string data;	///< string form of data we tried to convert
+	std::string data;		///< string form of data we tried to convert
 	size_t retrieved;		///< documentation needed!
 	size_t actual_size;		///< documentation needed!
 
@@ -85,10 +101,11 @@ public:
 	/// \param d string form of data we tried to convert
 	/// \param r ??
 	/// \param a ??
-	BadConversion(const char* tn, const char* d, size_t r,
-			size_t a) :
-	_what(std::string("Tried to convert \"") + std::string(d ? d : "") +
-		   "\" to a \"" + std::string(tn ? tn : "")),
+	BadConversion(const char* tn, const char* d,
+			size_t r, size_t a) :
+	Exception(std::string("Tried to convert \"") +
+			std::string(d ? d : "") + "\" to a \"" +
+			std::string(tn ? tn : "")),
 	type_name(tn),
 	data(d),
 	retrieved(r),
@@ -98,14 +115,14 @@ public:
 
 	/// \brief Create exception object, given completed error string
 	///
-	/// \param wt the "what" error string
+	/// \param w the "what" error string
 	/// \param tn type name we tried to convert to
 	/// \param d string form of data we tried to convert
 	/// \param r ??
 	/// \param a ??
-	BadConversion(const std::string& wt, const char* tn,
+	BadConversion(const std::string& w, const char* tn,
 				  const char* d, size_t r, size_t a) :
-	_what(wt),
+	Exception(w),
 	type_name(tn),
 	data(d),
 	retrieved(r),
@@ -115,11 +132,11 @@ public:
 
 	/// \brief Create exception object, with error string only
 	///
-	/// \param wt the "what" error string
+	/// \param w the "what" error string
 	///
 	/// All other data members are initialize to default values
-	BadConversion(const std::string& wt = "") :
-	_what(wt),
+	explicit BadConversion(const char* w = "") :
+	Exception(w),
 	type_name("unknown"),
 	data(""),
 	retrieved(0),
@@ -127,62 +144,8 @@ public:
 	{
 	}
 
-	/// \brief Destroy exception object
+	/// \brief Destroy exception
 	~BadConversion() throw() { }
-
-	/// \brief Returns the error message
-	virtual const char *what() const throw() { return _what.c_str(); }
-};
-
-
-/// \brief Exception thrown when you attempt to convert a SQL null
-/// to an incompatible type.
-
-class BadNullConversion : public std::exception
-{
-private:
-	const std::string _what;
-
-public:
-	/// \brief Create exception object
-	BadNullConversion(const std::string& wt = "") :
-	_what(wt)
-	{
-	}
-	
-	/// \brief Destroy exception object
-	~BadNullConversion() throw() { }
-
-	/// \brief Returns the error message
-	virtual const char* what() const throw() { return _what.c_str(); }
-};
-
-
-/// \brief Exception thrown when not enough parameters are provided.
-///
-/// Thrown when not enough parameters are provided for a
-/// template query.
-
-class SQLQueryNEParms : public std::exception
-{
-private:
-	const std::string _what;
-
-public:
-	/// \brief Create exception object
-	SQLQueryNEParms(const char* c) :
-	_what(std::string(c ? c : "")),
-	error(c)
-	{
-	}
-	
-	/// \brief Destroy exception object
-	~SQLQueryNEParms() throw() { }
-
-	/// \brief Returns the error message
-	virtual const char* what() const throw() { return _what.c_str(); }
-
-	const char* error;		///< MySQL error string
 };
 
 
@@ -191,26 +154,198 @@ public:
 /// Thrown by Row::lookup_by_name() when you pass a field name that
 /// isn't in the result set.
 
-class BadFieldName : public std::exception
+class BadFieldName : public Exception
 {
-private:
-	std::string _what;
-
 public:
 	/// \brief Create exception object
+	///
 	/// \param bad_field name of field the MySQL server didn't like
-	BadFieldName(const char* bad_field)
+	explicit BadFieldName(const char* bad_field) :
+	Exception(std::string("Unknown field name: ") + bad_field)
 	{
-		_what = "Unknown field name: ";
-		_what += bad_field;
 	}
 
-	/// \brief Destroy exception object
+	/// \brief Destroy exception
 	~BadFieldName() throw() { }
-
-	/// \brief Returns the error message
-	virtual const char* what() const throw() { return _what.c_str(); }
 };
+
+
+/// \brief Exception thrown when you attempt to convert a SQL null
+/// to an incompatible type.
+
+class BadNullConversion : public Exception
+{
+public:
+	/// \brief Create exception object
+	explicit BadNullConversion(const char* w = "") :
+	Exception(w)
+	{
+	}
+};
+
+
+/// \brief Exception thrown when you pass an unrecognized option to
+/// Connection::set_option().
+
+class BadOption : public Exception
+{
+public:
+	/// \brief Create exception object, taking C string
+	explicit BadOption(const char* w,
+			Connection::Option o) :
+	Exception(w),
+	option_(o)
+	{
+	}
+
+	/// \brief Create exception object, taking C++ string
+	explicit BadOption(const std::string& w,
+			Connection::Option o) :
+	Exception(w),
+	option_(o)
+	{
+	}
+
+	/// \brief Return the option that failed
+	Connection::Option what_option() const { return option_; }
+
+private:
+	Connection::Option option_;
+};
+
+
+/// \brief Exception thrown when not enough query parameters are
+/// provided.
+///
+/// This is used in handling template queries.
+
+class BadParamCount : public Exception
+{
+public:
+	/// \brief Create exception object
+	explicit BadParamCount(const char* w = "") :
+	Exception(w)
+	{
+	}
+
+	/// \brief Destroy exception
+	~BadParamCount() throw() { }
+};
+
+
+/// \brief Exception thrown when MySQL encounters a problem while
+/// processing your query.
+///
+/// This exception is typically only thrown when the server rejects a
+/// SQL query.  In v1.7, it was used as a more generic exception type,
+/// for no particularly good reason.
+
+class BadQuery : public Exception
+{
+public:
+	/// \brief Create exception object, taking C string
+	explicit BadQuery(const char* w = "") :
+	Exception(w)
+	{
+	}
+
+	/// \brief Create exception object, taking C++ string
+	explicit BadQuery(const std::string& w) :
+	Exception(w)
+	{
+	}
+};
+
+
+/// \brief Exception thrown when there is a problem establishing the
+/// database server connection.  It's also thrown if
+/// Connection::shutdown() fails.
+
+class ConnectionFailed : public Exception
+{
+public:
+	/// \brief Create exception object
+	explicit ConnectionFailed(const char* w = "") :
+	Exception(w)
+	{
+	}
+};
+
+
+/// \brief Exception thrown when the program tries to select a new
+/// database and the server refuses for some reason.
+
+class DBSelectionFailed : public Exception
+{
+public:
+	/// \brief Create exception object
+	explicit DBSelectionFailed(const char* w = "") :
+	Exception(w)
+	{
+	}
+};
+
+
+/// \brief Exception thrown when ResUse::fetch_row() walks off the end
+/// of a use-query's result set.
+
+class EndOfResults : public Exception
+{
+public:
+	/// \brief Create exception object
+	explicit EndOfResults(const char* w = "end of results") :
+	Exception(w)
+	{
+	}
+};
+
+
+/// \brief Exception thrown when Query::store_next() walks off the end
+/// of a use-query's multi result sets.
+
+class EndOfResultSets : public Exception
+{
+public:
+	/// \brief Create exception object
+	explicit EndOfResultSets(const char* w = "end of result sets") :
+	Exception(w)
+	{
+	}
+};
+
+
+/// \brief Exception thrown when a Lockable object fails.
+///
+/// Currently, "failure" means that the object is already locked when
+/// you make a call that tries to lock it again.  In the future, that
+/// case will probably result in the second thread blocking, but the
+/// thread library could assert other errors that would keep this
+/// exception relevant.
+
+class LockFailed : public Exception
+{
+public:
+	/// \brief Create exception object
+	explicit LockFailed(const char* w = "lock failed") :
+	Exception(w)
+	{
+	}
+};
+
+
+/// \brief Exception thrown when you try to use an object that isn't
+/// completely initialized.
+
+class ObjectNotInitialized : public Exception
+{
+public:
+	/// \brief Create exception object
+	explicit ObjectNotInitialized(const char* w = "") :
+	Exception(w)
+	{
+	}
+};
+
 
 } // end namespace mysqlpp
 

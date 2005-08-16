@@ -6,6 +6,7 @@ then
 	shift
 fi
 
+rm -f config.cache
 set -x
 
 aclocal -I config && \
@@ -13,5 +14,5 @@ aclocal -I config && \
 	autoheader && \
 	automake --add-missing --copy --foreign && \
 	autoconf &&
-	./configure --enable-maintainer-mode $* &&
+	./reconf $* &&
 	( cd lib ; make custom.h )

@@ -34,6 +34,7 @@
 #include "fields.h"
 #include "field_names.h"
 #include "field_types.h"
+#include "noexceptions.h"
 #include "resiter.h"
 #include "row.h"
 
@@ -57,115 +58,99 @@ class Connection;
 /// empty row if exceptions are disabled), you can process the result
 /// set one row at a time.
 
-class ResUse
+class ResUse : public OptionalExceptions
 {
-protected:
-	Connection* mysql;				///< server result set comes from
-	mutable MYSQL_RES* mysql_res;	///< underlying C API result set
-	bool throw_exceptions;			///< if true, throw exceptions on errors
-	bool initialized;				///< if true, object is fully initted
-	mutable FieldNames* _names;		///< list of field names in result
-	mutable FieldTypes* _types;		///< list of field types in result
-	Fields _fields;					///< list of fields in result
-	std::string _table;				///< table result set comes from
-
-	/// \brief copy another ResUse object's contents into this one.
-	///
-	/// Not to be used on the self. Self-copy is not allowed.
-	void copy(const ResUse & other);
-
 public:
 	/// \brief Default constructor
 	ResUse() :
-	mysql(0),
-	mysql_res(0),
-	throw_exceptions(false),
-	initialized(false),
-	_names(0),
-	_types(0),
-	_fields(this)
+	OptionalExceptions(),
+	conn_(0),
+	result_(0),
+	initialized_(false),
+	names_(0),
+	types_(0),
+	fields_(this)
 	{
 	}
 	
 	/// \brief Create the object, fully initialized
-	ResUse(MYSQL_RES* result, Connection* m = 0, bool te = false);
+	MYSQLPP_EXPORT ResUse(MYSQL_RES* result, Connection* c = 0, bool te = true);
 	
 	/// \brief Create a copy of another ResUse object
 	ResUse(const ResUse& other) :
-	initialized(false)
+	OptionalExceptions(),
+	initialized_(false)
 	{
 		copy(other);
 	}
 	
 	/// \brief Destroy object
-	~ResUse();
+	MYSQLPP_EXPORT virtual ~ResUse();
 
 	/// \brief Copy another ResUse object's data into this object
 	ResUse& operator =(const ResUse& other);
 
 	/// \brief Return raw MySQL C API result set
-	MYSQL_RES* mysql_result()
+	MYSQL_RES* raw_result()
 	{
-		return mysql_res;
+		return result_;
 	}
 
 	/// \brief Wraps mysql_fetch_row() in MySQL C API.
 	///
 	/// This is not a thin wrapper. It does a lot of error checking before
 	/// returning the mysqlpp::Row object containing the row data.
-	Row fetch_row() {
-		if (!mysql_res) {
-			if (throw_exceptions) {
+	Row fetch_row()
+	{
+		if (!result_) {
+			if (throw_exceptions()) {
 				throw BadQuery("Results not fetched");
 			}
 			else {
 				return Row();
 			}
 		}
-		MYSQL_ROW row = mysql_fetch_row(mysql_res);
-		unsigned long *length = mysql_fetch_lengths(mysql_res);
+		MYSQL_ROW row = mysql_fetch_row(result_);
+		unsigned long* length = mysql_fetch_lengths(result_);
 		if (!row || !length) {
-			if (throw_exceptions) {
-				throw BadQuery("Bad row");
+			if (throw_exceptions()) {
+				throw EndOfResults();
 			}
 			else {
 				return Row();
 			}
 		}
-		return Row(row, this, length, throw_exceptions);
-	}
-
-	/// \brief Wraps mysql_eof() in MySQL C API.
-	bool eof() const
-	{
-		return mysql_eof(mysql_res) != 0;
+		return Row(row, this, length, throw_exceptions());
 	}
 
 	/// \brief Wraps mysql_fetch_lengths() in MySQL C API.
-		unsigned long *fetch_lengths() const {
-		return mysql_fetch_lengths(mysql_res);
+	unsigned long *fetch_lengths() const
+	{
+		return mysql_fetch_lengths(result_);
 	}
 
 	/// \brief Wraps mysql_fetch_field() in MySQL C API.
-		Field & fetch_field() const {
-		return *mysql_fetch_field(mysql_res);
+	Field& fetch_field() const
+	{
+		return *mysql_fetch_field(result_);
 	}
 
 	/// \brief Wraps mysql_field_seek() in MySQL C API.
-		void field_seek(int field) {
-		mysql_field_seek(mysql_res, field);
+	void field_seek(int field)
+	{
+		mysql_field_seek(result_, field);
 	}
 
 	/// \brief Wraps mysql_num_fields() in MySQL C API.
 	int num_fields() const
 	{
-		return mysql_num_fields(mysql_res);
+		return mysql_num_fields(result_);
 	}
 	
 	/// \brief Documentation needed!
 	void parent_leaving()
 	{
-		mysql = 0;
+		conn_ = 0;
 	}
 
 	/// \brief Free all resources held by the object.
@@ -175,19 +160,18 @@ public:
 	/// to avoid having to completely re-create it.
 	void purge()
 	{
-		if (mysql_res) {
-			mysql_free_result(mysql_res);
-			mysql_res = 0;
+		if (result_) {
+			mysql_free_result(result_);
+			result_ = 0;
 		}
-		if (_names) {
-			delete _names;
-			_names = 0;
-		}
-		if (_types) {
-			delete _types;
-			_types = 0;
-		}
-		_table.erase();
+
+		delete names_;
+		names_ = 0;
+
+		delete types_;
+		types_ = 0;
+
+		table_.erase();
 	}
 
 	/// \brief Return true if we have a valid result set
@@ -205,7 +189,7 @@ public:
 	/// valid result set if the query failed.
 	operator bool() const
 	{
-		return mysql_res;
+		return result_;
 	}
 	
 	/// \brief Return the number of columns in the result set.
@@ -217,7 +201,7 @@ public:
 	/// \brief Get the name of table that the result set comes from.
 	std::string& table()
 	{
-		return _table;
+		return table_;
 	}
 
 	/// \brief Return the name of the table
@@ -225,91 +209,92 @@ public:
 	/// This is only valid 
 	const std::string& table() const
 	{
-		return _table;
+		return table_;
 	}
 
 	/// \brief Get the index of the named field.
 	///
 	/// This is the inverse of field_name().
-	inline int field_num(const std::string&) const;
+	MYSQLPP_EXPORT inline int field_num(const std::string&) const;
 
 	/// \brief Get the name of the field at the given index.
 	///
 	/// This is the inverse of field_num().
-	inline std::string& field_name(int);
+	MYSQLPP_EXPORT inline std::string& field_name(int);
 
 	/// \brief Get the name of the field at the given index.
-	inline const std::string& field_name(int) const;
+	MYSQLPP_EXPORT inline const std::string& field_name(int) const;
 
 	/// \brief Get the names of the fields within this result set.
-	inline FieldNames& field_names();
+	MYSQLPP_EXPORT inline FieldNames& field_names();
 
 	/// \brief Get the names of the fields within this result set.
-	inline const FieldNames& field_names() const;
+	MYSQLPP_EXPORT inline const FieldNames& field_names() const;
 
-	/// \brief Reset the names in the field list to their original values.
-	inline void reset_field_names();
-
-	/// \brief Get the MySQL type for a field given its index.
-	inline mysql_type_info& field_type(int i);
+	/// \brief Reset the names in the field list to their original
+	/// values.
+	MYSQLPP_EXPORT inline void reset_field_names();
 
 	/// \brief Get the MySQL type for a field given its index.
-	inline const mysql_type_info& field_type(int) const;
+	MYSQLPP_EXPORT inline mysql_type_info& field_type(int i);
+
+	/// \brief Get the MySQL type for a field given its index.
+	MYSQLPP_EXPORT inline const mysql_type_info& field_type(int) const;
 
 	/// \brief Get a list of the types of the fields within this
 	/// result set.
-	inline FieldTypes& field_types();
+	MYSQLPP_EXPORT inline FieldTypes& field_types();
 
 	/// \brief Get a list of the types of the fields within this
 	/// result set.
-	inline const FieldTypes& field_types() const;
+	MYSQLPP_EXPORT inline const FieldTypes& field_types() const;
 
 	/// \brief Reset the field types to their original values.
-	inline void reset_field_types();
+	MYSQLPP_EXPORT inline void reset_field_types();
 
 	/// \brief Alias for field_num()
-	inline int names(const std::string & s) const;
+	MYSQLPP_EXPORT inline int names(const std::string & s) const;
 
 	/// \brief Alias for field_name()
-	inline std::string& names(int i);
+	MYSQLPP_EXPORT inline std::string& names(int i);
 
 	/// \brief Alias for field_name()
-	inline const std::string& names(int i) const;
+	MYSQLPP_EXPORT inline const std::string& names(int i) const;
 
 	/// \brief Alias for field_names()
-	inline FieldNames& names();
+	MYSQLPP_EXPORT inline FieldNames& names();
 
 	/// \brief Alias for field_names()
-	inline const FieldNames& names() const;
+	MYSQLPP_EXPORT inline const FieldNames& names() const;
 
 	/// \brief Alias for reset_field_names()
-	inline void reset_names();
+	MYSQLPP_EXPORT inline void reset_names();
 
 	/// \brief Alias for field_type()
-	inline mysql_type_info& types(int i);
+	MYSQLPP_EXPORT inline mysql_type_info& types(int i);
 
 	/// \brief Alias for field_type()
-	inline const mysql_type_info& types(int i) const;
+	MYSQLPP_EXPORT inline const mysql_type_info& types(int i) const;
 
 	/// \brief Alias for field_types()
-	inline FieldTypes& types();
+	MYSQLPP_EXPORT inline FieldTypes& types();
 
 	/// \brief Alias for field_types()
-	inline const FieldTypes& types() const;
+	MYSQLPP_EXPORT inline const FieldTypes& types() const;
 
 	/// \brief Alias for reset_field_types()
-	inline void reset_types();
+	MYSQLPP_EXPORT inline void reset_types();
 
 	/// \brief Get the underlying Fields structure.
 	const Fields& fields() const
 	{
-		return _fields;
+		return fields_;
 	}
 
 	/// \brief Get the underlying Field structure given its index.
 	const Field& fields(unsigned int i) const
 	{
-		return _fields[i];
+		return fields_.at(i);
 	}
 	
 	/// \brief Returns true if the other ResUse object shares the same
@@ -319,15 +304,29 @@ public:
 	/// pointer, and thus can be copied and then compared.
 	bool operator ==(const ResUse& other) const
 	{
-		return mysql_res == other.mysql_res;
+		return result_ == other.result_;
 	}
 	
 	/// \brief Returns true if the other ResUse object has a different
 	/// underlying C API result set from this one.
 	bool operator !=(const ResUse& other) const
 	{
-		return mysql_res != other.mysql_res;
+		return result_ != other.result_;
 	}
+
+protected:
+	Connection* conn_;			///< server result set comes from
+	mutable MYSQL_RES* result_;	///< underlying C API result set
+	bool initialized_;			///< if true, object is fully initted
+	mutable FieldNames* names_;	///< list of field names in result
+	mutable FieldTypes* types_;	///< list of field types in result
+	Fields fields_;				///< list of fields in result
+	std::string table_;			///< table result set comes from
+
+	/// \brief Copy another ResUse object's contents into this one.
+	///
+	/// Self-copy is not allowed.
+	MYSQLPP_EXPORT void copy(const ResUse& other);
 };
 
 
@@ -353,10 +352,9 @@ public:
 	}
 	
 	/// \brief Fully initialize object
-	Result(MYSQL_RES* result, bool te = false) :
+	Result(MYSQL_RES* result, bool te = true) :
 	ResUse(result, 0, te)
 	{
-		mysql = 0;
 	}
 
 	/// \brief Initialize object as a copy of another Result object
@@ -364,12 +362,11 @@ public:
 	ResUse(other),
 	const_subscript_container<Result, Row, const Row>() // no copying here
 	{
-		mysql = 0;
+		conn_ = 0;
 	}
 
-	virtual ~Result()
-	{
-	}
+	/// \brief Destroy result set
+	virtual ~Result() { }
 
 	/// \brief Wraps mysql_fetch_row() in MySQL C API.
 	///
@@ -378,32 +375,32 @@ public:
 	/// actually \e be in our parent class is beyond me.
 	const Row fetch_row() const
 	{
-		if (!mysql_res) {
-			if (throw_exceptions) {
+		if (!result_) {
+			if (throw_exceptions()) {
 				throw BadQuery("Results not fetched");
 			}
 			else {
 				return Row();
 			}
 		}
-		MYSQL_ROW row = mysql_fetch_row(mysql_res);
-		unsigned long* length = mysql_fetch_lengths(mysql_res);
+		MYSQL_ROW row = mysql_fetch_row(result_);
+		unsigned long* length = mysql_fetch_lengths(result_);
 		if (!row || !length) {
-			if (throw_exceptions) {
-				throw BadQuery("Bad row");
+			if (throw_exceptions()) {
+				throw EndOfResults();
 			}
 			else {
 				return Row();
 			}
 		}
-		return Row(row, this, length, throw_exceptions);
+		return Row(row, this, length, throw_exceptions());
 	}
 
 	/// \brief Wraps mysql_num_rows() in MySQL C API.
 	my_ulonglong num_rows() const
 	{
-		if (initialized)
-			return mysql_num_rows(mysql_res);
+		if (initialized_)
+			return mysql_num_rows(result_);
 		else
 			return 0;
 	}
@@ -411,7 +408,7 @@ public:
 	/// \brief Wraps mysql_data_seek() in MySQL C API.
 	void data_seek(uint offset) const
 	{
-		mysql_data_seek(mysql_res, offset);
+		mysql_data_seek(result_, offset);
 	}
 
 	/// \brief Alias for num_rows(), only with different return type.
@@ -419,13 +416,15 @@ public:
 	{
 		return size_type(num_rows());
 	}
+
 	/// \brief Alias for num_rows(), only with different return type.
 	size_type rows() const
 	{
 		return size_type(num_rows());
 	}
+
 	/// \brief Get the row with an offset of i.
-	const Row operator [](size_type i) const
+	const Row at(size_type i) const
 	{
 		data_seek(i);
 		return fetch_row();
@@ -465,7 +464,7 @@ public:
 	}
 
 	/// \brief Initialize object
-	ResNSel(Connection* q);
+	MYSQLPP_EXPORT ResNSel(Connection* q);
 
 	/// \brief Returns true if the query was successful
 	operator bool() { return success; }
@@ -474,86 +473,94 @@ public:
 
 inline int ResUse::field_num(const std::string& i) const
 {
-	if (!_names) {
-		_names = new FieldNames(this);
+	if (!names_) {
+		names_ = new FieldNames(this);
 	}
-	return (*_names)[i];
+
+	size_t index = (*names_)[i];
+	if ((index >= names_->size()) && throw_exceptions()) {
+		throw BadFieldName(i.c_str());
+	}
+	
+	return int(index);
 }
 
 inline std::string& ResUse::field_name(int i)
 {
-	if (!_names) {
-		_names = new FieldNames(this);
+	if (!names_) {
+		names_ = new FieldNames(this);
 	}
-	return (*_names)[i];
+	return (*names_)[i];
 }
 
 inline const std::string& ResUse::field_name(int i) const
 {
-	if (!_names) {
-		_names = new FieldNames(this);
+	if (!names_) {
+		names_ = new FieldNames(this);
 	}
-	return (*_names)[i];
+	return (*names_)[i];
 }
 
 inline FieldNames& ResUse::field_names()
 {
-	if (!_names) {
-		_names = new FieldNames(this);
+	if (!names_) {
+		names_ = new FieldNames(this);
 	}
-	return *_names;
+	return *names_;
 }
 
 inline const FieldNames& ResUse::field_names() const
 {
-	if (!_names) {
-		_names = new FieldNames(this);
+	if (!names_) {
+		names_ = new FieldNames(this);
 	}
-	return *_names;
+	return *names_;
 }
 
 inline void ResUse::reset_field_names()
 {
-	delete _names;
-	_names = new FieldNames(this);
+	delete names_;
+	names_ = 0;
+	names_ = new FieldNames(this);
 }
 
 inline mysql_type_info& ResUse::field_type(int i)
 {
-	if (!_types) {
-		_types = new FieldTypes(this);
+	if (!types_) {
+		types_ = new FieldTypes(this);
 	}
-	return (*_types)[i];
+	return (*types_)[i];
 }
 
 inline const mysql_type_info& ResUse::field_type(int i) const
 {
-	if (!_types) {
-		_types = new FieldTypes(this);
+	if (!types_) {
+		types_ = new FieldTypes(this);
 	}
-	return (*_types)[i];
+	return (*types_)[i];
 }
 
 inline FieldTypes& ResUse::field_types()
 {
-	if (!_types) {
-		_types = new FieldTypes(this);
+	if (!types_) {
+		types_ = new FieldTypes(this);
 	}
-	return *_types;
+	return *types_;
 }
 
 inline const FieldTypes& ResUse::field_types() const
 {
-	if (!_types) {
-		_types = new FieldTypes(this);
+	if (!types_) {
+		types_ = new FieldTypes(this);
 	}
-	return *_types;
+	return *types_;
 }
 
 inline void ResUse::reset_field_types()
 {
-	delete _types;
-	_types = new FieldTypes(this);
+	delete types_;
+	types_ = 0;
+	types_ = new FieldTypes(this);
 }
 
 inline int ResUse::names(const std::string& s) const
@@ -617,7 +624,7 @@ inline ResUse& ResUse::operator =(const ResUse& other)
 		return *this;
 	}
 	copy(other);
-	other.mysql_res = 0;
+	other.result_ = 0;
 	return *this;
 }
 

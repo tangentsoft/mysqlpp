@@ -36,39 +36,41 @@ using namespace std;
 
 namespace mysqlpp {
 
-ostream& mysql_date::out_stream(ostream& s) const
+std::ostream& operator <<(std::ostream& os, const Date& d)
 {
-	char fill = s.fill('0');
-	ios::fmtflags flags = s.setf(ios::right);
-	s << setw(4) << year << '-' 
-			<< setw(2) << month << '-'
-			<< setw(2) << day;
-	s.flags(flags);
-	s.fill(fill);
-	return s;
+	char fill = os.fill('0');
+	ios::fmtflags flags = os.setf(ios::right);
+	os		<< setw(4) << d.year << '-' 
+			<< setw(2) << d.month << '-'
+			<< setw(2) << d.day;
+	os.flags(flags);
+	os.fill(fill);
+	return os;
 }
 
-ostream& mysql_time::out_stream(ostream& s) const
+
+std::ostream& operator <<(std::ostream& os, const Time& t)
 {
-	char fill = s.fill('0');
-	ios::fmtflags flags = s.setf(ios::right);
-	s << setw(2) << hour << ':' 
-			<< setw(2) << minute << ':'
-			<< setw(2) << second;
-	s.flags(flags);
-	s.fill(fill);
-	return s;
+	char fill = os.fill('0');
+	ios::fmtflags flags = os.setf(ios::right);
+	os		<< setw(2) << t.hour << ':' 
+			<< setw(2) << t.minute << ':'
+			<< setw(2) << t.second;
+	os.flags(flags);
+	os.fill(fill);
+	return os;
 }
 
-ostream& DateTime::out_stream (ostream& s) const
+
+std::ostream& operator <<(std::ostream& os, const DateTime& dt)
 {
-	mysql_date::out_stream(s);
-	s << " ";
-	mysql_time::out_stream(s);
-	return s;
+	operator <<(os, Date(dt));
+	os << ' ';
+	return operator <<(os, Time(dt));
 }
 
-cchar* mysql_date::convert(cchar* str)
+
+cchar* Date::convert(cchar* str)
 {
 	char num[5];
 
@@ -94,7 +96,8 @@ cchar* mysql_date::convert(cchar* str)
 	return str;
 }
 
-cchar* mysql_time::convert(cchar* str)
+
+cchar* Time::convert(cchar* str)
 {
 	char num[5];
 
@@ -118,35 +121,56 @@ cchar* mysql_time::convert(cchar* str)
 	return str;
 }
 
+
 cchar* DateTime::convert(cchar* str)
 {
-	str = mysql_date::convert(str);
-	if (*str == ' ') str++;
-	str = mysql_time::convert(str);
+	Date d;
+	str = d.convert(str);
+	year = d.year;
+	month = d.month;
+	day = d.day;
+	
+	if (*str == ' ') ++str;
+
+	Time t;
+	str = t.convert(str);
+	hour = t.hour;
+	minute = t.minute;
+	second = t.second;
+	
 	return str;
 }
 
-short int mysql_date::compare(const mysql_date* other) const
+
+short int Date::compare(const Date& other) const
 {
-	if (year != other->year) return year - other->year;
-	if (month != other->month) return month - other->month;
-	return day - other->day;
+	if (year != other.year) return year - other.year;
+	if (month != other.month) return month - other.month;
+	return day - other.day;
 }
 
-short int mysql_time::compare(const mysql_time* other) const
+
+short int Time::compare(const Time& other) const
 {
-	if (hour != other->hour) return hour - other->hour;
-	if (minute != other->minute) return minute - other->minute;
-	return second - other->second;
+	if (hour != other.hour) return hour - other.hour;
+	if (minute != other.minute) return minute - other.minute;
+	return second - other.second;
 }
 
-short int DateTime::compare(const DateTime &other) const
+
+short int DateTime::compare(const DateTime& other) const
 {
-	int x;
-	x = mysql_date::compare(&other);
-	if (x) return x;
-	return mysql_time::compare(&other);
+	Date d(*this), od(other);
+	Time t(*this), ot(other);
+
+	if (int x = d.compare(od)) {
+		return x;
+	}
+	else {
+		return t.compare(ot);
+	}
 }
 
 } // end namespace mysqlpp
+
 

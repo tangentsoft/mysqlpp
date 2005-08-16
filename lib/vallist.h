@@ -372,32 +372,6 @@ std::ostream& operator <<(std::ostream& o,
 }
 
 
-#if !defined(DOXYGEN_IGNORE)
-// Doxygen will not generate documentation for this section.
-
-template <class Iter>
-class simp_list_b
-{
-public:
-	Iter _begin;
-	Iter _end;
-
-public:
-	typedef Iter const_iterator;
-
-	simp_list_b(Iter b, Iter e) :
-	_begin(b),
-	_end(e)
-	{
-	}
-	
-	Iter begin() const { return _begin; }
-	Iter end() const { return _end; }
-};
-
-#endif // !defined(DOXYGEN_IGNORE)
-
-
 /// \brief Create a vector of bool with the given arguments as values.
 ///
 /// This function takes up to 13 bools, with the size parameter
@@ -408,7 +382,7 @@ public:
 /// and Row::field_list().  See the "Harnessing SSQLS Internals" section
 /// of the user manual to see that feature at work.
 
-void create_vector(int size, std::vector<bool>& v, bool t0,
+void create_vector(size_t size, std::vector<bool>& v, bool t0,
 		bool t1 = false, bool t2 = false, bool t3 = false,
 		bool t4 = false, bool t5 = false, bool t6 = false,
 		bool t7 = false, bool t8 = false, bool t9 = false,

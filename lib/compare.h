@@ -65,7 +65,8 @@ public:
 	/// \param c what to compare row element against
 	///
 	/// operator() for this object compares Row[i] to c using f.
-	MysqlCmp(uint i, const BinaryPred& f, const CmpType& c) :
+	MysqlCmp(uint i, const BinaryPred& f,
+			const CmpType& c) :
 	index(i),
 	func(f),
 	cmp2(c)
@@ -98,7 +99,8 @@ public:
 	/// \param c what to compare row element against
 	///
 	/// operator() for this object compares Row[i] to c using f.
-	MysqlCmpCStr(uint i, const BinaryPred& f, const char *c) :
+	MysqlCmpCStr(uint i, const BinaryPred& f,
+			const char *c) :
 	MysqlCmp<BinaryPred, const char*>(i, f, c)
 	{
 	}

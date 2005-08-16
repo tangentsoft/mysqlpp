@@ -8,10 +8,10 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
-# USA.
+# You should have received a copy of the GNU Lesser General Public
+# License along with MySQL++; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
+# USA
 
 EXTRA_DIST = \
 	CREDITS \
@@ -27,16 +27,15 @@ EXTRA_DIST = \
 	doc/README* \
 	doc/ssqls-pretty \
 	doc/refman/html \
-	doc/userman/*.in \
 	doc/userman/*.xml \
+	doc/userman/*.xsl \
+	doc/userman/mktxt \
 	doc/userman/html \
-	doc/userman/findxsl \
 	doc/userman/Makefile \
 	doc/userman/README \
+	makemake.* \
 	*.ebuild \
-	*.spec \
-	*.sln \
-	*.vcproj
+	*.spec
 
 #SUBDIRS = lib examples doc
 SUBDIRS = lib @OPTIONAL_EXAMPLES@
@@ -71,3 +70,14 @@ doc/mysqlpp-refman.pdf: lib/*.h
 doc/mysqlpp-userman.pdf: doc/userman/userman.xml
 	( cd doc/userman ; make && make pdf )
 
+tags: ctags
+
+ctags:
+	find . -name TAGS -o -name tags -exec rm {} \;
+	ctags `pwd`/*/*.cpp `pwd`/*/*.h
+	find . -type d -mindepth 1 -exec ln tags {} \;
+
+clean-local:
+	( cd lib ; make clean-docs )
+	( cd doc/userman ; make clean )
+	find . -name tags -exec rm {} \;

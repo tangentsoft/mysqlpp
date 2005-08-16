@@ -41,9 +41,6 @@ class ResUse;
 /// \brief Holds a list of SQL field names
 class FieldNames : public std::vector<std::string>
 {
-private:
-	void init(const ResUse * res);
-
 public:
 	/// \brief Default constructor
 	FieldNames() { }
@@ -78,14 +75,14 @@ public:
 	/// \brief Get the name of a field given its index.
 	std::string& operator [](int i)
 	{
-		return std::vector<std::string>::operator [](i);
+		return at(i);
 	}
 
 	/// \brief Get the name of a field given its index, in const
 	/// context.
 	const std::string& operator [](int i) const
 	{
-		return std::vector<std::string>::operator [](i);
+		return at(i);
 	}
 
 	/// \brief Get the index number of a field given its name
@@ -95,6 +92,9 @@ public:
 		str_to_lwr(temp);
 		return uint(std::find(begin(), end(), temp) - begin());
 	}
+
+private:
+	MYSQLPP_EXPORT void init(const ResUse* res);
 };
 
 } // end namespace mysqlpp

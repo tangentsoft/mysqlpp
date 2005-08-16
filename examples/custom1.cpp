@@ -58,6 +58,8 @@ sql_create_5(stock,
 int
 main(int argc, char *argv[])
 {
+	// Wrap all MySQL++ interactions in one big try block, so any
+	// errors are handled gracefully.
 	try {						
 		// Establish the connection to the database server.
 		Connection con(use_exceptions);
@@ -76,24 +78,24 @@ main(int argc, char *argv[])
 		print_stock_header(res.size());
 		vector<stock>::iterator it;
 		for (it = res.begin(); it != res.end(); ++it) {
-			print_stock_row(it->item.c_str(), it->num, it->weight,
-					it->price, it->sdate);
+			print_stock_row(it->item, it->num, it->weight, it->price,
+					it->sdate);
 		}
 	}
-	catch (BadQuery& er) {
-		// Handle any connection or query errors
-		cerr << "Error: " << er.what() << endl;
+	catch (const BadQuery& er) {
+		// Handle any query errors
+		cerr << "Query error: " << er.what() << endl;
 		return -1;
 	}
-	catch (BadConversion& er) {
-		// Handle bad conversions
-		cerr << "Error: " << er.what() << "\"." << endl <<
-				"retrieved data size: " << er.retrieved <<
-				" actual data size: " << er.actual_size << endl;
+	catch (const BadConversion& er) {
+		// Handle bad conversions; e.g. type mismatch populating 'stock'
+		cerr << "Conversion error: " << er.what() << endl <<
+				"\tretrieved data size: " << er.retrieved <<
+				", actual size: " << er.actual_size << endl;
 		return -1;
 	}
-	catch (exception& er) {
-		// Catch-all for any other standard C++ exceptions
+	catch (const Exception& er) {
+		// Catch-all for any other MySQL++ exceptions
 		cerr << "Error: " << er.what() << endl;
 		return -1;
 	}

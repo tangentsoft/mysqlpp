@@ -1,258 +1,314 @@
-Patches for any of these thoughtfully considered!
+Patches for any of these thoughtfully considered!  See the HACKERS file
+for instructions on sending patches.
 
-New Feature Requests and ABI Changes
-------------------------------------
+The items in the bug fix/maintenance section are the easiest to do
+without breaking things, so if you're looking for a project....
 
-	o Transaction support.  Considering block-level semantics: create
-	  a "transaction object" on the stack, which takes a ref to the
-	  Connection object (?) as a ctor parameter.  Transaction object's
-	  ctor calls a function on the conn telling it to tell the server to
-	  begin a transaction set.  When the transaction object is destroyed,
-	  it tells the conn object to commit everything.  Conn object in
-	  this situation must be created in a higher scope, or on the heap.
-	
-	o User-settable floating-point comparison precisions?  Something
-	  like this: http://lists.mysql.com/plusplus/3984
-	
-	o Look through my own code for uses of hand-rolled SQL queries, and
-	  try to reduce them to API features.
+Here's a meta-item that doesn't really fit into any of the categories
+below: any time you must hand-roll some SQL code in your program,
+consider whether it could be reduced to an API feature that would be
+widely useful.  Patches or proposals of this sort are always welcome.
 
-	o Write a new tutorial, separate from the reference manual, but
-	  linking to it.  It should be built around the existing examples.
-	  Where insufficient examples exist to support the tutorial, write
-	  more.
 
-	o True thread-awareness in the library.  One place this could
-	  impact: Connection lock mechanism could use platform mutexes
-	  where available.  Enable via configure script flag on Unixy
-	  systems.
+v2.1 Plan
+---------
 
-	o Change Connection::create_db() and drop_db() to return true on
-	  success.  They're the other way 'round now, but changing it would
-	  break a lot of code, so put it off to the next major version.
+	This plan is not set in stone.	These are simply the features
+	we want to try and tackle for the v2.1 release.
 
-	o Connection::create_db(), drop_db() and select_db() should take
-	  their arguments by reference, and be const.
+	Items in this plan may slip to a future release.  This
+	typically happens when the proper solution is unclear,
+	so the best way to prevent this is to get on the mailing
+	list and help discuss it.  Or even better, provide a patch;
+	we rarely reject working code outright.
 
-	o Why does Connection::infoo() exist?  Remove it if there is
-	  no good reason.
+	Items from the following sections may make it in, but if
+	you don't help make that happen, this will just be on the
+	whim of one of MySQL++'s developers.  Don't forget that it's
+	possible to subclass yourself from the "MySQL++'s developers"
+	base class.
 
-	o Rename Connection::read_options() to set_option()?  Much more
-	  accurate w.r.t. what the function actually does.
 
-	o Why is there a duplicate query interface in Connection?  Sure,
-	  it means you can get by without using a Query object, but is
-	  that a big enough advantage to justify the extra complexity?
-	  Everything in the tutorial uses Query objects, so I'd be stunned
-	  if there's a significant body of end-user code that actually uses
-	  the Connection query interface directly.  (Hell, I'd be surprised
-	  if there was _any_ such code.)
+	o Transaction support.	Create a "Transaction" class, an
+	  object of which you create on the stack, giving it a
+	  reference to the Connection object.  Transaction object's
+	  ctor calls a function on the Connection object to start
+	  a transaction set, and its dtor calls another function to
+	  commit the transaction.  Also provide a "commit()" member
+	  function, to commit before destruction.  This has a couple
+	  of uses.  First, it's useful for avoiding exceptions coming
+	  from ~Transaction(), if such a thing is possible.  Second,
+	  sometimes it's inconvenient to wait until the end of a block
+	  to commit the transaction, and adding artifical blocks is
+	  somewhat ugly.
 
-	o Connection lock mechanism should be extracted into a separate
-	  class, instances of which could be created on the stack so
-	  the lock is always relesased on function exit.  (Does Boost
-	  provide something like this?)  This will probably break the ABI,
-	  because Connection would have to derive from an interface class
-	  for the lock object to be able to call functions on it.
+	o Add a configure script option to allow the new lock
+	  mechanism to use platform mutexes via the Boost.Threads
+	  library.
 
-	o Do something similar to above with exception handling.  Derive
-	  from exception-disabling interface, and instantiate an exception
-	  disabler object that turns off exceptions until that object goes
-	  out of scope.
+	  Mechanism must reflect these MySQL C API restrictions:
 
-	o Fold SQLQuery class into Query.  The separation goes back to the
-	  dream of making MySQL++ database-independent.
+	  - Only one query executing at once per connection
+
+	  - For "use" queries, Connection (and therefore Query) object must
+	    remain locked until last row is consumed
+
+	  - Safest to have one Connection per thread.  Rules for sharing:
+	    http://dev.mysql.com/doc/mysql/en/threaded-clients.html
+
+	  Need some way to call mysql_thread_init() and
+	  mysql_thread_end() per thread.  Also, work in some way to
+	  call mysql_thread_safe() automatically, perhaps the first
+	  time through the function that calls mysql_thread_init().
+	  If the C API library reports that it is not thread-safe,
+	  report this to the caller, perhaps through an exception,
+	  or simply by refusing to init more than one thread.
+
+	o Currently, all overloads for Query's execute(), store()
+	  and use() methods eventually call the const char*
+	  version, which does the actual work of executing the query.
+	  This rules out query strings with embedded nulls, as you're
+	  likely to get with BLOB columns.  Also, it means MySQL++
+	  must scan the string for length in a few places.  The C API
+	  isn't limited in this way if you use mysql_real_query(),
+	  but you need an accurate length value to call it.  We could
+	  get that length with binary data if the end of the call
+	  chain were a std::string overload, but we can't do that
+	  easily because each of these functions has a version taking
+	  a SQLString (a subclass of std:string) for template queries.
+
+	  One way around this is to add a parallel set of functions
+	  (e.g. do_execute(), or execute_(), or some such) that take
+	  a single std::string, which are the new terminus of the call
+	  chain.  Reimplement const char* versions in terms of these.
+
+	  Another way is to rename the template query versions (e.g. to
+	  execute_tq()) to avoid the overload conflict.  With that
+	  done, we can use C API functions like mysql_real_query(),
+	  which can take binary data.
+
+	  Yet another way is to add a length parameter to the call
+	  chain end functions.
+
+	  And finally, we may be able to co-opt the first template
+	  query version of each of these functions, as it takes a
+	  single SQLString.
+
+	o Date and time classes are pretty minimalistic; they could
+	  be so much more powerful.  Some ideas:
+
+	  - Add time_t conversion.
+
+	  - Arithmetic features.  (See "Algorithms for Programmers"
+	    by Binstock and Rex.)
+
+	  - It may be possible to get some nice syntactic sugar,
+	    such as a way to call SQL functions like NOW() when
+	    inserting certain Date/Time objects into a Query stream.
+
+	  Don't forget to write an example showing how to use these
+	  new mechanisms.
+
+	  It may be possible to find existing date and time classes
+	  that can be extended, instead of reinventing the wheel.
+	  Boost, perhaps?
+
+	o When you create a Connection object with its default ctor and
+	  don't .connect() it, several of its functions can fail to
+	  work correctly.  ping(), for one, because the MYSQL handle
+	  isn't initialized until the connection is established.
+	  Decide how to cope: a) init the handle in all ctors; b)
+	  throw ObjectNotInitialized when the library knows the
+	  call will fail; or c) just return a failure code and hope
+	  the user is checking it.  Could be a different answer for
+	  each function.  Keep in mind the consequences for database-
+	  independence here.
+
+	o Build a forward iterator mechanism for ResUse.  Make it
+	  general enough that you can use it with STL algorithms
+	  like find_if().  Then make an example to demonstrate this
+	  augmentation of SELECT.  Also, update usequery example
+	  to use the iterator.	Tricky bit: how do we make it not
+	  interfere with subclass Result's random-access iterator?
+
+	o Write an example to demonstrate compare.h features, or throw
+	  the header away.  It's not being used within the library.
+
+	o Have resetdb create a second table containing a BLOB column
+	  that load_file and cgi_image can use.  
 	  
-	o Fold RowTemplate class into Row.  This is probably another
-	  obsolete bid for database-independence.
+	  Rework load_image to take the standard command line
+	  parameters, and load a JPEG or something into the BLOB table.
+	  Include a suitable JPEG with the distribution.  (A cheesy
+	  Photoshopped "MySQL++ Rocks!" thing should suffice.)
+
+	  Rework cgi_image so that you can drop it into a cgi-image
+	  directory and immediately use it to query the database and
+	  return the image data in CGI format.
+
+	o It may be possible to optimize the use of ColData in
+	  the return from Row::operator[].  Currently, that operator
+	  returns a temporary ColData object, which contains a
+	  std::string buffer which is initialized by a const char*
+	  pointer to data within the Row object.  Since the ColData
+	  object is temporary, you currently must copy the data a
+	  second time to store it when using Row::operator[].  If the
+	  end user just wants a const char*, this double copy could
+	  be prevented.  See http://lists.mysql.com/plusplus/4451
+	  for the proposal.
+
+
+Future Features
+---------------
+
+	These changes are planned for versions after v2.1.  If you
+	need one of these changes to happen on some particular
+	schedule, the best way to ensure it is to start coding and
+	provide a patch!
+
+
+	o Define operator<< for Fields, Row, ResUse, etc.  In other
+	  words, there should be a way to get a user-readable version
+	  of received data without a lot of code.  Perhaps use a CSV
+	  output format, or a mysql(1) one (ASCII grid).
+
+	o Abstract all uses of MySQL C API functions into a database
+	  driver class with a generic interface.  This is a step
+	  towards database-independence, without the parallel class
+	  hierarchy required by the MySQL++ 1.7 design.  Also, it
+	  will make it easier to make class Connection completely
+	  friend-less.	Right now, the main reason it needs friends
+	  is because these other classes make C API calls using its
+	  private MYSQL data member.  The other reasons for it having
+	  friends aren't nearly as compelling, so it wouldn't be
+	  hard to justify redesigning Connection to eliminate these
+	  final reasons.
+
+	  While it would be easy to have just one global database
+	  driver object, it's probably going to be necessary to have
+	  one per Connection.  Consider what happens when you have one
+	  program connected to two very different MySQL databases,
+	  and you indirectly call C API functions that take MYSQL
+	  parameters.  It's likely that those calls are supposed
+	  to behave different, depending on the data in that MYSQL
+	  object; for instance, different character encodings in the
+	  selected databases.  So, there must somehow be a way to pass
+	  the database driver's instance pointer down to all objects
+	  that will need to use the driver.  A side benefit is that
+	  a single program could talk to multiple different database
+	  server types.  Imagine a program for importing data from
+	  PostgreSQL and loading it into a MySQL table, for instance.
+
+	o manip.cpp uses mysql_escape_string(), which doesn't take the
+	  selected database's character set into account.  To do that,
+	  you must use mysql_real_escape_string(), which differs
+	  by taking a MYSQL instance as an additional parameter.
+	  The problem is, Connection owns the relevant MYSQL instance,
+	  and the manipulator functionality is implemented in global
+	  functions (operator<<() and such) so they have no direct
+	  access to the relevant Connection object.
+
+	  The key question for all operator<<'s for manipulators
+	  to ask is, "which Query object am I being inserted into?"
+	  From there, you can look up the associated Connection object.
+
+	  In some cases, this answer to the question is easy, because
+	  the operator takes an ostream parameter, which can be
+	  dynamically cast to Query.  From there, it's just a lookup
+	  table problem.
 	  
-	o With previous item done, it should be possible to use
-	  mysql_real_escape_string() instead of mysql_escape_string() within
-	  the pprepare() function.  Doing the same in manip.cpp will be more
-	  difficult.
-
-	o Consider giving combined Query+SQLQuery class all the members it
-	  needs to look like a std::stringstream and make them use a private
-	  stream data member instead of deriving from it.  C++ library
-	  classes were not designed to be subclassed.  Evidence is the
-	  dynamic_cast<>s required for VC++ in insert() and friends.
-
-	o There are operator<<(SQLQuery&, ColData...) functions in addition
-	  to the normal (ostream&, ColData) ones.  (See manip.h)  It looks
-	  like a workaround for a compiler's type system weakness.  If this
-	  is no longer needed, the obvious change plays into the decision for
-	  the previous item: if Query is no longer an ostream, those
-	  separate operators still need to exist, but the casts in the
-	  implementation will break things.
-
-	o Why is class ResUse separate from class Result?  They're declared
-	  in the same file, only Result derives from it, and it isn't clear
-	  that all of the other code that uses ResUse couldn't use Result
-	  directly.
-
-	o Same for mysql_date/Date and mysql_time/Time.  Some justification
-	  is that DateTime derives from their base classes, but why can't
-	  it be derived from the leaf classes instead?
-
-	o Add UTF-8 handling for VC++, in simple1 program?  Umlaut in
-	  first item shows as two high-ASCII characters when run in Win32
-	  console.  (Oddly enough, VC++'s editor understands UTF-8!)
+	  Other operator<<'s don't take an ostream, but they do take
+	  a manipulator.  Right now, manipulators are just enum values,
+	  but they could in fact be classes.  Classes can carry data,
+	  so there may be a way to "bind" them to the appropriate
+	  Connection object.  If not, then perhaps some other method
+	  will pop out of the database driver class idea.  The driver
+	  object may be able to look up a suitable Connection object
+	  for the manipulators.
 
 	o SSQLS structures include some static elements (_table and
-	  names[]), which are defined within the macro.  If you put an SSQLS
-	  declaration in a header file and #include that from multiple
-	  locations, you get a multiply-defined symbol warning.  Figure out
-	  some way to separate the definition from the declaration.  One
-	  idea is to give the SSQLS macros another parameter, to suppress
-	  static definition.  Another is to put them in another macro, which
-	  the user must instantiate once in a .cpp file.  (Similar to the
-	  way MFC message maps work.)
+	  names[]), which are defined within the macro.  If you
+	  put an SSQLS declaration in a header file and #include
+	  that from multiple locations, you get a multiply-defined
+	  symbol warning.  Some ways to separate the definition from
+	  the declaration:
 
-	o Deprecate sql_create_basic_* ? They have less functionality and
-	  they're no easier to use than sql_create and friends, so
-	  why bother with them?  I suppose the code generated is a bit
-	  smaller, but *really*....  Only possible saving grace is if BC++
-	  can compile them due to the macro code being shorter.
+		  o Give the SSQLS macros another parameter, to
+		    suppress static definition.
 
-	o Classes with virtual functions need virtual dtors.  GCC 4.0 warns
-	  about this.  It's easy to fix, but it breaks the ABI, so it will
-	  have to wait for 1.8 or 2.0.  It should be done with some thought
-	  as well: go through class looking for any code that allocates
-	  memory or other resources, and make sure they're released in the
-	  dtor.  This concern over releasing resources is why the warning
-	  exists in the first place.
+		  o Put statics in a separate macro, which the
+		    user must instantiate once in a .cpp file.
+		    (Similar to the way MFC message maps work.)
 
-	o mysql_type_info in type_info.h has multiple public and private
-	  sections.  Collapse into one of each.  This will break the ABI.
+		  o Put statics in a sub-macro, conditionally defined,
+		    which SSQLS is implemented in terms of.  Define the
+			condition macro in one module within your
+			program.
 
-	o mysql_type_info::types is arguably brittle, as it uses hard-coded
-	  integer values which mostly-but-not-quite map onto the values
-	  in the enum_field_types enum in the MySQL C API.  It might be
-	  better to use the MySQL C API enum constants here instead of bare
-	  integers so that we will follow any changes in the C API.  Doing
-	  so will break the ABI and a lot of infrastructure logic, though,
-	  so this change should not be done casually.
+		  o Redesign the SSQLS mechanism entirely.  Instead of
+		    defining SSQLSes by instantiating macros, you could
+		    declare the structure in, say, an XML format,
+		    which could be tranformed (XSLT?  Perl + a DOM
+		    parser?) into code very much like in the current
+		    SSQLS macros, except that it would generate
+		    separate .cpp and .h files for each structure.
+		    In addition to solving the static member problem,
+		    it would have other advantages, like side-stepping
+		    the Borland C++ macro size limit.
 
-	o Collapse store(string&) and store(string&, bool) into a single
-	  function by making bool argument default to false.  Same for
-	  use() and execute().
+	o Deprecate sql_create_basic_* ? They have less functionality
+	  and they're no easier to use than sql_create and friends,
+	  so why bother with them?  I suppose the code generated
+	  is a bit smaller, but *really*....  Only possible saving
+	  grace is if BC++ can compile them due to the macro code
+	  being shorter.  They also don't have the static members,
+	  mentioned in the previous item.
 
-	o Collapse mysql_* date and time classes into their subclasses,
-	  Date, Time, and DateTime.
+	o Consider whether some of the current boilerplate can be
+	  made into a base class that all SSQLSes derive from.
+	  This may have implications for some templates, like
+	  Query::insert<T>...they might become regular member
+	  functions, taking a reference to the base class.
 
-	o Remove simp_list_b from vallist.h.  It doesn't seem to be used
-	  anywhere, and it doesn't seem to be useful for end-user code.
+	o MySQL++ handles automatic quoting and escaping differently
+	  for cout and cerr than for Query streams.  This should
+	  probably be simplified so that automatic quoting is only
+	  done for Query streams.  No other stream type should be
+	  treated specially.
 
-	o Null's copy ctor should take its parameter by reference.
+	o Some field_list() functions use the do_nothing manipulator,
+	  while others use the quote manipulator.  Need to pick one.
+	  In the vast majority of cases, quoting won't be necessary,
+	  so make that the default.  But, it should be possible to turn
+	  it on, if needed.  If all uses of quoting are in template
+	  code, this can be a #define, allowing different programs
+	  built on the same system to get different quoting rules.
+	  Otherwise, it will probably have to be a configure script
+	  flag, which will "burn" the choice into the built binary.
 
-	o It's not helpful for Connection to have both connect() and
-	  real_connect().  That's a result of weaknesses in the C API
-	  leaking through.  Because C++ allows default parameters,
-	  real_connect() effectively presents a superset of the
-	  connect() interface.	Drop connect() and rename real_connect()
-	  to connect().
+	o User-settable floating-point comparison precisions?
+	  Something like this: http://lists.mysql.com/plusplus/3984
+	  As it currently stands, sql_cmp(double,double) is foolish.
+	  One shouldn't do exact equality comparison on floating
+	  point values.
 
-	o Exception objects are a hodge-podge.	Hoist all common
-	  functionality up into a superclass.  This will eliminate all
-	  of the interface differences between these classes.
-
-	o Several of the value_list* and related functions can be
-	  collapsed into one by use of default parameters.  These are
-	  in vallist.h, and also in RowTemplate, defined in row.h.
-	  This will change the ABI, but a conservative refactoring need
-	  not change the API.  It may be that aggressive refactoring is
-	  indicated, however.
-
-	o Create a mixin class that provides a standard way to disable
-	  exceptions on errors.  Currently there is some variation, and
-	  some classes that throw exceptions have no way to disable
-	  exceptions at all.  This could be done just by adding a
-	  standardized set of methods to all these clases, so it wouldn't
-	  have to break the ABI, but this really is a "new version" type
-	  of feature.
-
-	o Isn't the field name form of field_list() kind of silly?
-
-	o Some field_list() functions use the do_nothing manipulator by
-	  default, while some use quote.  The former makes more sense to
-	  me, as field names should never have to be quoted or escaped.
-	  If someone really needs the quote manipulator, that's available
-	  explicitly through other versions of the function.
-
-	o Row::Row should take the MYSQL_ROW parameter by const reference.
-
-	o Can SQLQueryParams::set() overloads all be collapsed into a
-	  single member by suitable use of default parameters?
-
-	o Swap the definitions of Row::operator[] and lookup_by_name()?
-	  That is, have the operator take a field name, and define a
-	  function (at()?) that takes a field index.  The original problem
-	  solved in 1.7.10 still exists, in that modern compilers won't
-	  let you overload the operator on both strings and integers,
-	  but the string form probably is the most useful.
+	o Consider using MySQL C API enum constants in
+	  mysql_type_info::types definition instead of hard-coded
+	  values.  This could potentially break a lot of
+	  infrastructure, though, so do it only with care.
 
 
 Bug Fix/Maintenance Items
 -------------------------
 
-	o It may be possible to optimize the use of ColData in the return
-	  from Row::operator[]. Currently, that operator returns
-	  a temporary ColData object, which contains a std::string
-	  buffer which is initialized by a const char* pointer to
-	  data within the Row object.  Since the ColData object is
-	  temporary, you currently must copy the data a second time to
-	  store it when using Row::operator[].	If the end user just
-	  wants a const char*, this double copy could be prevented.
-	  See http://lists.mysql.com/plusplus/4451 for the proposal.
+	These items could happen in any version.
 
-	o Connection::execute() should probably use mysql_real_query()
-	  instead of mysql_query() so it could handle binary data.
 
-	o Shouldn't ColData_Tmpl default ctor set type information to some
-	  default?
-
-	o There are comments in sql_query.h saying "only here temporary".
-	  They've been there for literally years.  Time to decide what
-	  to do about them!
-
-	o Have resetdb also create a table that load_file and
-	  cgi_image can use.  Remove "fax"ness from these examples,
-	  and encourage people to load up JPEGs or something else that
-	  a browser can display, so one can easily drop cgi_image into
-	  a cgi-bin directory to try it out.  Make load_image use the
-	  standard command line parameters, so you can manually load up
-	  some images for cgi_image to retrieve.
-
-	o Add nmake Makefiles for the project, for those using only the
-	  free command-line tools.
-
-	o Move SQLQueryNEParms into exceptions.h.
+	o 64-bit integer support has been reported to work, but more
+	  confirmation is wanted.
 
 	o Template ListInsert in lib/myset.h isn't being used within the
 	  library.  It could probably be used in place of SetInsert
 	  in the same file, which things like type_info.h do use now,
 	  but it isn't clear how one would go about doing that without
 	  changing the library code.  Document it or throw it away.
-
-	o sql_cmp(double,double) is foolish.  One shouldn't do ==
-	  comparison on floating point values.	Same for
-	  sql_cmp(float,float).  See also floating point precision item
-	  in previous section.
-
-	o Settle on new license for documentation, or make LGPL explicit.
-
-	o 64-bit integer support is not heavily tested.  It may yet have
-	  problems.
-
-	o Visual C++ project files should build a DLL version of the library
-	  only, for LGPL reasons.
-
-	o MinGW can't build a DLL for MySQL++.  It has to do with the file
-	  reorganization in 1.7.20: if you move everything from row.cc to
-	  a new row2.h file and include it in a few strategic locations, it
-	  works.  But, this is a bogus fix.  Find the right one.
-
-	o Define CSS stylesheet for userman to try and match its appearance
-	  to that of the refman.  Perhaps we can just copy the stylesheet
-	  from Doxygen?
-

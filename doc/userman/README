@@ -1,81 +1,128 @@
-The user manual is written in XML DocBook format, version 4.2. We
-restrict ourselves to Simplified DocBook 1.1 as much as possible.
-(Why these versions? They're the newest supported on the oldest system
-I still use, Red Hat Linux 9.)
+The user manual is written in XML DocBook format, version 4.2.
+It uses the official DocBook XSL stylesheets, and will build with
+versions as old as 1.58.1.  (Why these versions?  They're what comes
+with Red Hat Linux 9, the oldest system I still use.)  We restrict
+ourselves to Simplified DocBook 1.1 as much as practical, to make it
+easier for new people to get started hacking on the manual.
+
+To make the HTML version of the user manual, just type 'make' in this
+directory.  (Or 'make html' if you want to be pedantic.)  To make the
+PDF version of the manual, say 'make pdf'.  To make both versions,
+say 'make all'.
+
+
+
+The most likely cause of build failures is not having the right
+processing programs installed.  The DocBook processing model looks
+like this:
+
+    DocBook --[XSLT proc.]-+-> HTML
+                   ^       |
+                   |       +-> XSL-FO --[XSL-FO proc.]--> PDF
+                   |
+           {XSL stylesheets}
+
+"DocBook" above is a file in DocBook XML format.  In this case,
+it's in userman.xml.
+
+There are many alternatives for the tools in the square brackets:
+
+	The first replaceable piece is an XSLT processor, which
+	translates XML into other text formats, such as HTML or other
+	varieties of XML.  We use xsltproc from the Gnome project.
+	(http://xmlsoft.org/XSLT/)  There are numerous alternatives,
+	but each supports different extensions to the standard,
+	so it's simplest if everyone uses the same processor for a
+	given document.
+
+	We use the XSLT processor to do two transforms.  One is
+	directly to HTML.  The other is to XSL-FO, an XML-based page
+	layout language.  We do this intermediary transform because
+	XSLT is not good at creating binary formats like PDF.
+
+	The second replaceable piece in the diagram above is an
+	XSL-FO processor, which converts XSL-FO to a more directly
+	useful page layout format, like PDF.  We've chosen FOP from
+	the Apache Project (http://xml.apache.org/fop/), because it's
+	the best of the free-as-in-freedom XSL-FO processors.
+
+	FOP isn't without its faults.  If you'd like to try some of
+	the commercial XSL-FO processors, RenderX's XEP (renderx.com)
+	is avalable in a free-as-in-beer version that adds watermarks
+	to your pages.	Another popular option is Antenna House's XSL
+	Formatter (antennahouse.com), but there is no free offering.
+	The low-end commercial version of each of these is around $300.
+	Another relatively inexpensive option is Lunasil's Xinc
+	(lunasil.com), which is available in a personal-use edition
+	for under $100.
+
+The third replaceable piece above is the DocBook XSL stylesheet set.
+The stylesheets are the XSLT processor's rules, controlling how
+the input XML gets transformed to the output format.  The standard
+DocBook stylesheet set (link below) includes stylesheets for HTML
+and XSL-FO output.  If you don't have them on your system, the XSLT
+processor will try to download them using your Internet connection
+during processing.  This slows processing quite a bit even if you
+have a fast Internet connection, and it obviously doesn't work when
+your net connection is down.
+
+A better option is to have a copy of the stylesheets on your system.
+It's likely that there is a pre-built package for your system:
+
+	Red Hat Linux: docbook-style-xsl RPM (same for Fedora Core)
+	Mac OS X:      docbook-xsl Fink package (http://fink.sf.net)
+	Cygwin:        docbook-xml?? package (?? = DocBook version)
+
+(Please send the name of the package for your system to the mailing
+list if it isn't listed above, and I'll add it to the list.)
+
+If you can't find a package for your system, you can get the DocBook
+stylesheets from the source: http://docbook.sourceforge.net/  They're
+a bit tricky to set up correctly, so it's better to use a pre-built
+package if you can.
+
+If you are still having problems, post the details about it to the
+MySQL++ mailing list, and I'll try to help you debug the problem.
+You might also find the FOP and/or DocBook mailing lists helpful.
+
+
+
 
 If you're looking to hack on the manual, here are some helpful resources
 for getting up to speed on DocBook:
 
+	Mills' "Installing And Using An XML/SGML DocBook Editing Suite" article:
 
-Mills' "Installing And Using An XML/SGML DocBook Editing Suite" article:
+		http://tinyurl.com/8alb2
 
-	http://supportweb.cs.bham.ac.uk/documentation/tutorials/docsystem/build/tutorials/docbooksys/docbooksys.html
+		This is the best tutorial I've found.
+		
 
-	This is the best tutorial I've found.
-	
+	Walsh and Muellner's _Simplified DocBook: The Definitive Guide_ book:
 
-Walsh and Muellner's _Simplified DocBook: The Definitive Guide_ book:
+		http://www.docbook.org/tdg/simple/en/html/sdocbook.html
 
-	http://www.docbook.org/tdg/simple/en/html/sdocbook.html
-
-	This is the most accessible reference.
-
-
-Walsh and Muellner's _DocBook: The Definitive Guide_ book, second
-edition, online version:
-
-	http://www.docbook.org/tdg/en/html/docbook.html
-
-	This is the official DocBook referece; the "Simplified" guide is a
-	subset of this book.
+		This is the most accessible reference.
 
 
-DocBook FAQ:
+	Walsh and Muellner's _DocBook: The Definitive Guide_ book, second
+	edition, online version:
 
-	http://www.dpawson.co.uk/docbook/
+		http://www.docbook.org/tdg/en/html/docbook.html
 
-	Go here when you have a question that the tutorials and references
-	do not answer.
-
-
-xsltproc:
-
-	http://xmlsoft.org/XSLT/
-
-	This is the XSL processor that takes the DocBook file and an XSL
-	stylesheet and produces either HTML or XSL+FO. (The latter is an
-	intermediate step towards any of several print-oriented formats,
-	such as PDF or TeX.) If your system has GNOME on it, you probably
-	have this installed already.
-
-	You will also need the standard set of DocBook style sheets.  On
-	Red Hat Linux and Fedora Core, these are in the docbook-style-xsl
-	package.
+		This is the official DocBook referece; the "Simplified" guide is a
+		subset of this book.
 
 
-FOP:
+	DocBook FAQ:
 
-	http://xml.apache.org/fop/
+		http://www.dpawson.co.uk/docbook/
 
-	This is the XSL+FO document processor we use to build the PDF
-	files. ('make pdf')
-
-	If for some reason you have trouble getting FOP working, there's
-	an alternate method available as 'make oldpdf' which uses xsltproc
-	and pdfxmltex. It produces a pretty ugly PDF, but you probaly
-	already have the tools installed, if you have any of them at all.
-	pdfxmltex is in the xmltex package on Fedora Core 3.
-
-	If neither of those work for you, you could use the OpenJade
-	tool chain instead. (http://openjade.org/) This is SGML DocBook
-	rather than the more modern XML DocBook I favor, but the only
-	XML-specific thing we are using is local XSL stylesheets. You
-	could ignore them and use the standard DSSSL stylesheets
-	instead. I avoid the SGML tool chain only because I've had
-	trouble with it in the past.
+		Go here when you have a question that the tutorials and references
+		do not answer.
 
 
-The official DocBook site:
+	The official DocBook site:
 
-	http://docbook.org/
+		http://docbook.org/
 

@@ -46,23 +46,23 @@ namespace mysqlpp {
 template <class T, class value_type = typename T::value_type>
 class ListInsert
 {
-private:
-	T* object;
-
 public:
-	ListInsert(T* o) : object(o) { }
-	void operator ()(const value_type& data) { object->push_back(data); }
+	ListInsert(T* o) : object_(o) { }
+	void operator ()(const value_type& data) { object_->push_back(data); }
+
+private:
+	T* object_;
 };
 
 template <class T, class key_type = typename T::key_type>
 class SetInsert
 {
-private:
-	T* object;
-
 public:
-	SetInsert(T* o) : object(o) { }
-	void operator ()(const key_type& data) { object->insert(data); }
+	SetInsert(T* o) : object_(o) { }
+	void operator ()(const key_type& data) { object_->insert(data); }
+
+private:
+	T* object_;
 };
 
 template <class T>

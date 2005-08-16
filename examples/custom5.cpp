@@ -71,25 +71,24 @@ main(int argc, char *argv[])
 			// Display the finished query.
 			cout << "Custom query:\n" << query.preview() << endl;
 		}
-
-		return 0;
 	}
-	catch (BadQuery& er) {
-		// Handle any connection or query errors
-		cerr << "Error: " << er.what() << endl;
+	catch (const BadQuery& er) {
+		// Handle any query errors
+		cerr << "Query error: " << er.what() << endl;
 		return -1;
 	}
-	catch (BadConversion& er) {
+	catch (const BadConversion& er) {
 		// Handle bad conversions
-		cerr << "Error: " << er.what() << "\"." << endl <<
-				"retrieved data size: " << er.retrieved <<
-				" actual data size: " << er.actual_size << endl;
+		cerr << "Conversion error: " << er.what() << endl <<
+				"\tretrieved data size: " << er.retrieved <<
+				", actual size: " << er.actual_size << endl;
 		return -1;
 	}
-	catch (exception& er) {
-		// Catch-all for any other standard C++ exceptions
+	catch (const Exception& er) {
+		// Catch-all for any other MySQL++ exceptions
 		cerr << "Error: " << er.what() << endl;
 		return -1;
 	}
-}
 
+	return 0;
+}

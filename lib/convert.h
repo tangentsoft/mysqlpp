@@ -47,12 +47,12 @@ template <class Type> class mysql_convert;
 #define mysql__convert(TYPE, FUNC) \
   template <> \
   class mysql_convert<TYPE> {\
-  private:\
-    TYPE num;\
   public:\
     mysql_convert(const char* str, const char *& end) { \
-      num = FUNC(str, const_cast<char **>(&end));}\
-    operator TYPE () {return num;}\
+      num_ = FUNC(str, const_cast<char **>(&end));}\
+    operator TYPE () {return num_;}\
+  private:\
+    TYPE num_;\
   };\
 
 #if defined(_MSC_VER)
@@ -70,12 +70,12 @@ template <class Type> class mysql_convert;
 #define mysql__convert(TYPE, FUNC) \
   template <> \
   class mysql_convert<TYPE> {\
-  private:\
-    TYPE num;\
   public:\
     mysql_convert(const char* str, const char *& end) { \
-      num = FUNC(str, const_cast<char **>(&end),10);}\
-    operator TYPE () {return num;}\
+      num_ = FUNC(str, const_cast<char **>(&end),10);}\
+    operator TYPE () {return num_;}\
+  private:\
+    TYPE num_;\
   };\
 
 #if defined(_MSC_VER)

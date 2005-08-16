@@ -39,9 +39,6 @@ class ResUse;
 /// \brief A vector of SQL field types.
 class FieldTypes : public std::vector<mysql_type_info>
 {
-private:
-	void init(const ResUse* res);
-
 public:
 	/// \brief Default constructor
 	FieldTypes() { }
@@ -87,6 +84,9 @@ public:
 	{
 		return std::vector<mysql_type_info>::operator [](i);
 	}
+
+private:
+	MYSQLPP_EXPORT void init(const ResUse* res);
 };
 
 } // end namespace mysqlpp

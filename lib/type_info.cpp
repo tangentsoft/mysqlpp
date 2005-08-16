@@ -137,8 +137,8 @@ mysql_ti_sql_type_info_lookup::mysql_ti_sql_type_info_lookup(
 		const sql_type_info types[], const int size)
 {
 	for (int i = 0; i != size; i++) {
-		if (types[i]._default) {
-			_map[types[i]._c_type] = i;
+		if (types[i].default_) {
+			map_[types[i].c_type_] = i;
 		}
 	}
 }

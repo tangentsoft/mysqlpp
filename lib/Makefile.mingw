@@ -1,0 +1,67 @@
+## This file contains the 'make' rules specific to MinGW GCC.  The
+## ../makemake.bat script prepends this to Makefile.base to create a
+## complete Makefile.
+
+# This file is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as published
+# by the Free Software Foundation; either version 2.1 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with MySQL++; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
+# USA
+
+CXX=g++
+
+LIB_BASE=mysqlpp
+
+## Build DLL -- uncomment $(IMP_FILE) target below, and comment out
+## static library stuff if you want to try this.
+#CXXFLAGS=-Ic:\mysql\include -I.. -O2 -DMYSQLPP_MAKING_DLL -c
+#IMP_FILE=$(LIB_BASE).a
+#LIB_FILE=$(LIB_BASE).dll
+#LD=$(CXX)
+#LDFLAGS=-shared -o $(LIB_FILE)
+#LIBS=-Lc:\mysql\lib\gcc -lmysqlclient
+
+## Build static library
+CXXFLAGS=-Ic:\mysql\include -I.. -DMYSQLPP_NO_DLL -O2 -c
+LIB_FILE=lib$(LIB_BASE).a
+LD=ar
+LDFLAGS=cru $(LIB_FILE)
+
+EXTRA_CLEAN=#$(IMP_FILE)
+
+INST_DIR=c:\mysql++\mingw
+INST_INC_DIR=$(INST_DIR)\include
+INST_LIB_DIR=$(INST_DIR)\lib
+
+OBJ=o
+EXE=exe
+DEL=rm -f
+
+
+.SUFFIXES: .cpp .o
+.cpp.o:
+	$(CXX) $(CXXFLAGS) $<
+
+
+mingw: all
+
+install_platform:
+	@if not exist $(INST_DIR) mkdir $(INST_DIR)
+	@if not exist $(INST_INC_DIR) mkdir $(INST_INC_DIR)
+	@if not exist $(INST_LIB_DIR) mkdir $(INST_LIB_DIR)
+	copy *.h $(INST_INC_DIR) >& NUL
+	copy *.dll *.a $(INST_LIB_DIR) >& NUL
+
+#$(IMP_FILE): $(LIB_FILE)
+#	pexports $(LIB_FILE) |sed 's/^_//' > $(LIB_BASE).def
+#	dlltool -d $(LIB_BASE).def -l $(IMP_FILE)
+

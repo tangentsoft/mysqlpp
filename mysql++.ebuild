@@ -30,15 +30,14 @@ src_compile() {
 	# straight to /usr/include
 	# Note: the new maintainer is making RPM's that install to this
 	#       directory too, so this is fine.
-	myconf="${myconf} --includedir=/usr/include/mysql++"
+	myconf="${myconf}"
 	# not including the directives to where MySQL is because it seems to find it
 	# just fine without
 	# force the cflags into place otherwise they get totally ignored by
 	# configure
 	CFLAGS="${CFLAGS}" CXXFLAGS="${CFLAGS} ${CXXFLAGS}" \
 	econf \
-		--disable-examples \
-		--includedir=/usr/include/mysql++ || die "econf failed"
+		--disable-examples || die "econf failed"
 
 	emake || die "unable to make"
 }

@@ -38,70 +38,76 @@ info(q->info())
 {
 }
 
-ResUse::ResUse(MYSQL_RES* result, Connection* m, bool te) :
-mysql(m),
-throw_exceptions(te),
-initialized(false),
-_fields(this)
+
+ResUse::ResUse(MYSQL_RES* result, Connection* c, bool te) :
+OptionalExceptions(te),
+conn_(c),
+initialized_(false),
+names_(0),
+types_(0),
+fields_(this)
 {
 	if (!result) {
-		mysql_res = 0;
-		_types = 0;
-		_names = 0;
+		result_ = 0;
+		types_ = 0;
+		names_ = 0;
 		return;
 	}
-	mysql_res = result;
-	_names = new FieldNames(this);
-	if (_names) {
-		_types = new FieldTypes(this);
+	result_ = result;
+	names_ = new FieldNames(this);
+	if (names_) {
+		types_ = new FieldTypes(this);
 	}
-	_table = fields(0).table;
-	initialized = true;
+	table_ = fields(0).table;
+	initialized_ = true;
 }
+
 
 ResUse::~ResUse()
 {
-	if (mysql) {
-		mysql->unlock();
+	if (conn_) {
+		conn_->unlock();
 	}
 	purge();
 }
 
+
 void ResUse::copy(const ResUse& other)
 {
-	if (!other.mysql_res) {
-		mysql_res = 0;
-		_types = 0;
-		_names = 0;
-		return;
-	}
-
-	if (initialized) {
+	if (initialized_) {
 		purge();
 	}
 
-	throw_exceptions = other.throw_exceptions;
-	mysql_res = other.mysql_res;
-	_fields = other._fields;
+	if (!other.result_) {
+		result_ = 0;
+		types_ = 0;
+		names_ = 0;
+		initialized_ = other.initialized_;
+		return;
+	}
 
-	if (other._names) {
-		_names = new FieldNames(*other._names);
+	set_exceptions(other.throw_exceptions());
+	result_ = other.result_;
+	fields_ = Fields(this);
+
+	if (other.names_) {
+		names_ = new FieldNames(*other.names_);
 	}
 	else {
-		_names = 0;
+		names_ = 0;
 	}
 	
-	if (other._types) {
-		_types = new FieldTypes(*other._types);
+	if (other.types_) {
+		types_ = new FieldTypes(*other.types_);
 	}
 	else {
-		_types = 0;
+		types_ = 0;
 	}
 
-	_table = other._table;
+	table_ = other.table_;
 
-	mysql = other.mysql;
-	initialized = true;
+	conn_ = other.conn_;
+	initialized_ = true;
 }
 
 } // end namespace mysqlpp

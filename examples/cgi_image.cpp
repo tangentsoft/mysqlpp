@@ -53,8 +53,7 @@ main(int argc, char *argv[])
 	cout << "Content-type: image/jpeg" << endl;
 	Connection con(use_exceptions);
 	try {
-		con.real_connect(MY_DATABASE, MY_HOST, MY_USER, MY_PASSWORD, 3306,
-						 0, 60, NULL);
+		con.connect(MY_DATABASE, MY_HOST, MY_USER, MY_PASSWORD);
 		Query query = con.query();
 		query << "SELECT " << MY_FIELD << " FROM " << MY_TABLE << " WHERE "
 			<< MY_KEY << " = " << argv[1];
@@ -63,15 +62,17 @@ main(int argc, char *argv[])
 		long unsigned int *jj = res.fetch_lengths();
 		cout << "Content-length: " << *jj << endl << endl;
 		fwrite(row.raw_data(0), 1, *jj, stdout);
-		return 0;
 	}
-	catch (BadQuery& er) {
-		cerr << "Error: " << er.what() << " " << con.errnum() << endl;
+	catch (const BadQuery& er) {
+		// Handle any query errors
+		cerr << "Query error: " << er.what() << endl;
 		return -1;
 	}
-	catch (exception& er) {
+	catch (const Exception& er) {
+		// Catch-all for any other MySQL++ exceptions
 		cerr << "Error: " << er.what() << endl;
 		return -1;
 	}
-}
 
+	return 0;
+}

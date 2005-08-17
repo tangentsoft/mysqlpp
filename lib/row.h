@@ -133,6 +133,8 @@ public:
 	/// If the index is out-of-bounds, the underlying vector is supposed
 	/// to throw an exception according to the C++ Standard.  Whether it
 	/// actually does this is implementation-dependent.
+	///
+	/// \sa operator[]() for caveats about using this function.
 	MYSQLPP_EXPORT const ColData at(size_type i) const;
 
 	/// \brief Return the value of a field given its index, in raw form.

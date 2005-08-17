@@ -1,9 +1,9 @@
 /***********************************************************************
- simple2.cpp - Retrieves the entire contents of the sample stock table
- 	using a "store" query, and prints it out.
+ simple3.cpp - Example showing how to use the 'use' method of retrieving
+	a table, as opposed to the more common 'store' method illustrated
+	by the simple2 example.
 
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ Copyright (c) 2005 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -43,12 +43,13 @@ main(int argc, char *argv[])
 		return 1;
 	}
 
-	// Retrieve the sample stock table set up by resetdb
+	// Ask for all rows from the sample stock table set up by resetdb.
+	// Unlike simple2 example, we don't store result set in memory.
 	mysqlpp::Query query = con.query();
 	query << "select * from stock";
-	mysqlpp::Result res = query.store();
+	mysqlpp::ResUse res = query.use();
 
-	// Display results
+	// Retreive result rows one by one, and display them.
 	if (res) {
 		// Display header
 		cout.setf(ios::left);
@@ -60,8 +61,7 @@ main(int argc, char *argv[])
 
 		// Get each row in result set, and print its contents
 		mysqlpp::Row row;
-		mysqlpp::Row::size_type i;
-		for (i = 0; row = res.at(i); ++i) {
+		while (row = res.fetch_row()) {
 			cout << setw(20) << row["item"] << ' ' <<
 					setw(9) << row["num"] << ' ' <<
 					setw(9) << row["weight"] << ' ' <<
@@ -69,11 +69,11 @@ main(int argc, char *argv[])
 					setw(9) << row["sdate"] <<
 					endl;
 		}
+
+		return 0;
 	}
 	else {
 		cerr << "Failed to get stock item: " << query.error() << endl;
 		return 1;
 	}
-
-	return 0;
 }

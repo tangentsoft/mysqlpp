@@ -14,20 +14,23 @@ DEL=rm -f
 .cpp.o:
 	$(CXX) $(CXXFLAGS) $<
 
-BINARIES=resetdb simple1 simple2 usequery \
-		fieldinf1 dbinfo cgi_image load_file \
-		updel multiquery custom1 custom2 \
-		custom3 custom4 custom5 
+BINARIES=resetdb simple1 simple2 simple3 \
+		usequery fieldinf1 dbinfo cgi_image \
+		load_file updel multiquery custom1 \
+		custom2 custom3 custom4 custom5 \
+		custom6 
 
 RESETDB_OBJS=resetdb.o util.o
 SIMPLE1_OBJS=simple1.o util.o
 SIMPLE2_OBJS=simple2.o util.o
+SIMPLE3_OBJS=simple3.o util.o
 USEQUERY_OBJS=usequery.o util.o
 CUSTOM1_OBJS=custom1.o util.o
 CUSTOM2_OBJS=custom2.o util.o
 CUSTOM3_OBJS=custom3.o util.o
 CUSTOM4_OBJS=custom4.o util.o
 CUSTOM5_OBJS=custom5.o util.o
+CUSTOM6_OBJS=custom6.o util.o
 FIELDINF1_OBJS=fieldinf1.o util.o
 DBINFO_OBJS=dbinfo.o util.o
 CGI_IMAGE_OBJS=cgi_image.o
@@ -49,6 +52,9 @@ simple1: $(SIMPLE1_OBJS)
 simple2: $(SIMPLE2_OBJS)
 	$(LD) $(LDFLAGS) $(SIMPLE2_OBJS) $(LDEXEFLAG)$@ $(LIBS)
 
+simple3: $(SIMPLE3_OBJS)
+	$(LD) $(LDFLAGS) $(SIMPLE3_OBJS) $(LDEXEFLAG)$@ $(LIBS)
+
 usequery: $(USEQUERY_OBJS)
 	$(LD) $(LDFLAGS) $(USEQUERY_OBJS) $(LDEXEFLAG)$@ $(LIBS)
 
@@ -66,6 +72,9 @@ custom4: $(CUSTOM4_OBJS)
 
 custom5: $(CUSTOM5_OBJS)
 	$(LD) $(LDFLAGS) $(CUSTOM5_OBJS) $(LDEXEFLAG)$@ $(LIBS)
+
+custom6: $(CUSTOM6_OBJS)
+	$(LD) $(LDFLAGS) $(CUSTOM6_OBJS) $(LDEXEFLAG)$@ $(LIBS)
 
 fieldinf1: $(FIELDINF1_OBJS)
 	$(LD) $(LDFLAGS) $(FIELDINF1_OBJS) $(LDEXEFLAG)$@ $(LIBS)
@@ -88,12 +97,14 @@ multiquery: $(MULTIQUERY_OBJS)
 resetdb.o: resetdb.cpp util.h
 simple1.o: simple1.cpp util.h
 simple2.o: simple2.cpp util.h
+simple3.o: simple3.cpp util.h
 usequery.o: usequery.cpp util.h
 custom1.o: custom1.cpp util.h
 custom2.o: custom2.cpp util.h
 custom3.o: custom3.cpp util.h
 custom4.o: custom4.cpp util.h
 custom5.o: custom5.cpp util.h
+custom6.o: custom6.cpp util.h
 fieldinf1.o: fieldinf1.cpp util.h
 dbinfo.o: dbinfo.cpp util.h
 cgi_image.o: cgi_image.cpp

@@ -304,6 +304,12 @@ Bug Fix/Maintenance Items
 	These items could happen in any version.
 
 
+	o Storing a subset row in an SSQLS defined to hold the entire
+	  row currently causes a segfault.  To see this, copy the SSQLS
+	  definition from custom1 to custom6.  This is arguably a bug;
+	  see if we can't make it just fill out the fields queried for,
+	  and leave the rest unchanged.
+
 	o 64-bit integer support has been reported to work, but more
 	  confirmation is wanted.
 

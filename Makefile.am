@@ -26,11 +26,14 @@ EXTRA_DIST = \
 	doc/mysqlpp-userman.pdf \
 	doc/README* \
 	doc/ssqls-pretty \
-	doc/refman/html \
+	doc/refman/html/*.css \
+	doc/refman/html/*.html \
+	doc/refman/html/*.png \
 	doc/userman/*.xml \
 	doc/userman/*.xsl \
 	doc/userman/mktxt \
-	doc/userman/html \
+	doc/userman/html/*.css \
+	doc/userman/html/*.html \
 	doc/userman/Makefile \
 	doc/userman/README \
 	makemake.* \

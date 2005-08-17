@@ -14,16 +14,15 @@
 # USA
 
 
-dnl Don't forget to change libtool version below, plus the version
-dnl numbers in ChangeLog and mysql++.spec.
-AC_INIT(mysql++, 2.0.0, plusplus@lists.mysql.com, mysql++)
+dnl Don't forget to change libtool version below.
+AC_INIT(mysql++, 2.0.1, plusplus@lists.mysql.com, mysql++)
 
 # Libtool version scheme is: interface:change:age.  Interface number
 # goes up any time the library interface changes.  Change number goes up
 # any time library changes without affecting interface.  Age goes up any
 # time interface changes without breaking backwards compatibility, such
 # as by adding new functions; must always be less than interface number.
-AC_SUBST(MYSQLPP_LIBTOOL_VERSION, [2:0:0])
+AC_SUBST(MYSQLPP_LIBTOOL_VERSION, [2:0:1])
 
 dnl Break package version up into major, minor and bugfix components.
 dnl Avoid temptation to use these to define MYSQLPP_LIBTOOL_VERSION:

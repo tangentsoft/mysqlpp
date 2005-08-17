@@ -35,7 +35,7 @@
 		<holder>Educational Technology Resources</holder>
 	</copyright>
 
-	<pubdate role="rcs">$Date: 2005-08-15 10:13:39 -0600 (Mon, 15 Aug 2005) $</pubdate>
+	<pubdate role="rcs">$Date: 2005-08-17 13:18:35 -0600 (Wed, 17 Aug 2005) $</pubdate>
 </articleinfo>
 
 
@@ -315,7 +315,7 @@ for (vector&lt;mystruct&gt;::iterator it = v.begin(); it != v.end(); ++it) {
 </sect1>
 
 
-<sect1 id="tutorial">
+<sect1 id="tutorial" xreflabel="Tutorial">
 	<title>Tutorial</title>
 
 	<para>This tutorial is meant to give you a jump start in using
@@ -395,18 +395,29 @@ for (vector&lt;mystruct&gt;::iterator it = v.begin(); it != v.end(); ++it) {
 			parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 		</programlisting>
 
-		<para>The only tricky bit is that we
-		delegate connection establishment to
+		<para>This example simply gets the entire "item"
+		column from the example table, and prints those
+		values out.</para>
+
+		<para>Notice that MySQL++ lets you store
+		result sets in STL containers, such as
+		<computeroutput>std::vector</computeroutput>.
+		We iterate through the result set just as you would
+		with any other STL container. The only tricky bit is
+		the <computeroutput>it->at(0)</computeroutput> idiom.
+		This dereferences the iterator, which yields a <ulink
+		type="classref" url="Row"/> object, on which we call
+		the <computeroutput>at()</computeroutput> method to
+		retrieve the first field.</para>
+
+		<para>The only thing that isn't explicitly
+		handled in the code block above is that
+		we delegate connection establishment to
 		<computeroutput>connect_to_db()</computeroutput>
 		in the <computeroutput>util</computeroutput> module.
 		We do this only because that function also handles
 		the command line parsing for the examples, so they
 		have a consistent interface.</para>
-
-		<para>Once <computeroutput>simple1</computeroutput>
-		is connected to the database server, it then executes
-		a query for one of the rows in the sample table,
-		and prints it out.</para>
 	</sect2>
 
 
@@ -429,6 +440,42 @@ for (vector&lt;mystruct&gt;::iterator it = v.begin(); it != v.end(); ++it) {
 		with the Unicode stuff removed. The interaction
 		between MySQL, MySQL++ and Unicode is covered in a
 		later chapter, <xref linkend="unicode"/>.</para>
+	</sect2>
+
+
+	<sect2>
+		<title>A More Complicated Example</title>
+
+		<para>The <computeroutput>simple1</computeroutput>
+		example above was pretty trivial. Let's
+		get a little deeper. Here is
+		<filename>examples/simple2.cpp</filename>:</para>
+
+		<programlisting><xi:include href="simple2.txt"
+			parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+		</programlisting>
+
+		<para>This example illustrates several new concepts.</para>
+
+		<para>First, notice that we store the result set in
+		a <ulink type="classref" url="Result"/> object. Like
+		the a <computeroutput>std::vector</computeroutput> we
+		used in the <computeroutput>simple1</computeroutput>
+		example, <computeroutput>Result</computeroutput>
+		is a container type, so iterating through it
+		is straightforward. The main difference is that
+		<computeroutput>Result</computeroutput> is less
+		distanced from the way the underlying MySQL C API
+		works, so it is somewhat more efficient.</para>
+
+		<para>Second, we access each row's data indirectly
+		through a <ulink type="classref" url="Row"/>
+		object. This affords several nice features, such
+		as the ability to access a field by name.  You can
+		also access fields by position, as we did in the
+		<computeroutput>simple1</computeroutput> example,
+		which is more efficient, but makes your code less
+		flexible.</para>
 	</sect2>
 
 
@@ -677,6 +724,9 @@ q &lt;&lt; "SELECT * FROM stock WHERE item = " &lt;&lt; quote &lt;&lt; s; </prog
 			<programlisting><xi:include href="custom4.txt"
 				parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 			</programlisting>
+
+			<para>For more details on the SSQLS feature, see the <xref
+			linkend="ssqls"/> chapter.</para>
 		</sect3>
 	</sect2>
 
@@ -788,19 +838,19 @@ q &lt;&lt; "SELECT * FROM stock WHERE item = " &lt;&lt; quote &lt;&lt; s; </prog
 		iterator that a container like vector offers. By
 		accepting this limitation, you can process arbitrarily
 		large result sets. This technique is demonstrated
-		in <filename>examples/simple2.cpp</filename>:</para>
+		in <filename>examples/simple3.cpp</filename>:</para>
 
-		<programlisting><xi:include href="simple2.txt"
+		<programlisting><xi:include href="simple3.txt"
 			parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 		</programlisting>
 
 		<para>This example does the same thing as
-		<filename>simple1</filename>, only with a
-		"use" query instead of a "store" query. If your
-		program uses exceptions, you should instead look at
-		<filename>examples/usequery.cpp</filename>, which does
-		the same thing as the <filename>simple2</filename>
-		example, but with exception-awareness.</para>
+		<filename>simple2</filename>, only with a "use"
+		query instead of a "store" query. If your program
+		uses exceptions, you should instead look at
+		<filename>examples/usequery.cpp</filename>, which
+		does the same thing as <filename>simple</filename>,
+		but with exception-awareness.</para>
 	</sect2>
 
 
@@ -1360,6 +1410,48 @@ struct stock {
 		refuses to compile the code. If you are getting compiler
 		errors having to do with duplicate definitions, try
 		changing this value to zero.</para>
+	</sect2>
+
+
+	<sect2>
+		<title>An Important Limitation of sql_create</title>
+
+		<para>The features described in the two previous sections
+		work together nicely most of the time. However, if you try
+		to use the same value for the second and third parameters to
+		<computeroutput>sql_create_N</computeroutput>, your
+		program will fail to compile.</para>
+
+		<para>Why is this?</para>
+		
+		<para>The second parameter sets up SSQLS comparisons,
+		one aspect of which defines a constructor taking just
+		the table's key fields. The third parameter sets up
+		an initialization constructor, taking as many fields
+		as you request. When these two values are equal,
+		you get two identical constructor definitions,
+		which is illegal in C++.</para>
+		
+		<para>The solution is to use 0 for the third
+		parameter, indicating that you do not need
+		a separate full-initialization constructor.
+		<filename>examples/custom6.cpp</filename> illustrates
+		this:</para>
+
+		<programlisting><xi:include href="custom6.txt"
+			parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+		</programlisting>
+
+		<para>This example shows one other thing, which
+		is how to retrieve a subset of a table using
+		SSQLS. Because we wanted only one column from the
+		table, we had to pass 0 for the third parameter to
+		<computeroutput>sql_create_N</computeroutput> to get
+		the code to compile.</para>
+		
+		<para>(See the simple3 example in the <xref
+		linkend="tutorial"/> for another way to accomplish
+		the same thing.)</para>
 	</sect2>
 
 

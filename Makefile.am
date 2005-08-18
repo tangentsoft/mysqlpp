@@ -36,6 +36,7 @@ EXTRA_DIST = \
 	doc/userman/html/*.html \
 	doc/userman/Makefile \
 	doc/userman/README \
+	make.bat \
 	makemake.* \
 	*.ebuild \
 	*.spec
@@ -71,6 +72,7 @@ doc/mysqlpp-refman.pdf: lib/*.h
 	( cd lib ; make refman )
 
 doc/mysqlpp-userman.pdf: doc/userman/userman.xml
+	rm -f doc/userman/*.txt
 	( cd doc/userman ; make && make pdf )
 
 tags: ctags

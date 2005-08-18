@@ -49,6 +49,7 @@ install_platform:
 	@if not exist $(INST_DIR) mkdir $(INST_DIR)
 	@if not exist $(INST_INC_DIR) mkdir $(INST_INC_DIR)
 	@if not exist $(INST_LIB_DIR) mkdir $(INST_LIB_DIR)
-	copy *.h $(INST_INC_DIR) >& NUL
-	copy *.dll *.lib $(INST_LIB_DIR) >& NUL
+	copy *.h "$(INST_INC_DIR)" > NUL
+	copy *.dll "$(INST_LIB_DIR)" > NUL
+	copy *.lib "$(INST_LIB_DIR)" > NUL
 

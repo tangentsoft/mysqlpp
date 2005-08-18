@@ -35,7 +35,7 @@
 		<holder>Educational Technology Resources</holder>
 	</copyright>
 
-	<pubdate role="rcs">$Date: 2005-08-17 13:18:35 -0600 (Wed, 17 Aug 2005) $</pubdate>
+	<pubdate role="rcs">$Date: 2005-08-18 11:40:34 -0600 (Thu, 18 Aug 2005) $</pubdate>
 </articleinfo>
 
 
@@ -1449,7 +1449,7 @@ struct stock {
 		<computeroutput>sql_create_N</computeroutput> to get
 		the code to compile.</para>
 		
-		<para>(See the simple3 example in the <xref
+		<para>(See the simple1 example in the <xref
 		linkend="tutorial"/> for another way to accomplish
 		the same thing.)</para>
 	</sect2>

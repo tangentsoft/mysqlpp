@@ -17,12 +17,12 @@ rem Decide how to build subordinate make.bat files
 if "%1" == "vc" goto vc_make
 goto generic_make
 :vc_make
-echo @nmake /nologo ^%* > lib\make.bat
-echo @nmake /nologo ^%* > examples\make.bat
+echo @nmake /nologo %%* > lib\make.bat
+echo @nmake /nologo %%* > examples\make.bat
 goto make_bat_created
 :generic_make
-echo @make.exe ^%* > lib\make.bat
-echo @make.exe ^%* > examples\make.bat
+echo @make.exe %%* > lib\make.bat
+echo @make.exe %%* > examples\make.bat
 
 :make_bat_created
 rem Create library Makefile

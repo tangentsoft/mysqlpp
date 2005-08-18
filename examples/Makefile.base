@@ -52,6 +52,9 @@ all: $(BINARIES)
 clean:
 	$(DEL) *.$(OBJ) $(BINARIES) $(EXTRA_CLEAN)
 
+install:
+	@echo Nothing to install for examples.
+
 
 resetdb$(EXE): $(RESETDB_OBJS)
 	$(LD) $(LDFLAGS) $(LDSTARTUP) $(RESETDB_OBJS) $(LDEXEFLAG)$@ $(LIBS)

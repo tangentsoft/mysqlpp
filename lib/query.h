@@ -523,10 +523,10 @@ public:
 	/// \brief Specialization of storein_sequence() for STL
 	/// extension \c slist
 	///
-	/// This is primarily for really old versions of g++, which put
-	/// \c slist in the \c std namespace!
+	/// This is for those benighted compilers that include an \c slist
+	/// implementation, but erroneously put it in the \c std namespace!
 	template <class T>
-	void storein(slist<T>& con, const char* s)
+	void storein(std::slist<T>& con, const char* s)
 	{
 		storein_sequence(con, s);
 	}

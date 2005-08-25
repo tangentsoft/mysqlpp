@@ -36,42 +36,49 @@ using namespace std;
 const char* kpcSampleDatabase = "mysql_cpp_data";
 
 
-//// utf8_to_win32_ansi ////////////////////////////////////////////////
+//// utf8trans /////////////////////////////////////////////////////////
 // Converts a Unicode string encoded in UTF-8 form (which the MySQL
-// database uses) to Win32's ANSI character encoding using the current
-// code page.  A small modification to this function will turn it into
-// a UTF-8 to UCS-2 function, since that's an intermediate form within
-// this function.  The Unicode chapter in the user manual explains why
-// that double conversion is necessary.
+// database uses) to a form suitable for outputting to the standard C++
+// cout stream.  Functionality is platform-specific.
 
-#ifdef MYSQLPP_PLATFORM_WINDOWS
-static bool
-utf8_to_win32_ansi(const char* utf8_str, char* ansi_str,
-		int ansi_len)
+char*
+utf8trans(const char* utf8_str, char* out_buf, int buf_len)
 {
+#ifdef MYSQLPP_PLATFORM_WINDOWS
+	// It's Win32, so assume console output, where output needs to be in
+	// local ANSI code page by default.
 	wchar_t ucs2_buf[100];
 	static const int ub_chars = sizeof(ucs2_buf) / sizeof(ucs2_buf[0]);
 
-	int err = MultiByteToWideChar(CP_UTF8, 0, utf8_str, -1,
-			ucs2_buf, ub_chars);
-	if (err == 0) {
-		cerr << "Unknown error in Unicode translation: " <<
-				GetLastError() << endl;
-		return false;
-	}
-	else if (err == ERROR_NO_UNICODE_TRANSLATION) {
-		cerr << "Bad data in UTF-8 string" << endl;
-		return false;
-	}
-	else {
+	// First, convert UTF-8 string to UCS-2
+	if (MultiByteToWideChar(CP_UTF8, 0, utf8_str, -1,
+			ucs2_buf, ub_chars) > 0) {
+		// Next, convert UCS-2 to local code page.
 		CPINFOEX cpi;
 		GetCPInfoEx(CP_OEMCP, 0, &cpi);
 		WideCharToMultiByte(cpi.CodePage, 0, ucs2_buf, -1,
-				ansi_str, ansi_len, 0, 0);
-		return true;
+				out_buf, buf_len, 0, 0);
+		return out_buf;
 	}
-}
+	else {
+		int err = GetLastError();
+		if (err == ERROR_NO_UNICODE_TRANSLATION) {
+			cerr << "Bad data in UTF-8 string" << endl;
+		}
+		else {
+			cerr << "Unknown error in Unicode translation: " <<
+					GetLastError() << endl;
+		}
+		return 0;
+	}
+#else
+	// Assume a modern Unixy platform, where the system's terminal I/O
+	// code handles UTF-8 directly.  (e.g. common Linux distributions
+	// since 2001 or so, recent versions of Mac OS X, etc.)
+	strncpy(out_buf, utf8_str, buf_len);
+	return out_buf;
 #endif
+}
 
 
 //// print_stock_header ////////////////////////////////////////////////
@@ -98,24 +105,12 @@ void
 print_stock_row(const std::string& item, mysqlpp::longlong num,
 		double weight, double price, const mysqlpp::Date& date)
 {
-	// Output item field.  We treat it separately because there is
-	// Unicode data in this field in the sample database.
-#ifdef MYSQLPP_PLATFORM_WINDOWS
-	// We're running on Windows, so convert the first column from UTF-8
-	// to UCS-2, and then to the local ANSI code page.  The user manual
-	// explains why this double conversion is required.
-	char item_ansi[100];
-	if (utf8_to_win32_ansi(item.c_str(), item_ansi, sizeof(item_ansi))) {
-		cout << setw(20) << item_ansi << ' ';
-	}
-#else
-	// Just send string to console.  On modern Unices, the terminal code
-	// interprets UTF-8 directly, so no special handling is required.
-	cout << setw(20) << item << ' ';
-#endif
-
-	// Output remaining columns
-	cout << setw(9) << num << ' ' <<
+	// We do UTF-8 translation on item field because there is Unicode
+	// data in this field in the sample database, and some systems
+	// cannot handle UTF-8 sent directly to cout.
+	char buf[100];
+	cout << setw(20) << utf8trans(item.c_str(), buf, sizeof(buf)) << ' ' <<
+			setw(9) << num << ' ' <<
 			setw(9) << weight << ' ' <<
 			setw(9) << price << ' ' <<
 			date << endl;

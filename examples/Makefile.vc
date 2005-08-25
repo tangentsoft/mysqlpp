@@ -19,14 +19,15 @@
 
 CXX=cl
 INCLUDES=/Ic:\mysql\include -I..\lib
-CXXFLAGS=$(INCLUDES) /Od /G5 /EHsc /nologo /MDd /Zi /c
+CXXFLAGS=$(INCLUDES) /D_UNICODE /D_DEBUG /G6 /EHsc /nologo /MDd \
+		/Od /ZI /Zi /c
 
 LD=$(CXX)
 LDFLAGS=/nologo
 LDEXEFLAG=/link /LIBPATH:c:\mysql\lib\opt libmysql.lib \
-		/LIBPATH:..\lib mysqlpp.lib /OUT:
+		/LIBPATH:..\lib mysqlpp.lib /OPT:NOREF /OUT:
 
-EXTRA_CLEAN=*.dll *.pdb
+EXTRA_CLEAN=*.dll *.idb *.pdb
 
 OBJ=obj
 EXE=.exe

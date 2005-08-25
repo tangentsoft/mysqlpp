@@ -59,10 +59,12 @@ main(int argc, char *argv[])
 				"Date" << endl << endl;
 
 		// Get each row in result set, and print its contents
+		char buf[100];
 		mysqlpp::Row row;
 		mysqlpp::Row::size_type i;
 		for (i = 0; row = res.at(i); ++i) {
-			cout << setw(20) << row["item"] << ' ' <<
+			cout << setw(20) <<
+					utf8trans(row["item"], buf, sizeof(buf)) << ' ' <<
 					setw(9) << row["num"] << ' ' <<
 					setw(9) << row["weight"] << ' ' <<
 					setw(9) << row["price"] << ' ' <<
@@ -71,7 +73,7 @@ main(int argc, char *argv[])
 		}
 	}
 	else {
-		cerr << "Failed to get stock item: " << query.error() << endl;
+		cerr << "Failed to get stock table: " << query.error() << endl;
 		return 1;
 	}
 

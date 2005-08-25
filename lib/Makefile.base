@@ -22,13 +22,25 @@
 
 # --- No user-serviceable parts below :)
 
-OBJS=coldata.$(OBJ) connection.$(OBJ) datetime.$(OBJ) field_names.$(OBJ) \
-		field_types.$(OBJ) fields.$(OBJ) manip.$(OBJ) myset.$(OBJ) qparms.$(OBJ) \
-		query.$(OBJ) result.$(OBJ) row.$(OBJ) sql_string.$(OBJ) string_util.$(OBJ) \
-		type_info.$(OBJ) vallist.$(OBJ)
+OBJS=	coldata.$(OBJ) \
+		connection.$(OBJ) \
+		datetime.$(OBJ) \
+		field_names.$(OBJ) \
+		field_types.$(OBJ) \
+		fields.$(OBJ) \
+		manip.$(OBJ) \
+		myset.$(OBJ) \
+		qparms.$(OBJ) \
+		query.$(OBJ) \
+		result.$(OBJ) \
+		row.$(OBJ) \
+		sql_string.$(OBJ) \
+		string_util.$(OBJ) \
+		type_info.$(OBJ) \
+		vallist.$(OBJ)
 
 
-all: $(OBJS) $(LIB_FILE) $(IMP_FILE)
+all: $(OBJS) $(LIB_FILE) $(IMP_FILE) $(RELEASE_LIB_FILE)
 
 install: install_platform
 
@@ -37,7 +49,7 @@ clean:
 
 
 $(LIB_FILE): $(OBJS)
-	$(LD) $(LDFLAGS) $(LDSTARTUP) $(OBJS) $(LDEXE) $(LIBS)
+	$(LD) $(LDFLAGS) $(LDDEBUGFLAGS) $(LDSTARTUP) $(OBJS) $(LDEXE) $(LIBS)
 
 coldata.$(OBJ): coldata.cpp coldata.h
 connection.$(OBJ): connection.cpp connection.h

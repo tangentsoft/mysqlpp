@@ -35,7 +35,7 @@
 		<holder>Educational Technology Resources</holder>
 	</copyright>
 
-	<pubdate role="rcs">$Date: 2005-08-18 11:40:34 -0600 (Thu, 18 Aug 2005) $</pubdate>
+	<pubdate role="rcs">$Date: 2005-08-25 04:27:35 -0600 (Thu, 25 Aug 2005) $</pubdate>
 </articleinfo>
 
 
@@ -2031,20 +2031,6 @@ MessageBox(0, ucs2_buf, "UCS-2 version of Item", MB_OK);</programlisting>
 			<title>v2.0.0</title>
 
 			<sect4>
-				<title>Library-wide changes</title>
-				
-				<para>Where possible, all distributed
-				Makefiles only build dynamic
-				libraries. (Shared objects on most
-				Unices, DLLs on Windows, etc.) Unless
-				your program is licensed under the GPL
-				or LGPL, you shouldn't have been using
-				the static libraries from previous
-				versions anyway.</para>
-			</sect4>
-
-
-			<sect4>
 				<title>Connection class changes</title>
 
 				<itemizedlist>
@@ -2308,7 +2294,7 @@ MessageBox(0, ucs2_buf, "UCS-2 version of Item", MB_OK);</programlisting>
 					and unnecessary MySQL C API
 					function <ulink url="mysql-eof"
 					type="mysqlapi"/>. See the
-					<computeroutput>simple2</computeroutput>
+					<computeroutput>simple3</computeroutput>
 					and
 					<computeroutput>usequery</computeroutput>
 					examples to see the proper
@@ -2355,6 +2341,18 @@ MessageBox(0, ucs2_buf, "UCS-2 version of Item", MB_OK);</programlisting>
 				<title>Miscellaneous changes</title>
 
 				<itemizedlist>
+					<listitem><para>Where
+					possible, all distributed
+					Makefiles only build dynamic
+					libraries. (Shared objects on
+					most Unices, DLLs on Windows,
+					etc.) Unless your program
+					is licensed under the GPL or
+					LGPL, you shouldn't have been
+					using the static libraries
+					from previous versions
+					anyway.</para></listitem>
+
 					<listitem><para>Removed the
 					backwards-compatibility headers
 					<filename>sqlplus.hh</filename>

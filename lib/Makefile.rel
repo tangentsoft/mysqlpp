@@ -1,0 +1,5 @@
+
+$(RELEASE_LIB_FILE): $(OBJS)
+	cd release
+	$(LD) $(LDFLAGS) $(LDSTARTUP) $(OBJS) $(LDEXE) $(LIBS)
+	cd ..

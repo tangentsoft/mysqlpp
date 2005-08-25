@@ -27,6 +27,7 @@ EXTRA_DIST = \
 		Makefile.bc \
 		Makefile.gcc \
 		Makefile.mingw \
+		Makefile.rel \
 		Makefile.simple \
 		Makefile.vc
 

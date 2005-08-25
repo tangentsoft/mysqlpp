@@ -1,9 +1,9 @@
 2.0.3, 2005.08.25 (r1060)
 
 	o Visual C++ makemake system updated to build both debug and
-	  release versions.
+	  release versions of library DLL.
 
-	o Fixed bug in simple1 example that casued crashes on Windows.
+	o Fixed bug in simple1 example that caused crashes on Windows.
 
 	o Doing UTF-8 to ANSI text translation in simple examples now.
 

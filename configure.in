@@ -15,7 +15,7 @@
 
 
 # Don't forget to change libtool version below.
-AC_INIT(mysql++, 2.0.3, plusplus@lists.mysql.com, mysql++)
+AC_INIT(mysql++, 2.0.3a, plusplus@lists.mysql.com, mysql++)
 
 # Libtool version scheme is: interface:change:age.  Interface number
 # goes up any time the library interface changes.  Change number goes up

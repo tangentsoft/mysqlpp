@@ -33,6 +33,7 @@ echo. >> lib\Makefile
 echo. >> lib\Makefile
 type lib\Makefile.%1 >> lib\Makefile
 type lib\Makefile.base >> lib\Makefile
+if "%1" == "vc" type lib\Makefile.rel >> lib\Makefile
 
 rem Create example programs Makefile
 echo %head1% > examples\Makefile
@@ -42,6 +43,13 @@ echo. >> examples\Makefile
 echo. >> examples\Makefile
 type examples\Makefile.%1 >> examples\Makefile
 type examples\Makefile.base >> examples\Makefile
+
+
+rem Create library release subdirs, if it doesn't exist already
+if not exist lib\release mkdir lib\release
+
+
+rem Start build process
 shift
 call make.bat
 goto end

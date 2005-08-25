@@ -46,14 +46,21 @@ main(int argc, char *argv[])
 	// Retrieve a subset of the sample stock table set up by resetdb
 	mysqlpp::Query query = con.query();
 	query << "select item from stock";
-	vector<mysqlpp::Row> res;
-	query.storein(res);
+	mysqlpp::Result res = query.store();
 
 	// Display the result set
 	cout << "We have:" << endl;
-	vector<mysqlpp::Row>::iterator it;
-	for (it = res.begin(); it != res.end(); ++it) {
-		cout << '\t' << it->at(0) << endl;
+	if (res) {
+		char buf[100];
+		mysqlpp::Row row;
+		mysqlpp::Row::size_type i;
+		for (i = 0; row = res.at(i); ++i) {
+			cout << '\t' << utf8trans(row.at(0), buf, sizeof(buf)) << endl;
+		}
+	}
+	else {
+		cerr << "Failed to get item list: " << query.error() << endl;
+		return 1;
 	}
 
 	return 0;

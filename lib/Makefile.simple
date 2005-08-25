@@ -23,11 +23,23 @@ install_platform:
 	cp *.h $(INST_INC_DIR)
 	cp $(LIB_FILE) $(INST_LIB_DIR)
 
-		field_types.o fields.o manip.o myset.o qparms.o \
-		query.o result.o row.o sql_string.o string_util.o \
-		type_info.o vallist.o
+		connection.o \
+		datetime.o \
+		field_names.o \
+		field_types.o \
+		fields.o \
+		manip.o \
+		myset.o \
+		qparms.o \
+		query.o \
+		result.o \
+		row.o \
+		sql_string.o \
+		string_util.o \
+		type_info.o \
+		vallist.o
 
-all: $(OBJS) $(LIB_FILE) $(IMP_FILE)
+all: $(OBJS) $(LIB_FILE) $(IMP_FILE) $(RELEASE_LIB_FILE)
 
 install: install_platform
 
@@ -35,7 +47,7 @@ clean:
 	$(DEL) $(OBJS) $(LIB_FILE) $(EXTRA_CLEAN)
 
 $(LIB_FILE): $(OBJS)
-	$(LD) $(LDFLAGS) $(OBJS) $(LDEXE) $(LIBS)
+	$(LD) $(LDFLAGS) $(LDDEBUGFLAGS) $(OBJS) $(LDEXE) $(LIBS)
 
 coldata.o: coldata.cpp coldata.h
 connection.o: connection.cpp connection.h

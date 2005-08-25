@@ -40,5 +40,6 @@ void print_stock_rows(mysqlpp::Result& res);
 void get_stock_table(mysqlpp::Query& query, mysqlpp::Result& res);
 bool connect_to_db(int argc, char *argv[], mysqlpp::Connection& con,
 		const char* kdb = 0);
+char* utf8trans(const char* utf8_str, char* ansi_str, int ansi_len);
 
 #endif

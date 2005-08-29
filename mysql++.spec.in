@@ -45,7 +45,7 @@ mkdir -p $RPM_BUILD_ROOT/usr/src/mysql++/examples
 install -m644 examples/*.cpp examples/*.h $RPM_BUILD_ROOT/usr/src/mysql++/examples
 install -m644 examples/Makefile.simple $RPM_BUILD_ROOT/usr/src/mysql++/examples/Makefile
 cp examples/README doc/README.examples
-cp LGPL doc/LICENSE
+cp LICENSE doc
 rm $RPM_BUILD_ROOT/usr/lib/*.la
 rm $RPM_BUILD_ROOT/usr/lib/*.so
 rm $RPM_BUILD_ROOT/usr/lib/*.so.[0-9]

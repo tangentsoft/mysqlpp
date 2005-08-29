@@ -21,7 +21,7 @@ About the New Build System (makemake)
            files, but then old versions cannot read the new files.
            So, each time there's a new version of Visual Studio,
            there's a transition period where at least two versions
-           of the IDE are still in common use.    Makefiles,
+           of the IDE are still in common use.  Makefiles,
            by contrast, work with all versions, without changes.
 
         3. Standardization: project files types proliferated
@@ -57,11 +57,11 @@ Building the Library and Example Programs
     root, as well as in the examples and lib subdirectories.
 
     The build process creates debug and release versions of the MySQL++
-    DLL and import libraries for those DLLs.  It's possible to create
-    a static library, but we don't do this in the distributed Makefiles
-    because linking to such a library is a license violation for programs
-    not licensed under the GPL or LGPL.  Using the library in DLL form
-    avoids this problem.
+    DLL, as well as import libraries for those DLLs.  It's possible to
+    create a static library, but we don't do this in the distributed
+    Makefiles because linking to such a library is a license violation
+    for programs not licensed under the GPL or LGPL.  Using the
+    library in DLL form avoids this problem.
 
     The build process also builds the example programs.  They are built
     in debug mode.  You should run the major examples to make sure

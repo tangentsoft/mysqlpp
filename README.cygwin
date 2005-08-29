@@ -7,9 +7,12 @@ Limitations
 	(See http://www.redhat.com/software/cygwin/ for details.)
 
 	If you're making a closed-source program and do not have a
-	commercial Cygwin license, I recommend that you use either
-	Visual C++ (preferred) or MinGW.  See README.vc or README.mingw
-	for details.
+	commercial Cygwin license, I recommend that you use Visual C++.
+
+	If the cost is the only thing keeping you from using
+	Visual C++, there are free versions of VC++ available.
+	See the Visual C++ item in the MySQL++ FAQ for details:
+	http://tangentsoft.net/mysql++/#faq
 
 
 Building the Library and Example Programs

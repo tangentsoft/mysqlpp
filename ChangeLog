@@ -1,3 +1,18 @@
+2.0.4, 2005.08.29 (r1076)
+
+	o Made mysql_shutdown() second parameter autoconf check less
+	  sensitive to compiler pedantry.
+
+	o VC++ library Makefile is now smart enough to re-create the
+	  import library, if it is deleted while leaving the DLL alone.
+
+	o Added libmysqlclient.def to tarball.
+
+	o Reworked most of the top-level README* files.
+
+	o Renamed LGPL file to LICENSE.
+
+
 2.0.3, 2005.08.25 (r1060)
 
 	o Visual C++ makemake system updated to build both debug and

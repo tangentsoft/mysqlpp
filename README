@@ -1,60 +1,73 @@
-WHAT IT IS
-
+What It Is
+~~~~~~~~~~
 	MySQL++ is a C++ wrapper for MySQL's C API.
 
-	For authorship credits, see the CREDITS file.
+	For authorship information, see the CREDITS file.
 
-	Send feedback to the MySQL++ mailing list:
+	For license information, see the LICENSE file.
+
+	Send feedback and questions to the MySQL++ mailing list:
 			
 		http://lists.mysql.com/plusplus/
 
 
-BUILDING THE LIBRARY
+Prerequisites
+~~~~~~~~~~~~~
+	To build MySQL++, you must have the MySQL C API development
+	files installed.
 
+	On Unixy systems, these are installed if you build MySQL
+	from source.  If you installed MySQL as a binary package,
+	then the C API development files are often packaged separately
+	from the MySQL server itself.  It's common for the package
+	to be called "MySQL-devel" or something like that.
+
+	On Windows, you need to do a custom install of MySQL, for
+	two reasons.  First, the development files aren't installed
+	by default.  Second, the MySQL++ build system expects MySQL to
+	be installed in c:\mysql, and not the directory-du-jour used
+	by the changing installer versions.  The build process works
+	best if you use Visual C++.  If your situation goes against
+	any of these assumptions, read your tool chain's README.*
+	file carefully to learn of any needed workarounds.
+
+
+Building the Library
+~~~~~~~~~~~~~~~~~~~~
 	MySQL++ has two supported build systems.
 
-	The first is based on the GNU autotools (autoconf, automake,
-	and libtool), and is primarily for Unixy[*] systems.  To build
-	the library on such a system, the minimum build commands are:
+	The first is based on the GNU autotools, and is primarily
+	for Linux, Mac OS X, Cygwin, and the "real" Unices.
+	See README.unix for details.  There's a possiblity that
+	it will also work on Cygwin competitors such as MKS, UWin,
+	and Microsoft SFU, but this hasn't been tested.
 
-		$ ./configure
-		$ make
-		$ su
-		# make install
+	Mainstream Win32 tool chains are supported -- if at all --
+	by the MySQL++-specific 'makemake' system.  If your platform
+	is one of those supported, it will have a secondary README
+	file in this directory with more details.
 
-	See README.unix for further details, including useful flags for
-	the configure script.
-
-	[*] Unixy = Linux, Mac OS X, Cygwin, and the "real" Unices.
-	Does not include MinGW, MKS, or Microsoft SFU.
-
-
-	For Win32-based systems other than Cygwin, use makemake.bat.
-	If your platform is one of those supported, it will have a
-	secondary README file in this directory with more details.
-
-
-	If your system isn't supported by the autotools or makemake.bat
-	systems, you will have to either add that support, or find some
-	way to build the library yourself.  We welcome patches to add new
-	platform support on the mailing list.  We would much prefer to
-	have extensions to the existing build systems than completely
-	new systems, such as project files for proprietary IDEs.
-	We may accept such files, but the project's history shows that
-	they tend to be neglected as new library features are added.
-	We're therefore reluctant to accept these.
+	If your system isn't supported by the autotools or makemake
+	systems, you will have to either add that support, or find
+	some way to build the library yourself.  We welcome patches
+	to add new platform support on the mailing list.  We would
+	much prefer to have extensions to the existing build systems
+	than completely new systems, such as project files for
+	proprietary IDEs.  The project's history shows that project
+	files tend to be neglected as new library features are added,
+	so we're reluctant to accept these.
 
 
-EXAMPLE PROGRAMS
-
+Example Programs
+~~~~~~~~~~~~~~~~
 	You may want to try out the programs in the examples subdirectory
 	to ensure that the MySQL++ API and your MySQL database are both
 	working properly.  Also, these examples give many examples of the
 	proper use of MySQL++.	See examples/README for further details.
 
 
-IF YOU WANT TO HACK ON MYSQL++...
-
+If You Want to Hack on MySQL++...
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	If you intend to change the library or example code, please read
 	the HACKERS file.
 

@@ -11,7 +11,7 @@ AC_DEFUN([MYSQL_SHUTDOWN_ARG],
 	[
 		AC_TRY_LINK(
 			[ #include <mysql.h> ],
-			[ mysql_shutdown(0, 0); ],
+			[ mysql_shutdown(0, SHUTDOWN_DEFAULT); ],
 			ac_cv_mysql_shutdown_arg=yes,
 			ac_cv_mysql_shutdown_arg=no)
 	])

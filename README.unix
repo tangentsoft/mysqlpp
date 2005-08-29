@@ -1,5 +1,16 @@
-CONFIGURE OPTIONS
+Building the Library and Example Programs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	MySQL++ uses the GNU autotools, so you can build it with the
+	standard commands:
 
+	# ./configure
+	$ make
+	$ su
+	# make install
+
+
+Configure Options
+~~~~~~~~~~~~~~~~~
 	The configure script takes several interesting options. Say:
 
 		$ ./configure --help

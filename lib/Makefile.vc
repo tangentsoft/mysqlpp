@@ -62,3 +62,8 @@ install_platform:
 	copy *.lib "$(INST_LIB_DIR)\debug" > NUL
 	copy release\*.dll "$(INST_LIB_DIR)\release" > NUL
 	copy release\*.lib "$(INST_LIB_DIR)\release" > NUL
+
+$(IMP_FILE): $(LIB_FILE)
+	@echo Forcing import library re-creation
+	@$(DEL) *.dll release\*.dll
+	$(MAKE) $(LIB_FILE)

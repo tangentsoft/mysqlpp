@@ -16,7 +16,7 @@
 EXTRA_DIST = \
 	CREDITS \
 	HACKERS \
-	LGPL \
+	LICENSE \
 	README.* \
 	Wishlist \
 	bootstrap \
@@ -36,6 +36,7 @@ EXTRA_DIST = \
 	doc/userman/html/*.html \
 	doc/userman/Makefile \
 	doc/userman/README \
+	libmysqlclient.def \
 	make.bat \
 	makemake.* \
 	*.ebuild \

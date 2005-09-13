@@ -20,7 +20,6 @@ LDADD = $(MYSQLPP_LIB) @PTHREAD_LIBS@
 
 EXTRA_DIST = \
 		Makefile.base \
-		Makefile.bc \
 		Makefile.gcc \
 		Makefile.mingw \
 		Makefile.simple \

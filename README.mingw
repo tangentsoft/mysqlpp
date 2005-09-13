@@ -30,15 +30,23 @@ Building the Library and Example Programs
 		cd c:\mysql\lib\gcc
 	    dlltool -k -d c:\mysql++\libmysqlclient.def -l libmysqlclient.a
 	
-	Then to configure and build the MySQL++ library, say
-	"makemake mingw" in the project's root directory.  You only
-	have to give the "makemake" command once, unless you change
-	the Makefile.base or Makefile.mingw files.  Thenceforth,
-	you can just say "make".
+	To configure the MySQL++ library to build with MinGW, say
+	"makemake mingw" in the project's root directory.  If you
+	change the Makefile.base or Makefile.mingw files, you will
+	have to run makemake again.
 
-	If you didn't install MySQL in c:\mysql, you will have to change
-	Makefile.mingw in the lib and examples subdirectories and re-run
-	"makemake mingw".  You may also look at changing these files for
-	various other reasons, such as if you don't like the way we name
-	the DLL file, or want the 'install' target to put the MySQL++
-	development files somewhere other than c:\mysql++\mingw.
+	Now you can build the library with the command "mingw32-make".
+	That command ensures that you're using the MinGW version
+	of GNU make, and not some other version.  In particular,
+	the Cygwin and MSYS versions of GNU make WILL NOT WORK.
+	This problem is not insurmountable; if you want to fix it,
+	see Makefile.vc files, which work around differences among
+	these versions of GNU make.  Please send a patch for this to
+	the mailing list if you do it.
+
+	If you didn't install MySQL in c:\mysql, you will have to
+	change Makefile.mingw in the lib and examples subdirectories
+	and re-run "makemake mingw".  You may also look at changing
+	these files for various other reasons, such as if you don't
+	like the way we name the DLL file.  If you want to change
+	the install location, that is in install.bat.

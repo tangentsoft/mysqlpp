@@ -16,20 +16,40 @@ Prerequisites
 	To build MySQL++, you must have the MySQL C API development
 	files installed.
 
-	On Unixy systems, these are installed if you build MySQL
+	On Unixy systems (Linux, Mac OS X, Cygwin, "real" Unix...),
+	the MySQL development files are installed if you build MySQL
 	from source.  If you installed MySQL as a binary package,
-	then the C API development files are often packaged separately
-	from the MySQL server itself.  It's common for the package
-	to be called "MySQL-devel" or something like that.
+	then the development files are often packaged separately from
+	the MySQL server itself.  It's common for the package to be
+	called "MySQL-devel" or something like that.
 
-	On Windows, you need to do a custom install of MySQL, for
-	two reasons.  First, the development files aren't installed
-	by default.  Second, the MySQL++ build system expects MySQL to
+	If you're building on Windows with Visual C++, you can install
+	the native Win32 port of MySQL from mysql.com.  You should do
+	a custom install, as the MySQL++ build system expects MySQL to
 	be installed in c:\mysql, and not the directory-du-jour used
-	by the changing installer versions.  The build process works
-	best if you use Visual C++.  If your situation goes against
-	any of these assumptions, read your tool chain's README.*
-	file carefully to learn of any needed workarounds.
+	by the changing installer versions.
+
+
+Unsupported Compliers
+~~~~~~~~~~~~~~~~~~~~~
+	If you're on Windows but want to use some other compiler
+	besides Visual C++ or Cygwin GCC, you are currently on
+	your own.  We've put forth lots of effort in the past to
+	get other compilers working, but for one reason or another,
+	all of these ports have been unsatisfactory.
+
+	On Unixy systems, GCC still works best.  Many Unix vendors
+	offer their own C++ compilers, but these are currently
+	unsupported.  There are also third-party compilers such as
+	those from Intel, The Portland Group, and Comeau; again,
+	these are unsupported.
+
+	We have nothing in particular against these unsupported
+	systems.  We just lack the time and resources to support
+	everything ourselves.  If you are sufficiently motivated to
+	get MySQL++ working on one of these alternate systems, see
+	the HACKERS file first for guidance.  If you follow the advice
+	in that file, your patch will be more likely to be accepted.
 
 
 Building the Library

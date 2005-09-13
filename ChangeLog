@@ -1,3 +1,37 @@
+2.0.5, 2005.09.13 (r1114)
+
+	o Visual C++ build now requires GNU make.  It is tested to work
+	  with either the Cygwin or the MinGW versions.  The previous
+	  version of MySQL++ used nmake.  This change enabled the
+	  following features:
+
+		o Debug and Release versions are both built into
+		  separate subdirectories.
+
+		o Dependency tracking for release version works
+		  correctly now.  (Previously dependencies worked
+		  only for debug version.)
+
+		o 'make clean' removes release version binaries
+		  in addition to debug versions.
+
+	o MinGW makemake support updated to support new release/debug
+	  subdirectory system.	This is probationary support, since
+	  this code currently can't be built as a DLL.	As a result,
+	  it is no more useful than the Cygwin version, for licensing
+	  reasons.
+
+	o Several fixes to allow building on Solaris 8.  These fixes may
+	  also help on other SVR4-derived systems.
+
+	o Removed Borland C++ makemake support, because this version
+	  of the library does not work completely, and there seems
+	  to be almost no user interest in fixing it.
+	  
+	o Clarified "Handling SQL Nulls" section of user manual's
+	  Tutorial chapter.
+
+
 2.0.4, 2005.08.29 (r1076)
 
 	o Made mysql_shutdown() second parameter autoconf check less

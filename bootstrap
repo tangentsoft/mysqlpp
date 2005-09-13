@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ "$1" == "pedantic" ]
+if [ "$1" = "pedantic" ]
 then 
 	export CXXFLAGS="-g -O2 -ansi -pedantic -Wall -W -Wold-style-cast -Wfloat-equal -Wwrite-strings -Woverloaded-virtual -Wno-long-long"
 	shift

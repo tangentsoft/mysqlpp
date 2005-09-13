@@ -35,7 +35,7 @@
 		<holder>Educational Technology Resources</holder>
 	</copyright>
 
-	<pubdate role="rcs">$Date: 2005-08-25 04:27:35 -0600 (Thu, 25 Aug 2005) $</pubdate>
+	<pubdate role="rcs">$Date: 2005-09-13 08:49:57 -0600 (Tue, 13 Sep 2005) $</pubdate>
 </articleinfo>
 
 
@@ -737,51 +737,81 @@ q &lt;&lt; "SELECT * FROM stock WHERE item = " &lt;&lt; quote &lt;&lt; s; </prog
 		<para>There is no equivalent of SQL's null in the standard
 		C++ type system.</para>
 
-		<para>The primary distinction is one of type: in SQL,
-		null is a column attribute, which affects whether
-		that column can hold a SQL null. This effectively
-		doubles the number of types in SQL. MySQL++ handles
-		this the same way SQL does: it provides the
-		<ulink type="classref" url="null">Null</ulink>
-		template to allow the creation of distinct "nullable"
-		versions of existing C++ types. For each column type
-		MySQL understands, the library instantiates this
-		template for the closest C++ type. (See the top of
-		<computeroutput>lib/type_info.cpp</computeroutput>
-		for the list.)</para>
+		<para>The primary distinction is one of type: in
+		SQL, null is a column attribute, which affects
+		whether that column can hold a SQL null. Just
+		like the 'const' keyword in the C++ type system,
+		this effectively doubles the number of SQL data
+		types. To emulate this, MySQL++ provides the <ulink
+		type="classref" url="null">Null</ulink> template
+		to allow the creation of distinct "nullable"
+		versions of existing C++ types. So
+		for example, if you have a <computeroutput>TINY
+		INT UNSIGNED</computeroutput> column that can have
+		nulls, the proper declaration for MySQL++ would
+		be:</para>
 
-		<para>Template instantiations are first-class types in
-		the C++ language, on par with any other type. You can
-		use nullable MySQL++ types anywhere you'd use the plain
-		version of that type, you can assign plain values to a
-		nullable object and vice versa, etc.</para>
+		<programlisting>
+mysqlpp::Null&lt;unsigned char&gt; myfield;</programlisting>
 
-		<para>There's a secondary distinction between SQL null and
-		anything available in the standard C++ type system: SQL
-		null is a distinct value, equal to nothing else. C++'s
-		<computeroutput>NULL</computeroutput> is ambiguous,
-		being equal to 0 in integer context, so MySQL++ has
-		a global <computeroutput>null</computeroutput> object
-		which which you can assign to any nullable object to
-		get a SQL null.</para>
+		<para>Template instantiations are first-class types
+		in the C++ language, on par with any other type. You
+		can use <computeroutput>Null</computeroutput>
+		template instantiations anywhere you'd use the
+		plain version of that type. (You can see a complete
+		list of <computeroutput>Null</computeroutput>
+		template instantiations for all column
+		types that MySQL understands at the top of
+		<computeroutput>lib/type_info.cpp</computeroutput>.)</para>
 
-		<para>By default, if you try to convert a SQL
-		null to a plain C++ data type, MySQL++ will throw a
-		<ulink type="classref" url="BadNullConversion"/>
-		exception to enforce this distinction. If you insert
-		a SQL null into a C++ stream, you get "(NULL)". The
-		<ulink type="structref" url="NullisNull"/>
-		"behavior" type encapsulates these two
-		rules; it is the default for one of template
-		<computeroutput>Null</computeroutput>'s
-		parameters. To relax this distinction, you can
-		instantiate the <computeroutput>Null</computeroutput>
-		template with a different behavior type:
-		<ulink type="structref" url="NullisZero"/>
-		or <ulink type="structref" url="NullisBlank"/>.
-		As you might guess from their names, SQL nulls using
-		these behaviors get converted to 0 or a blank C string,
-		respectively.</para>
+		<para>There's a secondary distinction between SQL null
+		and anything available in the standard C++ type system:
+		SQL null is a distinct value, equal to nothing else. We
+		can't use C++'s <computeroutput>NULL</computeroutput>
+		for this because it is ambiguous, being equal to
+		0 in integer context. MySQL++ provides the global
+		<computeroutput>null</computeroutput> object, which you
+		can assign to a <computeroutput>Null</computeroutput>
+		template instance to make it equal to SQL null:</para>
+
+		<programlisting>
+myfield = mysqlpp::null;</programlisting>
+
+		<para>The final aspect of MySQL++'s null handling
+		is that, by default, it will enforce the uniqueness
+		of the SQL null value. If you try to convert a SQL
+		null to a plain C++ data type, MySQL++ will throw
+		a <ulink type="classref" url="BadNullConversion"/>
+		exception. If you insert a SQL null into a C++
+		stream, you get "(NULL)". If you don't like
+		this behavior, you can change it, by passing
+		a different value for the second parameter to
+		template <computeroutput>Null</computeroutput>. By
+		default, this parameter is <ulink type="structref"
+		url="NullisNull"/>, meaning that we should
+		enforce the uniqueness of the null type. To
+		relax this distinction, you can instantiate the
+		<computeroutput>Null</computeroutput> template with
+		a different behavior type: <ulink type="structref"
+		url="NullisZero"/> or <ulink type="structref"
+		url="NullisBlank"/>. Consider this code:</para>
+
+		<programlisting>
+mysqlpp::Null&lt;unsigned char, mysqlpp::NullisZero&gt; myfield;
+
+myfield = mysqlpp::null;
+cout &lt;&lt; myfield &lt;&lt; endl;
+
+int x = myfield;
+cout &lt;&lt; x &lt;&lt; endl;</programlisting>
+
+		<para>This will print "0" twice. If
+		you had used the default for the second
+		<computeroutput>Null</computeroutput> template
+		parameter, the first output statement would have
+		printed "(NULL)", and the second would have thrown
+		a <computeroutput>BadNullConversion</computeroutput>
+		exception.</para>
 	</sect2>
 
 

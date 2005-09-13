@@ -19,22 +19,32 @@
 
 CXX=g++
 INCLUDES=-Ic:\mysql\include -I..\lib
-CXXFLAGS=$(INCLUDES) -O0 -c -DMYSQLPP_NO_DLL
+CXXFLAGS=$(INCLUDES) -c -DMYSQLPP_NO_DLL
+
+BIN_DIR=debug
+ifeq "$(BIN_DIR)" "debug"
+	CXXFLAGS += -O0
+else
+	CXXFLAGS += -O2
+endif
 
 LD=$(CXX)
-LDFLAGS=-L..\lib -Lc:\mysql\lib\gcc
-LDEXEFLAG=-o
+LDFLAGS=-L..\lib\$(BIN_DIR) -Lc:\mysql\lib\gcc
+LDEXEFLAG=-o$(BIN_DIR)/
 LIBS=-lmysqlpp -lmysqlclient
 EXTRA_CLEAN=
 
 OBJ=o
 EXE=.exe
-DEL=rm -f
+DEL=del /q
+
+vpath %.exe $(BIN_DIR)
+vpath %.o $(BIN_DIR)
 
 
 .SUFFIXES: .cpp .o
 .cpp.o:
-	$(CXX) $(CXXFLAGS) $<
+	$(CXX) $(CXXFLAGS) -o$(BIN_DIR)\$@ $<
 
 
 mingw: all

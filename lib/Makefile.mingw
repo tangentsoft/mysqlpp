@@ -17,9 +17,13 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
 # USA
 
+MYSQL_DIR=c:\mysql
+
 CXX=g++
 
 LIB_BASE=mysqlpp
+BIN_DIR=debug
+EX_BIN_DIR="..\examples\$(BIN_DIR)\"
 
 ## Build DLL -- uncomment $(IMP_FILE) target below, and comment out
 ## static library stuff if you want to try this.
@@ -34,32 +38,36 @@ LIB_BASE=mysqlpp
 CXXFLAGS=-Ic:\mysql\include -I.. -DMYSQLPP_NO_DLL -O2 -c
 LIB_FILE=lib$(LIB_BASE).a
 LD=ar
-LDFLAGS=cru $(LIB_FILE)
+LDFLAGS=cru $(BIN_DIR)\$(LIB_FILE)
 
-EXTRA_CLEAN=#$(IMP_FILE)
+LOCAL_CLEAN=debug release
 
-INST_DIR=c:\mysql++\mingw
-INST_INC_DIR=$(INST_DIR)\include
-INST_LIB_DIR=$(INST_DIR)\lib
+ifeq "$(BIN_DIR)" "debug"
+	CXXFLAGS += -O0
+else
+	CXXFLAGS += -O2
+endif
+
+vpath %.a $(BIN_DIR)
+vpath %.o $(BIN_DIR)
+vpath %.dll $(BIN_DIR)
 
 OBJ=o
-EXE=exe
+EXE=.exe
 DEL=rm -f
+
+RM=del /q
+CP=copy
 
 
 .SUFFIXES: .cpp .o
 .cpp.o:
-	$(CXX) $(CXXFLAGS) $<
+	$(CXX) $(CXXFLAGS) -o$(BIN_DIR)\$@ $<
 
 
 mingw: all
 
-install_platform:
-	@if not exist $(INST_DIR) mkdir $(INST_DIR)
-	@if not exist $(INST_INC_DIR) mkdir $(INST_INC_DIR)
-	@if not exist $(INST_LIB_DIR) mkdir $(INST_LIB_DIR)
-	copy *.h $(INST_INC_DIR) >& NUL
-	copy *.dll *.a $(INST_LIB_DIR) >& NUL
+example_setup:
 
 #$(IMP_FILE): $(LIB_FILE)
 #	pexports $(LIB_FILE) |sed 's/^_//' > $(LIB_BASE).def

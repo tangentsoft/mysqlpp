@@ -19,24 +19,38 @@
 
 CXX=cl
 INCLUDES=/Ic:\mysql\include -I..\lib
-CXXFLAGS=$(INCLUDES) /D_UNICODE /D_DEBUG /G6 /EHsc /nologo /MDd \
-		/Od /ZI /Zi /c
+CXXFLAGS=$(INCLUDES) /D_UNICODE /G6 /EHsc /nologo /c
+
+BIN_DIR=debug
+ifeq "$(BIN_DIR)" "debug"
+	CXXFLAGS += /MDd /Od /D_DEBUG /ZI /Zi
+	LDEXEFLAG := /DEBUG $(LDEXEFLAG)
+else
+	CXXFLAGS += /MD /O2
+endif
 
 LD=$(CXX)
 LDFLAGS=/nologo
-LDEXEFLAG=/link /LIBPATH:c:\mysql\lib\opt libmysql.lib \
-		/LIBPATH:..\lib mysqlpp.lib /OPT:NOREF /OUT:
+LDEXEFLAG=/link /OPT:NOREF /OUT:$(BIN_DIR)/
 
-EXTRA_CLEAN=*.dll *.idb *.pdb
+MYSQLPP_LIB=../lib/$(BIN_DIR)/mysqlpp.lib
+LIBS=/LIBPATH:c:\mysql\lib\opt libmysql.lib /LIBPATH:..\lib\$(BIN_DIR) \
+		mysqlpp.lib
+
+vpath %.exe $(BIN_DIR)
+vpath %.obj $(BIN_DIR)
+
+RM=$(if $(wildcard /bin/cygwin1.dll),rm -rf,del /q)
+
+LOCAL_CLEAN=debug release
 
 OBJ=obj
 EXE=.exe
-DEL=del /q
 
 
 .SUFFIXES: .cpp .obj
 .cpp.obj:
-	$(CXX) $(CXXFLAGS) $<
+	$(CXX) $(CXXFLAGS) /Fo$(BIN_DIR)\$@ $<
 
 
 vc: all

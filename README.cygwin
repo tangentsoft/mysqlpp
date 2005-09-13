@@ -1,13 +1,15 @@
 Limitations
 ~~~~~~~~~~~
-	At the moment, Cygwin can only build a static version
-	of MySQL++.  Unless you're one of the few that have a
-	commercial Cygwin license, this isn't likely to matter to you,
-	since without this, your program is under the GPL anyway.
+	At the moment, Cygwin can only build a static version of
+	MySQL++.  The practical upshot of this is that Cygwin can
+	only be used to build LGPL or GPL-licensed MySQL++ programs.
+	Unless you're one of the few that have a commercial Cygwin
+	license, you are already under this restriction because
+	your programs must be GPL-licensed in this case anyway.
 	(See http://www.redhat.com/software/cygwin/ for details.)
 
-	If you're making a closed-source program and do not have a
-	commercial Cygwin license, I recommend that you use Visual C++.
+	If your program is under some other license and you do not
+	have a commercial Cygwin license, you must use Visual C++.
 
 	If the cost is the only thing keeping you from using
 	Visual C++, there are free versions of VC++ available.
@@ -15,31 +17,46 @@ Limitations
 	http://tangentsoft.net/mysql++/#faq
 
 
-Building the Library and Example Programs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Prerequisite: Build MySQL
+~~~~~~~~~~~~~~~~~~~~~~~~~
 	Before you can build MySQL++, you need to build the MySQL
-	client-side library from source. I recommend that you use
-	MySQL v4.1.x at this time. The best instructions I've found
-	for that are here:
+	client library from source.  This is necessary because
+	Cygwin programs work best when linked to Cygwin libraries.
+	You do not need to build a Cygwin version of the MySQL server;
+	it's still best to use the native Win32 version of that.
+
+	The MySQL client library does not build correctly out of
+	the box.  The best instructions I've found covering the
+	necessary changes are here:
 
 		http://cygwin.com/ml/cygwin/2004-11/msg00159.html
 
-	Skip the step changing the pthread stuff in my_thr_init.c,
-	as it isn't necessary in newer versions of MySQL. With those
-	changes applied, build and install MySQL like so:
+	I recommend that you use MySQL v4.1.x at this time.  Skip the
+	step changing the pthread stuff in my_thr_init.c, as this
+	change has already been made in recent versions of MySQL.
+
+	With the changes applied, build and install the client library
+	like so:
 
 	$ autoreconf --install --verbose --force
 	$ ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var \
 	    --infodir=/usr/share/info --mandir=/usr/share/man \
         --disable-shared --without-{debug,readline,libedit,server}
-	$ make && make install
+	$ make
+	$ make install
 
+
+Building the Library and Example Programs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	Now that the MySQL client library is built and installed,
-	you need to configure MySQL++ to build statically:
+	you can build MySQL++.	The only trick is that you have to
+	pass the proper flag to the configure script to make it build
+	a static version of MySQL++ only.
 
-	$ ./bootstrap --disable-shared [other options]
+	The simplest set of commands for this is:
 
-	The "other options" are passed to the configure script. See
-	README.unix for some suggestions.
+	$ ./configure --disable-shared
+	$ make
+	$ make install
 
-	Beyond that, it's the old "make && make install" bit.
+	For more on configure script options, see README.unix.

@@ -157,6 +157,13 @@ v2.1 Plan
 	  be prevented.  See http://lists.mysql.com/plusplus/4451
 	  for the proposal.
 
+	o Extract all of the type declarations at the top of
+	  type_info.cpp into a set of typedefs.  If someone
+	  wants, they could then declare a variable of type
+	  mysqlpp::tiny_int_unsigned_null, and know they're getting
+	  the most appropriate C++ type to SQL's TINY UNSIGNED INT
+	  with the NULL attribute.  Use these types in the examples?
+
 
 Future Features
 ---------------

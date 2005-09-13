@@ -24,10 +24,8 @@ EXTRA_DIST = \
 		custom.pl \
 		Doxyfile \
 		Makefile.base \
-		Makefile.bc \
 		Makefile.gcc \
 		Makefile.mingw \
-		Makefile.rel \
 		Makefile.simple \
 		Makefile.vc
 

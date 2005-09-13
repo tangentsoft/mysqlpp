@@ -2,8 +2,8 @@ If you are going to make any changes to MySQL++, this file has some
 hints and commentary you may find helpful.
 
 
-SUBVERSION ACCESS
-
+Subversion Access
+~~~~~~~~~~~~~~~~~
 	To check out the current development version from the Gna!
 	Subversion repository, say:
 
@@ -17,8 +17,8 @@ SUBVERSION ACCESS
 	ssh public key registered with Gna! for this to work.
 
 
-SUBMITTING PATCHES
-
+Submitting Patches
+~~~~~~~~~~~~~~~~~~
 	If you wish to submit a patch to the library, please send it to
 	the MySQL++ mailing list.  We want it in unified diff format.
 
@@ -47,8 +47,39 @@ SUBMITTING PATCHES
 	for not being able to make unified diffs.  :)
 
 
-MAINTAINING A PRIVATE CVS REPOSITORY
+Adding Support for a Different Compiler
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	One of the most common requests we get is to add support
+	for less common compilers or build systems.  We're happy to
+	accept patches to add such support, provided they comply with
+	certain rules.
 
+	We don't want proprietary "project files" and such.  We find
+	that they tend to "rot" quickly.  It's human nature for a
+	person to submit such a file, and then fail to maintain it.
+	Meanwhile, the library keeps changing, so the project file
+	becomes less and less relevant over time.  The project
+	maintainers cannot reliably maintain these files, because we
+	don't have access to the tools that use them.  To avoid this,
+	we've settled on two build systems: GNU autotools for Unixy
+	systems, and our own 'makemake' system for everything else.
+	Because the project maintainers actively use both of these,
+	the maintenance to track most library changes is on our
+	shoulders.  It isn't a perfect system, but it's better than
+	the alternative.
+
+	We're not willing to accept patches that provide only partial
+	library support.  In the past, we've had broken ports that
+	were missing important library features, or that crashed when
+	built in certain ways.	If you can't provide feature parity
+	with the existing ports, we're not interested.	The reason is,
+	few will knowingly use a crippled version of MySQL++, since
+	the alternatives are usually acceptable.  Therefore, such ports
+	become maintenance baggage, with little compensating value.
+
+
+Maintaining a Private CVS Repository
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	You may find it helpful to maintain your own CVS repository.
 	Whenever there is a new MySQL++ release, import it on the vendor
 	branch like this:
@@ -73,8 +104,8 @@ MAINTAINING A PRIVATE CVS REPOSITORY
 			$(cat CVS/Repository) > equal_list.patch
 
 
-ON MANIPULATING THE AUTOTOOLS INPUT FILES
-
+On Manipulating the Autotools Input Files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	If you are going to hack on the autotools files (*.am, *.in and
 	everything in the config subdir), run the command:
 

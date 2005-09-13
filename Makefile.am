@@ -20,6 +20,7 @@ EXTRA_DIST = \
 	README.* \
 	Wishlist \
 	bootstrap \
+	buildmf.bat \
 	common.am \
 	config/*.m4 \
 	doc/mysqlpp-refman.pdf \
@@ -36,9 +37,11 @@ EXTRA_DIST = \
 	doc/userman/html/*.html \
 	doc/userman/Makefile \
 	doc/userman/README \
+	install.bat \
 	libmysqlclient.def \
-	make.bat \
 	makemake.* \
+	mkbindirs.bat \
+	reconf \
 	*.ebuild \
 	*.spec
 

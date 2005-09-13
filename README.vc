@@ -95,7 +95,7 @@ Using MySQL++ in Your Own Projects
           Managed Extensions" to "No"
 
         o Under C/C++::General add to "Additional Include
-          Directories": c:\mysql++\vc\include, c:\mysql\include
+          Directories": c:\mysql++\include, c:\mysql\include
 
         o Under C/C++::Code Generation change "Runtime Library" to
           "Multi-threaded Debug DLL (/MDd)" for the Debug
@@ -103,9 +103,9 @@ Using MySQL++ in Your Own Projects
           "Multi-threaded DLL (/MD)".
 
         o Under Linker::General add to "Additional Library
-          Directories": "c:\mysql\lib\debug, c:\mysql++\vc\lib\debug"
+          Directories": "c:\mysql\lib\debug, c:\mysql++\vc\debug"
           for the Debug configuration.  For the Release configuration,
-          make it "c:\mysql\lib\opt, c:\mysql++\vc\lib\release"
+          make it "c:\mysql\lib\opt, c:\mysql++\vc\release"
 
         o Under Linker::Input add to "Additional Dependencies":
           "libmysql.lib wsock32.lib mysqlpp.lib"

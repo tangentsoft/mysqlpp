@@ -1,15 +1,14 @@
 @echo off
 
-set BUILDSYS=%1
-if "%BUILDSYS%" == "vc" goto build_makefiles
-if "%BUILDSYS%" == "mingw" goto build_makefiles
-echo Unrecognized build system %BUILDSYS%.
+if "%1" == "vc" goto build_makefiles
+if "%1" == "mingw" goto build_makefiles
+echo Unrecognized build system %1.
 echo.
 goto usage
 
 :build_makefiles
 rem Create Makefiles in subdirectories
-for %d in ( lib examples ) do call buildmf.bat %BUILDSYS% %d
+for %%d in ( lib examples ) do call buildmf.bat %1 %%d
 
 rem Create top-level Makefile
 echo all: > Makefile
@@ -19,7 +18,7 @@ echo 	cd lib ^&^& $(MAKE) BIN_DIR=release >> Makefile
 echo 	cd examples ^&^& $(MAKE) >> Makefile
 echo. >> Makefile
 echo install: all >> Makefile
-echo 	@cmd /c install.bat %BUILDSYS% >> Makefile
+echo 	@cmd /c install.bat %1 >> Makefile
 echo. >> Makefile
 echo clean debug release: >> Makefile
 echo 	cd lib ^&^& $(MAKE) $@ >> Makefile

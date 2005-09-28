@@ -18,8 +18,6 @@ include $(top_srcdir)/common.am
 AM_CXXFLAGS = @PTHREAD_CFLAGS@
 LDADD = $(MYSQLPP_LIB) @PTHREAD_LIBS@
 
-fooincludedir = $(pkgincludedir)/foo
-
 EXTRA_DIST = \
 		custom.pl \
 		Doxyfile \

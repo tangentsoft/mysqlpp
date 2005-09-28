@@ -1,3 +1,10 @@
+2.0.6, 2005.09.28 (r1123)
+
+	o Fixed makemake.bat so it works on cmd.exe, not just 4NT.
+
+	o Documentation fixes.
+
+
 2.0.5, 2005.09.13 (r1114)
 
 	o Visual C++ build now requires GNU make.  It is tested to work

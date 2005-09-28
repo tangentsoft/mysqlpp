@@ -35,7 +35,7 @@
 		<holder>Educational Technology Resources</holder>
 	</copyright>
 
-	<pubdate role="rcs">$Date: 2005-09-13 08:49:57 -0600 (Tue, 13 Sep 2005) $</pubdate>
+	<pubdate role="rcs">$Date: 2005-09-28 07:42:45 -0600 (Wed, 28 Sep 2005) $</pubdate>
 </articleinfo>
 
 
@@ -235,10 +235,10 @@
 			containers, you can treat the result set as a
 			two-dimensional array. For example, you can get
 			the 5th item on the 2nd row by simply saying
-			<computeroutput>result[1][4]</computeroutput>. You
+			<computeroutput>result.at(1).at(4)</computeroutput>. You
 			can also access row elements
 			by field name, like this:
-			<computeroutput>result[2].lookup_by_name("price")</computeroutput>.</para>
+			<computeroutput>result.at(2)["price"]</computeroutput>.</para>
 
 			<para>An alternate way of accessing
 			your query results is through a

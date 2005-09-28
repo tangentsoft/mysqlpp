@@ -304,6 +304,17 @@ Future Features
 	  values.  This could potentially break a lot of
 	  infrastructure, though, so do it only with care.
 
+	o Fix the row[0] ambiguity problem.  This stems from the fact
+	  that 0 is an int type, but can fit either of the unsigned int
+	  or const char* argument types from operator[].
+	  See the following threads for reference:
+	      http://lists.mysql.com/plusplus/4947
+	      http://lists.mysql.com/plusplus/4952
+	      http://lists.mysql.com/plusplus/4960
+	  The ideal way to fix it for v3.0 is to make
+	  const_subscript_container's SizeType an int instead of unsigned int,
+	  but this has implications for matching the C API.
+
 
 Bug Fix/Maintenance Items
 -------------------------
@@ -325,3 +336,5 @@ Bug Fix/Maintenance Items
 	  in the same file, which things like type_info.h do use now,
 	  but it isn't clear how one would go about doing that without
 	  changing the library code.  Document it or throw it away.
+
+	o Update refman.css to use new Doxygen 1.4 CSS IDs.

@@ -118,8 +118,6 @@ MYSQLPP_LIB = $(top_builddir)/lib/libmysqlpp.la
 AM_CXXFLAGS = @PTHREAD_CFLAGS@
 LDADD = $(MYSQLPP_LIB) @PTHREAD_LIBS@
 
-fooincludedir = $(pkgincludedir)/foo
-
 EXTRA_DIST = \
 		custom.pl \
 		Doxyfile \

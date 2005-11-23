@@ -322,6 +322,9 @@ Bug Fix/Maintenance Items
 	These items could happen in any version.
 
 
+	o Document restrictions on order of destruction.  See this thread:
+	  http://lists.mysql.com/plusplus/5084
+
 	o Storing a subset row in an SSQLS defined to hold the entire
 	  row currently causes a segfault.  To see this, copy the SSQLS
 	  definition from custom1 to custom6.  This is arguably a bug;

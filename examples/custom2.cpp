@@ -35,22 +35,21 @@
 #include <vector>
 
 using namespace std;
-using namespace mysqlpp;
 
 sql_create_5(stock,
 			1, 5,
 			string, item,
-			longlong, num,
+			mysqlpp::longlong, num,
 			double, weight,
 			double, price,
-			Date, sdate)
+			mysqlpp::Date, sdate)
 
 int
 main(int argc, char *argv[])
 {
 	try {
 		// Establish the connection to the database server.
-		Connection con(use_exceptions);
+		mysqlpp::Connection con(mysqlpp::use_exceptions);
 		if (!connect_to_db(argc, argv, con)) {
 			return 1;
 		}
@@ -61,7 +60,7 @@ main(int argc, char *argv[])
 		stock row("Hot Dogs", 100, 1.5, 1.75, "1998-09-25");
 
 		// Form the query to insert the row into the stock table.
-		Query query = con.query();
+		mysqlpp::Query query = con.query();
 		query.insert(row);
 
 		// Show the query about to be executed.
@@ -72,23 +71,23 @@ main(int argc, char *argv[])
 		query.execute();
 
 		// Print the new table.
-		Result res;
+		mysqlpp::Result res;
 		get_stock_table(query, res);
 		print_stock_rows(res);
 	}
-	catch (const BadQuery& er) {
+	catch (const mysqlpp::BadQuery& er) {
 		// Handle any query errors
 		cerr << "Query error: " << er.what() << endl;
 		return -1;
 	}
-	catch (const BadConversion& er) {	
+	catch (const mysqlpp::BadConversion& er) {	
 		// Handle bad conversions
 		cerr << "Conversion error: " << er.what() << endl <<
 				"\tretrieved data size: " << er.retrieved <<
 				", actual size: " << er.actual_size << endl;
 		return -1;
 	}
-	catch (const Exception& er) {
+	catch (const mysqlpp::Exception& er) {
 		// Catch-all for any other MySQL++ exceptions
 		cerr << "Error: " << er.what() << endl;
 		return -1;

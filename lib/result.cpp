@@ -65,9 +65,6 @@ fields_(this)
 
 ResUse::~ResUse()
 {
-	if (conn_) {
-		conn_->unlock();
-	}
 	purge();
 }
 

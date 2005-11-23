@@ -35,35 +35,34 @@
 #include <vector>
 
 using namespace std;
-using namespace mysqlpp;
 
 sql_create_5(stock,
 			1, 5,
 			string, item,
-			longlong, num,
+			mysqlpp::longlong, num,
 			double, weight,
 			double, price,
-			Date, sdate)
+			mysqlpp::Date, sdate)
 
 int
 main(int argc, char *argv[])
 {
 	try {
 		// Establish the connection to the database server.
-		Connection con(use_exceptions);
+		mysqlpp::Connection con(mysqlpp::use_exceptions);
 		if (!connect_to_db(argc, argv, con)) {
 			return 1;
 		}
 
 		// Build a query to retrieve the stock item that has Unicode
 		// characters encoded in UTF-8 form.
-		Query query = con.query();
+		mysqlpp::Query query = con.query();
 		query << "select * from stock where item = \"Nürnberger Brats\"";
 
 		// Retrieve the row, throwing an exception if it fails.
-		Result res = query.store();
+		mysqlpp::Result res = query.store();
 		if (res.empty()) {
-			throw BadQuery("UTF-8 bratwurst item not found in "
+			throw mysqlpp::BadQuery("UTF-8 bratwurst item not found in "
 					"table, run resetdb");
 		}
 
@@ -96,19 +95,19 @@ main(int argc, char *argv[])
 		get_stock_table(query, res);
 		print_stock_rows(res);
 	}
-	catch (const BadQuery& er) {
+	catch (const mysqlpp::BadQuery& er) {
 		// Handle any query errors
 		cerr << "Query error: " << er.what() << endl;
 		return -1;
 	}
-	catch (const BadConversion& er) {
+	catch (const mysqlpp::BadConversion& er) {
 		// Handle bad conversions
 		cerr << "Conversion error: " << er.what() << endl <<
 				"\tretrieved data size: " << er.retrieved <<
 				", actual size: " << er.actual_size << endl;
 		return -1;
 	}
-	catch (const Exception& er) {
+	catch (const mysqlpp::Exception& er) {
 		// Catch-all for any other MySQL++ exceptions
 		cerr << "Error: " << er.what() << endl;
 		return -1;

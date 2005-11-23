@@ -15,14 +15,14 @@
 
 
 # Don't forget to change libtool version below.
-AC_INIT(mysql++, 2.0.6, plusplus@lists.mysql.com, mysql++)
+AC_INIT(mysql++, 2.0.7, plusplus@lists.mysql.com, mysql++)
 
 # Libtool version scheme is: interface:change:age.  Interface number
 # goes up any time the library interface changes.  Change number goes up
 # any time library changes without affecting interface.  Age goes up any
 # time interface changes without breaking backwards compatibility, such
 # as by adding new functions; must always be less than interface number.
-AC_SUBST(MYSQLPP_LIBTOOL_VERSION, [2:6:0])
+AC_SUBST(MYSQLPP_LIBTOOL_VERSION, [2:7:0])
 
 # Break package version up into major, minor and bugfix components.
 # Avoid temptation to use these to define MYSQLPP_LIBTOOL_VERSION:
@@ -74,6 +74,7 @@ LIB_MATH
 LIB_SOCKET_NSL
 MYSQL_API_LOCATION
 MYSQL_SHUTDOWN_ARG
+MYSQL_WITH_SSL
 AC_CHECK_LIB(intl, main)
 AC_CHECK_LIB(socket, main)
 AC_CHECK_LIB(nsl, main)

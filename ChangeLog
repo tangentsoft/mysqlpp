@@ -1,3 +1,42 @@
+2.0.7, 2005.11.23 (r1147)
+
+	o Added explicit mysqlpp namespace qualifiers to generated code in
+	  custom*.h so you can use SSQLS in places where it doesn't make
+	  sense to say "using namespace mysqlpp" before the declaration.
+	  Also updated some of the examples to not have this "using"
+	  declaration to make it clear to users that it isn't needed, if you
+	  want to use explicit namespace qualifiers as well.  Thanks for
+	  this patch to Chris Frey.
+
+	o Removed an apparently useless unlock() call from ResUse; there is
+	  no nearby lock() call, so if this unlock() is in fact necessary,
+	  it shouldn't be here anyway, because the two calls should be
+	  nearby each other.  Thanks for this patch to Chris Frey.
+
+	o Fixed Query ostream initialization bug affecting SunPro CC (at
+	  least).  While this bug violates the Standard, it doesn't affect
+	  many real compilers because they don't enforce this rule.  Bug
+	  noticed by Kristofer Spinka, and fixed by Chris Frey.
+
+	o Previously, we only used the C99 style "long long" support when
+	  building under GNU CC.  This is now the default.  This should
+	  allow the code to work under SunPro CC.
+
+	o Added another dynamic cast needed for proper Query ostream
+	  subclass overloading under VC++.  (7.1 at least...)  Bug noticed
+	  by Mark Merendino.
+
+	o Detecting whether MySQL is built with SSL support on platforms
+	  using autotools.  Needed on some old Sun systems, for instance.
+	  Thanks for this patch to Ovidiu Bivolaru.
+
+	o Fixed a potential memory bug in ColData's conversion to SQL null.
+
+	o Many minor packaging tweaks.  (README clarifications, file
+	  permission fixes, better adherence to GNU packaging standards,
+	  etc.)
+
+	
 2.0.6, 2005.09.28 (r1123)
 
 	o Fixed makemake.bat so it works on cmd.exe, not just 4NT.

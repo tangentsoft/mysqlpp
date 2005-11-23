@@ -586,7 +586,9 @@ void
 Connection::enable_ssl(const char* key, const char* cert,
 		const char* ca, const char* capath, const char* cipher)
 {
+#if defined(HAVE_MYSQL_SSL_SET)
 	mysql_ssl_set(&mysql_, key, cert, ca, capath, cipher);
+#endif
 }
 
 

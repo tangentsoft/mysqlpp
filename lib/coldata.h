@@ -290,14 +290,17 @@ operator_binary_int(ulonglong, ulonglong)
 
 /// \brief Converts this object to a SQL null
 ///
-/// Returns null directly if the string data held by the object is
-/// exactly equal to "NULL".  Else, it 
-/// data.
+/// Returns a copy of the global null object if the string data held by
+/// the object is exactly equal to "NULL".  Else, it constructs an empty
+/// object of type T and tries to convert it to Null<T, B>.
 template <class Str> template<class T, class B>
 ColData_Tmpl<Str>::operator Null<T, B>() const
 {
-	if ((*this)[0] == 'N' && (*this)[1] == 'U' && (*this)[2] == 'L' &&
-			(*this)[3] == 'L' && Str::size() == 4) {
+	if ((Str::size() == 4) &&
+			(*this)[0] == 'N' &&
+			(*this)[1] == 'U' &&
+			(*this)[2] == 'L' &&
+			(*this)[3] == 'L') {
 		return Null<T, B>(null);
 	}
 	else {

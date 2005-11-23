@@ -53,12 +53,12 @@ typedef long longlong;
 // It's VC++, so we'll use Microsoft's 64-bit integer types
 typedef unsigned __int64 ulonglong;
 typedef __int64 longlong;
-#elif defined(__GNUC__)
-// It's g++ so use GNU convention of "long long" for large integers.
+#else
+// No better idea, so assume the C99 convention.  If your compiler
+// doesn't support this, please provide a patch to extend this ifdef, or
+// define NO_LONG_LONGS.
 typedef unsigned long long ulonglong;
 typedef long long longlong;
-#else
-#	error Unknown large integer type. Define NO_LONG_LONGS or add support for your system to defs.h.
 #endif
 #endif // !defined(DOXYGEN_IGNORE)
 

@@ -98,14 +98,16 @@ template <class Type> class mysql_convert;
 #endif
 
 #if !defined(NO_LONG_LONGS)
-#if defined(__GNUC__)
-mysql__convert(longlong, strtoll)
-mysql__convert(ulonglong, strtoull)
-#elif defined(_MSC_VER)
+#if defined(_MSC_VER)
+// Handle 64-bit ints the VC++ way
 mysql__convert(longlong, _strtoi64)
 mysql__convert(ulonglong, _strtoui64)
 #else
-#error Fix me! I need the "string to 64-bit int" function for your platform!
+// No better idea, so assume the C99 way.  If your compiler doesn't
+// support this, please provide a patch to extend this ifdef, or define
+// NO_LONG_LONGS.
+mysql__convert(longlong, strtoll)
+mysql__convert(ulonglong, strtoull)
 #endif
 #endif // !defined(NO_LONG_LONGS)
 

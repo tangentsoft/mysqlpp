@@ -36,27 +36,26 @@
 #include <vector>
 
 using namespace std;
-using namespace mysqlpp;
 
 sql_create_5(stock,
 			 1, 5,
 			 string, item,
-			 longlong, num,
+			 mysqlpp::longlong, num,
 			 double, weight,
 			 double, price,
-			 Date, sdate)
+			 mysqlpp::Date, sdate)
 
 int
 main(int argc, char *argv[])
 {
 	try {
-		Connection con(use_exceptions);
+		mysqlpp::Connection con(mysqlpp::use_exceptions);
 		if (!connect_to_db(argc, argv, con)) {
 			return 1;
 		}
 
 		// Get all the rows in the stock table.
-		Query query = con.query();
+		mysqlpp::Query query = con.query();
 		query << "select * from stock";
 		vector<stock> res;
 		query.storein(res);
@@ -72,19 +71,19 @@ main(int argc, char *argv[])
 			cout << "Custom query:\n" << query.preview() << endl;
 		}
 	}
-	catch (const BadQuery& er) {
+	catch (const mysqlpp::BadQuery& er) {
 		// Handle any query errors
 		cerr << "Query error: " << er.what() << endl;
 		return -1;
 	}
-	catch (const BadConversion& er) {
+	catch (const mysqlpp::BadConversion& er) {
 		// Handle bad conversions
 		cerr << "Conversion error: " << er.what() << endl <<
 				"\tretrieved data size: " << er.retrieved <<
 				", actual size: " << er.actual_size << endl;
 		return -1;
 	}
-	catch (const Exception& er) {
+	catch (const mysqlpp::Exception& er) {
 		// Catch-all for any other MySQL++ exceptions
 		cerr << "Error: " << er.what() << endl;
 		return -1;

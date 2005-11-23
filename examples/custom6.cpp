@@ -36,7 +36,6 @@
 #include <vector>
 
 using namespace std;
-using namespace mysqlpp;
 
 // To store a subset of a row, we define an SSQLS containing just the
 // fields that we will store.  There are complications here that are
@@ -50,14 +49,14 @@ main(int argc, char *argv[])
 {
 	try {						
 		// Establish the connection to the database server.
-		Connection con(use_exceptions);
+		mysqlpp::Connection con(mysqlpp::use_exceptions);
 		if (!connect_to_db(argc, argv, con)) {
 			return 1;
 		}
 
 		// Retrieve a subset of the stock table, and store the data in
 		// a vector of 'stock_subset' SSQLS structures.
-		Query query = con.query();
+		mysqlpp::Query query = con.query();
 		query << "select item from stock";
 		vector<stock_subset> res;
 		query.storein(res);
@@ -69,19 +68,19 @@ main(int argc, char *argv[])
 			cout << '\t' << it->item << endl;
 		}
 	}
-	catch (const BadQuery& er) {
+	catch (const mysqlpp::BadQuery& er) {
 		// Handle any query errors
 		cerr << "Query error: " << er.what() << endl;
 		return -1;
 	}
-	catch (const BadConversion& er) {
+	catch (const mysqlpp::BadConversion& er) {
 		// Handle bad conversions; e.g. type mismatch populating 'stock'
 		cerr << "Conversion error: " << er.what() << endl <<
 				"\tretrieved data size: " << er.retrieved <<
 				", actual size: " << er.actual_size << endl;
 		return -1;
 	}
-	catch (const Exception& er) {
+	catch (const mysqlpp::Exception& er) {
 		// Catch-all for any other MySQL++ exceptions
 		cerr << "Error: " << er.what() << endl;
 		return -1;

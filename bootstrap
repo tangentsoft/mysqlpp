@@ -1,18 +1,33 @@
 #!/bin/sh
 
-if [ "$1" = "pedantic" ]
-then 
-	export CXXFLAGS="-g -O2 -ansi -pedantic -Wall -W -Wold-style-cast -Wfloat-equal -Wwrite-strings -Woverloaded-virtual -Wno-long-long"
-	shift
-fi
+ARGS=1
+BF_OPTIONS=
+while [ $ARGS != 0 ]
+do
+	case "$1" in
+		noexamples)
+			BF_OPTIONS="-DEXAMPLES=no $BF_OPTIONS"
+			shift
+			;;
+
+		pedantic)
+			export CXXFLAGS="-g -O2 -ansi -pedantic -Wall -W -Wold-style-cast -Wfloat-equal -Wwrite-strings -Woverloaded-virtual -Wno-long-long"
+			shift
+			;;
+
+		*)
+			ARGS=0
+			;;
+	esac
+done
 
 rm -f config.cache
 set -x
 
-aclocal -I config && \
-	libtoolize --force --copy && \
-	autoheader && \
-	automake --add-missing --copy --foreign && \
+./rebake $BF_OPTIONS &&
+	aclocal -I config -I /usr/local/share/aclocal &&
+	autoheader &&
 	autoconf &&
 	./reconf $* &&
-	( cd lib ; make custom.h )
+	( cd lib ; make custom.h querydef.h )
+

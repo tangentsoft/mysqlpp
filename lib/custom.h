@@ -12,6 +12,12 @@
 
 #include <string>
 
+#ifdef MYSQLPP_SSQLS_NO_STATICS
+#define MYSQLPP_SSQLS_EXPAND(...)
+#else
+#define MYSQLPP_SSQLS_EXPAND(...) __VA_ARGS__
+#endif
+
 namespace mysqlpp {
 
 enum sql_dummy_type {sql_dummy};
@@ -45,6 +51,14 @@ inline int sql_cmp(short int a,short int b) {
 }
 
 inline int sql_cmp(unsigned short int a,unsigned short int b) {
+  return a-b;
+}
+
+inline int sql_cmp(unsigned long a,unsigned long b) {
+  return a-b;
+}
+
+inline int sql_cmp(long a,long b) {
   return a-b;
 }
 

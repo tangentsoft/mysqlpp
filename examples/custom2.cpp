@@ -25,24 +25,12 @@
  USA
 ***********************************************************************/
 
+#include "stock.h"
 #include "util.h"
 
-#include <mysql++.h>
-#include <custom.h>
-
 #include <iostream>
-#include <string>
-#include <vector>
 
 using namespace std;
-
-sql_create_5(stock,
-			1, 5,
-			string, item,
-			mysqlpp::longlong, num,
-			double, weight,
-			double, price,
-			mysqlpp::Date, sdate)
 
 int
 main(int argc, char *argv[])

@@ -22,22 +22,12 @@ src_unpack() {
 
 src_compile() {
 	gnuconfig_update
-	local myconf
-	myconf="--disable-examples"
-	# We do this because of the large number of header files installed
-	# to the include directory
-	# This is a breakage compared to previous versions that installed
-	# straight to /usr/include
-	# Note: the new maintainer is making RPM's that install to this
-	#       directory too, so this is fine.
-	myconf="${myconf}"
 	# not including the directives to where MySQL is because it seems to find it
 	# just fine without
 	# force the cflags into place otherwise they get totally ignored by
 	# configure
-	CFLAGS="${CFLAGS}" CXXFLAGS="${CFLAGS} ${CXXFLAGS}" \
-	econf \
-		--disable-examples || die "econf failed"
+	CFLAGS="${CFLAGS}" CXXFLAGS="${CFLAGS} ${CXXFLAGS}" econf || \
+			die "econf failed"
 
 	emake || die "unable to make"
 }

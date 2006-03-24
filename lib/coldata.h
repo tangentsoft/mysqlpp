@@ -46,6 +46,7 @@
 
 #include <typeinfo>
 #include <string>
+#include <sstream>
 
 #include <stdlib.h>
 
@@ -324,7 +325,10 @@ Type ColData_Tmpl<Str>::conv(Type /* dummy */) const
 	}
 	
 	if (*end != '\0' && end != 0) {
-		throw BadConversion(typeid(Type).name(), Str::c_str(),
+		std::ostringstream outs;
+		outs << "Tried to convert \"" << *this << "\" to a \"" <<
+				typeid(Type).name() << "\" object." << std::ends;
+		throw BadConversion(outs.str().c_str(), Str::c_str(),
 				end - str, len);
 	}
 

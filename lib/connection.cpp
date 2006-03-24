@@ -2,7 +2,7 @@
  connection.cpp - Implements the Connection class.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ MySQL AB, and (c) 2004-2006 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -95,6 +95,7 @@ Connection::legal_opt_arg_types_[Connection::opt_COUNT] = {
 	Connection::opt_type_boolean,	// opt_secure_auth
 	Connection::opt_type_boolean,	// opt_multi_statements
 	Connection::opt_type_boolean,	// opt_report_data_truncation
+	Connection::opt_type_boolean,   // opt_reconnect
 };
 
 
@@ -216,12 +217,22 @@ Connection::drop_db(const std::string& db)
 bool
 Connection::select_db(const char *db)
 {
-	bool suc = !(mysql_select_db(&mysql_, db));
-	if (throw_exceptions() && !suc) {
-		throw DBSelectionFailed(error());
+	if (connected()) {
+		bool suc = !(mysql_select_db(&mysql_, db));
+		if (throw_exceptions() && !suc) {
+			throw DBSelectionFailed(error());
+		}
+		else {
+			return suc;
+		}
 	}
 	else {
-		return suc;
+		if (throw_exceptions()) {
+			throw DBSelectionFailed("MySQL++ connection not established");
+		}
+		else {
+			return false;
+		}
 	}
 }
 
@@ -229,16 +240,26 @@ Connection::select_db(const char *db)
 bool
 Connection::reload()
 {
-	bool suc = !mysql_reload(&mysql_);
-	if (throw_exceptions() && !suc) {
-		// Reloading grant tables through this API isn't precisely a
-		// query, but it's acceptable to signal errors with BadQuery
-		// because the new mechanism is the FLUSH PRIVILEGES statement.
-		// A program won't have to change when moving to the new way.
-		throw BadQuery(error());
+	if (connected()) {
+		bool suc = !mysql_reload(&mysql_);
+		if (throw_exceptions() && !suc) {
+			// Reloading grant tables through this API isn't precisely a
+			// query, but it's acceptable to signal errors with BadQuery
+			// because the new mechanism is the FLUSH PRIVILEGES query.
+			// A program won't have to change when doing it the new way.
+			throw BadQuery(error());
+		}
+		else {
+			return suc;
+		}
 	}
 	else {
-		return suc;
+		if (throw_exceptions()) {
+			throw BadQuery("MySQL++ connection not established");
+		}
+		else {
+			return false;
+		}
 	}
 }
 
@@ -246,12 +267,22 @@ Connection::reload()
 bool
 Connection::shutdown()
 {
-	bool suc = !(mysql_shutdown(&mysql_ SHUTDOWN_ARG));
-	if (throw_exceptions() && !suc) {
-		throw ConnectionFailed(error());
+	if (connected()) {
+		bool suc = !(mysql_shutdown(&mysql_ SHUTDOWN_ARG));
+		if (throw_exceptions() && !suc) {
+			throw ConnectionFailed(error());
+		}
+		else {
+			return suc;
+		}
 	}
 	else {
-		return suc;
+		if (throw_exceptions()) {
+			throw ConnectionFailed("MySQL++ connection not established");
+		}
+		else {
+			return false;
+		}
 	}
 }
 
@@ -412,6 +443,10 @@ Connection::set_option(Option option, bool arg)
 #if MYSQL_VERSION_ID >= 50003
 			case opt_report_data_truncation:
 				return set_option_impl(MYSQL_REPORT_DATA_TRUNCATION, &my_arg);
+#endif
+#if MYSQL_VERSION_ID >= 50013
+			case opt_reconnect:
+				return set_option_impl(MYSQL_OPT_RECONNECT, &my_arg);
 #endif
 			case opt_FIRST:	// warning eater when using old C APIs
 			default:
@@ -602,6 +637,20 @@ Connection::api_version(ostream& os)
 	os << major << '.' << minor << '.' << bug;
 
 	return os;
+}
+
+
+int
+Connection::ping()
+{
+	if (connected()) {
+		return mysql_ping(&mysql_);
+	}
+	else {
+		// Not connected, and we've forgotten everything we need in
+		// order to re-connect, if we once were connected.
+		return 1;
+	}
 }
 
 

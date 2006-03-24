@@ -1,7 +1,6 @@
 /***********************************************************************
- util.h - Declares functions and such required by several of the
- 	example programs.
-
+ stock.h - Declares the stock SSQLS used by several of the examples.
+ 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
  MySQL AB, and (c) 2004-2006 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
@@ -25,24 +24,25 @@
  USA
 ***********************************************************************/
 
-#if !defined(MYSQLPP_UTIL_H)
-#define MYSQLPP_UTIL_H
-
 #include <mysql++.h>
+#include <custom.h>
 
-extern const char* kpcSampleDatabase;
+#include <string>
 
-void print_stock_header(int rows);
-void print_stock_row(const mysqlpp::Row& r);
-void print_stock_row(const mysqlpp::sql_char& item,
-		mysqlpp::sql_bigint num, mysqlpp::sql_double weight,
-		mysqlpp::sql_double price, const mysqlpp::sql_date& date);
-void print_stock_rows(mysqlpp::Result& res);
-void print_stock_table(mysqlpp::Query& query);
-void get_stock_table(mysqlpp::Query& query, mysqlpp::Result& res);
-bool connect_to_db(int argc, char *argv[], mysqlpp::Connection& con,
-		const char* kdb = 0);
-char* utf8trans(const char* utf8_str, char* ansi_str, int ansi_len);
-
-#endif // !defined(MYSQLPP_UTIL_H)
+// The following is calling a very complex macro which will create
+// "struct stock", which has the member variables:
+//
+//   sql_char item;
+//   ...
+//   sql_date sdate;
+//
+// plus methods to help populate the class from a MySQL row.  See the
+// SSQLS sections in the user manual for further details.
+sql_create_5(stock,
+	1, 5, // The meaning of these values is covered in the user manual
+	mysqlpp::sql_char, item,
+	mysqlpp::sql_bigint, num,
+	mysqlpp::sql_double, weight,
+	mysqlpp::sql_double, price,
+	mysqlpp::sql_date, sdate)
 

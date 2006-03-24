@@ -1,4 +1,0 @@
-INCLUDES = -I$(top_srcdir)/lib
-LIBS = -lz -l@MYSQL_C_LIB@
-
-MYSQLPP_LIB = $(top_builddir)/lib/libmysqlpp.la

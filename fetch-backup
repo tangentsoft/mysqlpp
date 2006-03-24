@@ -1,0 +1,5 @@
+#!/bin/sh
+# Fetches the current Subversion dump file from gna.org, and saves it
+# in /pub/backups in a file named after the current date.
+
+wget -O /pub/backups/mysqlpp-`date +%Y%m%d`.dump.gz http://svn.gna.org/daily/mysqlpp.dump.gz

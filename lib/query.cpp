@@ -294,7 +294,8 @@ char* Query::preview_char()
 	*this << std::ends;
 	size_t length = sbuffer_.str().size();
 	char* s = new char[length + 1];
-	strcpy(s, sbuffer_.str().c_str());
+	strncpy(s, sbuffer_.str().c_str(), length);
+	s[length] = '\0';
 	return s;
 }
 

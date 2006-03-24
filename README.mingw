@@ -26,27 +26,23 @@ Building the Library and Example Programs
 	library.  Assuming you installed MySQL in c:\mysql and MySQL++
 	in c\mysql++, the commands to do this are:
 
-		mkdir c:\mysql\lib\gcc
-		cd c:\mysql\lib\gcc
+		mkdir c:\mysql\lib\opt
+		cd c:\mysql\lib\opt
 	    dlltool -k -d c:\mysql++\libmysqlclient.def -l libmysqlclient.a
 	
-	To configure the MySQL++ library to build with MinGW, say
-	"makemake mingw" in the project's root directory.  If you
-	change the Makefile.base or Makefile.mingw files, you will
-	have to run makemake again.
+	Now you can build the library with this command:
+	
+		mingw32-make -f Makefile.mingw
 
-	Now you can build the library with the command "mingw32-make".
-	That command ensures that you're using the MinGW version
-	of GNU make, and not some other version.  In particular,
-	the Cygwin and MSYS versions of GNU make WILL NOT WORK.
-	This problem is not insurmountable; if you want to fix it,
-	see Makefile.vc files, which work around differences among
-	these versions of GNU make.  Please send a patch for this to
-	the mailing list if you do it.
+	Notice that we're using the MinGW-specific version of GNU
+	make, not the Cygwin or MSYS versions.	This is in order to
+	get proper path separator handling.
 
-	If you didn't install MySQL in c:\mysql, you will have to
-	change Makefile.mingw in the lib and examples subdirectories
-	and re-run "makemake mingw".  You may also look at changing
-	these files for various other reasons, such as if you don't
-	like the way we name the DLL file.  If you want to change
-	the install location, that is in install.bat.
+	If you didn't install MySQL in c:\mysql, it's probably simplest
+	to just change the Makefile.mingw files.  Theoretically you
+	could adjust the Bakefiles instead, but due to the way we're
+	using Bakefile, it's a little difficult to rebuild Makefiles
+	on Windows right now.
+
+	If you want to change the install location, that is in
+	install.bat.

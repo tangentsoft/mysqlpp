@@ -6,7 +6,7 @@
 
 /***********************************************************************
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ MySQL AB, and (c) 2004-2006 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -35,16 +35,16 @@
 
 #include <mysql.h>
 
-#include <typeinfo>
 #include <map>
+#include <typeinfo>
 
 namespace mysqlpp {
 
-class mysql_type_info;
-class mysql_ti_sql_type_info_lookup;
-
 #if !defined(DOXYGEN_IGNORE)
 // Doxygen will not generate documentation for this section.
+
+class mysql_type_info;
+class mysql_ti_sql_type_info_lookup;
 
 class mysql_ti_sql_type_info
 {

@@ -10,7 +10,7 @@
 
 /***********************************************************************
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ MySQL AB, and (c) 2004-2006 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -100,6 +100,10 @@ public:
 
 		// Set reporting of data truncation errors
 		opt_report_data_truncation,
+
+		// Enable or disable automatic reconnection to the server if
+		// the connection is found to have been lost.
+		opt_reconnect,
 
 		// Number of options supported.  Never send this to
 		// set_option()!
@@ -245,15 +249,16 @@ public:
 
 	/// \brief "Pings" the MySQL database
 	///
-	/// If server doesn't respond, this function tries to reconnect.
+	/// Wraps \c mysql_ping() in the C API.  As a result, this function
+	/// will try to reconnect to the server if the connection has been
+	/// dropped.
 	/// 
 	/// \retval 0 if server is responding, regardless of whether we had
 	/// to reconnect or not
-	/// \retval nonzero if server did not respond to ping and we could
-	/// not re-establish the connection
-	///
-	/// Simply wraps \c mysql_ping() in the C API.
-	int ping() { return mysql_ping(&mysql_); }
+	/// \retval nonzero if either we already know the connection is down
+	/// and cannot re-establish it, or if the server did not respond to
+	/// the ping and we could not re-establish the connection.
+	int ping();
 
 	/// \brief Kill a MySQL server thread
 	///

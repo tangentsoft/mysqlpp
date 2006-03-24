@@ -79,8 +79,15 @@ main(int argc, char *argv[])
 	try {
 		// Send the query to create the table and execute it.
 		mysqlpp::Query query = con.query();
-		query << "create table stock (item char(20) not null, "
-				"num bigint, weight double, price double, sdate date)";
+		query << 
+				"CREATE TABLE stock " <<
+				"(item CHAR(20) NOT NULL, " <<
+				" num BIGINT, " <<
+				" weight DOUBLE, " <<
+				" price DOUBLE, " <<
+				" sdate DATE) " <<
+				"ENGINE = InnoDB " <<
+				"CHARACTER SET utf8 COLLATE utf8_general_ci";
 		query.execute();
 
 		// Set up the template query to insert the data.  The parse()

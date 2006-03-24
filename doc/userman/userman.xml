@@ -29,13 +29,13 @@
 	</authorgroup>
 
 	<copyright>
-		<year>1998-2001, 2005</year>
+		<year>1998-2001, 2005-2006</year>
 		<holder>Kevin Atkinson (original author)</holder>
 		<holder>MySQL AB</holder>
 		<holder>Educational Technology Resources</holder>
 	</copyright>
 
-	<pubdate role="rcs">$Date: 2005-09-28 07:42:45 -0600 (Wed, 28 Sep 2005) $</pubdate>
+	<pubdate role="rcs">$Date: 2006-03-24 13:52:00 -0700 (Fri, 24 Mar 2006) $</pubdate>
 </articleinfo>
 
 
@@ -147,43 +147,48 @@
 		<title>The Connection Object</title>
 
 		<para>A <ulink type="classref" url="Connection"/>
-		object manages the connection to the MySQL server. You
-		need at least one of these objects to do anything. A
-		Connection object can either create Query objects for
-		you, or you can execute queries directly through the
-		Connection object. The separate Query object is the
-		recommended way as it gives you far more power.</para>
+		object manages the connection to the MySQL
+		server. You need at least one of these objects to
+		do anything. Because the other MySQL++ objects your
+		program will use often depend (at least indirectly)
+		on the <classname>Connection</classname> instance,
+		the <classname>Connection</classname> object needs
+		to live at least as long as all other MySQL++ objects
+		in your program.</para>
 	</sect2>
 
 
 	<sect2>
 		<title>The Query Object</title>
 
-		<para>A <ulink type="classref" url="Query"/>
-		object is the recommended way of building
-		and executing queries. It is subclassed from
-		<computeroutput>std::stringstream</computeroutput>
+		<para>Most often, you create SQL queries using a
+		<ulink type="classref" url="Query"/> object created
+		by the <classname>Connection</classname> object.</para>
+
+		<para><classname>Query</classname> is subclassed
+		from <classname>std::stringstream</classname>
 		which means you can write to it like any other
 		C++ stream to form a query. The library includes
 		<ulink url="../../refman/html/manip_8h.html">stream
 		manipulators</ulink> that make it easy to generate
 		syntactically-correct SQL.</para>
 
-		<para>You can also set up <xref linkend="tquery"/> with
-		this class. Template queries work something like the
-		C <computeroutput>printf()</computeroutput> function:
+		<para>You can also set up <xref linkend="tquery"/>
+		with this class. Template queries work something
+		like C's <function>printf()</function> function:
 		you set up a fixed query string with tags inside that
 		indicate where to insert the variable parts. If you
 		have multiple queries that are structurally similar,
-		you simply set up one template query, and use that in
-		the various locations of your program.</para>
+		you simply set up one template query, and use that
+		in the various locations of your program.</para>
 
-		<para>A third method for building queries is to
-		use <xref linkend="ssqls"/> (SSQLS). This feature
-		presents your results as a C++ data structure, instead of
-		making you access the data through MySQL++ intermediary
-		classes. It also reduces the amount of embedded SQL code
-		your program needs.</para>
+		<para>A third method for building queries is
+		to use <classname>Query</classname> with <xref
+		linkend="ssqls"/> (SSQLS). This feature presents your
+		results as a C++ data structure, instead of making
+		you access the data through MySQL++ intermediary
+		classes. It also reduces the amount of embedded SQL
+		code your program needs.</para>
 	</sect2>
 
 
@@ -665,8 +670,18 @@ q &lt;&lt; "SELECT * FROM stock WHERE item = " &lt;&lt; quote &lt;&lt; s; </prog
 			<programlisting><xi:include href="custom1.txt"
 				parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 			</programlisting>
+
+			<para>Here is the stock.h header used by that example, and many
+			others:</para>
 			
-			<para>As you can see, SSQLS is very powerful.</para>
+			<programlisting><xi:include href="stock.txt"
+				parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+			</programlisting>
+
+			<para>As you can see, SSQLS is very
+			powerful. It allows you to have a C++ structure
+			paralleling your SQL table structure and use
+			it easily with STL code.</para>
 		</sect3>
 
 		<sect3>
@@ -728,6 +743,38 @@ q &lt;&lt; "SELECT * FROM stock WHERE item = " &lt;&lt; quote &lt;&lt; s; </prog
 			<para>For more details on the SSQLS feature, see the <xref
 			linkend="ssqls"/> chapter.</para>
 		</sect3>
+	</sect2>
+
+
+	<sect2>
+		<title>C++ Equivalents of SQL Column Types</title>
+
+		<para>In MySQL++ version 2.1, the new
+		<filename>sql_types.h</filename> header declares
+		typedefs for all MySQL column types. These typedefs
+		all begin with <classname>sql_</classname> and end
+		with a lowercase version of the standard SQL type
+		name. For instance, the MySQL++ typedef corresponding
+		to <classname>TINYINT UNSIGNED</classname> is
+		<classname>mysqlpp::sql_tinyint_unsigned</classname>.
+		You do not have to use these typedefs; you could use
+		an <classname>unsigned char</classname> here if you
+		wanted to. For that matter, you could use a plain
+		<classname>int</classname> in most cases; MySQL++
+		is quite tolerant of this sort of thing. The typedefs
+		exist for style reasons, for those who want their C++
+		code to use the closest equivalent type for any given
+		SQL type.</para>
+
+		<para>Most of these typedefs use standard
+		C++ data types, but a few are aliases for a
+		MySQL++ specific type. For instance, the SQL type
+		<classname>DATETIME</classname> is mirrored in MySQL++
+		by <classname>mysqlpp::DateTime</classname>. For
+		consistency, <filename>sql_types.h</filename>
+		includes a typedef alias for
+		<classname>DateTime</classname> called
+		<classname>mysqlpp::sql_datetime</classname>.</para>
 	</sect2>
 
 
@@ -812,6 +859,34 @@ cout &lt;&lt; x &lt;&lt; endl;</programlisting>
 		printed "(NULL)", and the second would have thrown
 		a <computeroutput>BadNullConversion</computeroutput>
 		exception.</para>
+	</sect2>
+
+
+	<sect2>
+		<title>Creating Transaction Sets</title>
+
+		<para>MySQL++ v2.1 added the <ulink type="classref"
+		url="Transaction"/> class, which makes it easier to
+		use transactions in an exception-safe manner. Normally
+		you create the <classname>Transaction</classname>
+		object on the stack before you issue the queries in
+		your transaction set. Then, when all the queries
+		in the transaction set have been issued, you call
+		<function>Transaction::commit()</function>,
+		which commits the transaction set. If the
+		<classname>Transaction</classname> object goes out of
+		scope before you call <function>commit()</function>,
+		the transaction set is rolled back. This ensures
+		that if some code throws an exception after the
+		transaction is started but before it is committed,
+		the transaction isn't left unresolved.</para>
+
+		<para><filename>examples/xaction.cpp</filename> illustrates
+		this:</para>
+
+		<programlisting><xi:include href="xaction.txt"
+			parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+		</programlisting>
 	</sect2>
 
 
@@ -1115,7 +1190,7 @@ query.parse();</programlisting>
 		<computeroutput>Query::use()</computeroutput> and
 		<computeroutput>Query::execute()</computeroutput>.
 		'parm0' corresponds to the first parameter,
-		etc. You may specify up to 12 parameters. For
+		etc. You may specify up to 25 parameters. For
 		example:</para>
 
 		<programlisting>
@@ -1280,17 +1355,20 @@ Result res = query.store(1.25); </programlisting>
 		<para>This is the most basic sort of SSQLS declaration:</para>
 
 		<programlisting>
-sql_create_5(stock, 0, 0,     
+sql_create_5(stock, 1, 0,
     string, item,
     int, num,                  
     double, weight,  
     double, price,  
     mysqlpp::Date, date)</programlisting>
 
-		<para>This creates a C++ structure called 'stock'
-		containing five member variables, along with some
-		constructors and other member functions useful with
-		MySQL++.</para>
+		<para>This creates a C++ structure called
+		<classname>stock</classname> containing
+		five member variables (<varname>item</varname>,
+		<varname>num</varname>, <varname>weight</varname>,
+		<varname>price</varname> and <varname>date</varname>),
+		along with some constructors and other member functions
+		useful with MySQL++.</para>
 
 		<para>One of the generated constructors takes a reference
 		to a mysqlpp::Row object, allowing you to easily populate
@@ -1308,163 +1386,115 @@ query.storein(result);</programlisting>
 		<para>The general format of this set of macros is:</para>
 
 		<programlisting>
-sql_create_#(NAME, KEYS, INITPARMS, TYPE1, ITEM1, ... TYPE#, ITEM#)</programlisting>
+sql_create_#(NAME, COMPCOUNT, SETCOUNT, TYPE1, ITEM1, ... TYPE#, ITEM#)</programlisting>
 
-		<para>Where # is the number of member variables,
-		NAME is the name of the structure you wish to create,
-		TYPE<emphasis>x</emphasis> is the type name for a
-		member variable, and ITEM<emphasis>x</emphasis> is that
+		<para>Where # is the number of member
+		variables, <parameter>NAME</parameter> is
+		the name of the structure you wish to create,
+		<parameter>TYPEx</parameter> is the type of a member
+		variable, and <parameter>ITEMx</parameter> is that
 		variable's name.</para>
 
-		<para>The KEYS and INITPARMS arguments can always be zero,
-		to keep things simple. We will discuss what happens if
-		you use different values in the next few sections.</para>
+		<para>The <parameter>COMPCOUNT</parameter> and
+		<parameter>SETCOUNT</parameter> arguments are described
+		in the next section.</para>
 	</sect2>
 
 
 	<sect2>
-		<title>sql_create with Compare</title>
+		<title>SSQLS Comparison and Initialization</title>
 
-		<para>SSQLS structures can also have member functions that
-		allow you to compare one structure to another. You simply
-		change the first 0 in the previous example (KEYS) to a
-		higher value. If this number is N, then two structures
-		are considered equal if the first N members of each
-		are equal.</para>
+		<para><varname>sql_create_</varname><emphasis>x</emphasis>
+		adds member functions and operators to each
+		SSQLS that allow you to compare one SSQLS
+		instance to another. These functions compare
+		the first <parameter>COMPCOUNT</parameter>
+		fields in the structure. In the example above,
+		<parameter>COMPCOUNT</parameter> is 1, so only
+		the <varname>item</varname> field will be checked
+		when comparing two <classname>stock</classname>
+		structures.</para>
+		
+		<para>This feature works best when your table's "key"
+		fields are the first ones in the table schema and
+		you set <parameter>COMPCOUNT</parameter> equal to the
+		number of key fields.  That way, a check for equality
+		between two SSQLS structures in your C++ code will give
+		the same results as a check for equality in SQL.</para>
 
-		<para>For example:</para>
+		<para><parameter>COMPCOUNT</parameter> must
+		be at least 1. The current implementation of
+		<varname>sql_create_</varname><emphasis>x</emphasis>
+		cannot create an SSQLS without comparison member
+		functions.</para>
 
-		<programlisting>
-sql_create_5(stock, 1, 0,     
-    string, item,
-    int, num,                  
-    double, weight,  
-    double, price,  
-    mysqlpp::Date, date)</programlisting>
-
-		<para>Here we are saying that the 'item' field is a kind
-		of key field: it is always unique between any two 'stock'
-		items, so if two stock records have equal item values,
-		they are the same stock item.</para>
-
-		<para>That change adds the following members to the
-		SSQLS:</para>
-
-		<programlisting>
-struct stock {
-    ...  
-    stock(const std::string &amp;p1); 
-    set(const std::string &amp;p1); 
-    bool operator ==(const stock &amp;other) const;  
-    bool operator !=(const stock &amp;other) const;   
-    bool operator &gt;(const stock &amp;other) const;   
-    bool operator &lt;(const stock &amp;other) const;   
-    bool operator &gt;=(const stock &amp;other) const;   
-    bool operator &lt;=(const stock &amp;other) const;   
-    int cmp(const stock &amp;other) const;  
-    int compare(const stock &amp;other) const;  
-}  
-      
-int compare(const stock &amp;x, const stock &amp;y);</programlisting>
-
-		<para>The global
-		<computeroutput>compare()</computeroutput>
-		function compares x to y and returns &lt;0 if
-		x &lt; y, 0 if x = y, and &gt;0 if x &gt; y.
-		<computeroutput>stock::cmp()</computeroutput> and
-		<computeroutput>stock::compare()</computeroutput>
-		are the same thing as <computeroutput>compare(*this,
-		other)</computeroutput>.</para>
-
-		<para>The additional constructor initializes the key
-		fields of the structure and leaves the other member
-		variables undefined. This is useful for creating temporary
-		objects to use for comparisons like <computeroutput>x
-		&lt;= stock("Hotdog")</computeroutput>.</para>
-
-		<para>Because stock is now less-than-comparable you
-		can store the query results in an STL associative
-		container:</para>
+		<para>Because our <classname>stock</classname>
+		structure is less-than-comparable, you can use it
+		in STL algorithms and containers that require this,
+		such as STL's associative containers:</para>
 
 		<programlisting>
 std::set&lt;stock&gt; result;   
-query.storein(result);</programlisting>
-
-		<para>And you can now use it like any other set:</para>
-
-		<programlisting>
+query.storein(result);
 cout &lt;&lt; result.lower_bound(stock("Hamburger"))-&gt;item &lt;&lt; endl;</programlisting>
 
-		<para>This will return the first item that begins with
-		"Hamburger".</para>
+		<para>This will print the first item in the result
+		set that begins with "Hamburger".</para>
 
-		<para>You can also use it will any STL algorithm that
-		require the values to be less-than-comparable.</para>
-	</sect2>
-
-
-	<sect2>
-		<title>sql_create with Additional Initializers</title>
-
-		<para>If third parameter for this macro (INITPARMS) is
-		nonzero, the SSQLS will have two additional members
-		functions that make it easier to initialize the
-		structure's data members. For example:</para>
+		<para>The third parameter to
+		<varname>sql_create_</varname><emphasis>x</emphasis>
+		is <parameter>SETCOUNT</parameter>. If this is
+		nonzero, it adds an initialization constructor and
+		a <function>set()</function> member function taking
+		the given number of arguments, for setting the first
+		<emphasis>N</emphasis> fields of the structure. For
+		example, you could change the above example like
+		so:</para>
 
 		<programlisting>
-sql_create_5(stock, 1, 5,   
+sql_create_5(stock, 1, 2,
     string, item,
     int, num,                  
     double, weight,  
     double, price,  
-    mysqlpp::Date, date)</programlisting>
+    mysqlpp::Date, date)
+		
+stock foo("Hotdog", 52);</programlisting>
 
-		<para>will add these functions to the structure relative to
-		that in the previous example:</para>
+		<para>In addition to this 2-parameter constructor, this
+		version of the <classname>stock</classname> SSQLS will
+		have a similar 2-parameter <function>set()</function>
+		member function.</para>
 
-		<programlisting>
-struct stock {   
-    ...  
-    stock(const string&amp;, const int&amp;, const double&amp;,  
-            const double&amp;, const mysqlpp::Date&amp;);
-    void set(const string&amp;, const int&amp;, const double&amp;,  
-            const double&amp;, const mysqlpp::Date&amp;);  
-}</programlisting>
-
-		<para>There is one trick with this: because each SSQLS
-		has at least one other constructor besides the one
-		defined by this feature, not every logical value for
-		INITPARMS results in working code. A simple example is
-		setting KEYS and INITPARMS to the same value: you get
-		two identical constructor definitions, so the compiler
-		refuses to compile the code. If you are getting compiler
-		errors having to do with duplicate definitions, try
-		changing this value to zero.</para>
+		<para>The <parameter>COMPCOUNT</parameter> and
+		<parameter>SETCOUNT</parameter> values cannot
+		be equal. If they are, the macro will generate
+		two initialization constructors with identical
+		parameter lists, which is illegal in C++. Why
+		does this happen? It's often convenient to be
+		able to say something like <computeroutput>x
+		== stock("Hotdog")</computeroutput>. This
+		requires that there be a constructor taking
+		<parameter>COMPCOUNT</parameter> arguments to create
+		the temporary <classname>stock</classname> instance
+		used in the comparison. It is easy to work around this
+		limitation. Using our <classname>stock</classname>
+		example structure, if you wanted comparisons
+		to consider all 5 fields and also be able to
+		initialize all 5 fields at once, you would pass
+		5 for <parameter>COMPCOUNT</parameter> and 0 for
+		<parameter>SETCOUNT</parameter>. You would still
+		get a 5-parameter initialization constructor and a
+		5-parameter <function>set()</function> function.</para>
 	</sect2>
 
 
 	<sect2>
-		<title>An Important Limitation of sql_create</title>
+		<title>Retrieving a Table Subset</title>
 
-		<para>The features described in the two previous sections
-		work together nicely most of the time. However, if you try
-		to use the same value for the second and third parameters to
-		<computeroutput>sql_create_N</computeroutput>, your
-		program will fail to compile.</para>
-
-		<para>Why is this?</para>
-		
-		<para>The second parameter sets up SSQLS comparisons,
-		one aspect of which defines a constructor taking just
-		the table's key fields. The third parameter sets up
-		an initialization constructor, taking as many fields
-		as you request. When these two values are equal,
-		you get two identical constructor definitions,
-		which is illegal in C++.</para>
-		
-		<para>The solution is to use 0 for the third
-		parameter, indicating that you do not need
-		a separate full-initialization constructor.
+		<para>It's not necessary to retrieve an entire table
+		row using SSQLS, as long as the fields you want are
+		grouped together at the start of the table schema.
 		<filename>examples/custom6.cpp</filename> illustrates
 		this:</para>
 
@@ -1472,16 +1502,32 @@ struct stock {
 			parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 		</programlisting>
 
-		<para>This example shows one other thing, which
-		is how to retrieve a subset of a table using
-		SSQLS. Because we wanted only one column from the
-		table, we had to pass 0 for the third parameter to
-		<computeroutput>sql_create_N</computeroutput> to get
-		the code to compile.</para>
-		
 		<para>(See the simple1 example in the <xref
 		linkend="tutorial"/> for another way to accomplish
 		the same thing.)</para>
+
+		<para>This example illustrates an important point: you
+		could not use the 5-member <classname>stock</classname>
+		structure in this example. The reason is, when
+		you assign a <classname>Row</classname> object to
+		an SSQLS, the function that copies the row's data
+		into the structure expects to see as many fields
+		in the row as are in the SSQLS. Your program will
+		crash when the code tries to access fields beyond
+		those that exist in the <classname>Row</classname>
+		object. The converse is not true, however: if you
+		change the <computeroutput>SELECT</computeroutput>
+		statement above so that it retrieves more than one
+		column, the code will still work, because the extra
+		fields in each row will simply be ignored.</para>
+
+		<para>Realize that the second and third parameters
+		to <varname>sql_create_1</varname> can't be anything
+		other than 1 and 0, respectively. As discussed above,
+		the second parameter must be at least 1, but since
+		there is only one field in the structure, it cannot
+		be higher than 1. Since the third parameter cannot
+		be equal to the second, only 0 works there.</para>
 	</sect2>
 
 
@@ -1946,13 +1992,13 @@ void utf8_to_win32_ansi(const char* utf8_str, char* ansi_str, int ansi_len)
 		<programlisting>
 MessageBox(0, ucs2_buf, "UCS-2 version of Item", MB_OK);</programlisting>
 
-		<para>All of this assumes you're using Windows NT or one
-		of its direct descendants: Windows 2000, Windows XP,
-		Windows 2003 Server, and someday "Longhorn". Windows
-		95/98/ME and Windows CE do not support UCS-2. They
-		still have the 'W' APIs for compatibility, but they
-		just smash the data down to 8-bit and call the 'A'
-		version for you.</para>
+		<para>All of this assumes you're using Windows NT
+		or one of its direct descendants: Windows 2000,
+		Windows XP, Windows 2003 Server, and someday Windows
+		Vista. Windows 95/98/ME and Windows CE do not support
+		UCS-2. They still have the 'W' APIs for compatibility,
+		but they just smash the data down to 8-bit and call
+		the 'A' version for you.</para>
 	</sect2>
 
 

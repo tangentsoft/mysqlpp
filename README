@@ -43,28 +43,26 @@ Additional Files to Read
 
 Building the Library
 ~~~~~~~~~~~~~~~~~~~~
-	MySQL++ has two supported build systems.
+	As of version 2.1, MySQL++ uses the Bakefile build system. This
+	tool creates platform-specific project files and makefiles. We
+	currently support these options:
 
-	The first is based on the GNU autotools, and is primarily
-	for Linux, Mac OS X, Cygwin, and the "real" Unices.
-	See README.unix for details.  There's a possiblity that
-	it will also work on Cygwin competitors such as MKS, UWin,
-	and Microsoft SFU, but this hasn't been tested.
+	autoconf:
+		For Unixy platforms, including Linux, Mac OS X, and
+		Cygwin. See README.unix for details. Supplementary
+		details for Cygwin are in README.cygwin.
 
-	Mainstream Win32 tool chains are supported -- if at all --
-	by the MySQL++-specific 'makemake' system.  If your platform
-	is one of those supported, it will have a secondary README
-	file in this directory with more details.
+	Visual C++:
+		We ship Visual C++ 6 project files, but MySQL++ only
+		works with Visual C++ 7.1 (a.k.a. Visual Studio 2003)
+		or newer. Your version of Visual Studio will upgrade
+		these project files for you. See README.vc for details.
 
-	If your system isn't supported by the autotools or makemake
-	systems, you will have to either add that support, or find
-	some way to build the library yourself.  We welcome patches
-	to add new platform support on the mailing list.  We would
-	much prefer to have extensions to the existing build systems
-	than completely new systems, such as project files for
-	proprietary IDEs.  The project's history shows that project
-	files tend to be neglected as new library features are added,
-	so we're reluctant to accept these.
+	MinGW:
+		We ship Makefiles made for MinGW. These currently only
+		work for building static versions of the library,
+		which has licensing ramifications. See README.mingw
+		for details.
 
 
 Example Programs

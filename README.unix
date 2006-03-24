@@ -1,6 +1,6 @@
 Building the Library and Example Programs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	MySQL++ uses the GNU autotools, so you can build it with the
+	MySQL++ uses the GNU autoconf, so you can build it with the
 	standard commands:
 
 	# ./configure

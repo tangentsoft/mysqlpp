@@ -10,11 +10,11 @@ consider whether it could be reduced to an API feature that would be
 widely useful.  Patches or proposals of this sort are always welcome.
 
 
-v2.1 Plan
+v2.2 Plan
 ---------
 
 	This plan is not set in stone.	These are simply the features
-	we want to try and tackle for the v2.1 release.
+	we want to try and tackle for the v2.2 release.
 
 	Items in this plan may slip to a future release.  This
 	typically happens when the proper solution is unclear,
@@ -29,22 +29,11 @@ v2.1 Plan
 	base class.
 
 
-	o Transaction support.	Create a "Transaction" class, an
-	  object of which you create on the stack, giving it a
-	  reference to the Connection object.  Transaction object's
-	  ctor calls a function on the Connection object to start
-	  a transaction set, and its dtor calls another function to
-	  commit the transaction.  Also provide a "commit()" member
-	  function, to commit before destruction.  This has a couple
-	  of uses.  First, it's useful for avoiding exceptions coming
-	  from ~Transaction(), if such a thing is possible.  Second,
-	  sometimes it's inconvenient to wait until the end of a block
-	  to commit the transaction, and adding artifical blocks is
-	  somewhat ugly.
-
-	o Add a configure script option to allow the new lock
-	  mechanism to use platform mutexes via the Boost.Threads
-	  library.
+	o Conditionally allow the Lockable mechanism to the
+	  Boost.Threads library.  If MYSQLPP_BOOST_THREADS is defined,
+	  #include the proper header and use Boost's mutexes.  Add a
+	  configure script option that defines this macro and adds
+	  any needed libraries to the <sys-lib> tags.
 
 	  Mechanism must reflect these MySQL C API restrictions:
 
@@ -82,25 +71,26 @@ v2.1 Plan
 	  a single std::string, which are the new terminus of the call
 	  chain.  Reimplement const char* versions in terms of these.
 
-	  Another way is to rename the template query versions (e.g. to
-	  execute_tq()) to avoid the overload conflict.  With that
-	  done, we can use C API functions like mysql_real_query(),
-	  which can take binary data.
+	  Another way is to add more overloads taking both a const
+	  char* and a length parameter. Make these new functions the
+	  terminus to each call chain.
 
-	  Yet another way is to add a length parameter to the call
-	  chain end functions.
+	  Yet another way is that we may be able to co-opt the first
+	  template query version of each of these functions, as it
+	  takes a single SQLString.
 
-	  And finally, we may be able to co-opt the first template
-	  query version of each of these functions, as it takes a
-	  single SQLString.
+	o Viktor Stark reports that a BLOB of binary data containing
+	  0's appears to be truncated when stored in an SSQLS with
+	  a std::string for the BLOB field.  Investigate, and fix
+	  if confirmed.
 
 	o Date and time classes are pretty minimalistic; they could
 	  be so much more powerful.  Some ideas:
 
 	  - Add time_t conversion.
 
-	  - Arithmetic features.  (See "Algorithms for Programmers"
-	    by Binstock and Rex.)
+	  - Arithmetic features.  (See "Practical Algorithms for
+	    Programmers" by Binstock and Rex.)
 
 	  - It may be possible to get some nice syntactic sugar,
 	    such as a way to call SQL functions like NOW() when
@@ -113,26 +103,12 @@ v2.1 Plan
 	  that can be extended, instead of reinventing the wheel.
 	  Boost, perhaps?
 
-	o When you create a Connection object with its default ctor and
-	  don't .connect() it, several of its functions can fail to
-	  work correctly.  ping(), for one, because the MYSQL handle
-	  isn't initialized until the connection is established.
-	  Decide how to cope: a) init the handle in all ctors; b)
-	  throw ObjectNotInitialized when the library knows the
-	  call will fail; or c) just return a failure code and hope
-	  the user is checking it.  Could be a different answer for
-	  each function.  Keep in mind the consequences for database-
-	  independence here.
-
 	o Build a forward iterator mechanism for ResUse.  Make it
 	  general enough that you can use it with STL algorithms
 	  like find_if().  Then make an example to demonstrate this
 	  augmentation of SELECT.  Also, update usequery example
 	  to use the iterator.	Tricky bit: how do we make it not
 	  interfere with subclass Result's random-access iterator?
-
-	o Write an example to demonstrate compare.h features, or throw
-	  the header away.  It's not being used within the library.
 
 	o Have resetdb create a second table containing a BLOB column
 	  that load_file and cgi_image can use.  
@@ -157,27 +133,41 @@ v2.1 Plan
 	  be prevented.  See http://lists.mysql.com/plusplus/4451
 	  for the proposal.
 
-	o Extract all of the type declarations at the top of
-	  type_info.cpp into a set of typedefs.  If someone
-	  wants, they could then declare a variable of type
-	  mysqlpp::tiny_int_unsigned_null, and know they're getting
-	  the most appropriate C++ type to SQL's TINY UNSIGNED INT
-	  with the NULL attribute.  Use these types in the examples?
+	o Add Chris Frey's packarray class?
 
 
-Future Features
----------------
+v3.0 Plan
+---------
 
-	These changes are planned for versions after v2.1.  If you
-	need one of these changes to happen on some particular
-	schedule, the best way to ensure it is to start coding and
-	provide a patch!
+	Version 3.0 is primarily for those changes that will break
+	the ABI.  (i.e. removing functions, changing function
+	signatures, etc.)  This plan is very tenuous.  Some of this
+	could slip to v4.0.
 
+	o Change the unsigned int overloads for operator[] on
+	  const_subscript_iterator and its subclasses from unsigned
+	  int to a plain int.  This should fix the ambiguous overload
+	  problems, such as with row[0].
 
-	o Define operator<< for Fields, Row, ResUse, etc.  In other
-	  words, there should be a way to get a user-readable version
-	  of received data without a lot of code.  Perhaps use a CSV
-	  output format, or a mysql(1) one (ASCII grid).
+	  See the following threads for reference:
+	      http://lists.mysql.com/plusplus/4947
+	      http://lists.mysql.com/plusplus/4952
+	      http://lists.mysql.com/plusplus/4960
+	
+	o Several MySQL++ functions wrap the MySQL C API too literally:
+	  they indicate success by returning 0 instead of true,
+	  as most other wrapper functions do.
+
+	o Apply Waba's patch allowing Null<T> fields in SSQLSes:
+	  http://lists.mysql.com/plusplus/5433
+
+	o Deprecate sql_create_basic_*  They have less functionality
+	  and they're no easier to use than sql_create and friends.
+
+	o Consider whether some of the current boilerplate can be
+	  made into a base class that all SSQLSes derive from.	Some
+	  template functions like Query::insert<T> might become regular
+	  member functions, taking a reference to the SSQLS base class.
 
 	o Abstract all uses of MySQL C API functions into a database
 	  driver class with a generic interface.  This is a step
@@ -206,6 +196,36 @@ Future Features
 	  server types.  Imagine a program for importing data from
 	  PostgreSQL and loading it into a MySQL table, for instance.
 
+
+
+Future Features
+---------------
+
+	These changes are not assigned to any particular version.
+	They could happen at any time.	If you want one to appear at
+	some definite date, get coding and provide a patch!
+
+	o Create adaptors for std::bitset, for storing binary data in a
+	  MySQL table.	Make two options available, one for storing
+	  the return from bitset::to_ulong() in an UNSIGNED INTEGER
+	  column, and another for storing a larger set of bits in a
+	  more flexible way, perhaps as a BLOB.
+
+	o Row object currently depends on the associated ResUse object
+	  to stick around through all calls to .at(), because it needs
+	  the list of field types in the result set to construct
+	  ColData objects.  This means it's not possible to store
+	  the result of several queries before accessing the data.
+	  Currently, this is just a documented limitation, but it
+	  would be nice if there were a clean way to avoid this.
+	  Obviously you could just copy the type list when constructing
+	  the Row object, but that seems pointlessly inefficient.
+
+	o Define operator<< for Fields, Row, ResUse, etc.  In other
+	  words, there should be a way to get a user-readable version
+	  of received data without a lot of code.  Perhaps use a CSV
+	  output format, or a mysql(1) one (ASCII grid).
+
 	o manip.cpp uses mysql_escape_string(), which doesn't take the
 	  selected database's character set into account.  To do that,
 	  you must use mysql_real_escape_string(), which differs
@@ -232,50 +252,6 @@ Future Features
 	  will pop out of the database driver class idea.  The driver
 	  object may be able to look up a suitable Connection object
 	  for the manipulators.
-
-	o SSQLS structures include some static elements (_table and
-	  names[]), which are defined within the macro.  If you
-	  put an SSQLS declaration in a header file and #include
-	  that from multiple locations, you get a multiply-defined
-	  symbol warning.  Some ways to separate the definition from
-	  the declaration:
-
-		  o Give the SSQLS macros another parameter, to
-		    suppress static definition.
-
-		  o Put statics in a separate macro, which the
-		    user must instantiate once in a .cpp file.
-		    (Similar to the way MFC message maps work.)
-
-		  o Put statics in a sub-macro, conditionally defined,
-		    which SSQLS is implemented in terms of.  Define the
-			condition macro in one module within your
-			program.
-
-		  o Redesign the SSQLS mechanism entirely.  Instead of
-		    defining SSQLSes by instantiating macros, you could
-		    declare the structure in, say, an XML format,
-		    which could be tranformed (XSLT?  Perl + a DOM
-		    parser?) into code very much like in the current
-		    SSQLS macros, except that it would generate
-		    separate .cpp and .h files for each structure.
-		    In addition to solving the static member problem,
-		    it would have other advantages, like side-stepping
-		    the Borland C++ macro size limit.
-
-	o Deprecate sql_create_basic_* ? They have less functionality
-	  and they're no easier to use than sql_create and friends,
-	  so why bother with them?  I suppose the code generated
-	  is a bit smaller, but *really*....  Only possible saving
-	  grace is if BC++ can compile them due to the macro code
-	  being shorter.  They also don't have the static members,
-	  mentioned in the previous item.
-
-	o Consider whether some of the current boilerplate can be
-	  made into a base class that all SSQLSes derive from.
-	  This may have implications for some templates, like
-	  Query::insert<T>...they might become regular member
-	  functions, taking a reference to the base class.
 
 	o MySQL++ handles automatic quoting and escaping differently
 	  for cout and cerr than for Query streams.  This should
@@ -304,32 +280,12 @@ Future Features
 	  values.  This could potentially break a lot of
 	  infrastructure, though, so do it only with care.
 
-	o Fix the row[0] ambiguity problem.  This stems from the fact
-	  that 0 is an int type, but can fit either of the unsigned int
-	  or const char* argument types from operator[].
-	  See the following threads for reference:
-	      http://lists.mysql.com/plusplus/4947
-	      http://lists.mysql.com/plusplus/4952
-	      http://lists.mysql.com/plusplus/4960
-	  The ideal way to fix it for v3.0 is to make
-	  const_subscript_container's SizeType an int instead of unsigned int,
-	  but this has implications for matching the C API.
-
 
 Bug Fix/Maintenance Items
 -------------------------
 
 	These items could happen in any version.
 
-
-	o Document restrictions on order of destruction.  See this thread:
-	  http://lists.mysql.com/plusplus/5084
-
-	o Storing a subset row in an SSQLS defined to hold the entire
-	  row currently causes a segfault.  To see this, copy the SSQLS
-	  definition from custom1 to custom6.  This is arguably a bug;
-	  see if we can't make it just fill out the fields queried for,
-	  and leave the rest unchanged.
 
 	o 64-bit integer support has been reported to work, but more
 	  confirmation is wanted.

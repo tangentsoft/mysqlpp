@@ -83,6 +83,11 @@ public:
 	/// If the field does not exist in this row, we throw a BadFieldName
 	/// exception.
 	///
+	/// For this operator to work, the Result or ResUse object that
+	/// created this object must still exist.  In other words, you
+	/// cannot re-use or destroy the result object until you are done
+	/// retrieving data from this row object.
+	///
 	/// Note that we return the
 	/// \link mysqlpp::ColData_Tmpl ColData \endlink object by value.
 	/// The purpose of ColData is to make it easy to convert the string
@@ -109,20 +114,20 @@ public:
 	/// get around to actually \e using the pointer.
 	///
 	/// This function is rather inefficient.  If that is a concern for
-	/// you, use at(), operator[](size_type) or the SSQLS mechanism
+	/// you, use at(), operator[](size_type) or the SSQLS mechanism'
 	/// instead.
 	MYSQLPP_EXPORT const ColData operator [](const char* field) const;
 
 	/// \brief Get the value of a field given its index.
 	///
-	/// If the index value is bad, the underlying std::vector is
-	/// supposed to throw an exception, according to the Standard.
-	///
 	/// This function is just syntactic sugar, wrapping the at() method.
-	/// The at() method is the only way to get at the first field by
-	/// index, as row[0] is ambiguous: it could call either overload.
+	/// The at() method is the only way to get at the first field in a
+	/// result set by index, as \c row[0] is ambiguous: it could call
+	/// either \c operator[] overload.
 	///
-	/// See operator[](const char*) for more caveats.
+	/// \sa at() for the full documentation for this operator, and
+	/// operator[](const char*) for further caveats about using this
+	/// operator.
 	const ColData operator [](size_type i) const
 	{
 		return at(i);
@@ -130,11 +135,15 @@ public:
 
 	/// \brief Get the value of a field given its index.
 	///
-	/// If the index is out-of-bounds, the underlying vector is supposed
-	/// to throw an exception according to the C++ Standard.  Whether it
-	/// actually does this is implementation-dependent.
+	/// If the index value is bad, the underlying std::vector is
+	/// supposed to throw an exception, according to the Standard.
 	///
-	/// \sa operator[]() for caveats about using this function.
+	/// For this function to work, the Result or ResUse object that
+	/// created this object must still exist.  In other words, you
+	/// cannot re-use or destroy the result object until you are done
+	/// retrieving data from this row object.
+	///
+	/// See operator[](const char*) for more caveats.
 	MYSQLPP_EXPORT const ColData at(size_type i) const;
 
 	/// \brief Return the value of a field given its index, in raw form.

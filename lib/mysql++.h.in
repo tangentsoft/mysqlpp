@@ -6,16 +6,14 @@
 ///
 /// There is no point in trying to optimize which headers you include,
 /// because every MySQL++ program needs query.h, and that #includes
-/// all the other headers indirectly, except for custom*.h and
-/// compare.h.  (query.h doesn't bring in compare.h because it's not
-/// used within the library anywhere; its facilities are only for
-/// end-user programs.)  The only possible optimization is to include
-/// query.h instead of mysql++.h, and this results only in trivial
-/// compile time reductions at the expense of code clarity.
+/// all the other headers indirectly, except for custom*.h.  The only
+/// possible optimization is to include query.h instead of mysql++.h,
+/// and this results only in trivial compile time reductions at the
+/// expense of code clarity.
 
 /***********************************************************************
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ MySQL AB, and (c) 2004-2006 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -53,7 +51,7 @@
 // dependency chain.
 #include "connection.h"
 #include "query.h"
-#include "compare.h"
+#include "sql_types.h"
 
 #endif // !defined(MYSQLPP_MYSQLPP_H)
 

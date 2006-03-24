@@ -18,8 +18,8 @@ FO_SS=fo.xsl
 HTML_SS=html.xsl
 EX_TXT=cgi_image.txt custom1.txt custom2.txt custom3.txt custom4.txt \
 		custom5.txt custom6.txt fieldinf1.txt load_file.txt \
-		resetdb.txt simple1.txt simple2.txt simple3.txt updel.txt \
-		util.txt
+		resetdb.txt simple1.txt simple2.txt simple3.txt stock.txt \
+		updel.txt util.txt xaction.txt
 
 
 ## ------------------------

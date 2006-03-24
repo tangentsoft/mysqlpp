@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<bakefile-gen>
+    <input>
+        ./mysql++.bkl
+		lib/lib.bkl
+		examples/examples.bkl
+    </input>
+
+    <!-- List of output formats to generate: -->
+    <add-formats>
+        autoconf,msvc6prj,mingw
+    </add-formats>
+
+    <add-flags formats="mingw">
+        -o$(INPUT_FILE_DIR)/Makefile.mingw
+    </add-flags>
+</bakefile-gen>

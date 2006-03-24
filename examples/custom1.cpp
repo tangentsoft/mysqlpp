@@ -26,33 +26,13 @@
  USA
 ***********************************************************************/
 
+#include "stock.h"
 #include "util.h"
 
-#include <mysql++.h>
-#include <custom.h>
-
 #include <iostream>
-#include <iomanip>
 #include <vector>
 
 using namespace std;
-
-// The following is calling a very complex macro which will create
-// "struct stock", which has the member variables:
-//
-//   string item
-//   ...
-//   Date sdate
-//
-// plus methods to help populate the class from a MySQL row
-// among other things that I'll get to in a later example.
-sql_create_5(stock,
-			 1, 5,				// explained in the user manual
-			 string, item,
-			 mysqlpp::longlong, num,
-			 double, weight,
-			 double, price,
-			 mysqlpp::Date, sdate)
 
 int
 main(int argc, char *argv[])

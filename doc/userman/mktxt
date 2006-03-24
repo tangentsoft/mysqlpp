@@ -4,11 +4,16 @@
 # reformat the example programs so they can be xincluded directly into
 # the DocBook during XSLT processing.
 
-SRCFILE=`echo ../../examples/$1 | sed -e s/txt/cpp/`
+TXTFILE=$1
+SRCFILE=`echo ../../examples/$TXTFILE | sed -e s/\\\\.txt/.cpp/`
+if [ ! -e $SRCFILE ]
+then
+	SRCFILE=`echo ../../examples/$TXTFILE | sed -e s/\\\\.txt/.h/`
+fi
 CLINE=`grep -n '\*\*/' $SRCFILE |cut -f1 -d:`
-LINE=`echo $CLINE + 1 |bc`
+LINE=`echo $CLINE + 2 |bc`
 
-#echo Converting $SRCFILE to $1, starting at line $LINE...
+#echo Converting $SRCFILE to $TXTFILE, starting at line $LINE...
 
-expand -t4 $SRCFILE | tail -n +$LINE > $1
+expand -t4 $SRCFILE | tail -n +$LINE > $TXTFILE
 

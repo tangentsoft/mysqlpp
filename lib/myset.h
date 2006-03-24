@@ -85,7 +85,7 @@ void set2container(const char* str, Insert insert);
 
 /// \brief A special std::set derivative for holding MySQL data sets.
 
-template <class Container = std::set< std::string> >
+template <class Container = std::set<std::string> >
 class Set : public Container
 {
 public:

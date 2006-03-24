@@ -1,11 +1,9 @@
 /***********************************************************************
- custom4.cpp - Example very similar to custom1.cpp, except that it
-	stores its result set in an STL set container.  This demonstrates
-	how one can manipulate MySQL++ result sets in a very natural C++
-	style.
+ xaction.cpp - Example showing how to use the transaction support in
+ 	MySQL++ v2.1 and up.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ MySQL AB, and (c) 2004-2006 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -30,6 +28,8 @@
 #include "stock.h"
 #include "util.h"
 
+#include <transaction.h>
+
 #include <iostream>
 
 using namespace std;
@@ -44,43 +44,56 @@ main(int argc, char *argv[])
 			return 1;
 		}
 
-		// Retrieve all rows from the stock table and put them in an
-		// STL set.  Notice that this works just as well as storing them
-		// in a vector, which we did in custom1.cpp.  It works because
-		// SSQLS objects are less-than comparable.
+		// Show initial state
 		mysqlpp::Query query = con.query();
-		query << "select * from stock";
-		set<stock> res;
-		query.storein(res);
+		cout << "Initial state of stock table:" << endl;
+		print_stock_table(query);
 
-		// Display the result set.  Since it is an STL set and we set up
-		// the SSQLS to compare based on the item column, the rows will
-		// be sorted by item.
-		print_stock_header(res.size());
-		set<stock>::iterator it;
-		cout.precision(3);
-		for (it = res.begin(); it != res.end(); ++it) {
-			print_stock_row(it->item.c_str(), it->num, it->weight,
-					it->price, it->sdate);
-		}
+		// Insert a few rows in a single transaction set
+		{
+			mysqlpp::Transaction trans(con);
 
-		// Use set's find method to look up a stock item by item name.
-		// This also uses the SSQLS comparison setup.
-		it = res.find(stock("Hotdog Buns"));
-		if (it != res.end()) {
-			cout << endl << "Currently " << it->num <<
-					" hotdog buns in stock." << endl;
+			stock row1("Sauerkraut", 42, 1.2, 0.75, "2006-03-06");
+			query.insert(row1);
+			query.execute();
+			query.reset();
+
+			stock row2("Bratwurst", 24, 3.0, 4.99, "2006-03-06");
+			query.insert(row2);
+			query.execute();
+			query.reset();
+
+			cout << "\nRows are inserted, but not committed." << endl;
+			cout << "Verify this with another program (e.g. simple1), "
+					"then hit Enter." << endl;
+			getchar();
+
+			cout << "\nCommitting transaction gives us:" << endl;
+			trans.commit();
+			print_stock_table(query);
 		}
-		else {
-			cout << endl << "Sorry, no hotdog buns in stock." << endl;
+			
+		// Now let's test auto-rollback
+		{
+			mysqlpp::Transaction trans(con);
+			cout << "\nNow adding catsup to the database..." << endl;
+
+			stock row("Catsup", 3, 3.9, 2.99, "2006-03-06");
+			query.insert(row);
+			query.execute();
+			query.reset();
 		}
+		cout << "\nNo, yuck! We don't like catsup. Rolling it back:" <<
+				endl;
+		print_stock_table(query);
+			
 	}
 	catch (const mysqlpp::BadQuery& er) {
 		// Handle any query errors
 		cerr << "Query error: " << er.what() << endl;
 		return -1;
 	}
-	catch (const mysqlpp::BadConversion& er) {
+	catch (const mysqlpp::BadConversion& er) {	
 		// Handle bad conversions
 		cerr << "Conversion error: " << er.what() << endl <<
 				"\tretrieved data size: " << er.retrieved <<

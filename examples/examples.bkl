@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<makefile>
+	<include file="../common.bkl"/>
+
+	<set var="EXAMPLES">yes</set>
+
+	<!-- Set up standard build options for all examples -->
+	<template id="example">
+		<include>../lib</include>
+
+		<debug-info>$(DEBUGINFO)</debug-info>
+
+		<if cond="FORMAT in ['msvc6prj', 'mingw']">
+			<define>_UNICODE</define>
+			<include>c:\mysql\include</include>
+			<lib-path>c:\mysql\lib\opt</lib-path>
+			<sys-lib>mysqlpp</sys-lib>
+		</if>
+		<if cond="FORMAT=='msvc6prj'">
+			<lib-path>..\lib\$(BUILD)</lib-path>
+			<sys-lib>libmysql</sys-lib>
+		</if>
+		<if cond="FORMAT=='mingw'">
+			<lib-path>..\lib</lib-path>
+			<sys-lib>mysqlclient</sys-lib>
+		</if>
+
+		<if cond="FORMAT=='autoconf'">
+			<cxxflags>@PTHREAD_CFLAGS@</cxxflags>
+			<ldflags>@PTHREAD_LIBS@ @MYSQLPP_EXTRA_LIBS@</ldflags>
+			<sys-lib>@MYSQL_C_LIB@</sys-lib>
+
+			<warnings>max</warnings>
+			<ldlibs>../lib/libmysqlpp.$(SO_SUFFIX)</ldlibs>
+			<if cond="ZLIB=='yes'">
+				<sys-lib>z</sys-lib>
+			</if>
+		</if>
+
+		<if cond="FORMAT=='gnu'">
+			<include>/usr/include/mysql</include>
+			<include>/usr/include/mysql++</include>
+			<sys-lib>mysqlpp</sys-lib>
+			<sys-lib>mysqlclient</sys-lib>
+		</if>
+
+		<threading>$(THREAD_TYPE)</threading>
+		<cxx-rtti>on</cxx-rtti>
+		<cxx-exceptions>on</cxx-exceptions>
+	</template>
+
+	<!-- Extend 'example' template for the subset of examples that
+	     use the util module. -->
+	<template id="std-example" template="example">
+		<depends>util</depends>
+		<sys-lib>mysqlpp_util</sys-lib>
+
+		<if cond="FORMAT=='msvc6prj'">
+			<lib-path>$(BUILD)</lib-path>
+		</if>
+
+		<if cond="FORMAT in ['autoconf', 'mingw', 'gnu']">
+			<lib-path>.</lib-path>
+		</if>
+	</template>
+
+
+	<!-- Define output targets, if examples are enabled -->
+	<if cond="EXAMPLES=='yes'">
+		<!-- The "util" convenience library -->
+		<lib id="util" template="example">
+			<libname>mysqlpp_util</libname>
+			<sources>util.cpp</sources>
+		</lib>
+		
+		<!-- The "standard" examples, being the ones that depend on
+			the util library. -->
+		<exe id="resetdb" template="std-example">
+			<sources>resetdb.cpp</sources>
+		</exe>
+		<exe id="simple1" template="std-example">
+			<sources>simple1.cpp</sources>
+		</exe>
+		<exe id="simple2" template="std-example">
+			<sources>simple2.cpp</sources>
+		</exe>
+		<exe id="simple3" template="std-example">
+			<sources>simple3.cpp</sources>
+		</exe>
+		<exe id="usequery" template="std-example">
+			<sources>usequery.cpp</sources>
+		</exe>
+		<exe id="multiquery" template="std-example">
+			<sources>multiquery.cpp</sources>
+		</exe>
+		<exe id="custom1" template="std-example">
+			<sources>custom1.cpp</sources>
+		</exe>
+		<exe id="custom2" template="std-example">
+			<sources>custom2.cpp</sources>
+		</exe>
+		<exe id="custom3" template="std-example">
+			<sources>custom3.cpp</sources>
+		</exe>
+		<exe id="custom4" template="std-example">
+			<sources>custom4.cpp</sources>
+		</exe>
+		<exe id="custom5" template="std-example">
+			<sources>custom5.cpp</sources>
+		</exe>
+		<exe id="custom6" template="std-example">
+			<sources>custom6.cpp</sources>
+		</exe>
+		<exe id="dbinfo" template="std-example">
+			<sources>dbinfo.cpp</sources>
+		</exe>
+		<exe id="fieldinf1" template="std-example">
+			<sources>fieldinf1.cpp</sources>
+		</exe>
+		<exe id="xaction" template="std-example">
+			<sources>xaction.cpp</sources>
+		</exe>
+
+		<!-- The "nonstandard" examples -->
+		<exe id="cgi_image" template="example">
+			<sources>cgi_image.cpp</sources>
+		</exe>
+		<exe id="load_file" template="example">
+			<sources>load_file.cpp</sources>
+		</exe>
+		<exe id="updel" template="example">
+			<sources>updel.cpp</sources>
+		</exe>
+	</if>
+
+	<if cond="FORMAT=='autoconf'">
+		<action id="tags">
+			<is-phony/>
+			<command>( cd .. ; make tags )</command>
+		</action>
+		<action id="ctags"><depends>tags</depends></action>
+	</if>
+</makefile>

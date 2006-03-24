@@ -13,20 +13,14 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
 # USA
 
+# Standard autotools stuff
+AC_INIT(mysql++, 2.1.0, plusplus@lists.mysql.com, mysql++)
+AC_CONFIG_HEADER(config.h)
+AC_DISABLE_STATIC
+AC_CANONICAL_SYSTEM
 
-# Don't forget to change libtool version below.
-AC_INIT(mysql++, 2.0.7, plusplus@lists.mysql.com, mysql++)
-
-# Libtool version scheme is: interface:change:age.  Interface number
-# goes up any time the library interface changes.  Change number goes up
-# any time library changes without affecting interface.  Age goes up any
-# time interface changes without breaking backwards compatibility, such
-# as by adding new functions; must always be less than interface number.
-AC_SUBST(MYSQLPP_LIBTOOL_VERSION, [2:7:0])
 
 # Break package version up into major, minor and bugfix components.
-# Avoid temptation to use these to define MYSQLPP_LIBTOOL_VERSION:
-# only in the x.0.0 case do these two schemes take the same values!
 MYSQLPP_VERSION_MAJOR=`echo $PACKAGE_VERSION | cut -f1 -d.`
 AC_SUBST(MYSQLPP_VERSION_MAJOR)
 MYSQLPP_VERSION_MINOR=`echo $PACKAGE_VERSION | cut -f2 -d.`
@@ -34,13 +28,9 @@ AC_SUBST(MYSQLPP_VERSION_MINOR)
 MYSQLPP_VERSION_BUGFIX=`echo $PACKAGE_VERSION | cut -f3 -d.`
 AC_SUBST(MYSQLPP_VERSION_BUGFIX)
 
-# Standard autotools stuff
-AM_INIT_AUTOMAKE
-AM_CONFIG_HEADER(config.h)
-AC_PROG_MAKE_SET
-AC_DISABLE_STATIC
-AC_PROG_LIBTOOL
-AM_MAINTAINER_MODE
+
+# Include Bakefile macros
+AC_BAKEFILE([m4_include(config/autoconf_inc.m4)])
 
 
 # Checks for build system tools
@@ -48,10 +38,26 @@ AC_PROG_CC
 AC_PROG_CXX
 
 
-# Checks for Standard C support
+# Check for Standard C support
 AC_HEADER_STDC
-AC_C_CONST
-AC_CHECK_FUNCS(strtol)
+
+
+# Checks for libraries and local system features
+AC_CHECK_HEADERS(zlib.h, AC_CHECK_LIB(z, gzread, [],
+		[ AC_MSG_ERROR([zlib is required]) ]))
+LIB_MATH
+LIB_SOCKET_NSL
+MYSQL_API_LOCATION
+MYSQL_SHUTDOWN_ARG
+MYSQL_WITH_SSL
+AC_CHECK_LIB(intl, main)
+
+
+# Check for Standard C++ support, and extensions.  This must be near
+# the end, because the CPLUSPLUS directive makes autoconf use C++
+# compiler for all subsequent tests!
+AC_LANG_CPLUSPLUS
+STL_SLIST_EXTENSION
 
 
 # Figure out whether/how to handle threading support, if available.
@@ -67,46 +73,9 @@ then
 fi
 
 
-# Checks for libraries and local system features
-AC_CHECK_HEADERS(zlib.h, AC_CHECK_LIB(z, gzread, [],
-		[ AC_MSG_ERROR([zlib is required]) ]))
-LIB_MATH
-LIB_SOCKET_NSL
-MYSQL_API_LOCATION
-MYSQL_SHUTDOWN_ARG
-MYSQL_WITH_SSL
-AC_CHECK_LIB(intl, main)
-AC_CHECK_LIB(socket, main)
-AC_CHECK_LIB(nsl, main)
-AM_WITH_DMALLOC()
-
-
-# Check for Standard C++ support, and extensions.  This must be near
-# the end, because the CPLUSPLUS directive makes autoconf use C++
-# compiler for all subsequent tests!
-AC_LANG_CPLUSPLUS
-STL_SLIST_EXTENSION
-
-
-# Decide if examples are to be built or not.
-AC_ARG_ENABLE(examples,
-		[  --enable-examples  Build the examples (built by default) ],
-		[ build_examples=$enableval ],
-		[ build_examples=yes ])
-if test "x$build_examples" = xyes
-then
-	OPTIONAL_EXAMPLES=examples
-	echo will build examples
-else
-	OPTIONAL_EXAMPLES= 
-	echo will NOT build examples
-fi
-AC_SUBST([OPTIONAL_EXAMPLES])
-
-
 #
-# Done with checks!
+# Configure process complete; write out files generated from *.in.
 #
-AC_OUTPUT([Makefile mysql++.spec lib/mysql++.h lib/Makefile lib/Doxyfile examples/Makefile])
+AC_OUTPUT([Makefile lib/Makefile examples/Makefile 
+		mysql++.spec lib/Doxyfile lib/mysql++.h])
 
-./makemake.sh simple gcc

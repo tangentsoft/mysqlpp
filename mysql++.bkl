@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<makefile>
+	<include file="common.bkl"/>
+
+	<subproject id="lib">
+		<dir>lib</dir>
+		<dependency-of>all</dependency-of>
+	</subproject>
+
+	<subproject id="examples">
+		<dir>examples</dir>
+		<installable>no</installable>
+		<dependency-of>all</dependency-of>
+	</subproject>
+
+	<if cond="FORMAT=='autoconf'">
+		<set var="PKGNAME">mysql++-@PACKAGE_VERSION@</set>
+			
+		<modify-target target="install">
+			<command>(cd lib &amp;&amp; $(DOLLAR)(MAKE) install)</command>
+		</modify-target>
+
+		<modify-target target="uninstall">
+			<command>(cd lib &amp;&amp; $(DOLLAR)(MAKE) uninstall)</command>
+		</modify-target>
+
+		<action id="dist">
+			<depends>dist-build</depends>
+			<command>tar czf $(PKGNAME).tar.gz $(PKGNAME)</command>
+			<command>rm -rf $(PKGNAME)</command>
+		</action>
+
+		<action id="dist-build">
+			<!-- Set up package directory -->
+			<command>
+				for d in config doc/refman/html doc/userman/html lib ; do \
+					mkdir -p $(PKGNAME)/$(DBLDOLLAR)d ; \
+				done
+			</command>
+
+			<!-- Copy files into package directory -->
+			<!-- top directory -->
+			<command>
+				cp Bakefiles.bkgen bootstrap ChangeLog cleanmf \
+					common.bkl config.guess config.h.in config.sub \
+					configure* COPYING CREDITS do-upload fetch-backup \
+					HACKERS INSTALL install.bat install-sh \
+					libmysqlclient.def LICENSE Makefile.* mysql++.* \
+					osver README* rebake reconf Wishlist $(PKGNAME)
+			</command>
+
+			<!-- config subdir -->
+			<command>cp config/*.m4 $(PKGNAME)/config</command>
+
+			<!-- doc subdir -->
+			<command>
+				cp doc/README* doc/*.pdf doc/ssqls-pretty $(PKGNAME)/doc
+			</command>
+			<command>
+				for f in LICENSE Makefile mktxt README *.{xsl,xml} ; do \
+					cp doc/userman/$(DBLDOLLAR)f $(PKGNAME)/doc/userman ; \
+				done
+			</command>
+			<command>
+				for d in refman userman ; do \
+					for f in *.{css,html} ; do \
+						cp doc/$(DBLDOLLAR)d/html/$(DBLDOLLAR)f \
+								$(PKGNAME)/doc/$(DBLDOLLAR)d/html ; \
+					done ; \
+				done ; \
+				cp doc/refman/html/*.png $(PKGNAME)/doc/refman/html
+			</command>
+
+			<!-- lib subdir -->
+			<command>
+				cp lib/*.{bkl,cpp,ds?,h,in,pl} lib/Makefile.* $(PKGNAME)/lib
+			</command>
+
+			<!-- examples subdir -->
+			<command>mkdir -p $(PKGNAME)/examples</command>
+			<command>
+				( cd examples &amp;&amp; \
+				  cp *.{bkl,cpp,ds?,h} Makefile.* README \
+				  ../$(PKGNAME)/examples )
+			</command>
+		</action>
+
+		<action id="rpm-setup">
+			<command>cp $(PKGNAME).tar.gz /usr/src/redhat/SOURCES</command>
+			<depends>dist</depends>
+		</action>
+
+		<action id="rpm">
+			<command>cd /usr/src/redhat/SPECS</command>
+			<command>rpmbuild -bb mysql++.spec</command>
+			<depends>rpm-setup</depends>
+		</action>
+
+		<action id="srpm">
+			<command>cd /usr/src/redhat/SPECS</command>
+			<command>rpmbuild -bs mysql++.spec</command>
+			<depends>rpm-setup</depends>
+		</action>
+
+		<action id="ebuild">
+			<depends>dist</depends>
+			<command>cp $(PKGNAME).tar.gz /usr/portage/distfiles</command>
+			<command>
+				cp mysql++.ebuild /usr/portage/dev-db/mysql++/$(PKGNAME).ebuild
+			</command>
+			<command>
+				ebuild /usr/portage/dev-db/mysql++/$(PKGNAME).ebuild digest
+			</command>
+		</action>
+
+		<action id="tags">
+			<is-phony/>
+			<command>ctags `pwd`/{lib,examples}/*.{cpp,h}</command>
+			<command>( cd lib ; ln -sf ../tags . )</command>
+			<command>( cd examples ; ln -sf ../tags . )</command>
+		</action>
+		<action id="ctags"><depends>tags</depends></action>
+	</if>
+</makefile>

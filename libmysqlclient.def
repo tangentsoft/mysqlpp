@@ -73,8 +73,8 @@ mysql_list_fields
 mysql_list_processes
 mysql_list_tables
 mysql_master_query
-mysql_more_results
-mysql_next_result
+mysql_more_results@4
+mysql_next_result@4
 mysql_num_fields@4
 mysql_num_rows@4
 mysql_odbc_escape_string

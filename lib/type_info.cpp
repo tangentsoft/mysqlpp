@@ -27,7 +27,7 @@
 #include "platform.h"
 
 #include "datetime.h"
-#include "myset.h"
+#include "sql_types.h"
 #include "type_info.h"
 
 #include <mysql.h>
@@ -37,14 +37,6 @@
 using namespace std;
 
 namespace mysqlpp {
-
-/// \if INTERNAL
-// Doxygen will not generate documentation for this section.
-
-typedef string Enum;
-
-/// \endif
-
 
 // The first half of this array roughly parallels enum_field_types
 // in mysql/mysql_com.h.  It is a lookup table used by the type() method
@@ -62,69 +54,69 @@ typedef string Enum;
 // of C++ types to SQL types.  Put another way, if you take the subset
 // of all items marked true, the typeid() of each item must be unique.
 const mysql_type_info::sql_type_info mysql_type_info::types[62] = {
-	sql_type_info("DECIMAL NOT NULL", typeid(double), 0),
-	sql_type_info("TINYINT NOT NULL", typeid(signed char), 1, true),
-	sql_type_info("SMALLINT NOT NULL", typeid(short int), 2, true),
-	sql_type_info("INT NOT NULL", typeid(int), 3, true),
-	sql_type_info("FLOAT NOT NULL", typeid(float), 4, true),
-	sql_type_info("DOUBLE NOT NULL", typeid(double), 5, true),
+	sql_type_info("DECIMAL NOT NULL", typeid(sql_decimal), 0),
+	sql_type_info("TINYINT NOT NULL", typeid(sql_tinyint), 1, true),
+	sql_type_info("SMALLINT NOT NULL", typeid(sql_smallint), 2, true),
+	sql_type_info("INT NOT NULL", typeid(sql_int), 3, true),
+	sql_type_info("FLOAT NOT NULL", typeid(sql_float), 4, true),
+	sql_type_info("DOUBLE NOT NULL", typeid(sql_double), 5, true),
 	sql_type_info("NULL NOT NULL", typeid(void), 6),
-	sql_type_info("TIMESTAMP NOT NULL", typeid(Time), 7),
-	sql_type_info("BIGINT NOT NULL", typeid(longlong), 8, true),
-	sql_type_info("MEDIUMINT NOT NULL", typeid(int), 9),
-	sql_type_info("DATE NOT NULL", typeid(Date), 10, true),
-	sql_type_info("TIME NOT NULL", typeid(Time), 11, true),
-	sql_type_info("DATETIME NOT NULL", typeid(DateTime), 12, true),
-	sql_type_info("ENUM NOT NULL", typeid(Enum), 13, true),
-	sql_type_info("SET NOT NULL", typeid(Set < string >), 14, true),
-	sql_type_info("TINYBLOB NOT NULL", typeid(string), 15),
-	sql_type_info("MEDIUMBLOB NOT NULL", typeid(string), 16),
-	sql_type_info("LONGBLOB NOT NULL", typeid(string), 17),
-	sql_type_info("BLOB NOT NULL", typeid(string), 18),
-	sql_type_info("VARCHAR NOT NULL", typeid(string), 19, true),
-	sql_type_info("CHAR NOT NULL", typeid(string), 20),
-	sql_type_info("CHAR NOT NULL", typeid(string), 21),
-	sql_type_info("TINYINT UNSIGNED NOT NULL", typeid(unsigned char), 22, true),
-	sql_type_info("SMALLINT UNSIGNED NOT NULL", typeid(unsigned short int), 23, true),
-	sql_type_info("INT UNSIGNED NOT NULL", typeid(unsigned int), 24),
-	sql_type_info("INT UNSIGNED NOT NULL", typeid(unsigned int), 25),
-	sql_type_info("INT UNSIGNED NOT NULL", typeid(unsigned int), 26),
-	sql_type_info("INT UNSIGNED NOT NULL", typeid(unsigned int), 27),
-	sql_type_info("INT UNSIGNED NOT NULL", typeid(unsigned int), 28, true),
-	sql_type_info("BIGINT UNSIGNED NOT NULL", typeid(ulonglong), 29, true),
-	sql_type_info("MEDIUMINT UNSIGNED NOT NULL", typeid(unsigned int), 30),
+	sql_type_info("TIMESTAMP NOT NULL", typeid(sql_timestamp), 7),
+	sql_type_info("BIGINT NOT NULL", typeid(sql_bigint), 8, true),
+	sql_type_info("MEDIUMINT NOT NULL", typeid(sql_mediumint), 9),
+	sql_type_info("DATE NOT NULL", typeid(sql_date), 10, true),
+	sql_type_info("TIME NOT NULL", typeid(sql_time), 11, true),
+	sql_type_info("DATETIME NOT NULL", typeid(sql_datetime), 12, true),
+	sql_type_info("ENUM NOT NULL", typeid(sql_enum), 13, true),
+	sql_type_info("SET NOT NULL", typeid(sql_set), 14, true),
+	sql_type_info("TINYBLOB NOT NULL", typeid(sql_tinyblob), 15),
+	sql_type_info("MEDIUMBLOB NOT NULL", typeid(sql_mediumblob), 16),
+	sql_type_info("LONGBLOB NOT NULL", typeid(sql_longblob), 17),
+	sql_type_info("BLOB NOT NULL", typeid(sql_blob), 18),
+	sql_type_info("VARCHAR NOT NULL", typeid(sql_varchar), 19, true),
+	sql_type_info("CHAR NOT NULL", typeid(sql_char), 20),
+	sql_type_info("CHAR NOT NULL", typeid(sql_char), 21),
+	sql_type_info("TINYINT UNSIGNED NOT NULL", typeid(sql_tinyint_unsigned), 22, true),
+	sql_type_info("SMALLINT UNSIGNED NOT NULL", typeid(sql_smallint_unsigned), 23, true),
+	sql_type_info("INT UNSIGNED NOT NULL", typeid(sql_int_unsigned), 24),
+	sql_type_info("INT UNSIGNED NOT NULL", typeid(sql_int_unsigned), 25),
+	sql_type_info("INT UNSIGNED NOT NULL", typeid(sql_int_unsigned), 26),
+	sql_type_info("INT UNSIGNED NOT NULL", typeid(sql_int_unsigned), 27),
+	sql_type_info("INT UNSIGNED NOT NULL", typeid(sql_int_unsigned), 28, true),
+	sql_type_info("BIGINT UNSIGNED NOT NULL", typeid(sql_bigint_unsigned), 29, true),
+	sql_type_info("MEDIUMINT UNSIGNED NOT NULL", typeid(sql_mediumint_unsigned), 30),
 
-	sql_type_info("DECIMAL NULL", typeid(Null < double >), 0),
-	sql_type_info("TINYINT NULL", typeid(Null < signed char >), 1, true),
-	sql_type_info("SMALLINT NULL", typeid(Null < short int >), 2, true),
-	sql_type_info("INT NULL", typeid(Null < int >), 3, true),
-	sql_type_info("FLOAT NULL", typeid(Null < float >), 4, true),
-	sql_type_info("DOUBLE NULL", typeid(Null < double >), 5, true),
-	sql_type_info("NULL NULL", typeid(Null < void >), 6),
-	sql_type_info("TIMESTAMP NULL", typeid(Null < Time >), 7),
-	sql_type_info("BIGINT NULL", typeid(Null < longlong >), 8, true),
-	sql_type_info("MEDIUMINT NULL", typeid(Null < int >), 9),
-	sql_type_info("DATE NULL", typeid(Null < Date >), 10, true),
-	sql_type_info("TIME NULL", typeid(Null < Time >), 11, true),
-	sql_type_info("DATETIME NULL", typeid(Null < DateTime >), 12, true),
-	sql_type_info("ENUM NULL", typeid(Null < Enum >), 13, true),
-	sql_type_info("SET NULL", typeid(Null < Set < string > >), 14, true),
-	sql_type_info("TINYBLOB NULL", typeid(Null < string >), 15),
-	sql_type_info("MEDIUMBLOB NULL", typeid(Null < string >), 16),
-	sql_type_info("LONGBLOB NULL", typeid(Null < string >), 17),
-	sql_type_info("BLOB NULL", typeid(Null < string >), 18),
-	sql_type_info("VARCHAR NULL", typeid(Null < string >), 19, true),
-	sql_type_info("CHAR NULL", typeid(Null < string >), 20),
-	sql_type_info("CHAR NULL", typeid(Null < string >), 21),
-	sql_type_info("TINYINT UNSIGNED NULL", typeid(Null < unsigned char >), 22, true),
-	sql_type_info("SMALLINT UNSIGNED NULL", typeid(Null < unsigned short int >), 23, true),
-	sql_type_info("INT UNSIGNED NULL", typeid(Null < unsigned int >), 24),
-	sql_type_info("INT UNSIGNED NULL", typeid(Null < unsigned int >), 25),
-	sql_type_info("INT UNSIGNED NULL", typeid(Null < unsigned int >), 26),
-	sql_type_info("INT UNSIGNED NULL", typeid(Null < unsigned int >), 27),
-	sql_type_info("INT UNSIGNED NULL", typeid(Null < unsigned int >), 28, true),
-	sql_type_info("BIGINT UNSIGNED NULL", typeid(Null < ulonglong >), 29, true),
-	sql_type_info("MEDIUMINT UNSIGNED NULL", typeid(Null < unsigned int >), 30),
+	sql_type_info("DECIMAL NULL", typeid(Null<sql_decimal>), 0),
+	sql_type_info("TINYINT NULL", typeid(Null<sql_tinyint>), 1, true),
+	sql_type_info("SMALLINT NULL", typeid(Null<sql_smallint>), 2, true),
+	sql_type_info("INT NULL", typeid(Null<sql_int>), 3, true),
+	sql_type_info("FLOAT NULL", typeid(Null<sql_float>), 4, true),
+	sql_type_info("DOUBLE NULL", typeid(Null<sql_double>), 5, true),
+	sql_type_info("NULL NULL", typeid(Null<void>), 6),
+	sql_type_info("TIMESTAMP NULL", typeid(Null<sql_timestamp>), 7),
+	sql_type_info("BIGINT NULL", typeid(Null<sql_bigint>), 8, true),
+	sql_type_info("MEDIUMINT NULL", typeid(Null<sql_mediumint>), 9),
+	sql_type_info("DATE NULL", typeid(Null<sql_date>), 10, true),
+	sql_type_info("TIME NULL", typeid(Null<sql_time>), 11, true),
+	sql_type_info("DATETIME NULL", typeid(Null<sql_datetime>), 12, true),
+	sql_type_info("ENUM NULL", typeid(Null<sql_enum>), 13, true),
+	sql_type_info("SET NULL", typeid(Null<sql_set>), 14, true),
+	sql_type_info("TINYBLOB NULL", typeid(Null<sql_tinyblob>), 15),
+	sql_type_info("MEDIUMBLOB NULL", typeid(Null<sql_mediumblob>), 16),
+	sql_type_info("LONGBLOB NULL", typeid(Null<sql_longblob>), 17),
+	sql_type_info("BLOB NULL", typeid(Null<sql_blob>), 18),
+	sql_type_info("VARCHAR NULL", typeid(Null<sql_varchar>), 19, true),
+	sql_type_info("CHAR NULL", typeid(Null<sql_char>), 20),
+	sql_type_info("CHAR NULL", typeid(Null<sql_char>), 21),
+	sql_type_info("TINYINT UNSIGNED NULL", typeid(Null<sql_tinyint_unsigned>), 22, true),
+	sql_type_info("SMALLINT UNSIGNED NULL", typeid(Null<sql_smallint_unsigned>), 23, true),
+	sql_type_info("INT UNSIGNED NULL", typeid(Null<sql_int_unsigned>), 24),
+	sql_type_info("INT UNSIGNED NULL", typeid(Null<sql_int_unsigned>), 25),
+	sql_type_info("INT UNSIGNED NULL", typeid(Null<sql_int_unsigned>), 26),
+	sql_type_info("INT UNSIGNED NULL", typeid(Null<sql_int_unsigned>), 27),
+	sql_type_info("INT UNSIGNED NULL", typeid(Null<sql_int_unsigned>), 28, true),
+	sql_type_info("BIGINT UNSIGNED NULL", typeid(Null<sql_bigint_unsigned>), 29, true),
+	sql_type_info("MEDIUMINT UNSIGNED NULL", typeid(Null<sql_mediumint_unsigned>), 30),
 };
 
 const mysql_type_info::sql_type_info_lookup
@@ -174,25 +166,25 @@ unsigned char mysql_type_info::type(enum_field_types t,
 
 bool mysql_type_info::quote_q() const
 {
-	if (base_type().c_type() == typeid(string) ||
-			base_type().c_type() == typeid(Date) ||
-			base_type().c_type() == typeid(Time) ||
-			base_type().c_type() == typeid(DateTime) ||
-			base_type().c_type() == typeid(Enum) ||
-			base_type().c_type() == typeid(Set<string>)) {
-		return true;
-	}
-	else {
-		return false;
-	}
+	const type_info& ti = base_type().c_type();
+	return ti == typeid(string) ||
+			ti == typeid(sql_date) ||
+			ti == typeid(sql_time) ||
+			ti == typeid(sql_datetime) ||
+			ti == typeid(sql_set);
 }
 
 bool mysql_type_info::escape_q() const
 {
-	if (c_type() == typeid(string))
-		return true;
-	else
-		return false;
+	const type_info& ti = c_type();
+	return ti == typeid(string) ||
+			ti == typeid(sql_enum) ||
+			ti == typeid(sql_blob) ||
+			ti == typeid(sql_tinyblob) ||
+			ti == typeid(sql_mediumblob) ||
+			ti == typeid(sql_longblob) ||
+			ti == typeid(sql_char) ||
+			ti == typeid(sql_varchar);
 }
 
 } // end namespace mysqlpp

@@ -49,33 +49,29 @@ Submitting Patches
 
 Adding Support for a Different Compiler
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	One of the most common requests we get is to add support
-	for less common compilers or build systems.  We're happy to
-	accept patches to add such support, provided they comply with
-	certain rules.
+	MySQL++ now uses the Bakefile system for creating project
+	files and makefiles.  This allows us to make changes to a
+	single set of files, and have the proper changes be made
+	to all generated project files and makefiles.  In the past,
+	we used more ad-hoc systems, and we'd frequently forget to
+	update individual project files and makefiles, so at any
+	given time, at least one target was likely to be broken.
 
-	We don't want proprietary "project files" and such.  We find
-	that they tend to "rot" quickly.  It's human nature for a
-	person to submit such a file, and then fail to maintain it.
-	Meanwhile, the library keeps changing, so the project file
-	becomes less and less relevant over time.  The project
-	maintainers cannot reliably maintain these files, because we
-	don't have access to the tools that use them.  To avoid this,
-	we've settled on two build systems: GNU autotools for Unixy
-	systems, and our own 'makemake' system for everything else.
-	Because the project maintainers actively use both of these,
-	the maintenance to track most library changes is on our
-	shoulders.  It isn't a perfect system, but it's better than
-	the alternative.
+	If MySQL++ doesn't currently ship with project files or
+	makefiles tuned for your compiler of choice, you need
+	to work through the Bakefile mechanism to add support.
+	We're not willing to do ad-hoc platform support any more,
+	so please don't ask if you can send us project files instead;
+	we don't want them.
 
-	We're not willing to accept patches that provide only partial
-	library support.  In the past, we've had broken ports that
-	were missing important library features, or that crashed when
-	built in certain ways.	If you can't provide feature parity
-	with the existing ports, we're not interested.	The reason is,
-	few will knowingly use a crippled version of MySQL++, since
-	the alternatives are usually acceptable.  Therefore, such ports
-	become maintenance baggage, with little compensating value.
+	If you want to port MySQL++ to another platform, we need to
+	be confident that the entire library works on your platform
+	before we'll accept patches.  In the past, we've had broken
+	ports that were missing important library features, or
+	that crashed when built in certain ways.  Few people will
+	knowingly use a crippled version of MySQL++, since there are
+	usually acceptable alternatives.  Therefore, such ports become
+	maintenance baggage with little compensating value.
 
 
 Maintaining a Private CVS Repository
@@ -104,33 +100,28 @@ Maintaining a Private CVS Repository
 			$(cat CVS/Repository) > equal_list.patch
 
 
-On Manipulating the Autotools Input Files
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	If you are going to hack on the autotools files (*.am, *.in and
-	everything in the config subdir), run the command:
+On Manipulating the Bakefiles and Autoconf Files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	If change any of the Bakefiles (*.bkl) or the autoconf stuff
+	(configure.ac and everything in the config subdir), you need
+	to run the command:
 
-		$ ./bootstrap [pedantic] [options]
+		$ ./bootstrap [pedantic] [noexamples] [configure options]
 
-	The primary purpose of this command is to rebuild all the
-	autotools output files, and to enable "maintainer mode".
-	In maintainer mode, the build system is set up such that if you
-	change any of these autotools input files in the future, their
-	dependents will be re-generated automatically.	Occasionally
-	automake/autoconf gets confused and you have to run it again,
-	but this is rare.
+	This command rebuilds all of the project files and makefiles
+	that depend on the Bakefiles and Autoconf stuff.
 
-	If the first argument to the bootstrap script is 'pedantic'
-	(without the quotes) it will turn on a bunch of GCC-specific
-	flags which make the compiler much pickier about the source
-	code it will accept without warnings.  It is useful to enable
-	this mode whenever you are making large changes to the library,
-	to ensure that you haven't done something silly.  We strive to
-	keep MySQL++ in a state where it never gives compiler warnings
-	in pedantic mode.  We're not 100% there yet with all compilers,
-	but we're trying...
+	If you pass 'pedantic' to the bootstrap script, it will set
+	up the autoconf build system so it turns on all of GCC's
+	warnings and such.  It's useful to build the library in this
+	mode when making changes to make sure there are no obvious
+	problems with the code.
 
-	Anything after the optional pedantic argument is passed as
-	arguments to the configure script.  See the README file in
-	this directory for more information about the flags that the
-	script accepts.
+	If you pass 'noexamples', the examples won't be built.
+
+	You can pass any of the previous options in any order.
+	As soon as the bootstrap script sees an options that it
+	doesn't understand, it stops processing the command line.
+	Any subsequent options are passed (indirectly) to the configure
+	script.  See README.unix for more on configure script options.
 

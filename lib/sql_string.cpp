@@ -26,6 +26,7 @@
 
 #include "sql_string.h"
 
+#include <iomanip>
 #include <sstream>
 
 using namespace std;
@@ -141,6 +142,7 @@ dont_escape(false),
 processed(false)
 {
 	ostringstream outs;
+	outs.precision(7);	// max digits in IEEE 754 single-prec float
 	outs << f;
 	assign(outs.str());
 }
@@ -151,6 +153,7 @@ dont_escape(false),
 processed(false)
 {
 	ostringstream outs;
+	outs.precision(16);	// max digits in IEEE 754 double-prec float
 	outs << f;
 	assign(outs.str());
 }

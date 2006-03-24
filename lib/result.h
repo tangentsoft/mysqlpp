@@ -82,6 +82,7 @@ public:
 	initialized_(false)
 	{
 		copy(other);
+		other.result_ = 0;
 	}
 	
 	/// \brief Destroy object

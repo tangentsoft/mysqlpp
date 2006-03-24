@@ -3,7 +3,7 @@
  	programs.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ MySQL AB, and (c) 2004-2006 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -30,6 +30,12 @@
 #include <iostream>
 #include <iomanip>
 #include <stdlib.h>
+
+// This include isn't needed by util module.  It's just a test of the
+// new SSQLS feature allowing the structure to be defined in many
+// modules without having a multiply-defined static variable error.
+#define MYSQLPP_SSQLS_NO_STATICS
+#include "stock.h"		
 
 using namespace std;
 
@@ -102,8 +108,9 @@ print_stock_header(int rows)
 // with the header printed out in the previous function.
 
 void
-print_stock_row(const std::string& item, mysqlpp::longlong num,
-		double weight, double price, const mysqlpp::Date& date)
+print_stock_row(const mysqlpp::sql_char& item, mysqlpp::sql_bigint num,
+		mysqlpp::sql_double weight, mysqlpp::sql_double price,
+		const mysqlpp::sql_date& date)
 {
 	// We do UTF-8 translation on item field because there is Unicode
 	// data in this field in the sample database, and some systems
@@ -192,6 +199,18 @@ get_stock_table(mysqlpp::Query& query, mysqlpp::Result& res)
 
 	// Execute the query, storing the results in memory.
 	res = query.store();
+}
+
+
+//// print_stock_table /////////////////////////////////////////////////
+// Simply retrieve and print the entire contents of the stock table.
+
+void
+print_stock_table(mysqlpp::Query& query)
+{
+	mysqlpp::Result res;
+	get_stock_table(query, res);
+	print_stock_rows(res);
 }
 
 

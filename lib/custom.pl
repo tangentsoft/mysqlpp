@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 ########################################################################
 # custom.pl - Generates custom.h and custom-macros.h, as these files
@@ -38,6 +38,8 @@ my $max_data_members = 25;
 
 # No user-serviceable parts below.
 
+use strict;
+
 open (OUT0, ">custom.h");
 open (OUT, ">custom-macros.h");
 
@@ -56,6 +58,12 @@ print OUT0 << "---";
 
 #include <string>
 
+#ifdef MYSQLPP_SSQLS_NO_STATICS
+#define MYSQLPP_SSQLS_EXPAND(...)
+#else
+#define MYSQLPP_SSQLS_EXPAND(...) __VA_ARGS__
+#endif
+
 namespace mysqlpp {
 
 enum sql_dummy_type {sql_dummy};
@@ -65,9 +73,9 @@ inline int sql_cmp(const std::string &a, const std::string &b) {
 }
 ---
 
-@types = ("char", "unsigned char", "tiny_int", "int", "unsigned int",
-	  "short int", "unsigned short int");
-foreach $type (@types) {
+my @types = ("char", "unsigned char", "tiny_int", "int", "unsigned int",
+	  "short int", "unsigned short int", "unsigned long", "long");
+foreach my $type (@types) {
     print OUT0 << "---";
 
 inline int sql_cmp($type a,$type b) {
@@ -77,7 +85,7 @@ inline int sql_cmp($type a,$type b) {
 }
 
 @types = ("double", "float");
-foreach $type (@types) {
+foreach my $type (@types) {
     print OUT0 << "---";
 
 inline int sql_cmp($type a,$type b) {
@@ -89,7 +97,7 @@ inline int sql_cmp($type a,$type b) {
 }	
 
 @types = ("longlong", "ulonglong");
-foreach $type (@types) {
+foreach my $type (@types) {
     print OUT0 << "---";
 
 inline int sql_cmp($type a,$type b) {
@@ -140,7 +148,9 @@ print OUT << "---";
       {return sql_compare_##NAME<mysqlpp::sql_dummy>(*this,other);}
 ---
 
-foreach $j (1..$max_data_members) {
+my ($parm0, $parm1);
+
+foreach my $j (1..$max_data_members) {
     $parm0 .= "T$j, C$j";
     $parm0 .= ", " unless $j == $max_data_members;
     $parm1 .= "C$j";
@@ -166,11 +176,14 @@ print OUT << "---";
 // ---------------------------------------------------
 ---
 
-foreach $i (1..$max_data_members) {
+
+foreach my $i (1..$max_data_members) {
+  my ($compr, $define, $compp, $set, $parm2);
   $compr = ""; $parm2 = ""; $define = "";
   $compr = "    int cmp; \\\n" unless $i == 1;
   $compp = "";
-  foreach $j (1..$i) {
+  $set = "";
+  foreach my $j (1..$i) {
       $compr .= "    if (cmp = mysqlpp::sql_cmp(x.C$j , y.C$j )) return cmp; \\\n"
                                                               unless $j == $i;
       $compr .= "    return mysqlpp::sql_cmp(x.C$j , y.C$j );"   if $j == $i;
@@ -228,20 +241,20 @@ print OUT << "---";
 ---
 
 
-foreach $i (1..$max_data_members) {
-    $parm_complete = ""; 
-    $parm_order = ""; $parm_order2c = "";
-    $parm_simple = ""; $parm_simple2c = "";
-    $parm_simple_b = ""; $parm_simple2c_b = "";
-    $parm_names = ""; $parm_names2c = "";
-    $defs = ""; $popul = ""; $parmc = ""; $parmC = "";
-    $value_list = ""; $field_list = ""; $equal_list = "";
-    $value_list_cus = ""; $cus_field_list = ""; $cus_equal_list = "";
-    $create_bool = ""; $create_list = "";
-    $cusparms1 = ""; $cusparms2 = ""; $cusparmsv = "";    
-    $cusparms11 = ""; $cusparms22 = "";
-    $names = "";$enums = "";
-    foreach $j (1 .. $i) {
+foreach my $i (1..$max_data_members) {
+    my $parm_complete = ""; 
+    my $parm_order = ""; my $parm_order2c = "";
+    my $parm_simple = ""; my $parm_simple2c = "";
+    my $parm_simple_b = ""; my $parm_simple2c_b = "";
+    my $parm_names = ""; my $parm_names2c = "";
+    my $defs = ""; my $popul = ""; my $parmc = ""; my $parmC = "";
+    my $value_list = ""; my $field_list = ""; my $equal_list = "";
+    my $value_list_cus = ""; my $cus_field_list = ""; my $cus_equal_list = "";
+    my $create_bool = ""; my $create_list = "";
+    my $cusparms1 = ""; my $cusparms2 = ""; my $cusparmsv = "";    
+    my $cusparms11 = ""; my $cusparms22 = "";
+    my $names = "";my $enums = "";
+    foreach my $j (1 .. $i) {
         $parm_complete .= "T$j, I$j, N$j, O$j";
 	$parm_complete .= ", " unless $j == $i;
 	$parm_order    .= "T$j, I$j, O$j";
@@ -315,7 +328,7 @@ foreach $i (1..$max_data_members) {
         $parmc .= "I$j";
 	$parmc .= ", " unless $j == $max_data_members;
     }
-    foreach $j ($i+1 .. $max_data_members) {
+    foreach my $j ($i+1 .. $max_data_members) {
 	$parmC .= "0, 0";
 	$parmC .= ", " unless $j == $max_data_members;
         $parmc .= "0";
@@ -327,7 +340,7 @@ foreach $i (1..$max_data_members) {
 //                  Begin Create $i
 // ---------------------------------------------------
 ---
-    $out = <<"---";
+    my $out = <<"---";
 #define sql_create_basic_c_order_$i(NAME, CMP, CONTR, $parm_order)
 
   struct NAME; 
@@ -635,11 +648,11 @@ $defs
     NAME##_cus_equal_list<Manip> equal_list(mysqlpp::cchar *d, mysqlpp::cchar *c, Manip m, 
 					    mysqlpp::sql_cmp_type sc) const;
   }; 
-
+  MYSQLPP_SSQLS_EXPAND(
   const char *NAME::names[] = { 
 $names 
   }; 
-  const char *NAME::_table = #NAME ;  
+  const char *NAME::_table = #NAME ;)
 
   template <class Manip>
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list
@@ -878,7 +891,7 @@ print OUT << "---";
 
 
 sub prepare {
-    local $_ = @_[0];
+    local $_ = $_[0];
     s/\n+$//;
     s/\n[\n ]*\n/\n/g; 
     s/\n+/\\\n/g;

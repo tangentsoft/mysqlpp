@@ -103,9 +103,8 @@ public:
 	/// \param a ??
 	BadConversion(const char* tn, const char* d,
 			size_t r, size_t a) :
-	Exception(std::string("Tried to convert \"") +
-			std::string(d ? d : "") + "\" to a \"" +
-			std::string(tn ? tn : "")),
+	Exception(std::string("Bad type conversion: ") +
+			std::string(d ? d : "<NULL>")),
 	type_name(tn),
 	data(d),
 	retrieved(r),

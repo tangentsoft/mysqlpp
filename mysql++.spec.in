@@ -31,24 +31,27 @@ it's so large, and it doesn't change with every release.
 
 %prep
 %setup -q
-./configure --prefix=/usr --disable-examples --disable-dependency-tracking
+./bootstrap noexamples --prefix=/usr --disable-dependency-tracking
 
 %build
 make RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/usr/lib
-mkdir -p $RPM_BUILD_ROOT/usr/include
-mkdir -p $RPM_BUILD_ROOT/usr/src/mysql++/examples
+BDIR=$RPM_BUILD_ROOT/usr
+LIBDIR=$BDIR/lib
+INCDIR=$BDIR/include
+EXDIR=$BDIR/src/mysql++/examples
+mkdir -p $LIBDIR
+mkdir -p $INCDIR
+mkdir -p $EXDIR
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
-install -m644 examples/*.cpp examples/*.h $RPM_BUILD_ROOT/usr/src/mysql++/examples
-install -m644 examples/Makefile.simple $RPM_BUILD_ROOT/usr/src/mysql++/examples/Makefile
+install -m644 examples/*.cpp examples/*.h $EXDIR
+install -m644 examples/Makefile.simple $EXDIR/Makefile
 cp examples/README doc/README.examples
 cp LICENSE doc
-rm $RPM_BUILD_ROOT/usr/lib/*.la
-rm $RPM_BUILD_ROOT/usr/lib/*.so
-rm $RPM_BUILD_ROOT/usr/lib/*.so.[0-9]
+mv doc/README.mysql++ doc/README
+mv $LIBDIR/*.so $LIBDIR/libmysqlpp.so.%{version}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -58,11 +61,13 @@ rm -f doc/README.examples doc/LICENSE
 	ln -sf /usr/lib/libmysqlpp.so.%{version} /usr/lib/libmysqlpp.so
 	/sbin/ldconfig
 
-%postun -p /sbin/ldconfig
+%postun
+	rm /usr/lib/libmysqlpp.so
+	/sbin/ldconfig
 
 %files
 %defattr(-,root,root)
-%doc doc/LICENSE doc/README.mysql++
+%doc doc/LICENSE doc/README
 
 /usr/lib/libmysqlpp.*
 
@@ -75,7 +80,7 @@ rm -f doc/README.examples doc/LICENSE
 
 %files manuals
 %defattr(-,root,root)
-%doc doc/*.pdf doc/refman doc/userman
+#%doc doc/*.pdf doc/refman doc/userman
 
 %changelog
 * Sat Apr 30 2005 Warren Young <mysqlpp@etr-usa.com> 1.7.34-1

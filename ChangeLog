@@ -1,3 +1,71 @@
+2.1.0, 2006.03.24 (r1269)
+
+	o Converted automake and makemake files to their equivalents in
+	  Bakefile format.
+
+	o Added the Transaction class, which makes it easy to use
+	  transaction sets in MySQL++.
+
+	o Added xaction example to test new Transaction class.
+
+	o Resetdb example now creates its example table using the
+	  InnoDB storage engine, in order to test the new transaction
+	  support.  Resetdb also declares the table as using UTF-8
+	  text; this doesn't change anything, but it does correctly
+	  document what we're doing.
+
+	o Added sql_types.h header, containing C++ typedefs
+	  corresponding to each MySQL column type.  Using those new
+	  types in the type_info module, and in the SSQLS examples.
+
+	o Replaced the way we were handling the template query
+	  version of Query member functions, to allow an arbitrary
+	  number of template query parameters.	By default, we
+	  now support 25 parameters, up from the old limit of 12.
+	  It's now possible to change just one number, run a script,
+	  and have a new limit.
+
+	o Connection class does a better job of returning error
+	  messages if you call certain member functions that depend
+	  on a connection to the server before the connection is
+	  established.
+
+	o Updated libmysqlclient.def for newer versions of MySQL.  (Fixes
+	  build errors having to do with mysql_more_results() and
+	  mysql_next_result().
+
+	o Replaced final use of strcpy() with strncpy().
+
+	o custom.pl now runs without complaint in strict mode, with
+	  warnings turned on.  Thanks for this patch go to "Waba".
+
+	o Fixed a bug in custom.pl where incorrect code would be
+	  generated for some SSQLS set() methods.  Thanks for this
+	  patch go to "Waba".
+
+	o SSQLS structures now support long and unsigned long fields.
+	  Thanks for this patch go to "Waba".
+
+	o It's now possible to put SSQLS definitions in a header
+	  file used by multiple modules in a program without
+	  getting multiple static member definition errors.  See the
+	  documentation for details.  Thanks for this patch go to
+	  Viktor Stark.
+
+	o Moved the definition of the 'stock' SSQLS out of the
+	  custom*.cpp example files and into a new stock.h file.
+	  Also, #including that file in the util module to test out
+	  the new SSQLS multiple static definition fix.
+
+	o Using all of the digits of precision guaranteed by the
+	  IEEE 754 spec when stringizing floating point numbers
+	  to build queries.  Previously, we would use the platform
+	  default, which can be as few as 6 digits.
+
+	o Removed lib/compare.h.  Not used within the library, never
+	  documented, and nobody seems to want to defend it.
+
+
 2.0.7, 2005.11.23 (r1147)
 
 	o Added explicit mysqlpp namespace qualifiers to generated code in
@@ -15,16 +83,15 @@
 
 	o Fixed Query ostream initialization bug affecting SunPro CC (at
 	  least).  While this bug violates the Standard, it doesn't affect
-	  many real compilers because they don't enforce this rule.  Bug
-	  noticed by Kristofer Spinka, and fixed by Chris Frey.
+	  many real compilers because they don't enforce this rule.  Fixed
+	  by Chris Frey.
 
 	o Previously, we only used the C99 style "long long" support when
 	  building under GNU CC.  This is now the default.  This should
 	  allow the code to work under SunPro CC.
 
 	o Added another dynamic cast needed for proper Query ostream
-	  subclass overloading under VC++.  (7.1 at least...)  Bug noticed
-	  by Mark Merendino.
+	  subclass overloading under VC++.  (7.1 at least...)
 
 	o Detecting whether MySQL is built with SSL support on platforms
 	  using autotools.  Needed on some old Sun systems, for instance.

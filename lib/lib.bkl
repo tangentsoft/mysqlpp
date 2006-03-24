@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<makefile>
+	<requires version="0.2.0"/>		<!-- for fileList() -->
+
+	<include file="../common.bkl"/>
+	<using module="datafiles"/>
+
+	<set var="HEADER_DIR">$(PREFIX)/include/mysql++</set>
+
+	<dll id="mysqlpp">
+		<sources>coldata.cpp connection.cpp datetime.cpp field_names.cpp
+		fields.cpp field_types.cpp manip.cpp myset.cpp qparms.cpp
+		query.cpp result.cpp row.cpp sql_string.cpp string_util.cpp
+		transaction.cpp type_info.cpp vallist.cpp</sources>
+
+		<debug-info>$(DEBUGINFO)</debug-info>
+		<include>..</include>
+
+		<if cond="FORMAT in ['msvc6prj', 'mingw']">
+			<define>_UNICODE</define>
+			<define>MYSQLPP_MAKING_DLL</define>
+			<include>c:\mysql\include</include>
+			<lib-path>c:\mysql\lib\opt</lib-path>
+		</if>
+		<if cond="FORMAT=='msvc6prj'">
+			<sys-lib>libmysql</sys-lib>
+		</if>
+		<if cond="FORMAT=='mingw'">
+			<sys-lib>mysqlclient</sys-lib>
+		</if>
+
+		<threading>$(THREAD_TYPE)</threading>
+		<cxx-rtti>on</cxx-rtti>
+		<cxx-exceptions>on</cxx-exceptions>
+		
+		<install-to>$(LIBDIR)</install-to>
+		
+		<if cond="FORMAT=='autoconf'">
+			<depends>custom.h</depends>
+
+			<cxxflags>@PTHREAD_CFLAGS@</cxxflags>
+			<ldflags>@PTHREAD_LIBS@ @MYSQLPP_EXTRA_LIBS@</ldflags>
+			<sys-lib>@MYSQL_C_LIB@</sys-lib>
+
+			<modify-target target="uninstall">
+				<command>
+					rm -f $(DESTDIR)$(libdir)/$(DLLPREFIX)mysqlpp.$(SO_SUFFIX)
+				</command>
+				<command>
+					for f in *.h ; do rm -f $(HEADER_DIR)/$(DBLDOLLAR)f ; done
+				</command>
+				<command>rmdir $(HEADER_DIR)</command>
+			</modify-target>
+		</if>
+	</dll>
+
+	<data-files>
+		<files>*.h</files>
+		<install-to>$(HEADER_DIR)</install-to>
+	</data-files>
+
+	<if cond="FORMAT=='autoconf'">
+		<action id="custom.h">
+			<command>./custom.pl</command>
+			<depends-on-file>custom.pl</depends-on-file>
+		</action>
+
+		<action id="querydef.h">
+			<command>./querydef.pl</command>
+			<depends-on-file>querydef.pl</depends-on-file>
+		</action>
+
+		<action id="tags">
+			<is-phony/>
+			<command>( cd .. ; make tags )</command>
+		</action>
+		<action id="ctags"><depends>tags</depends></action>
+
+		<action id="refman">
+			<command>doxygen</command>
+			<command>cd ../doc/refman/latex &amp;&amp; make pdf &amp;&amp; mv refman.pdf ../../mysqlpp-refman.pdf</command>
+		</action>
+	</if>
+</makefile>

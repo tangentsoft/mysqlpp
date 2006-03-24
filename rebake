@@ -1,0 +1,8 @@
+#!/bin/sh
+set -x
+bakefilize &&
+	bakefile_gen $* &&
+	bakefile -f gnu -o examples/Makefile.simple examples/examples.bkl &&
+	unix2dos {examples,lib}/*.ds? &&
+	mv autoconf_inc.m4 config &&
+	rm -f {examples,lib}/autoconf_inc.m4 mysql++.dsw

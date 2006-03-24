@@ -3,7 +3,7 @@
 
 /***********************************************************************
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ MySQL AB, and (c) 2004-2006 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -33,6 +33,7 @@
 #include "lockable.h"
 #include "noexceptions.h"
 #include "qparms.h"
+#include "querydef.h"
 #include "result.h"
 #include "row.h"
 #include "sql_string.h"
@@ -40,6 +41,7 @@
 #include <mysql.h>
 
 #include <deque>
+#include <iomanip>
 #include <list>
 #include <map>
 #include <set>
@@ -53,68 +55,6 @@
 #      include <slist>
 #  endif
 #endif
-
-
-/// \brief Used to define many similar functions in class Query.
-#define mysql_query_define0(RETURN, FUNC)\
-  RETURN FUNC (ss a)\
-    {return FUNC (parms() << a);}\
-  RETURN FUNC (ss a, ss b)\
-    {return FUNC (parms() << a << b);}\
-  RETURN FUNC (ss a, ss b, ss c)\
-    {return FUNC (parms() << a << b << c);}\
-  RETURN FUNC (ss a, ss b, ss c, ss d)\
-    {return FUNC (parms() << a << b << c << d);}\
-  RETURN FUNC (ss a, ss b, ss c, ss d, ss e)\
-    {return FUNC (parms() << a << b << c << d << e);} \
-  RETURN FUNC (ss a, ss b, ss c, ss d, ss e, ss f)\
-    {return FUNC (parms() << a << b << c << d << e << f);}\
-  RETURN FUNC (ss a, ss b, ss c, ss d, ss e, ss f, ss g)\
-    {return FUNC (parms() << a << b << c << d << e << f << g);}\
-  RETURN FUNC (ss a, ss b, ss c, ss d, ss e, ss f, ss g, ss h)\
-    {return FUNC (parms() << a << b << c << d << e << f << g << h);}\
-  RETURN FUNC (ss a, ss b, ss c, ss d, ss e, ss f, ss g, ss h, ss i)\
-    {return FUNC (parms() << a << b << c << d << e << f << g << h << i);}\
-  RETURN FUNC (ss a,ss b,ss c,ss d,ss e,ss f,ss g,ss h,ss i,ss j)\
-    {return FUNC (parms() <<a <<b <<c <<d <<e <<f <<g <<h <<i <<j);}\
-  RETURN FUNC (ss a,ss b,ss c,ss d,ss e,ss f,ss g,ss h,ss i,ss j,ss k)\
-    {return FUNC (parms() <<a <<b <<c <<d <<e <<f <<g <<h <<i <<j <<k);}\
-  RETURN FUNC (ss a,ss b,ss c,ss d,ss e,ss f,ss g,ss h,ss i,ss j,ss k,ss l)\
-    {return FUNC (parms() <<a <<b <<c <<d <<e <<f <<g <<h <<i <<j <<k <<l);}\
-
-/// \brief Used to define many similar member functions in class Query.
-#define mysql_query_define1(RETURN, FUNC) \
-  MYSQLPP_EXPORT RETURN FUNC (parms &p);\
-  mysql_query_define0(RETURN,FUNC) \
-
-/// \brief Used to define many similar member functions in class Query.
-#define mysql_query_define2(FUNC) \
-  template <class T1> void FUNC (T1 &con, const char* str); \
-  template <class T1> void FUNC (T1 &con, parms &p, query_reset r = RESET_QUERY);\
-  template <class T1> void FUNC (T1 &con, ss a)\
-	{FUNC (con, parms() << a);}\
-  template <class T1> void FUNC (T1 &con, ss a, ss b)\
-	{FUNC (con, parms() << a << b);}\
-  template <class T1> void FUNC (T1 &con, ss a, ss b, ss c)\
-	{FUNC (con, parms() << a << b << c);}\
-  template <class T1> void FUNC (T1 &con, ss a, ss b, ss c, ss d)\
-	{FUNC (con, parms() << a << b << c << d);}\
-  template <class T1> void FUNC (T1 &con, ss a, ss b, ss c, ss d, ss e)\
-	{FUNC (con, parms() << a << b << c << d << e);} \
-  template <class T1> void FUNC (T1 &con, ss a, ss b, ss c, ss d, ss e, ss f)\
-	{FUNC (con, parms() << a << b << c << d << e << f);}\
-  template <class T1> void FUNC (T1 &con,ss a,ss b,ss c,ss d,ss e,ss f,ss g)\
-	{FUNC (con, parms() << a << b << c << d << e << f << g);}\
-  template <class T1> void FUNC (T1 &con,ss a,ss b,ss c,ss d,ss e,ss f,ss g,ss h)\
-	{FUNC (con, parms() << a << b << c << d << e << f << g << h);}\
-  template <class T1> void FUNC (T1 &con, ss a, ss b, ss c, ss d, ss e, ss f, ss g, ss h, ss i)\
-	{FUNC (con, parms() << a << b << c << d << e << f << g << h << i);}\
-  template <class T1> void FUNC (T1 &con, ss a,ss b,ss c,ss d,ss e,ss f,ss g,ss h,ss i,ss j)\
-	{FUNC (con, parms() <<a <<b <<c <<d <<e <<f <<g <<h <<i <<j);}\
-  template <class T1> void FUNC (T1 &con, ss a,ss b,ss c,ss d,ss e,ss f,ss g,ss h,ss i,ss j,ss k)\
-	{FUNC (con, parms() <<a <<b <<c <<d <<e <<f <<g <<h <<i <<j <<k);}\
-  template <class T1> void FUNC (T1 &con, ss a,ss b,ss c,ss d,ss e,ss f,ss g,ss h,ss i,ss j,ss k,ss l)\
-	{FUNC (con, parms() <<a <<b <<c <<d <<e <<f <<g <<h <<i <<j <<k <<l);}\
 
 namespace mysqlpp {
 
@@ -165,10 +105,10 @@ enum query_reset { DONT_RESET, RESET_QUERY };
 /// You call the parse() method to tell the Query object that the query
 /// string contains placeholders. Once that's done, you can call any of
 /// the many overloaded methods that take a number of SQLStrings (up to
-/// 12 at the moment) or any type that can be converted to SQLString,
-/// and those parameters will be inserted into the placeholders. When
-/// you call one of the parameterless functions the execute the query,
-/// the final query string is assembled and sent to the server.
+/// 25 by default) or any type that can be converted to SQLString, and
+/// those parameters will be inserted into the placeholders. When you
+/// call one of the parameterless functions the execute the query, the
+/// final query string is assembled and sent to the server.
 ///
 /// See the user manual for more details about these options.
 
@@ -176,9 +116,6 @@ class Query : public std::ostream,
 		public OptionalExceptions, public Lockable
 {
 public:
-	typedef const SQLString& ss;	///< to keep parameter lists short
-	typedef SQLQueryParms parms;	///< shortens def'ns of above macros
-
 	/// \brief Create a new query object attached to a connection.
 	///
 	/// This is the constructor used by mysqlpp::Connection::query().
@@ -565,9 +502,9 @@ public:
 		// Cast required for VC++ 2003 due to error in overloaded operator
 		// lookup logic.  For an explanation of the problem, see:
 		// http://groups-beta.google.com/group/microsoft.public.vc.stl/browse_thread/thread/9a68d84644e64f15
-		dynamic_cast<std::ostream&>(*this) << "UPDATE " << o.table() <<
-				" SET " << n.equal_list() << " WHERE " <<
-				o.equal_list(" AND ", sql_use_compare);
+		dynamic_cast<std::ostream&>(*this) << std::setprecision(16) <<
+				"UPDATE " << o.table() << " SET " << n.equal_list() <<
+				" WHERE " << o.equal_list(" AND ", sql_use_compare);
 		return *this;
 	}
 
@@ -585,9 +522,10 @@ public:
 		reset();
 
 		// See above comment for cast rationale
-		dynamic_cast<std::ostream&>(*this) << "INSERT INTO " <<
-				v.table() << " (" << v.field_list() << ") VALUES (" <<
-				v.value_list() << ")";
+		dynamic_cast<std::ostream&>(*this) << std::setprecision(16) <<
+				"INSERT INTO " << v.table() << " (" <<
+				v.field_list() << ") VALUES (" <<
+				v.value_list() << ')';
 		return *this;
 	}
 
@@ -613,9 +551,10 @@ public:
 		}
 		
 		// See above comment for cast rationale
-		dynamic_cast<std::ostream&>(*this) << "INSERT INTO " <<
-				first->table() << " (" << first->field_list() <<
-				") VALUES (" << first->value_list() << ')';
+		dynamic_cast<std::ostream&>(*this) << std::setprecision(16) <<
+				"INSERT INTO " << first->table() << " (" <<
+				first->field_list() << ") VALUES (" <<
+				first->value_list() << ')';
 
 		Iter it = first + 1;
 		while (it != last) {
@@ -642,9 +581,9 @@ public:
 		reset();
 
 		// See above comment for cast rationale
-		dynamic_cast<std::ostream&>(*this) << "REPLACE INTO " <<
-				v.table() << " (" << v.field_list() << ") VALUES (" <<
-				v.value_list() << ")";
+		dynamic_cast<std::ostream&>(*this) << std::setprecision(16) <<
+				"REPLACE INTO " << v.table() << " (" <<
+				v.field_list() << ") VALUES (" << v.value_list() << ')';
 		return *this;
 	}
 

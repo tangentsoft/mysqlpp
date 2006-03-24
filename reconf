@@ -1,2 +1,2 @@
 #!/bin/sh
-./configure --enable-maintainer-mode --cache-file=config.cache $*
+./configure --cache-file=config.cache $*

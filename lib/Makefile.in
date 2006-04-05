@@ -89,7 +89,7 @@ distclean: clean
 	rm -f config.cache config.log config.status bk-deps bk-make-pch shared-ld-sh Makefile
 
 $(DLLPREFIX)mysqlpp.$(SO_SUFFIX): $(MYSQLPP_OBJECTS) custom.h
-	$(SHARED_LD_CXX) $@ $(MYSQLPP_OBJECTS) $(LDFLAGS) $(__mysqlpp___importlib)   $(__mysqlpp___macinstnamecmd) @PTHREAD_LIBS@ @MYSQLPP_EXTRA_LIBS@  -l@MYSQL_C_LIB@
+	$(SHARED_LD_CXX) $@ $(MYSQLPP_OBJECTS) $(LDFLAGS) $(__mysqlpp___importlib)   $(__mysqlpp___macinstnamecmd) @PTHREAD_LIBS@ @MYSQLPP_EXTRA_LIBS@  -l@MYSQL_C_LIB@ -lz
 
 install_mysqlpp: 
 	$(INSTALL_DIR) $(DESTDIR)$(libdir)

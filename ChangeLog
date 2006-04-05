@@ -1,3 +1,18 @@
+2.1.1, 2006.04.04 (r1289)
+
+	o MinGW and Cygwin will now build and link to mysqlpp DLLs.
+
+	o Fixed bug in Query, causing it to initialize the "throw
+	  exceptions" flag incorrectly.  Thanks for this patch go to
+	  Joel Fielder.
+
+	o Added -v flag for custom.pl script, which turns off the
+	  multiply-defined static variable fix.  Needed for VS 2003,
+	  which doesn't support variadic macros.  Also, added
+	  a diagnostic to detect the need for the -v flag, and
+	  suppressed the test for this feature in examples/util.cpp.
+
+
 2.1.0, 2006.03.24 (r1269)
 
 	o Converted automake and makemake files to their equivalents in

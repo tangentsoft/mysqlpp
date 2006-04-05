@@ -12,10 +12,14 @@
 
 #include <string>
 
+#if defined(_MSC_VER) && (_MSC_VER < 1400)
+#	error Please run the MySQL++ script lib/custom.pl with the -v compatibility flag.
+#endif
+
 #ifdef MYSQLPP_SSQLS_NO_STATICS
-#define MYSQLPP_SSQLS_EXPAND(...)
+#	define MYSQLPP_SSQLS_EXPAND(...)
 #else
-#define MYSQLPP_SSQLS_EXPAND(...) __VA_ARGS__
+#	define MYSQLPP_SSQLS_EXPAND(...) __VA_ARGS__
 #endif
 
 namespace mysqlpp {

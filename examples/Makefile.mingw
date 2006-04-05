@@ -34,80 +34,80 @@ BUILD = debug
 ### Variables: ###
 
 CPPDEPS = -MT$@ -MF$@.d -MD
-UTIL_CXXFLAGS = -I..\lib $(__DEBUGINFO) -D_UNICODE -Ic:\mysql\include -mthreads \
-	$(CPPFLAGS) $(CXXFLAGS)
+UTIL_CXXFLAGS = -mthreads $(__DEBUGINFO) -I..\lib -D_UNICODE -Ic:\mysql\include \
+	-DMYSQLPP_NO_DLL $(CPPFLAGS) $(CXXFLAGS)
 UTIL_OBJECTS =  \
 	util_util.o
-RESETDB_CXXFLAGS = -I..\lib $(__DEBUGINFO) -D_UNICODE -Ic:\mysql\include \
-	-mthreads $(CPPFLAGS) $(CXXFLAGS)
+RESETDB_CXXFLAGS = -mthreads $(__DEBUGINFO) -I..\lib -D_UNICODE \
+	-Ic:\mysql\include -DMYSQLPP_NO_DLL $(CPPFLAGS) $(CXXFLAGS)
 RESETDB_OBJECTS =  \
 	resetdb_resetdb.o
-SIMPLE1_CXXFLAGS = -I..\lib $(__DEBUGINFO) -D_UNICODE -Ic:\mysql\include \
-	-mthreads $(CPPFLAGS) $(CXXFLAGS)
+SIMPLE1_CXXFLAGS = -mthreads $(__DEBUGINFO) -I..\lib -D_UNICODE \
+	-Ic:\mysql\include -DMYSQLPP_NO_DLL $(CPPFLAGS) $(CXXFLAGS)
 SIMPLE1_OBJECTS =  \
 	simple1_simple1.o
-SIMPLE2_CXXFLAGS = -I..\lib $(__DEBUGINFO) -D_UNICODE -Ic:\mysql\include \
-	-mthreads $(CPPFLAGS) $(CXXFLAGS)
+SIMPLE2_CXXFLAGS = -mthreads $(__DEBUGINFO) -I..\lib -D_UNICODE \
+	-Ic:\mysql\include -DMYSQLPP_NO_DLL $(CPPFLAGS) $(CXXFLAGS)
 SIMPLE2_OBJECTS =  \
 	simple2_simple2.o
-SIMPLE3_CXXFLAGS = -I..\lib $(__DEBUGINFO) -D_UNICODE -Ic:\mysql\include \
-	-mthreads $(CPPFLAGS) $(CXXFLAGS)
+SIMPLE3_CXXFLAGS = -mthreads $(__DEBUGINFO) -I..\lib -D_UNICODE \
+	-Ic:\mysql\include -DMYSQLPP_NO_DLL $(CPPFLAGS) $(CXXFLAGS)
 SIMPLE3_OBJECTS =  \
 	simple3_simple3.o
-USEQUERY_CXXFLAGS = -I..\lib $(__DEBUGINFO) -D_UNICODE -Ic:\mysql\include \
-	-mthreads $(CPPFLAGS) $(CXXFLAGS)
+USEQUERY_CXXFLAGS = -mthreads $(__DEBUGINFO) -I..\lib -D_UNICODE \
+	-Ic:\mysql\include -DMYSQLPP_NO_DLL $(CPPFLAGS) $(CXXFLAGS)
 USEQUERY_OBJECTS =  \
 	usequery_usequery.o
-MULTIQUERY_CXXFLAGS = -I..\lib $(__DEBUGINFO) -D_UNICODE -Ic:\mysql\include \
-	-mthreads $(CPPFLAGS) $(CXXFLAGS)
+MULTIQUERY_CXXFLAGS = -mthreads $(__DEBUGINFO) -I..\lib -D_UNICODE \
+	-Ic:\mysql\include -DMYSQLPP_NO_DLL $(CPPFLAGS) $(CXXFLAGS)
 MULTIQUERY_OBJECTS =  \
 	multiquery_multiquery.o
-CUSTOM1_CXXFLAGS = -I..\lib $(__DEBUGINFO) -D_UNICODE -Ic:\mysql\include \
-	-mthreads $(CPPFLAGS) $(CXXFLAGS)
+CUSTOM1_CXXFLAGS = -mthreads $(__DEBUGINFO) -I..\lib -D_UNICODE \
+	-Ic:\mysql\include -DMYSQLPP_NO_DLL $(CPPFLAGS) $(CXXFLAGS)
 CUSTOM1_OBJECTS =  \
 	custom1_custom1.o
-CUSTOM2_CXXFLAGS = -I..\lib $(__DEBUGINFO) -D_UNICODE -Ic:\mysql\include \
-	-mthreads $(CPPFLAGS) $(CXXFLAGS)
+CUSTOM2_CXXFLAGS = -mthreads $(__DEBUGINFO) -I..\lib -D_UNICODE \
+	-Ic:\mysql\include -DMYSQLPP_NO_DLL $(CPPFLAGS) $(CXXFLAGS)
 CUSTOM2_OBJECTS =  \
 	custom2_custom2.o
-CUSTOM3_CXXFLAGS = -I..\lib $(__DEBUGINFO) -D_UNICODE -Ic:\mysql\include \
-	-mthreads $(CPPFLAGS) $(CXXFLAGS)
+CUSTOM3_CXXFLAGS = -mthreads $(__DEBUGINFO) -I..\lib -D_UNICODE \
+	-Ic:\mysql\include -DMYSQLPP_NO_DLL $(CPPFLAGS) $(CXXFLAGS)
 CUSTOM3_OBJECTS =  \
 	custom3_custom3.o
-CUSTOM4_CXXFLAGS = -I..\lib $(__DEBUGINFO) -D_UNICODE -Ic:\mysql\include \
-	-mthreads $(CPPFLAGS) $(CXXFLAGS)
+CUSTOM4_CXXFLAGS = -mthreads $(__DEBUGINFO) -I..\lib -D_UNICODE \
+	-Ic:\mysql\include -DMYSQLPP_NO_DLL $(CPPFLAGS) $(CXXFLAGS)
 CUSTOM4_OBJECTS =  \
 	custom4_custom4.o
-CUSTOM5_CXXFLAGS = -I..\lib $(__DEBUGINFO) -D_UNICODE -Ic:\mysql\include \
-	-mthreads $(CPPFLAGS) $(CXXFLAGS)
+CUSTOM5_CXXFLAGS = -mthreads $(__DEBUGINFO) -I..\lib -D_UNICODE \
+	-Ic:\mysql\include -DMYSQLPP_NO_DLL $(CPPFLAGS) $(CXXFLAGS)
 CUSTOM5_OBJECTS =  \
 	custom5_custom5.o
-CUSTOM6_CXXFLAGS = -I..\lib $(__DEBUGINFO) -D_UNICODE -Ic:\mysql\include \
-	-mthreads $(CPPFLAGS) $(CXXFLAGS)
+CUSTOM6_CXXFLAGS = -mthreads $(__DEBUGINFO) -I..\lib -D_UNICODE \
+	-Ic:\mysql\include -DMYSQLPP_NO_DLL $(CPPFLAGS) $(CXXFLAGS)
 CUSTOM6_OBJECTS =  \
 	custom6_custom6.o
-DBINFO_CXXFLAGS = -I..\lib $(__DEBUGINFO) -D_UNICODE -Ic:\mysql\include \
-	-mthreads $(CPPFLAGS) $(CXXFLAGS)
+DBINFO_CXXFLAGS = -mthreads $(__DEBUGINFO) -I..\lib -D_UNICODE \
+	-Ic:\mysql\include -DMYSQLPP_NO_DLL $(CPPFLAGS) $(CXXFLAGS)
 DBINFO_OBJECTS =  \
 	dbinfo_dbinfo.o
-FIELDINF1_CXXFLAGS = -I..\lib $(__DEBUGINFO) -D_UNICODE -Ic:\mysql\include \
-	-mthreads $(CPPFLAGS) $(CXXFLAGS)
+FIELDINF1_CXXFLAGS = -mthreads $(__DEBUGINFO) -I..\lib -D_UNICODE \
+	-Ic:\mysql\include -DMYSQLPP_NO_DLL $(CPPFLAGS) $(CXXFLAGS)
 FIELDINF1_OBJECTS =  \
 	fieldinf1_fieldinf1.o
-XACTION_CXXFLAGS = -I..\lib $(__DEBUGINFO) -D_UNICODE -Ic:\mysql\include \
-	-mthreads $(CPPFLAGS) $(CXXFLAGS)
+XACTION_CXXFLAGS = -mthreads $(__DEBUGINFO) -I..\lib -D_UNICODE \
+	-Ic:\mysql\include -DMYSQLPP_NO_DLL $(CPPFLAGS) $(CXXFLAGS)
 XACTION_OBJECTS =  \
 	xaction_xaction.o
-CGI_IMAGE_CXXFLAGS = -I..\lib $(__DEBUGINFO) -D_UNICODE -Ic:\mysql\include \
-	-mthreads $(CPPFLAGS) $(CXXFLAGS)
+CGI_IMAGE_CXXFLAGS = -mthreads $(__DEBUGINFO) -I..\lib -D_UNICODE \
+	-Ic:\mysql\include -DMYSQLPP_NO_DLL $(CPPFLAGS) $(CXXFLAGS)
 CGI_IMAGE_OBJECTS =  \
 	cgi_image_cgi_image.o
-LOAD_FILE_CXXFLAGS = -I..\lib $(__DEBUGINFO) -D_UNICODE -Ic:\mysql\include \
-	-mthreads $(CPPFLAGS) $(CXXFLAGS)
+LOAD_FILE_CXXFLAGS = -mthreads $(__DEBUGINFO) -I..\lib -D_UNICODE \
+	-Ic:\mysql\include -DMYSQLPP_NO_DLL $(CPPFLAGS) $(CXXFLAGS)
 LOAD_FILE_OBJECTS =  \
 	load_file_load_file.o
-UPDEL_CXXFLAGS = -I..\lib $(__DEBUGINFO) -D_UNICODE -Ic:\mysql\include -mthreads \
-	$(CPPFLAGS) $(CXXFLAGS)
+UPDEL_CXXFLAGS = -mthreads $(__DEBUGINFO) -I..\lib -D_UNICODE -Ic:\mysql\include \
+	-DMYSQLPP_NO_DLL $(CPPFLAGS) $(CXXFLAGS)
 UPDEL_OBJECTS =  \
 	updel_updel.o
 
@@ -154,58 +154,58 @@ libmysqlpp_util.a: $(UTIL_OBJECTS)
 	ranlib $@
 
 resetdb.exe: $(RESETDB_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(RESETDB_OBJECTS) $(LDFLAGS) $(__DEBUGINFO) -Lc:\mysql\lib\opt -L..\lib -mthreads -L.  -lmysqlpp -lmysqlclient -lmysqlpp_util
+	$(CXX) -o $@ $(RESETDB_OBJECTS) $(LDFLAGS) -L. -mthreads $(__DEBUGINFO) -Lc:\mysql\lib\opt -Wl,--enable-auto-import -L..\lib  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 simple1.exe: $(SIMPLE1_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(SIMPLE1_OBJECTS) $(LDFLAGS) $(__DEBUGINFO) -Lc:\mysql\lib\opt -L..\lib -mthreads -L.  -lmysqlpp -lmysqlclient -lmysqlpp_util
+	$(CXX) -o $@ $(SIMPLE1_OBJECTS) $(LDFLAGS) -L. -mthreads $(__DEBUGINFO) -Lc:\mysql\lib\opt -Wl,--enable-auto-import -L..\lib  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 simple2.exe: $(SIMPLE2_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(SIMPLE2_OBJECTS) $(LDFLAGS) $(__DEBUGINFO) -Lc:\mysql\lib\opt -L..\lib -mthreads -L.  -lmysqlpp -lmysqlclient -lmysqlpp_util
+	$(CXX) -o $@ $(SIMPLE2_OBJECTS) $(LDFLAGS) -L. -mthreads $(__DEBUGINFO) -Lc:\mysql\lib\opt -Wl,--enable-auto-import -L..\lib  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 simple3.exe: $(SIMPLE3_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(SIMPLE3_OBJECTS) $(LDFLAGS) $(__DEBUGINFO) -Lc:\mysql\lib\opt -L..\lib -mthreads -L.  -lmysqlpp -lmysqlclient -lmysqlpp_util
+	$(CXX) -o $@ $(SIMPLE3_OBJECTS) $(LDFLAGS) -L. -mthreads $(__DEBUGINFO) -Lc:\mysql\lib\opt -Wl,--enable-auto-import -L..\lib  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 usequery.exe: $(USEQUERY_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(USEQUERY_OBJECTS) $(LDFLAGS) $(__DEBUGINFO) -Lc:\mysql\lib\opt -L..\lib -mthreads -L.  -lmysqlpp -lmysqlclient -lmysqlpp_util
+	$(CXX) -o $@ $(USEQUERY_OBJECTS) $(LDFLAGS) -L. -mthreads $(__DEBUGINFO) -Lc:\mysql\lib\opt -Wl,--enable-auto-import -L..\lib  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 multiquery.exe: $(MULTIQUERY_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(MULTIQUERY_OBJECTS) $(LDFLAGS) $(__DEBUGINFO) -Lc:\mysql\lib\opt -L..\lib -mthreads -L.  -lmysqlpp -lmysqlclient -lmysqlpp_util
+	$(CXX) -o $@ $(MULTIQUERY_OBJECTS) $(LDFLAGS) -L. -mthreads $(__DEBUGINFO) -Lc:\mysql\lib\opt -Wl,--enable-auto-import -L..\lib  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 custom1.exe: $(CUSTOM1_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(CUSTOM1_OBJECTS) $(LDFLAGS) $(__DEBUGINFO) -Lc:\mysql\lib\opt -L..\lib -mthreads -L.  -lmysqlpp -lmysqlclient -lmysqlpp_util
+	$(CXX) -o $@ $(CUSTOM1_OBJECTS) $(LDFLAGS) -L. -mthreads $(__DEBUGINFO) -Lc:\mysql\lib\opt -Wl,--enable-auto-import -L..\lib  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 custom2.exe: $(CUSTOM2_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(CUSTOM2_OBJECTS) $(LDFLAGS) $(__DEBUGINFO) -Lc:\mysql\lib\opt -L..\lib -mthreads -L.  -lmysqlpp -lmysqlclient -lmysqlpp_util
+	$(CXX) -o $@ $(CUSTOM2_OBJECTS) $(LDFLAGS) -L. -mthreads $(__DEBUGINFO) -Lc:\mysql\lib\opt -Wl,--enable-auto-import -L..\lib  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 custom3.exe: $(CUSTOM3_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(CUSTOM3_OBJECTS) $(LDFLAGS) $(__DEBUGINFO) -Lc:\mysql\lib\opt -L..\lib -mthreads -L.  -lmysqlpp -lmysqlclient -lmysqlpp_util
+	$(CXX) -o $@ $(CUSTOM3_OBJECTS) $(LDFLAGS) -L. -mthreads $(__DEBUGINFO) -Lc:\mysql\lib\opt -Wl,--enable-auto-import -L..\lib  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 custom4.exe: $(CUSTOM4_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(CUSTOM4_OBJECTS) $(LDFLAGS) $(__DEBUGINFO) -Lc:\mysql\lib\opt -L..\lib -mthreads -L.  -lmysqlpp -lmysqlclient -lmysqlpp_util
+	$(CXX) -o $@ $(CUSTOM4_OBJECTS) $(LDFLAGS) -L. -mthreads $(__DEBUGINFO) -Lc:\mysql\lib\opt -Wl,--enable-auto-import -L..\lib  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 custom5.exe: $(CUSTOM5_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(CUSTOM5_OBJECTS) $(LDFLAGS) $(__DEBUGINFO) -Lc:\mysql\lib\opt -L..\lib -mthreads -L.  -lmysqlpp -lmysqlclient -lmysqlpp_util
+	$(CXX) -o $@ $(CUSTOM5_OBJECTS) $(LDFLAGS) -L. -mthreads $(__DEBUGINFO) -Lc:\mysql\lib\opt -Wl,--enable-auto-import -L..\lib  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 custom6.exe: $(CUSTOM6_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(CUSTOM6_OBJECTS) $(LDFLAGS) $(__DEBUGINFO) -Lc:\mysql\lib\opt -L..\lib -mthreads -L.  -lmysqlpp -lmysqlclient -lmysqlpp_util
+	$(CXX) -o $@ $(CUSTOM6_OBJECTS) $(LDFLAGS) -L. -mthreads $(__DEBUGINFO) -Lc:\mysql\lib\opt -Wl,--enable-auto-import -L..\lib  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 dbinfo.exe: $(DBINFO_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(DBINFO_OBJECTS) $(LDFLAGS) $(__DEBUGINFO) -Lc:\mysql\lib\opt -L..\lib -mthreads -L.  -lmysqlpp -lmysqlclient -lmysqlpp_util
+	$(CXX) -o $@ $(DBINFO_OBJECTS) $(LDFLAGS) -L. -mthreads $(__DEBUGINFO) -Lc:\mysql\lib\opt -Wl,--enable-auto-import -L..\lib  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 fieldinf1.exe: $(FIELDINF1_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(FIELDINF1_OBJECTS) $(LDFLAGS) $(__DEBUGINFO) -Lc:\mysql\lib\opt -L..\lib -mthreads -L.  -lmysqlpp -lmysqlclient -lmysqlpp_util
+	$(CXX) -o $@ $(FIELDINF1_OBJECTS) $(LDFLAGS) -L. -mthreads $(__DEBUGINFO) -Lc:\mysql\lib\opt -Wl,--enable-auto-import -L..\lib  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 xaction.exe: $(XACTION_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(XACTION_OBJECTS) $(LDFLAGS) $(__DEBUGINFO) -Lc:\mysql\lib\opt -L..\lib -mthreads -L.  -lmysqlpp -lmysqlclient -lmysqlpp_util
+	$(CXX) -o $@ $(XACTION_OBJECTS) $(LDFLAGS) -L. -mthreads $(__DEBUGINFO) -Lc:\mysql\lib\opt -Wl,--enable-auto-import -L..\lib  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 cgi_image.exe: $(CGI_IMAGE_OBJECTS)
-	$(CXX) -o $@ $(CGI_IMAGE_OBJECTS) $(LDFLAGS) $(__DEBUGINFO) -Lc:\mysql\lib\opt -L..\lib -mthreads  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(CGI_IMAGE_OBJECTS) $(LDFLAGS) -mthreads $(__DEBUGINFO) -Lc:\mysql\lib\opt -Wl,--enable-auto-import -L..\lib  -lmysqlpp -lmysqlclient
 
 load_file.exe: $(LOAD_FILE_OBJECTS)
-	$(CXX) -o $@ $(LOAD_FILE_OBJECTS) $(LDFLAGS) $(__DEBUGINFO) -Lc:\mysql\lib\opt -L..\lib -mthreads  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(LOAD_FILE_OBJECTS) $(LDFLAGS) -mthreads $(__DEBUGINFO) -Lc:\mysql\lib\opt -Wl,--enable-auto-import -L..\lib  -lmysqlpp -lmysqlclient
 
 updel.exe: $(UPDEL_OBJECTS)
-	$(CXX) -o $@ $(UPDEL_OBJECTS) $(LDFLAGS) $(__DEBUGINFO) -Lc:\mysql\lib\opt -L..\lib -mthreads  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(UPDEL_OBJECTS) $(LDFLAGS) -mthreads $(__DEBUGINFO) -Lc:\mysql\lib\opt -Wl,--enable-auto-import -L..\lib  -lmysqlpp -lmysqlclient
 
 util_util.o: ./util.cpp
 	$(CXX) -c -o $@ $(UTIL_CXXFLAGS) $(CPPDEPS) $<

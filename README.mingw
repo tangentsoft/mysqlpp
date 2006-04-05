@@ -1,36 +1,18 @@
-Limitations
-~~~~~~~~~~~
-	Currently, MinGW can only build a static version of MySQL++.
-	Legally speaking, this means that you can only use MySQL++ in
-	programs with LGPL-compatible license.	This wouldn't be the
-	case if we could get MinGW to build a DLL version of MySQL++.
-	The effort to make it build a DLL has stalled due to lack
-	of interest from the major maintainers.  We will, however,
-	accept patches if someone manages to get it working.
-
-	If you are not willing to contribute to that effort, I
-	recommend that you switch to Visual C++, which builds a DLL
-	version of MySQL++ without fuss.  (And no, you cannot link a
-	Visual C++ DLL containing C++ code to a MinGW program; only
-	C DLLs are compatible across toolchains.)
-	
-	If the cost is the only thing keeping you from using
-	Visual C++, there are free versions of VC++ available.
-	See the Visual C++ item in the MySQL++ FAQ for details:
-	http://tangentsoft.net/mysql++/#faq
-
-
-Building the Library and Example Programs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	First, you will need to create a MinGW-compatible import
+Prerequisite: Create Import Library
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	Before you can build MySQL++ with MinGW, you will need to
+	create a MinGW-compatible import library for MySQL's C API
 	library.  Assuming you installed MySQL in c:\mysql and MySQL++
 	in c\mysql++, the commands to do this are:
 
 		mkdir c:\mysql\lib\opt
 		cd c:\mysql\lib\opt
 	    dlltool -k -d c:\mysql++\libmysqlclient.def -l libmysqlclient.a
-	
-	Now you can build the library with this command:
+
+
+Building the Library and Example Programs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	Now you can build MySQL++ with this command:
 	
 		mingw32-make -f Makefile.mingw
 

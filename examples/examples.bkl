@@ -4,11 +4,14 @@
 
 	<set var="EXAMPLES">yes</set>
 
-	<!-- Set up standard build options for all examples -->
-	<template id="example">
-		<include>../lib</include>
-
+	<!-- Set up build options common to all examples -->
+	<template id="common">
+		<threading>$(THREAD_TYPE)</threading>
+		<cxx-rtti>on</cxx-rtti>
+		<cxx-exceptions>on</cxx-exceptions>
 		<debug-info>$(DEBUGINFO)</debug-info>
+
+		<include>../lib</include>
 
 		<if cond="FORMAT in ['msvc6prj', 'mingw']">
 			<define>_UNICODE</define>
@@ -21,114 +24,110 @@
 			<sys-lib>libmysql</sys-lib>
 		</if>
 		<if cond="FORMAT=='mingw'">
+			<ldflags>-Wl,--enable-auto-import</ldflags>
+			<define>MYSQLPP_NO_DLL</define>
 			<lib-path>..\lib</lib-path>
 			<sys-lib>mysqlclient</sys-lib>
 		</if>
-
 		<if cond="FORMAT=='autoconf'">
 			<cxxflags>@PTHREAD_CFLAGS@</cxxflags>
 			<ldflags>@PTHREAD_LIBS@ @MYSQLPP_EXTRA_LIBS@</ldflags>
 			<sys-lib>@MYSQL_C_LIB@</sys-lib>
 
 			<warnings>max</warnings>
-			<ldlibs>../lib/libmysqlpp.$(SO_SUFFIX)</ldlibs>
+			<ldflags>-L../lib</ldflags>
+			<sys-lib>mysqlpp</sys-lib>
 			<if cond="ZLIB=='yes'">
 				<sys-lib>z</sys-lib>
 			</if>
 		</if>
-
 		<if cond="FORMAT=='gnu'">
 			<include>/usr/include/mysql</include>
 			<include>/usr/include/mysql++</include>
 			<sys-lib>mysqlpp</sys-lib>
 			<sys-lib>mysqlclient</sys-lib>
 		</if>
-
-		<threading>$(THREAD_TYPE)</threading>
-		<cxx-rtti>on</cxx-rtti>
-		<cxx-exceptions>on</cxx-exceptions>
 	</template>
 
-	<!-- Extend 'example' template for the subset of examples that
-	     use the util module. -->
-	<template id="std-example" template="example">
+	<!-- Additional options specific to examples that depend on
+	     the util module. -->
+	<template id="std-example">
 		<depends>util</depends>
 		<sys-lib>mysqlpp_util</sys-lib>
 
 		<if cond="FORMAT=='msvc6prj'">
 			<lib-path>$(BUILD)</lib-path>
 		</if>
-
 		<if cond="FORMAT in ['autoconf', 'mingw', 'gnu']">
 			<lib-path>.</lib-path>
 		</if>
 	</template>
 
 
-	<!-- Define output targets, if examples are enabled -->
+	<!-- Define output targets, if commons are enabled -->
 	<if cond="EXAMPLES=='yes'">
 		<!-- The "util" convenience library -->
-		<lib id="util" template="example">
+		<lib id="util" template="common">
 			<libname>mysqlpp_util</libname>
 			<sources>util.cpp</sources>
 		</lib>
 		
 		<!-- The "standard" examples, being the ones that depend on
 			the util library. -->
-		<exe id="resetdb" template="std-example">
+		<exe id="resetdb" template="std-example,common">
 			<sources>resetdb.cpp</sources>
 		</exe>
-		<exe id="simple1" template="std-example">
+		<exe id="simple1" template="std-example,common">
 			<sources>simple1.cpp</sources>
 		</exe>
-		<exe id="simple2" template="std-example">
+		<exe id="simple2" template="std-example,common">
 			<sources>simple2.cpp</sources>
 		</exe>
-		<exe id="simple3" template="std-example">
+		<exe id="simple3" template="std-example,common">
 			<sources>simple3.cpp</sources>
 		</exe>
-		<exe id="usequery" template="std-example">
+		<exe id="usequery" template="std-example,common">
 			<sources>usequery.cpp</sources>
 		</exe>
-		<exe id="multiquery" template="std-example">
+		<exe id="multiquery" template="std-example,common">
 			<sources>multiquery.cpp</sources>
 		</exe>
-		<exe id="custom1" template="std-example">
+		<exe id="custom1" template="std-example,common">
 			<sources>custom1.cpp</sources>
 		</exe>
-		<exe id="custom2" template="std-example">
+		<exe id="custom2" template="std-example,common">
 			<sources>custom2.cpp</sources>
 		</exe>
-		<exe id="custom3" template="std-example">
+		<exe id="custom3" template="std-example,common">
 			<sources>custom3.cpp</sources>
 		</exe>
-		<exe id="custom4" template="std-example">
+		<exe id="custom4" template="std-example,common">
 			<sources>custom4.cpp</sources>
 		</exe>
-		<exe id="custom5" template="std-example">
+		<exe id="custom5" template="std-example,common">
 			<sources>custom5.cpp</sources>
 		</exe>
-		<exe id="custom6" template="std-example">
+		<exe id="custom6" template="std-example,common">
 			<sources>custom6.cpp</sources>
 		</exe>
-		<exe id="dbinfo" template="std-example">
+		<exe id="dbinfo" template="std-example,common">
 			<sources>dbinfo.cpp</sources>
 		</exe>
-		<exe id="fieldinf1" template="std-example">
+		<exe id="fieldinf1" template="std-example,common">
 			<sources>fieldinf1.cpp</sources>
 		</exe>
-		<exe id="xaction" template="std-example">
+		<exe id="xaction" template="std-example,common">
 			<sources>xaction.cpp</sources>
 		</exe>
 
 		<!-- The "nonstandard" examples -->
-		<exe id="cgi_image" template="example">
+		<exe id="cgi_image" template="common">
 			<sources>cgi_image.cpp</sources>
 		</exe>
-		<exe id="load_file" template="example">
+		<exe id="load_file" template="common">
 			<sources>load_file.cpp</sources>
 		</exe>
-		<exe id="updel" template="example">
+		<exe id="updel" template="common">
 			<sources>updel.cpp</sources>
 		</exe>
 	</if>

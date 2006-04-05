@@ -39,6 +39,10 @@ my $max_data_members = 25;
 # No user-serviceable parts below.
 
 use strict;
+use Getopt::Std;
+
+our ($opt_v);
+getopts('v') or die "usage: custom.pl [-v]\n";
 
 open (OUT0, ">custom.h");
 open (OUT, ">custom-macros.h");
@@ -57,13 +61,28 @@ print OUT0 << "---";
 #include "tiny_int.h"
 
 #include <string>
+---
 
-#ifdef MYSQLPP_SSQLS_NO_STATICS
-#define MYSQLPP_SSQLS_EXPAND(...)
-#else
-#define MYSQLPP_SSQLS_EXPAND(...) __VA_ARGS__
+my ($suppress_statics_start, $suppress_statics_end) = ('', '');
+unless ($opt_v) {
+	print OUT0 << "---";
+
+#if defined(_MSC_VER) && (_MSC_VER < 1400)
+#	error Please run the MySQL++ script lib/custom.pl with the -v compatibility flag.
 #endif
 
+#ifdef MYSQLPP_SSQLS_NO_STATICS
+#	define MYSQLPP_SSQLS_EXPAND(...)
+#else
+#	define MYSQLPP_SSQLS_EXPAND(...) __VA_ARGS__
+#endif
+
+---
+	$suppress_statics_start = 'MYSQLPP_SSQLS_EXPAND(';
+	$suppress_statics_end = ')';
+}
+
+print OUT0 << "---";
 namespace mysqlpp {
 
 enum sql_dummy_type {sql_dummy};
@@ -648,11 +667,12 @@ $defs
     NAME##_cus_equal_list<Manip> equal_list(mysqlpp::cchar *d, mysqlpp::cchar *c, Manip m, 
 					    mysqlpp::sql_cmp_type sc) const;
   }; 
-  MYSQLPP_SSQLS_EXPAND(
+  $suppress_statics_start
   const char *NAME::names[] = { 
 $names 
   }; 
-  const char *NAME::_table = #NAME ;)
+  const char *NAME::_table = #NAME ;
+  $suppress_statics_end
 
   template <class Manip>
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list

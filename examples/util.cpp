@@ -34,8 +34,12 @@
 // This include isn't needed by util module.  It's just a test of the
 // new SSQLS feature allowing the structure to be defined in many
 // modules without having a multiply-defined static variable error.
-#define MYSQLPP_SSQLS_NO_STATICS
-#include "stock.h"		
+// Don't do this for VC++ 2003: it doesn't support variadic macros,
+// which this feature depends on.
+#if !defined(_MSC_VER) || _MSC_VER >= 1400
+#	define MYSQLPP_SSQLS_NO_STATICS
+#	include "stock.h"		
+#endif
 
 using namespace std;
 

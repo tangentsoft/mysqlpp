@@ -14,7 +14,7 @@
 # USA
 
 # Standard autotools stuff
-AC_INIT(mysql++, 2.1.0, plusplus@lists.mysql.com, mysql++)
+AC_INIT(mysql++, 2.1.1, plusplus@lists.mysql.com, mysql++)
 AC_CONFIG_HEADER(config.h)
 AC_DISABLE_STATIC
 AC_CANONICAL_SYSTEM
@@ -71,6 +71,14 @@ then
 	CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
 	CC="$PTHREAD_CC"
 fi
+
+
+# If this is Cygwin, add a linker flag to suppress a silly link message.
+case "${host}" in
+	*cygwin*)
+		LDFLAGS="$LDFLAGS -Wl,--enable-auto-import"
+		;;
+esac
 
 
 #

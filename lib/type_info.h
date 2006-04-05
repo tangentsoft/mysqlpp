@@ -139,13 +139,13 @@ public:
 	/// \param t the MySQL C API type ID for this type
 	/// \param _unsigned if true, this is the unsigned version of the type
 	/// \param _null if true, this type can hold a SQL null
-	MYSQLPP_EXPORT inline mysql_type_info(enum_field_types t,
+	inline mysql_type_info(enum_field_types t,
 			bool _unsigned, bool _null);
 
 	/// \brief Create object from a MySQL C API field
 	///
 	/// \param f field from which we extract the type info
-	MYSQLPP_EXPORT inline mysql_type_info(const MYSQL_FIELD& f);
+	inline mysql_type_info(const MYSQL_FIELD& f);
 
 	/// \brief Create object as a copy of another
 	mysql_type_info(const mysql_type_info& t) :
@@ -194,37 +194,37 @@ public:
 	///
 	/// Returns the name that would be returned by typeid().name() for
 	/// the C++ type associated with the SQL type.
-	MYSQLPP_EXPORT inline const char* name() const;
+	inline const char* name() const;
 
 	/// \brief Returns the name of the SQL type.
 	///
 	/// Returns the SQL name for the type.
-	MYSQLPP_EXPORT inline const char* sql_name() const;
+	inline const char* sql_name() const;
 
 	/// \brief Returns the type_info for the C++ type associated with
 	/// the SQL type.
 	///
 	/// Returns the C++ type_info record corresponding to the SQL type.
-	MYSQLPP_EXPORT inline const std::type_info& c_type() const;
+	inline const std::type_info& c_type() const;
 
 	/// \brief Return length of data in this field
 	///
 	/// This only works if you initialized this object from a
 	/// MYSQL_FIELD object.
-	MYSQLPP_EXPORT inline const unsigned int length() const;
+	inline const unsigned int length() const;
 
 	/// \brief Return maximum length of data in this field
 	///
 	/// This only works if you initialized this object from a
 	/// MYSQL_FIELD object.
-	MYSQLPP_EXPORT inline const unsigned int max_length() const;
+	inline const unsigned int max_length() const;
 
 	/// \brief Returns the type_info for the C++ type inside of the
 	/// mysqlpp::Null type.
 	///
 	/// Returns the type_info for the C++ type inside the mysqlpp::Null
 	/// type.  If the type is not Null then this is the same as c_type().
-	MYSQLPP_EXPORT inline const mysql_type_info base_type() const;
+	inline const mysql_type_info base_type() const;
 
 	/// \brief Returns the ID of the SQL type.
 	///

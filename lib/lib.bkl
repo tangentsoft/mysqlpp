@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <makefile>
-	<requires version="0.2.0"/>		<!-- for fileList() -->
+	<requires version="0.1.9"/>
 
 	<include file="../common.bkl"/>
 	<using module="datafiles"/>
@@ -18,14 +18,15 @@
 
 		<if cond="FORMAT in ['msvc6prj', 'mingw']">
 			<define>_UNICODE</define>
-			<define>MYSQLPP_MAKING_DLL</define>
 			<include>c:\mysql\include</include>
 			<lib-path>c:\mysql\lib\opt</lib-path>
 		</if>
 		<if cond="FORMAT=='msvc6prj'">
+			<define>MYSQLPP_MAKING_DLL</define>
 			<sys-lib>libmysql</sys-lib>
 		</if>
 		<if cond="FORMAT=='mingw'">
+			<define>MYSQLPP_NO_DLL</define>
 			<sys-lib>mysqlclient</sys-lib>
 		</if>
 
@@ -41,6 +42,10 @@
 			<cxxflags>@PTHREAD_CFLAGS@</cxxflags>
 			<ldflags>@PTHREAD_LIBS@ @MYSQLPP_EXTRA_LIBS@</ldflags>
 			<sys-lib>@MYSQL_C_LIB@</sys-lib>
+
+			<if cond="ZLIB=='yes'">
+				<sys-lib>z</sys-lib>
+			</if>
 
 			<modify-target target="uninstall">
 				<command>

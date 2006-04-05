@@ -1,22 +1,3 @@
-Limitations
-~~~~~~~~~~~
-	At the moment, Cygwin can only build a static version of
-	MySQL++.  The practical upshot of this is that Cygwin can
-	only be used to build LGPL or GPL-licensed MySQL++ programs.
-	Unless you're one of the few that have a commercial Cygwin
-	license, you are already under this restriction because
-	your programs must be GPL-licensed in this case anyway.
-	(See http://www.redhat.com/software/cygwin/ for details.)
-
-	If your program is under some other license and you do not
-	have a commercial Cygwin license, you must use Visual C++.
-
-	If the cost is the only thing keeping you from using
-	Visual C++, there are free versions of VC++ available.
-	See the Visual C++ item in the MySQL++ FAQ for details:
-	http://tangentsoft.net/mysql++/#faq
-
-
 Prerequisite: Build MySQL
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 	Before you can build MySQL++, you need to build the MySQL
@@ -48,15 +29,5 @@ Prerequisite: Build MySQL
 
 Building the Library and Example Programs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	Now that the MySQL client library is built and installed,
-	you can build MySQL++.	The only trick is that you have to
-	pass the proper flag to the configure script to make it build
-	a static version of MySQL++ only.
-
-	The simplest set of commands for this is:
-
-	$ ./configure --disable-shared
-	$ make
-	$ make install
-
-	For more on configure script options, see README.unix.
+	With that done, you can build MySQL++ just as you would most
+	other Unix programs.  See README.unix for details.

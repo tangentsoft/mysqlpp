@@ -2570,7 +2570,8 @@
   const char *NAME::names[] = { \
     N1  \
   }; \
-  const char *NAME::_table = #NAME ;)\
+  const char *NAME::_table = #NAME ;\
+  )\
   template <class Manip>\
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list\
   (const NAME *o, mysqlpp::cchar *d, Manip m, bool i1) \
@@ -3057,7 +3058,8 @@
     N1 ,\
     N2  \
   }; \
-  const char *NAME::_table = #NAME ;)\
+  const char *NAME::_table = #NAME ;\
+  )\
   template <class Manip>\
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list\
   (const NAME *o, mysqlpp::cchar *d, Manip m, bool i1, bool i2) \
@@ -3580,7 +3582,8 @@
     N2 ,\
     N3  \
   }; \
-  const char *NAME::_table = #NAME ;)\
+  const char *NAME::_table = #NAME ;\
+  )\
   template <class Manip>\
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list\
   (const NAME *o, mysqlpp::cchar *d, Manip m, bool i1, bool i2, bool i3) \
@@ -4136,7 +4139,8 @@
     N3 ,\
     N4  \
   }; \
-  const char *NAME::_table = #NAME ;)\
+  const char *NAME::_table = #NAME ;\
+  )\
   template <class Manip>\
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list\
   (const NAME *o, mysqlpp::cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4) \
@@ -4725,7 +4729,8 @@
     N4 ,\
     N5  \
   }; \
-  const char *NAME::_table = #NAME ;)\
+  const char *NAME::_table = #NAME ;\
+  )\
   template <class Manip>\
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list\
   (const NAME *o, mysqlpp::cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5) \
@@ -5347,7 +5352,8 @@
     N5 ,\
     N6  \
   }; \
-  const char *NAME::_table = #NAME ;)\
+  const char *NAME::_table = #NAME ;\
+  )\
   template <class Manip>\
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list\
   (const NAME *o, mysqlpp::cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6) \
@@ -6002,7 +6008,8 @@
     N6 ,\
     N7  \
   }; \
-  const char *NAME::_table = #NAME ;)\
+  const char *NAME::_table = #NAME ;\
+  )\
   template <class Manip>\
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list\
   (const NAME *o, mysqlpp::cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7) \
@@ -6690,7 +6697,8 @@
     N7 ,\
     N8  \
   }; \
-  const char *NAME::_table = #NAME ;)\
+  const char *NAME::_table = #NAME ;\
+  )\
   template <class Manip>\
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list\
   (const NAME *o, mysqlpp::cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8) \
@@ -7411,7 +7419,8 @@
     N8 ,\
     N9  \
   }; \
-  const char *NAME::_table = #NAME ;)\
+  const char *NAME::_table = #NAME ;\
+  )\
   template <class Manip>\
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list\
   (const NAME *o, mysqlpp::cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9) \
@@ -8165,7 +8174,8 @@
     N9 ,\
     N10  \
   }; \
-  const char *NAME::_table = #NAME ;)\
+  const char *NAME::_table = #NAME ;\
+  )\
   template <class Manip>\
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list\
   (const NAME *o, mysqlpp::cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10) \
@@ -8952,7 +8962,8 @@
     N10 ,\
     N11  \
   }; \
-  const char *NAME::_table = #NAME ;)\
+  const char *NAME::_table = #NAME ;\
+  )\
   template <class Manip>\
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list\
   (const NAME *o, mysqlpp::cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11) \
@@ -9772,7 +9783,8 @@
     N11 ,\
     N12  \
   }; \
-  const char *NAME::_table = #NAME ;)\
+  const char *NAME::_table = #NAME ;\
+  )\
   template <class Manip>\
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list\
   (const NAME *o, mysqlpp::cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12) \
@@ -10625,7 +10637,8 @@
     N12 ,\
     N13  \
   }; \
-  const char *NAME::_table = #NAME ;)\
+  const char *NAME::_table = #NAME ;\
+  )\
   template <class Manip>\
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list\
   (const NAME *o, mysqlpp::cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13) \
@@ -11511,7 +11524,8 @@
     N13 ,\
     N14  \
   }; \
-  const char *NAME::_table = #NAME ;)\
+  const char *NAME::_table = #NAME ;\
+  )\
   template <class Manip>\
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list\
   (const NAME *o, mysqlpp::cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14) \
@@ -12430,7 +12444,8 @@
     N14 ,\
     N15  \
   }; \
-  const char *NAME::_table = #NAME ;)\
+  const char *NAME::_table = #NAME ;\
+  )\
   template <class Manip>\
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list\
   (const NAME *o, mysqlpp::cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15) \
@@ -13382,7 +13397,8 @@
     N15 ,\
     N16  \
   }; \
-  const char *NAME::_table = #NAME ;)\
+  const char *NAME::_table = #NAME ;\
+  )\
   template <class Manip>\
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list\
   (const NAME *o, mysqlpp::cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16) \
@@ -14367,7 +14383,8 @@
     N16 ,\
     N17  \
   }; \
-  const char *NAME::_table = #NAME ;)\
+  const char *NAME::_table = #NAME ;\
+  )\
   template <class Manip>\
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list\
   (const NAME *o, mysqlpp::cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17) \
@@ -15385,7 +15402,8 @@
     N17 ,\
     N18  \
   }; \
-  const char *NAME::_table = #NAME ;)\
+  const char *NAME::_table = #NAME ;\
+  )\
   template <class Manip>\
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list\
   (const NAME *o, mysqlpp::cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17, bool i18) \
@@ -16436,7 +16454,8 @@
     N18 ,\
     N19  \
   }; \
-  const char *NAME::_table = #NAME ;)\
+  const char *NAME::_table = #NAME ;\
+  )\
   template <class Manip>\
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list\
   (const NAME *o, mysqlpp::cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17, bool i18, bool i19) \
@@ -17520,7 +17539,8 @@
     N19 ,\
     N20  \
   }; \
-  const char *NAME::_table = #NAME ;)\
+  const char *NAME::_table = #NAME ;\
+  )\
   template <class Manip>\
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list\
   (const NAME *o, mysqlpp::cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17, bool i18, bool i19, bool i20) \
@@ -18637,7 +18657,8 @@
     N20 ,\
     N21  \
   }; \
-  const char *NAME::_table = #NAME ;)\
+  const char *NAME::_table = #NAME ;\
+  )\
   template <class Manip>\
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list\
   (const NAME *o, mysqlpp::cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17, bool i18, bool i19, bool i20, bool i21) \
@@ -19787,7 +19808,8 @@
     N21 ,\
     N22  \
   }; \
-  const char *NAME::_table = #NAME ;)\
+  const char *NAME::_table = #NAME ;\
+  )\
   template <class Manip>\
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list\
   (const NAME *o, mysqlpp::cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17, bool i18, bool i19, bool i20, bool i21, bool i22) \
@@ -20970,7 +20992,8 @@
     N22 ,\
     N23  \
   }; \
-  const char *NAME::_table = #NAME ;)\
+  const char *NAME::_table = #NAME ;\
+  )\
   template <class Manip>\
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list\
   (const NAME *o, mysqlpp::cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17, bool i18, bool i19, bool i20, bool i21, bool i22, bool i23) \
@@ -22186,7 +22209,8 @@
     N23 ,\
     N24  \
   }; \
-  const char *NAME::_table = #NAME ;)\
+  const char *NAME::_table = #NAME ;\
+  )\
   template <class Manip>\
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list\
   (const NAME *o, mysqlpp::cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17, bool i18, bool i19, bool i20, bool i21, bool i22, bool i23, bool i24) \
@@ -23435,7 +23459,8 @@
     N24 ,\
     N25  \
   }; \
-  const char *NAME::_table = #NAME ;)\
+  const char *NAME::_table = #NAME ;\
+  )\
   template <class Manip>\
   NAME##_cus_value_list<Manip>::NAME##_cus_value_list\
   (const NAME *o, mysqlpp::cchar *d, Manip m, bool i1, bool i2, bool i3, bool i4, bool i5, bool i6, bool i7, bool i8, bool i9, bool i10, bool i11, bool i12, bool i13, bool i14, bool i15, bool i16, bool i17, bool i18, bool i19, bool i20, bool i21, bool i22, bool i23, bool i24, bool i25) \

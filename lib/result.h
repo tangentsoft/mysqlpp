@@ -216,75 +216,75 @@ public:
 	/// \brief Get the index of the named field.
 	///
 	/// This is the inverse of field_name().
-	MYSQLPP_EXPORT inline int field_num(const std::string&) const;
+	inline int field_num(const std::string&) const;
 
 	/// \brief Get the name of the field at the given index.
 	///
 	/// This is the inverse of field_num().
-	MYSQLPP_EXPORT inline std::string& field_name(int);
+	inline std::string& field_name(int);
 
 	/// \brief Get the name of the field at the given index.
-	MYSQLPP_EXPORT inline const std::string& field_name(int) const;
+	inline const std::string& field_name(int) const;
 
 	/// \brief Get the names of the fields within this result set.
-	MYSQLPP_EXPORT inline FieldNames& field_names();
+	inline FieldNames& field_names();
 
 	/// \brief Get the names of the fields within this result set.
-	MYSQLPP_EXPORT inline const FieldNames& field_names() const;
+	inline const FieldNames& field_names() const;
 
 	/// \brief Reset the names in the field list to their original
 	/// values.
-	MYSQLPP_EXPORT inline void reset_field_names();
+	inline void reset_field_names();
 
 	/// \brief Get the MySQL type for a field given its index.
-	MYSQLPP_EXPORT inline mysql_type_info& field_type(int i);
+	inline mysql_type_info& field_type(int i);
 
 	/// \brief Get the MySQL type for a field given its index.
-	MYSQLPP_EXPORT inline const mysql_type_info& field_type(int) const;
+	inline const mysql_type_info& field_type(int) const;
 
 	/// \brief Get a list of the types of the fields within this
 	/// result set.
-	MYSQLPP_EXPORT inline FieldTypes& field_types();
+	inline FieldTypes& field_types();
 
 	/// \brief Get a list of the types of the fields within this
 	/// result set.
-	MYSQLPP_EXPORT inline const FieldTypes& field_types() const;
+	inline const FieldTypes& field_types() const;
 
 	/// \brief Reset the field types to their original values.
-	MYSQLPP_EXPORT inline void reset_field_types();
+	inline void reset_field_types();
 
 	/// \brief Alias for field_num()
-	MYSQLPP_EXPORT inline int names(const std::string & s) const;
+	inline int names(const std::string & s) const;
 
 	/// \brief Alias for field_name()
-	MYSQLPP_EXPORT inline std::string& names(int i);
+	inline std::string& names(int i);
 
 	/// \brief Alias for field_name()
-	MYSQLPP_EXPORT inline const std::string& names(int i) const;
+	inline const std::string& names(int i) const;
 
 	/// \brief Alias for field_names()
-	MYSQLPP_EXPORT inline FieldNames& names();
+	inline FieldNames& names();
 
 	/// \brief Alias for field_names()
-	MYSQLPP_EXPORT inline const FieldNames& names() const;
+	inline const FieldNames& names() const;
 
 	/// \brief Alias for reset_field_names()
-	MYSQLPP_EXPORT inline void reset_names();
+	inline void reset_names();
 
 	/// \brief Alias for field_type()
-	MYSQLPP_EXPORT inline mysql_type_info& types(int i);
+	inline mysql_type_info& types(int i);
 
 	/// \brief Alias for field_type()
-	MYSQLPP_EXPORT inline const mysql_type_info& types(int i) const;
+	inline const mysql_type_info& types(int i) const;
 
 	/// \brief Alias for field_types()
-	MYSQLPP_EXPORT inline FieldTypes& types();
+	inline FieldTypes& types();
 
 	/// \brief Alias for field_types()
-	MYSQLPP_EXPORT inline const FieldTypes& types() const;
+	inline const FieldTypes& types() const;
 
 	/// \brief Alias for reset_field_types()
-	MYSQLPP_EXPORT inline void reset_types();
+	inline void reset_types();
 
 	/// \brief Get the underlying Fields structure.
 	const Fields& fields() const

@@ -79,7 +79,7 @@ mysql_num_fields@4
 mysql_num_rows@4
 mysql_odbc_escape_string
 mysql_options@12
-mysql_ping
+mysql_ping@4
 mysql_query@8
 mysql_read_query_result
 mysql_real_connect@32

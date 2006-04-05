@@ -91,7 +91,7 @@ struct quote_type1
 };
 
 
-MYSQLPP_EXPORT inline quote_type1 operator <<(std::ostream& o,
+inline quote_type1 operator <<(std::ostream& o,
 		quote_type0 /*esc */)
 {
 	return quote_type1(&o);
@@ -109,7 +109,7 @@ struct quote_type2
 };
 
 
-MYSQLPP_EXPORT inline quote_type2 operator <<(SQLQueryParms& p,
+inline quote_type2 operator <<(SQLQueryParms& p,
 		quote_type0 /*esc */)
 {
 	return quote_type2(&p);
@@ -164,7 +164,7 @@ MYSQLPP_EXPORT std::ostream& operator <<(quote_type1 o,
 
 
 template <>
-MYSQLPP_EXPORT inline std::ostream& operator <<(quote_type1 o,
+inline std::ostream& operator <<(quote_type1 o,
 		char* const& in)
 {
 	return operator <<(o, const_cast<const char* const&>(in));
@@ -172,7 +172,7 @@ MYSQLPP_EXPORT inline std::ostream& operator <<(quote_type1 o,
 
 
 template <>
-MYSQLPP_EXPORT inline std::ostream& operator <<(quote_type1 o,
+inline std::ostream& operator <<(quote_type1 o,
 		const Date& in)
 {
 	return *o.ostr << '\'' << in << '\'';
@@ -180,7 +180,7 @@ MYSQLPP_EXPORT inline std::ostream& operator <<(quote_type1 o,
 
 
 template <>
-MYSQLPP_EXPORT inline std::ostream& operator <<(quote_type1 o,
+inline std::ostream& operator <<(quote_type1 o,
 		const Time& in)
 {
 	return *o.ostr << '\'' << in << '\'';
@@ -188,7 +188,7 @@ MYSQLPP_EXPORT inline std::ostream& operator <<(quote_type1 o,
 
 
 template <>
-MYSQLPP_EXPORT inline std::ostream& operator <<(quote_type1 o,
+inline std::ostream& operator <<(quote_type1 o,
 		const DateTime& in)
 {
 	return *o.ostr << '\'' << in << '\'';
@@ -231,7 +231,7 @@ struct quote_only_type1
 };
 
 
-MYSQLPP_EXPORT inline quote_only_type1 operator <<(std::ostream& o,
+inline quote_only_type1 operator <<(std::ostream& o,
 		quote_only_type0 /* esc */)
 {
 	return quote_only_type1(&o);
@@ -248,7 +248,7 @@ struct quote_only_type2
 };
 
 
-MYSQLPP_EXPORT inline quote_only_type2 operator <<(SQLQueryParms& p,
+inline quote_only_type2 operator <<(SQLQueryParms& p,
 		quote_only_type0 /* esc */)
 {
 	return quote_only_type2(&p);
@@ -266,7 +266,7 @@ inline std::ostream& operator <<(quote_only_type1 o, const T& in)
 
 
 template <>
-MYSQLPP_EXPORT inline std::ostream& operator <<(quote_only_type1 o,
+inline std::ostream& operator <<(quote_only_type1 o,
 		const std::string& in)
 {
 	return *o.ostr << '\'' << in << '\'';
@@ -284,7 +284,7 @@ MYSQLPP_EXPORT std::ostream& operator <<(quote_only_type1 o,
 
 
 template <>
-MYSQLPP_EXPORT inline std::ostream& operator <<(quote_only_type1 o,
+inline std::ostream& operator <<(quote_only_type1 o,
 		const Date& in)
 {
 	return *o.ostr << '\'' << in << '\'';
@@ -292,7 +292,7 @@ MYSQLPP_EXPORT inline std::ostream& operator <<(quote_only_type1 o,
 
 
 template <>
-MYSQLPP_EXPORT inline std::ostream& operator <<(quote_only_type1 o,
+inline std::ostream& operator <<(quote_only_type1 o,
 		const Time& in)
 {
 	return *o.ostr << '\'' << in << '\'';
@@ -300,7 +300,7 @@ MYSQLPP_EXPORT inline std::ostream& operator <<(quote_only_type1 o,
 
 
 template <>
-MYSQLPP_EXPORT inline std::ostream& operator <<(quote_only_type1 o,
+inline std::ostream& operator <<(quote_only_type1 o,
 		const DateTime& in)
 {
 	return *o.ostr << '\'' << in << '\'';
@@ -343,7 +343,7 @@ struct quote_double_only_type1
 };
 
 
-MYSQLPP_EXPORT inline quote_double_only_type1 operator <<(
+inline quote_double_only_type1 operator <<(
 		std::ostream& o, quote_double_only_type0 /* esc */)
 {
 	return quote_double_only_type1(&o);
@@ -360,7 +360,7 @@ struct quote_double_only_type2
 };
 
 
-MYSQLPP_EXPORT inline quote_double_only_type2 operator <<(
+inline quote_double_only_type2 operator <<(
 		SQLQueryParms& p, quote_double_only_type0 /* esc */)
 {
 	return quote_double_only_type2(&p);
@@ -379,7 +379,7 @@ inline std::ostream& operator <<(quote_double_only_type1 o, const T& in)
 
 
 template <>
-MYSQLPP_EXPORT inline std::ostream& operator <<(
+inline std::ostream& operator <<(
 		quote_double_only_type1 o, const std::string& in)
 {
 	return *o.ostr << '"' << in << '"';
@@ -397,7 +397,7 @@ MYSQLPP_EXPORT std::ostream & operator <<(quote_double_only_type1 o,
 
 
 template <>
-MYSQLPP_EXPORT inline std::ostream& operator <<(
+inline std::ostream& operator <<(
 		quote_double_only_type1 o, const Date& in)
 {
 	return *o.ostr << '"' << in << '"';
@@ -405,7 +405,7 @@ MYSQLPP_EXPORT inline std::ostream& operator <<(
 
 
 template <>
-MYSQLPP_EXPORT inline std::ostream& operator <<(
+inline std::ostream& operator <<(
 		quote_double_only_type1 o, const Time& in)
 {
 	return *o.ostr << '"' << in << '"';
@@ -413,7 +413,7 @@ MYSQLPP_EXPORT inline std::ostream& operator <<(
 
 
 template <>
-MYSQLPP_EXPORT inline std::ostream& operator <<(
+inline std::ostream& operator <<(
 		quote_double_only_type1 o, const DateTime& in)
 {
 	return *o.ostr << '"' << in << '"';
@@ -453,7 +453,7 @@ struct escape_type1
 };
 
 
-MYSQLPP_EXPORT inline escape_type1 operator <<(std::ostream& o,
+inline escape_type1 operator <<(std::ostream& o,
 		escape_type0 /*esc */)
 {
 	return escape_type1(&o);
@@ -470,7 +470,7 @@ struct escape_type2
 };
 
 
-MYSQLPP_EXPORT inline escape_type2 operator <<(SQLQueryParms& p,
+inline escape_type2 operator <<(SQLQueryParms& p,
 		escape_type0 /*esc */)
 {
 	return escape_type2(&p);
@@ -534,7 +534,7 @@ MYSQLPP_EXPORT std::ostream& operator <<(escape_type1 o,
 /// const char* const&).
 
 template <>
-MYSQLPP_EXPORT inline std::ostream& operator <<(escape_type1 o,
+inline std::ostream& operator <<(escape_type1 o,
 		char* const& in)
 {
 	return operator <<(o, const_cast<const char* const&>(in));
@@ -571,7 +571,7 @@ struct do_nothing_type1
 };
 
 
-MYSQLPP_EXPORT inline do_nothing_type1 operator <<(std::ostream& o,
+inline do_nothing_type1 operator <<(std::ostream& o,
 		do_nothing_type0 /*esc */)
 {
 	return do_nothing_type1(&o);
@@ -595,7 +595,7 @@ struct do_nothing_type2
 };
 
 
-MYSQLPP_EXPORT inline do_nothing_type2 operator <<(SQLQueryParms& p,
+inline do_nothing_type2 operator <<(SQLQueryParms& p,
 		do_nothing_type0 /* esc */)
 {
 	return do_nothing_type2(&p);
@@ -637,7 +637,7 @@ struct ignore_type2
 };
 
 
-MYSQLPP_EXPORT inline ignore_type2 operator <<(SQLQueryParms& p,
+inline ignore_type2 operator <<(SQLQueryParms& p,
 		ignore_type0 /* esc*/)
 {
 	return ignore_type2(&p);

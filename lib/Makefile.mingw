@@ -34,8 +34,8 @@ BUILD = debug
 ### Variables: ###
 
 CPPDEPS = -MT$@ -MF$@.d -MD
-MYSQLPP_CXXFLAGS = $(__DEBUGINFO) -I.. -D_UNICODE -DMYSQLPP_MAKING_DLL \
-	-Ic:\mysql\include -mthreads $(CPPFLAGS) $(CXXFLAGS)
+MYSQLPP_CXXFLAGS = $(__DEBUGINFO) -I.. -D_UNICODE -Ic:\mysql\include \
+	-DMYSQLPP_NO_DLL -mthreads $(CPPFLAGS) $(CXXFLAGS)
 MYSQLPP_OBJECTS =  \
 	mysqlpp_coldata.o \
 	mysqlpp_connection.o \

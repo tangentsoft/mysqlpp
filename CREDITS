@@ -33,6 +33,9 @@ Other contributors of note since 1.7.10:
 	result set handling features, and multiquery example to demonstrate
 	it.
 
+	Korolyov Ilya has submitted several patches in many different
+	areas of the library.
+
 
 Here are the personal credits from the old 1.7.9 documentation,
 apparently written by Kevin Atkinson:

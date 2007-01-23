@@ -40,7 +40,7 @@ namespace mysqlpp {
 
 /// \brief Base class for all MySQL++ custom exceptions
 
-class Exception : public std::exception
+class MYSQLPP_EXPORT Exception : public std::exception
 {
 public:
 	/// \brief Create exception object as copy of another
@@ -86,7 +86,7 @@ protected:
 
 /// \brief Exception thrown when a bad type conversion is attempted.
 
-class BadConversion : public Exception
+class MYSQLPP_EXPORT BadConversion : public Exception
 {
 public:
 	const char* type_name;	///< name of type we tried to convert to
@@ -153,7 +153,7 @@ public:
 /// Thrown by Row::lookup_by_name() when you pass a field name that
 /// isn't in the result set.
 
-class BadFieldName : public Exception
+class MYSQLPP_EXPORT BadFieldName : public Exception
 {
 public:
 	/// \brief Create exception object
@@ -172,7 +172,7 @@ public:
 /// \brief Exception thrown when you attempt to convert a SQL null
 /// to an incompatible type.
 
-class BadNullConversion : public Exception
+class MYSQLPP_EXPORT BadNullConversion : public Exception
 {
 public:
 	/// \brief Create exception object
@@ -186,7 +186,7 @@ public:
 /// \brief Exception thrown when you pass an unrecognized option to
 /// Connection::set_option().
 
-class BadOption : public Exception
+class MYSQLPP_EXPORT BadOption : public Exception
 {
 public:
 	/// \brief Create exception object, taking C string
@@ -218,7 +218,7 @@ private:
 ///
 /// This is used in handling template queries.
 
-class BadParamCount : public Exception
+class MYSQLPP_EXPORT BadParamCount : public Exception
 {
 public:
 	/// \brief Create exception object
@@ -239,7 +239,7 @@ public:
 /// SQL query.  In v1.7, it was used as a more generic exception type,
 /// for no particularly good reason.
 
-class BadQuery : public Exception
+class MYSQLPP_EXPORT BadQuery : public Exception
 {
 public:
 	/// \brief Create exception object, taking C string
@@ -260,7 +260,7 @@ public:
 /// database server connection.  It's also thrown if
 /// Connection::shutdown() fails.
 
-class ConnectionFailed : public Exception
+class MYSQLPP_EXPORT ConnectionFailed : public Exception
 {
 public:
 	/// \brief Create exception object
@@ -274,7 +274,7 @@ public:
 /// \brief Exception thrown when the program tries to select a new
 /// database and the server refuses for some reason.
 
-class DBSelectionFailed : public Exception
+class MYSQLPP_EXPORT DBSelectionFailed : public Exception
 {
 public:
 	/// \brief Create exception object
@@ -288,7 +288,7 @@ public:
 /// \brief Exception thrown when ResUse::fetch_row() walks off the end
 /// of a use-query's result set.
 
-class EndOfResults : public Exception
+class MYSQLPP_EXPORT EndOfResults : public Exception
 {
 public:
 	/// \brief Create exception object
@@ -302,7 +302,7 @@ public:
 /// \brief Exception thrown when Query::store_next() walks off the end
 /// of a use-query's multi result sets.
 
-class EndOfResultSets : public Exception
+class MYSQLPP_EXPORT EndOfResultSets : public Exception
 {
 public:
 	/// \brief Create exception object
@@ -321,7 +321,7 @@ public:
 /// thread library could assert other errors that would keep this
 /// exception relevant.
 
-class LockFailed : public Exception
+class MYSQLPP_EXPORT LockFailed : public Exception
 {
 public:
 	/// \brief Create exception object
@@ -335,7 +335,7 @@ public:
 /// \brief Exception thrown when you try to use an object that isn't
 /// completely initialized.
 
-class ObjectNotInitialized : public Exception
+class MYSQLPP_EXPORT ObjectNotInitialized : public Exception
 {
 public:
 	/// \brief Create exception object

@@ -3,7 +3,7 @@
 	database from a file.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ MySQL AB, and (c) 2004-2006 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -55,26 +55,34 @@ main(int argc, char *argv[])
 	try {
 		con.connect(MY_DATABASE, MY_HOST, MY_USER, MY_PASSWORD);
 		Query query = con.query();
-		ostringstream strbuf;
 		ifstream In(argv[1], ios::in | ios::binary);
-		struct stat for_len;
-		if ((In.rdbuf())->is_open()) {
-			if (stat(argv[1], &for_len) == -1)
+		if (In) {
+			struct stat for_len;
+			if (stat(argv[1], &for_len) < 0) {
+				cerr << "stat() failed for " << argv[1] << '!' << endl;
 				return -1;
+			}
+
 			unsigned int blen = for_len.st_size;
-			if (!blen)
+			if (blen == 0) {
+				cerr << "Sorry, " << argv[1] << " is empty; I won't "
+						"insert such a thing." << endl;
 				return -1;
-			char *read_buffer = new char[blen];
+			}
+
+			char* read_buffer = new char[blen];
 			In.read(read_buffer, blen);
 			string fill(read_buffer, blen);
+			ostringstream strbuf;
 			strbuf << "INSERT INTO " << MY_TABLE << " (" << MY_FIELD <<
-				") VALUES(\"" << mysqlpp::escape << fill << "\")" << ends;
+					") VALUES(\"" << mysqlpp::escape << fill << "\")" <<
+					ends;
 			query.exec(strbuf.str());
-			delete[]read_buffer;
+			delete[] read_buffer;
 		}
-		else
-			cerr << "Failed to open " << argv[1] <<
-					'.' << endl;
+		else {
+			cerr << "Failed to open " << argv[1] << '.' << endl;
+		}
 	}
 	catch (const BadQuery& er) {
 		// Handle any query errors

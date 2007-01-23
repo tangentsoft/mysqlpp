@@ -10,26 +10,59 @@ consider whether it could be reduced to an API feature that would be
 widely useful.  Patches or proposals of this sort are always welcome.
 
 
-v2.2 Plan
+v2.3 Plan
 ---------
-
-	This plan is not set in stone.	These are simply the features
-	we want to try and tackle for the v2.2 release.
-
 	Items in this plan may slip to a future release.  This
 	typically happens when the proper solution is unclear,
 	so the best way to prevent this is to get on the mailing
 	list and help discuss it.  Or even better, provide a patch;
 	we rarely reject working code outright.
 
-	Items from the following sections may make it in, but if
-	you don't help make that happen, this will just be on the
-	whim of one of MySQL++'s developers.  Don't forget that it's
-	possible to subclass yourself from the "MySQL++'s developers"
-	base class.
+	o Update examples/cgi_image and examples/load_file to use new
+	  binary-aware ColData, const_string and Query classes.
+
+	o Check that SSQLS works with BLOB now that ColData, const_string
+	  and Query classes cope with embedded nulls.  If not, fix.
+
+	o Find all other code that constructs ColData without using the
+	  ctor that takes an explicit length.  If that code is in a path
+	  that can have nulls, and it has the real data length at hand,
+	  change it to use the explicit length ColData ctor.
+
+	o Have resetdb create a second table containing a BLOB column
+	  that load_file and cgi_image can use.  
+	  
+	  Rework load_image to take the standard command line
+	  parameters, and load a JPEG or something into the BLOB table.
+	  Include a suitable JPEG with the distribution.  (A cheesy
+	  Photoshopped "MySQL++ Rocks!" thing should suffice.)
+
+	  Rework cgi_image so that you can drop it into a cgi-image
+	  directory and immediately use it to query the database and
+	  return the image data in CGI format.
+
+	  Don't forget to write an example showing how to use these
+	  new mechanisms.
 
 
-	o Conditionally allow the Lockable mechanism to the
+v2.4 Plan
+---------
+	This plan is even more nebulous than the v2.3 plan.  The only
+	thing that puts a feature on this list and not on the v3.0
+	list is that they can be done without breaking the ABI,
+	which forces a feature to v3.0.  Items on this list could
+	still easily slip to v3.0.  There might not even _be_ a v2.4...
+
+	o Add a few features to date and time classes:
+
+	  - It may be possible to get some nice syntactic sugar,
+	    such as a way to call SQL functions like NOW() when
+	    inserting certain Date/Time objects into a Query stream.
+
+	  - Arithmetic features?  (See "Practical Algorithms for
+	    Programmers" by Binstock and Rex.)
+
+	o Conditionally allow the Lockable mechanism to use the
 	  Boost.Threads library.  If MYSQLPP_BOOST_THREADS is defined,
 	  #include the proper header and use Boost's mutexes.  Add a
 	  configure script option that defines this macro and adds
@@ -53,74 +86,12 @@ v2.2 Plan
 	  report this to the caller, perhaps through an exception,
 	  or simply by refusing to init more than one thread.
 
-	o Currently, all overloads for Query's execute(), store()
-	  and use() methods eventually call the const char*
-	  version, which does the actual work of executing the query.
-	  This rules out query strings with embedded nulls, as you're
-	  likely to get with BLOB columns.  Also, it means MySQL++
-	  must scan the string for length in a few places.  The C API
-	  isn't limited in this way if you use mysql_real_query(),
-	  but you need an accurate length value to call it.  We could
-	  get that length with binary data if the end of the call
-	  chain were a std::string overload, but we can't do that
-	  easily because each of these functions has a version taking
-	  a SQLString (a subclass of std:string) for template queries.
-
-	  One way around this is to add a parallel set of functions
-	  (e.g. do_execute(), or execute_(), or some such) that take
-	  a single std::string, which are the new terminus of the call
-	  chain.  Reimplement const char* versions in terms of these.
-
-	  Another way is to add more overloads taking both a const
-	  char* and a length parameter. Make these new functions the
-	  terminus to each call chain.
-
-	  Yet another way is that we may be able to co-opt the first
-	  template query version of each of these functions, as it
-	  takes a single SQLString.
-
-	o Viktor Stark reports that a BLOB of binary data containing
-	  0's appears to be truncated when stored in an SSQLS with
-	  a std::string for the BLOB field.  Investigate, and fix
-	  if confirmed.
-
-	o Date and time classes are pretty minimalistic; they could
-	  be so much more powerful.  Some ideas:
-
-	  - Add time_t conversion.
-
-	  - Arithmetic features.  (See "Practical Algorithms for
-	    Programmers" by Binstock and Rex.)
-
-	  - It may be possible to get some nice syntactic sugar,
-	    such as a way to call SQL functions like NOW() when
-	    inserting certain Date/Time objects into a Query stream.
-
-	  Don't forget to write an example showing how to use these
-	  new mechanisms.
-
-	  It may be possible to find existing date and time classes
-	  that can be extended, instead of reinventing the wheel.
-	  Boost, perhaps?
-
 	o Build a forward iterator mechanism for ResUse.  Make it
 	  general enough that you can use it with STL algorithms
 	  like find_if().  Then make an example to demonstrate this
 	  augmentation of SELECT.  Also, update usequery example
 	  to use the iterator.	Tricky bit: how do we make it not
 	  interfere with subclass Result's random-access iterator?
-
-	o Have resetdb create a second table containing a BLOB column
-	  that load_file and cgi_image can use.  
-	  
-	  Rework load_image to take the standard command line
-	  parameters, and load a JPEG or something into the BLOB table.
-	  Include a suitable JPEG with the distribution.  (A cheesy
-	  Photoshopped "MySQL++ Rocks!" thing should suffice.)
-
-	  Rework cgi_image so that you can drop it into a cgi-image
-	  directory and immediately use it to query the database and
-	  return the image data in CGI format.
 
 	o It may be possible to optimize the use of ColData in
 	  the return from Row::operator[].  Currently, that operator
@@ -130,8 +101,10 @@ v2.2 Plan
 	  object is temporary, you currently must copy the data a
 	  second time to store it when using Row::operator[].  If the
 	  end user just wants a const char*, this double copy could
-	  be prevented.  See http://lists.mysql.com/plusplus/4451
-	  for the proposal.
+	  be prevented.  See:
+	  
+	  	http://lists.mysql.com/plusplus/4451
+		http://lists.mysql.com/plusplus/4460
 
 	o Add Chris Frey's packarray class?
 
@@ -143,6 +116,23 @@ v3.0 Plan
 	the ABI.  (i.e. removing functions, changing function
 	signatures, etc.)  This plan is very tenuous.  Some of this
 	could slip to v4.0.
+
+	o More robust fix for the Query stream base class init problem:
+	  http://www.boost.org/libs/utility/base_from_member.html
+
+	  Requires inheritance change, which is why it has to be in v3.
+
+	o Query::str() appends a null byte to the end of the string it
+	  returns each time it is called.  It is arguable whether it
+	  should append a null byte at all, since std::string doesn't
+	  need it.  But even if it does, it at least should recognize
+	  when the string already has a null, and not keep adding them
+	  when it is called repeatedly.  See this thread for details:
+
+	  	http://lists.mysql.com/plusplus/6252
+
+	o Should sql_timestamp typedef not be for DateTime class, not Time
+	  class?
 
 	o Apply Richard Forrest's iterator patch.
 
@@ -203,6 +193,25 @@ v3.0 Plan
 	  server types.  Imagine a program for importing data from
 	  PostgreSQL and loading it into a MySQL table, for instance.
 
+	o Query::preview() is just an alias for Query::str().
+	  Pick one.
+
+	o Remove Query::execute(), store() and use() overloads taking
+	  a SQLQueryParms object reference.  With the changes in
+	  v2.2 making the single SQLString overload the end-point
+	  of the call chain, this just adds one more layer to the
+	  call chain.  Oh, sure, maybe there is someone out there who
+	  uses this...but probably not.  Much more likely it's just
+	  an outdated step that adds nothing to the user experience.
+
+	o The sense of Lockable::lock()'s return value is backwards.
+	  It should return true if it succeeds in locking the object.
+
+	o Remove simple const char* version of Query::execute(),
+	  store(), and use()?  SQLString already has a conversion
+	  ctor taking a const char* string, so there should be no
+	  need for this explicit overload.
+
 
 
 Future Features
@@ -211,6 +220,20 @@ Future Features
 	These changes are not assigned to any particular version.
 	They could happen at any time.	If you want one to appear at
 	some definite date, get coding and provide a patch!
+
+	o SSQLS v2.  Not sure how it will look yet, but there are ideas
+	  in play, and patches to study.
+
+	o Figure out some way to name debug DLL and library under VC++
+	  differently (trailing 'd'?) to prevent some problems due
+	  to mixing debug and release programs and MySQL++ DLLs.
+	  This appears to require changes to Bakefile, or some sort of
+	  post-build hackery.
+
+	o Drop recursive make.	This will make parallel building work
+	  correctly, and it makes for a single VC++ project file.
+	  It'll make the "don't build examples" case a little trickier,
+	  but that's not a deal-breaker.
 
 	o Create adaptors for std::bitset, for storing binary data in a
 	  MySQL table.	Make two options available, one for storing
@@ -287,20 +310,5 @@ Future Features
 	  values.  This could potentially break a lot of
 	  infrastructure, though, so do it only with care.
 
+	o Support prepared statements.
 
-Bug Fix/Maintenance Items
--------------------------
-
-	These items could happen in any version.
-
-
-	o 64-bit integer support has been reported to work, but more
-	  confirmation is wanted.
-
-	o Template ListInsert in lib/myset.h isn't being used within the
-	  library.  It could probably be used in place of SetInsert
-	  in the same file, which things like type_info.h do use now,
-	  but it isn't clear how one would go about doing that without
-	  changing the library code.  Document it or throw it away.
-
-	o Update refman.css to use new Doxygen 1.4 CSS IDs.

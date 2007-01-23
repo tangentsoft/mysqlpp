@@ -38,6 +38,16 @@ using namespace std;
 int
 main(int argc, char *argv[])
 {
+	// Ensure that we're not mixing library and header file versions.
+	// This is really easy to do if you have MySQL++ on your system and
+	// are trying to build a new version, and run the examples directly
+	// instead of through exrun.
+	if (mysqlpp::get_library_version() != MYSQLPP_HEADER_VERSION) {
+		cerr << "Library/header version number mismatch.  Are you" << endl;
+		cerr << "using exrun to run this?  See README.examples." << endl;
+		return 1;
+	}
+	
 	// Connect to database server
 	mysqlpp::Connection con;
 	try {

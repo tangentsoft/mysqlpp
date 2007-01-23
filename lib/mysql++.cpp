@@ -1,8 +1,8 @@
 /***********************************************************************
- field_names.cpp - Implements the FieldNames class.
+ mysql++.cpp - Implements functions dealing with the library itself,
+	as opposed to individual features of the library.
 
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ Copyright (c) 2007 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -24,25 +24,15 @@
  USA
 ***********************************************************************/
 
-#define MYSQLPP_NOT_HEADER
-#include "common.h"
-
-#include "field_names.h"
-
-#include "result.h"
+#include "mysql++.h"
 
 namespace mysqlpp {
 
-void FieldNames::init(const ResUse * res)
+unsigned int 
+get_library_version()
 {
-	int num = res->num_fields();
-	reserve(num);
-
-	for (int i = 0; i < num; i++) {
-		std::string p(res->fields().at(i).name);
-		str_to_lwr(p);
-		push_back(p);
-	}
+	return MYSQLPP_HEADER_VERSION;
 }
 
 } // end namespace mysqlpp
+

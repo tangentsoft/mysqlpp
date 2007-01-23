@@ -16,28 +16,45 @@ Prerequisites
 	On Unixy systems (Linux, Mac OS X, Cygwin, "real" Unix...),
 	the MySQL development files are installed if you build MySQL
 	from source.  If you installed MySQL as a binary package,
-	then the development files are often packaged separately from
-	the MySQL server itself.  It's common for the package to be
-	called "MySQL-devel" or something like that.
+	then the development files are often packaged separately
+	from the MySQL server itself.  It's common for the package
+	containing the development files to be called something like
+	"MySQL-devel".
 
-	If you're building on Windows with Visual C++, you can install
-	the native Win32 port of MySQL from mysql.com.  You should do
-	a custom install, as the MySQL++ build system expects MySQL to
-	be installed in c:\mysql, and not the directory-du-jour used
-	by the changing installer versions.
+	If you're building on Windows with Visual C++ or MinGW, you
+	need to install the native Win32 port of MySQL from mysql.com.
+	The development files are only included with the "complete"
+	version of the MySQL installer, and some versions of this
+	installer won't actually install them unless you do a custom
+	install.  Another pitfall is that MySQL++'s project files
+	assume that you've installed the current General Availability
+	release of MySQL (v5.0 right now) and it's installed in the
+	default location.  If you've installed a different version,
+	or if MySQL Inc. changes the default location (which they
+	seem to do regularly!) you'll have to adjust the link and
+	include file paths in the project settings.
 
 
-Additional Files to Read
-~~~~~~~~~~~~~~~~~~~~~~~~
-	The README.* files have information specific to each of the
-	major platforms we support.
+Additional Things to Read
+~~~~~~~~~~~~~~~~~~~~~~~~~
+	Each major platform we support has a dedicated README.* file
+	for it containing information specific to that platform.
+	Please read it.
 
 	For authorship information, see the CREDITS file.
 
 	For license information, see the LICENSE file.
 
-	Send feedback and questions to the MySQL++ mailing list:
-			
+	If you want to change MySQL++, see the HACKERS file.
+
+	You should have received a user manual and a reference manual
+	with MySQL++.  If not, you can read a recent version online:
+
+		http://tangentsoft.net/mysql++/doc/
+
+	Search the MySQL++ mailing list archives if you have more
+	questions:
+
 		http://lists.mysql.com/plusplus/
 
 
@@ -67,10 +84,11 @@ Building the Library
 
 Example Programs
 ~~~~~~~~~~~~~~~~
-	You may want to try out the programs in the examples subdirectory
-	to ensure that the MySQL++ API and your MySQL database are both
-	working properly.  Also, these examples give many examples of the
-	proper use of MySQL++.	See examples/README for further details.
+	You may want to try out the programs in the examples
+	subdirectory to ensure that the MySQL++ API and your
+	MySQL database are both working properly.  Also, these
+	examples give many examples of the proper use of MySQL++.
+	See README.examples for further details.
 
 
 Unsupported Compliers
@@ -95,8 +113,8 @@ Unsupported Compliers
 
 If You Want to Hack on MySQL++...
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	If you intend to change the library or example code, please read
-	the HACKERS file.
+	If you intend to change the library or example code, please
+	read the HACKERS file.
 
 	If you want to change the user manual, read doc/userman/README.
 

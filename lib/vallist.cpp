@@ -3,7 +3,7 @@
 	This is internal functionality used within the library.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ MySQL AB, and (c) 2004-2007 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -130,20 +130,15 @@ void create_vector(const Container& c, std::vector<bool>& v,
 }
 
 
-/// \if INTERNAL
-// Doxygen will not generate documentation for this section.
-
-// Instantiate above template.  Not sure why this is necessary.  Either
-// find out, document and remove it from the INTERNAL section; or remove
-// it.
-
+#if !defined(DOXYGEN_IGNORE)
+// Instantiate above template.  Not sure why this is necessary.  Hide it
+// from Doxygen, because we clearly cannot appease it by documenting it.
 template void
 create_vector(const Row& c, std::vector<bool>& v, string s0,
 		string s1, string s2, string s3, string s4, string s5,
 		string s6, string s7, string s8, string s9, string sa,
 		string sb, string sc);
-
-/// \endif
+#endif
 
 } // end namespace mysqlpp
 

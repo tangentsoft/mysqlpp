@@ -56,6 +56,14 @@ processed(false)
 {
 }
 
+SQLString::SQLString(const char* str, size_t len) : 
+string(str, len),
+is_string(true),
+dont_escape(false),
+processed(false)
+{
+}
+
 SQLString::SQLString(char i) :
 is_string(false),
 dont_escape(false),

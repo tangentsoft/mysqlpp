@@ -24,7 +24,7 @@
 ***********************************************************************/
 
 #define MYSQLPP_NOT_HEADER
-#include "platform.h"
+#include "common.h"
 
 #include "transaction.h"
 
@@ -59,7 +59,12 @@ finished_(true)		// don't bother rolling it back if ctor fails
 Transaction::~Transaction()
 {
 	if (!finished_) {
-		rollback();
+		try {
+			rollback();
+		}
+		catch (...) {
+			// eat all exceptions
+		}
 	}
 }
 

@@ -29,13 +29,13 @@
 	</authorgroup>
 
 	<copyright>
-		<year>1998-2001, 2005-2006</year>
+		<year>1998-2001, 2005-2007</year>
 		<holder>Kevin Atkinson (original author)</holder>
 		<holder>MySQL AB</holder>
 		<holder>Educational Technology Resources</holder>
 	</copyright>
 
-	<pubdate role="rcs">$Date: 2006-03-24 13:52:00 -0700 (Fri, 24 Mar 2006) $</pubdate>
+	<pubdate role="rcs">$Date: 2007-01-12 03:40:51 -0700 (Fri, 12 Jan 2007) $</pubdate>
 </articleinfo>
 
 
@@ -1920,7 +1920,7 @@ ssqls-pretty &lt; myprog.cpp |less</programlisting>
 		<title>Unicode and Win32</title>
 
 		<para>Each Win32 API function that takes
-		a string actually has two two versions. One
+		a string actually has two versions. One
 		version supports only 1-byte "ANSI" characters (a
 		superset of ASCII), so they end in 'A'. Win32 also
 		supports the 2-byte subset of Unicode called <ulink

@@ -1,0 +1,47 @@
+#!/bin/sh
+if [ -z "$1" ]
+then
+	echo "usage: $0 <example> [args...]"
+	echo
+	echo "   Runs the given example, using the library in the current directory"
+	echo "   instead of using the system library search mechanism.  Accepts an "
+	echo "   arbitrary number of arguments."
+	echo
+	echo "   Example can be 'valgrind' instead, in which case we run the example"
+	echo "   under valgrind in memory checking mode."
+	echo
+	exit 1
+fi
+
+TOOL=
+PROG=$1
+if [ "$PROG" == 'valgrind' ]
+then
+	TOOL=valgrind
+	shift
+	if [ -z "$1" ]
+	then
+		echo "usage: $0 valgrind <example> [args...]"
+		echo
+		echo "   Run $0 without arguments for more detailed usage info."
+		echo
+		exit 1
+	fi
+	PROG=$1
+fi
+shift
+
+if [ ! -e libmysqlpp.so.2 ]
+then
+	( ln -sf libmysqlpp.so libmysqlpp.so.2 )
+fi
+
+if [ -e /usr/bin/ldd ]
+then
+	LD_LIBRARY_PATH=. $TOOL ./$PROG $*
+elif [ -e /usr/bin/otool ]
+then
+	DYLD_LIBRARY_PATH=. $TOOL ./$PROG $*
+else
+	echo ERROR: I don\'t grok this system\'s dynamic linkage system.
+fi

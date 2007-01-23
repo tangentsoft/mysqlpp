@@ -1,19 +1,16 @@
 /// \file mysql++.h
 /// \brief The main MySQL++ header file.
 ///
-/// This file brings in all MySQL++ headers except for custom*.h,
-/// which is a strictly optional feature of MySQL++.
+/// This file brings in all MySQL++ headers except for custom.h and
+/// custom-macros.h which are a strictly optional feature of MySQL++.
 ///
 /// There is no point in trying to optimize which headers you include,
-/// because every MySQL++ program needs query.h, and that #includes
-/// all the other headers indirectly, except for custom*.h.  The only
-/// possible optimization is to include query.h instead of mysql++.h,
-/// and this results only in trivial compile time reductions at the
-/// expense of code clarity.
+/// because the MySQL++ headers are so intertwined.  You can only get
+/// trivial compile time benefits, at the expense of clarity.
 
 /***********************************************************************
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004-2006 by Educational Technology Resources, Inc.
+ MySQL AB, and (c) 2004-2007 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -35,23 +32,43 @@
  USA
 ***********************************************************************/
 
-#if !defined(MYSQLPP_MYSQLPP_H)
+#ifndef MYSQLPP_MYSQLPP_H
 #define MYSQLPP_MYSQLPP_H
 
-// Encode MySQL++ library version number.  MYSQLPP_VERSION macro takes
-// major, minor and bugfix numbers (e.g. 1, 2, and 3) and encodes them
-// like 0x010203.  MYSQLPP_LIB_VERSION is the current library version
-// in the same scheme, so between these two macros you can create
-// conditional code based on the MySQL++ library version.
+/// \brief Encode MySQL++ library version number.
+///
+/// This macro takes major, minor and bugfix numbers (e.g. 1, 2, and 3)
+/// and encodes them like 0x010203.
 #define MYSQLPP_VERSION(major, minor, bugfix) \
 		(((major) << 16) | ((minor) << 8) | (bugfix))
-#define MYSQLPP_LIB_VERSION MYSQLPP_VERSION(@MYSQLPP_VERSION_MAJOR@, @MYSQLPP_VERSION_MINOR@, @MYSQLPP_VERSION_BUGFIX@)
+
+/// \brief Get the library version number that mysql++.h comes from
+///
+/// MySQL++ Version number that the mysql++.h header file comes from,
+/// encoded by MYSQLPP_VERSION macro.  Compare this value to what
+/// mysqlpp_lib_version() returns in order to ensure that your program
+/// is using header files from the same version of MySQL++ as the
+/// actual library you're linking to.
+#define MYSQLPP_HEADER_VERSION MYSQLPP_VERSION(@MYSQLPP_VERSION_MAJOR@, @MYSQLPP_VERSION_MINOR@, @MYSQLPP_VERSION_BUGFIX@)
 
 // This #include order gives the fewest redundancies in the #include
 // dependency chain.
 #include "connection.h"
 #include "query.h"
 #include "sql_types.h"
+
+namespace mysqlpp {
+
+/// \brief Get the current MySQL++ library version number
+///
+/// MySQL++ version number that the program is actually linked to,
+/// encoded by MYSQLPP_VERSION macro.  Compare this value to the
+/// MYSQLPP_HEADER_VERSION constant in order to ensure that your
+/// program is using header files from the same version of MySQL++ as
+/// the actual library you're linking to.
+MYSQLPP_EXPORT unsigned int get_library_version();
+
+} // end namespace mysqlpp
 
 #endif // !defined(MYSQLPP_MYSQLPP_H)
 

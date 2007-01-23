@@ -4,7 +4,7 @@
 
 /***********************************************************************
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ MySQL AB, and (c) 2004-2007 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -33,12 +33,15 @@
 
 namespace mysqlpp {
 
-class ResUse;
+#if !defined(DOXYGEN_IGNORE)
+// Make Doxygen ignore this
+class MYSQLPP_EXPORT ResUse;
+#endif
 
 /// \brief A container similar to \c std::vector for holding
 /// mysqlpp::Field records.
 
-class Fields : public const_subscript_container<Fields, Field>
+class MYSQLPP_EXPORT Fields : public const_subscript_container<Fields, Field>
 {
 public:
 	/// \brief Default constructor
@@ -51,7 +54,7 @@ public:
 	}
 
 	/// \brief Returns a field given its index.
-	MYSQLPP_EXPORT const Field& at(size_type i) const;
+	const Field& at(Fields::size_type i) const;
 
 	/// \brief Returns a field given its index.
 	const Field& at(int i) const
@@ -59,7 +62,7 @@ public:
 		return at(static_cast<size_type>(i));
 	}
 
-	MYSQLPP_EXPORT size_type size() const;	///< get the number of fields
+	size_type size() const;	///< get the number of fields
 
 private:
 	mutable ResUse* res_;

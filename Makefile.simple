@@ -40,79 +40,79 @@ BUILD = debug
 ### Variables: ###
 
 CPPDEPS = -MT$@ -MF`echo $@ | sed -e 's,\.o$$,.d,'` -MD
-UTIL_CXXFLAGS = $(__DEBUGINFO) -I../lib -I/usr/include/mysql \
+UTIL_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 UTIL_OBJECTS =  \
 	util_util.o
-RESETDB_CXXFLAGS = $(__DEBUGINFO) -I../lib -I/usr/include/mysql \
+RESETDB_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 RESETDB_OBJECTS =  \
 	resetdb_resetdb.o
-SIMPLE1_CXXFLAGS = $(__DEBUGINFO) -I../lib -I/usr/include/mysql \
+SIMPLE1_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 SIMPLE1_OBJECTS =  \
 	simple1_simple1.o
-SIMPLE2_CXXFLAGS = $(__DEBUGINFO) -I../lib -I/usr/include/mysql \
+SIMPLE2_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 SIMPLE2_OBJECTS =  \
 	simple2_simple2.o
-SIMPLE3_CXXFLAGS = $(__DEBUGINFO) -I../lib -I/usr/include/mysql \
+SIMPLE3_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 SIMPLE3_OBJECTS =  \
 	simple3_simple3.o
-USEQUERY_CXXFLAGS = $(__DEBUGINFO) -I../lib -I/usr/include/mysql \
+USEQUERY_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 USEQUERY_OBJECTS =  \
 	usequery_usequery.o
-MULTIQUERY_CXXFLAGS = $(__DEBUGINFO) -I../lib -I/usr/include/mysql \
+MULTIQUERY_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 MULTIQUERY_OBJECTS =  \
 	multiquery_multiquery.o
-CUSTOM1_CXXFLAGS = $(__DEBUGINFO) -I../lib -I/usr/include/mysql \
+CUSTOM1_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 CUSTOM1_OBJECTS =  \
 	custom1_custom1.o
-CUSTOM2_CXXFLAGS = $(__DEBUGINFO) -I../lib -I/usr/include/mysql \
+CUSTOM2_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 CUSTOM2_OBJECTS =  \
 	custom2_custom2.o
-CUSTOM3_CXXFLAGS = $(__DEBUGINFO) -I../lib -I/usr/include/mysql \
+CUSTOM3_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 CUSTOM3_OBJECTS =  \
 	custom3_custom3.o
-CUSTOM4_CXXFLAGS = $(__DEBUGINFO) -I../lib -I/usr/include/mysql \
+CUSTOM4_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 CUSTOM4_OBJECTS =  \
 	custom4_custom4.o
-CUSTOM5_CXXFLAGS = $(__DEBUGINFO) -I../lib -I/usr/include/mysql \
+CUSTOM5_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 CUSTOM5_OBJECTS =  \
 	custom5_custom5.o
-CUSTOM6_CXXFLAGS = $(__DEBUGINFO) -I../lib -I/usr/include/mysql \
+CUSTOM6_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 CUSTOM6_OBJECTS =  \
 	custom6_custom6.o
-DBINFO_CXXFLAGS = $(__DEBUGINFO) -I../lib -I/usr/include/mysql \
+DBINFO_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 DBINFO_OBJECTS =  \
 	dbinfo_dbinfo.o
-FIELDINF1_CXXFLAGS = $(__DEBUGINFO) -I../lib -I/usr/include/mysql \
+FIELDINF1_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 FIELDINF1_OBJECTS =  \
 	fieldinf1_fieldinf1.o
-XACTION_CXXFLAGS = $(__DEBUGINFO) -I../lib -I/usr/include/mysql \
+XACTION_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 XACTION_OBJECTS =  \
 	xaction_xaction.o
-CGI_IMAGE_CXXFLAGS = $(__DEBUGINFO) -I../lib -I/usr/include/mysql \
+CGI_IMAGE_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 CGI_IMAGE_OBJECTS =  \
 	cgi_image_cgi_image.o
-LOAD_FILE_CXXFLAGS = $(__DEBUGINFO) -I../lib -I/usr/include/mysql \
+LOAD_FILE_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 LOAD_FILE_OBJECTS =  \
 	load_file_load_file.o
-UPDEL_CXXFLAGS = $(__DEBUGINFO) -I../lib -I/usr/include/mysql \
+UPDEL_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 UPDEL_OBJECTS =  \
 	updel_updel.o
@@ -164,114 +164,114 @@ libmysqlpp_util.a: $(UTIL_OBJECTS)
 	$(RANLIB) $@
 
 resetdb: $(RESETDB_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(RESETDB_OBJECTS) $(LDFLAGS) -L.  $(__DEBUGINFO)  -lmysqlpp_util -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(RESETDB_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 simple1: $(SIMPLE1_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(SIMPLE1_OBJECTS) $(LDFLAGS) -L.  $(__DEBUGINFO)  -lmysqlpp_util -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(SIMPLE1_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 simple2: $(SIMPLE2_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(SIMPLE2_OBJECTS) $(LDFLAGS) -L.  $(__DEBUGINFO)  -lmysqlpp_util -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(SIMPLE2_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 simple3: $(SIMPLE3_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(SIMPLE3_OBJECTS) $(LDFLAGS) -L.  $(__DEBUGINFO)  -lmysqlpp_util -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(SIMPLE3_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 usequery: $(USEQUERY_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(USEQUERY_OBJECTS) $(LDFLAGS) -L.  $(__DEBUGINFO)  -lmysqlpp_util -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(USEQUERY_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 multiquery: $(MULTIQUERY_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(MULTIQUERY_OBJECTS) $(LDFLAGS) -L.  $(__DEBUGINFO)  -lmysqlpp_util -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(MULTIQUERY_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 custom1: $(CUSTOM1_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(CUSTOM1_OBJECTS) $(LDFLAGS) -L.  $(__DEBUGINFO)  -lmysqlpp_util -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(CUSTOM1_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 custom2: $(CUSTOM2_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(CUSTOM2_OBJECTS) $(LDFLAGS) -L.  $(__DEBUGINFO)  -lmysqlpp_util -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(CUSTOM2_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 custom3: $(CUSTOM3_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(CUSTOM3_OBJECTS) $(LDFLAGS) -L.  $(__DEBUGINFO)  -lmysqlpp_util -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(CUSTOM3_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 custom4: $(CUSTOM4_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(CUSTOM4_OBJECTS) $(LDFLAGS) -L.  $(__DEBUGINFO)  -lmysqlpp_util -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(CUSTOM4_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 custom5: $(CUSTOM5_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(CUSTOM5_OBJECTS) $(LDFLAGS) -L.  $(__DEBUGINFO)  -lmysqlpp_util -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(CUSTOM5_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 custom6: $(CUSTOM6_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(CUSTOM6_OBJECTS) $(LDFLAGS) -L.  $(__DEBUGINFO)  -lmysqlpp_util -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(CUSTOM6_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 dbinfo: $(DBINFO_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(DBINFO_OBJECTS) $(LDFLAGS) -L.  $(__DEBUGINFO)  -lmysqlpp_util -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(DBINFO_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 fieldinf1: $(FIELDINF1_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(FIELDINF1_OBJECTS) $(LDFLAGS) -L.  $(__DEBUGINFO)  -lmysqlpp_util -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(FIELDINF1_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 xaction: $(XACTION_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(XACTION_OBJECTS) $(LDFLAGS) -L.  $(__DEBUGINFO)  -lmysqlpp_util -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(XACTION_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 cgi_image: $(CGI_IMAGE_OBJECTS)
-	$(CXX) -o $@ $(CGI_IMAGE_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(CGI_IMAGE_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp -lmysqlclient
 
 load_file: $(LOAD_FILE_OBJECTS)
-	$(CXX) -o $@ $(LOAD_FILE_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(LOAD_FILE_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp -lmysqlclient
 
 updel: $(UPDEL_OBJECTS)
-	$(CXX) -o $@ $(UPDEL_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(UPDEL_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp -lmysqlclient
 
-util_util.o: ./util.cpp
+util_util.o: ./examples/util.cpp
 	$(CXX) -c -o $@ $(UTIL_CXXFLAGS) $(CPPDEPS) $<
 
-resetdb_resetdb.o: ./resetdb.cpp
+resetdb_resetdb.o: ./examples/resetdb.cpp
 	$(CXX) -c -o $@ $(RESETDB_CXXFLAGS) $(CPPDEPS) $<
 
-simple1_simple1.o: ./simple1.cpp
+simple1_simple1.o: ./examples/simple1.cpp
 	$(CXX) -c -o $@ $(SIMPLE1_CXXFLAGS) $(CPPDEPS) $<
 
-simple2_simple2.o: ./simple2.cpp
+simple2_simple2.o: ./examples/simple2.cpp
 	$(CXX) -c -o $@ $(SIMPLE2_CXXFLAGS) $(CPPDEPS) $<
 
-simple3_simple3.o: ./simple3.cpp
+simple3_simple3.o: ./examples/simple3.cpp
 	$(CXX) -c -o $@ $(SIMPLE3_CXXFLAGS) $(CPPDEPS) $<
 
-usequery_usequery.o: ./usequery.cpp
+usequery_usequery.o: ./examples/usequery.cpp
 	$(CXX) -c -o $@ $(USEQUERY_CXXFLAGS) $(CPPDEPS) $<
 
-multiquery_multiquery.o: ./multiquery.cpp
+multiquery_multiquery.o: ./examples/multiquery.cpp
 	$(CXX) -c -o $@ $(MULTIQUERY_CXXFLAGS) $(CPPDEPS) $<
 
-custom1_custom1.o: ./custom1.cpp
+custom1_custom1.o: ./examples/custom1.cpp
 	$(CXX) -c -o $@ $(CUSTOM1_CXXFLAGS) $(CPPDEPS) $<
 
-custom2_custom2.o: ./custom2.cpp
+custom2_custom2.o: ./examples/custom2.cpp
 	$(CXX) -c -o $@ $(CUSTOM2_CXXFLAGS) $(CPPDEPS) $<
 
-custom3_custom3.o: ./custom3.cpp
+custom3_custom3.o: ./examples/custom3.cpp
 	$(CXX) -c -o $@ $(CUSTOM3_CXXFLAGS) $(CPPDEPS) $<
 
-custom4_custom4.o: ./custom4.cpp
+custom4_custom4.o: ./examples/custom4.cpp
 	$(CXX) -c -o $@ $(CUSTOM4_CXXFLAGS) $(CPPDEPS) $<
 
-custom5_custom5.o: ./custom5.cpp
+custom5_custom5.o: ./examples/custom5.cpp
 	$(CXX) -c -o $@ $(CUSTOM5_CXXFLAGS) $(CPPDEPS) $<
 
-custom6_custom6.o: ./custom6.cpp
+custom6_custom6.o: ./examples/custom6.cpp
 	$(CXX) -c -o $@ $(CUSTOM6_CXXFLAGS) $(CPPDEPS) $<
 
-dbinfo_dbinfo.o: ./dbinfo.cpp
+dbinfo_dbinfo.o: ./examples/dbinfo.cpp
 	$(CXX) -c -o $@ $(DBINFO_CXXFLAGS) $(CPPDEPS) $<
 
-fieldinf1_fieldinf1.o: ./fieldinf1.cpp
+fieldinf1_fieldinf1.o: ./examples/fieldinf1.cpp
 	$(CXX) -c -o $@ $(FIELDINF1_CXXFLAGS) $(CPPDEPS) $<
 
-xaction_xaction.o: ./xaction.cpp
+xaction_xaction.o: ./examples/xaction.cpp
 	$(CXX) -c -o $@ $(XACTION_CXXFLAGS) $(CPPDEPS) $<
 
-cgi_image_cgi_image.o: ./cgi_image.cpp
+cgi_image_cgi_image.o: ./examples/cgi_image.cpp
 	$(CXX) -c -o $@ $(CGI_IMAGE_CXXFLAGS) $(CPPDEPS) $<
 
-load_file_load_file.o: ./load_file.cpp
+load_file_load_file.o: ./examples/load_file.cpp
 	$(CXX) -c -o $@ $(LOAD_FILE_CXXFLAGS) $(CPPDEPS) $<
 
-updel_updel.o: ./updel.cpp
+updel_updel.o: ./examples/updel.cpp
 	$(CXX) -c -o $@ $(UPDEL_CXXFLAGS) $(CPPDEPS) $<
 
 .PHONY: all install uninstall clean

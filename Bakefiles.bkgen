@@ -2,8 +2,6 @@
 <bakefile-gen>
     <input>
         ./mysql++.bkl
-		lib/lib.bkl
-		examples/examples.bkl
     </input>
 
     <!-- List of output formats to generate: -->

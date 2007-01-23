@@ -22,11 +22,11 @@ AC_DEFUN([MYSQL_API_LOCATION],
 		[  --with-mysql=<path>     root directory path of MySQL installation],
 		[MYSQL_lib_check="$with_mysql/lib/mysql $with_mysql/lib"
 		MYSQL_inc_check="$with_mysql/include $with_mysql/include/mysql"],
-		[MYSQL_lib_check="/usr/local/mysql/lib/mysql /usr/local/lib/mysql /opt/mysql/lib/mysql /usr/lib/mysql /usr/local/mysql/lib /usr/local/lib /opt/mysql/lib /usr/lib"
+		[MYSQL_lib_check="/usr/local/mysql/lib/mysql /usr/local/lib/mysql /opt/mysql/lib/mysql /usr/lib64/mysql /usr/lib/mysql /usr/local/mysql/lib /usr/local/lib /opt/mysql/lib /usr/lib64 /usr/lib"
 		MYSQL_inc_check="/usr/local/mysql/include/mysql /usr/local/include/mysql /opt/mysql/include/mysql /usr/include/mysql"])
 	AC_ARG_WITH(mysql-lib,
 		[  --with-mysql-lib=<path> directory path of MySQL library installation],
-		[MYSQL_lib_check="$with_mysql_lib $with_mysql_lib/lib $with_mysql_lib/lib/mysql"])
+		[MYSQL_lib_check="$with_mysql_lib $with_mysql_lib/lib64 $with_mysql_lib/lib $with_mysql_lib/lib64/mysql $with_mysql_lib/lib/mysql"])
 	AC_ARG_WITH(mysql-include,
 		[  --with-mysql-include=<path> directory path of MySQL header installation],
 		[MYSQL_inc_check="$with_mysql_include $with_mysql_include/include $with_mysql_include/include/mysql"])

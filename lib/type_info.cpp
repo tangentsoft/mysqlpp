@@ -2,7 +2,7 @@
  type_info.cpp - Implements the mysql_type_info class.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ MySQL AB, and (c) 2004-2007 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -24,7 +24,7 @@
  USA
 ***********************************************************************/
 
-#include "platform.h"
+#include "common.h"
 
 #include "datetime.h"
 #include "sql_types.h"
@@ -122,7 +122,7 @@ const mysql_type_info::sql_type_info mysql_type_info::types[62] = {
 const mysql_type_info::sql_type_info_lookup
 		mysql_type_info::lookups(mysql_type_info::types, 62);
 
-/// \if INTERNAL
+#if !defined(DOXYGEN_IGNORE)
 // Doxygen will not generate documentation for this section.
 
 mysql_ti_sql_type_info_lookup::mysql_ti_sql_type_info_lookup(
@@ -135,7 +135,7 @@ mysql_ti_sql_type_info_lookup::mysql_ti_sql_type_info_lookup(
 	}
 }
 
-/// \endif
+#endif // !defined(DOXYGEN_IGNORE)
 
 unsigned char mysql_type_info::type(enum_field_types t,
 		bool _unsigned, bool _null) 

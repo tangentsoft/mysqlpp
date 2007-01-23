@@ -57,7 +57,7 @@ print OUT0 << "---";
 #ifndef MYSQLPP_CUSTOM_H
 #define MYSQLPP_CUSTOM_H
 
-#include "defs.h"
+#include "common.h"
 #include "tiny_int.h"
 
 #include <string>
@@ -203,8 +203,11 @@ foreach my $i (1..$max_data_members) {
   $compp = "";
   $set = "";
   foreach my $j (1..$i) {
-      $compr .= "    if (cmp = mysqlpp::sql_cmp(x.C$j , y.C$j )) return cmp; \\\n"
-                                                              unless $j == $i;
+	  if ($j != $i) {
+		  $compr .= "    cmp = mysqlpp::sql_cmp(x.C$j , y.C$j ); \\\n";
+		  $compr .= "    if (cmp) return cmp; \\\n";
+      }
+
       $compr .= "    return mysqlpp::sql_cmp(x.C$j , y.C$j );"   if $j == $i;
       $parm2 .= "const T$j &p$j";
       $parm2 .= ", "  unless $j == $i;

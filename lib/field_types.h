@@ -3,7 +3,7 @@
 
 /***********************************************************************
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ MySQL AB, and (c) 2004-2007 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -34,10 +34,13 @@
 
 namespace mysqlpp {
 
-class ResUse;
+#if !defined(DOXYGEN_IGNORE)
+// Make Doxygen ignore this
+class MYSQLPP_EXPORT ResUse;
+#endif
 
 /// \brief A vector of SQL field types.
-class FieldTypes : public std::vector<mysql_type_info>
+class MYSQLPP_EXPORT FieldTypes : public std::vector<mysql_type_info>
 {
 public:
 	/// \brief Default constructor
@@ -86,7 +89,7 @@ public:
 	}
 
 private:
-	MYSQLPP_EXPORT void init(const ResUse* res);
+	void init(const ResUse* res);
 };
 
 } // end namespace mysqlpp

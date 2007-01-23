@@ -7,16 +7,30 @@ Compatibility
 
 Building the Library and Example Programs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	Due to a limitation in Bakefile (the tool we use to generate
-	the project files) there are two different workspaces (a.k.a.
-	"solutions"): one in the lib subdirectory and one in the
-	examples subdirectory.	You only have to build the project
-	in the lib subdirectory, but you are encouraged to also build
-	the examples, as they are good tests of whether your library
-	is built and working correctly.
+	As of MySQL++ v2.2, there is only one set of project files in
+	the top level directory for MySQL++.  We ship VC++6 project
+	files (.dsw and .dsp instead of .sln and .vcproj) due to a
+	limitation of the version of Bakefile we're using to generate
+	the project files.  Just let Visual Studio convert these to
+	the new format.
 
-    If you didn't install MySQL in c:\mysql, you will have to change
-    the project options.
+	If MySQL isn't in C:\Program Files\MySQL\MySQL Server 5.0\
+	you need to change the project file settings.  You have
+	two options:
+
+		- The simplest is to change the link and include
+		  file directories in the project settings directly.
+		  Although it's generally bad practice to change
+		  generated files, if that's all the only change to
+		  MySQL++ you need, this is harmless.
+
+		- If you're doing deeper work on MySQL++, you
+		  should probably be changing mysql++.bkl instead.
+		  Then to generate Visual C++ project files from that
+		  file, you will need the Win32 port of Bakefile from
+		  http://bakefile.sf.net/  The command to do that is:
+
+			  bakefile -f msvc6prj mysql++.bkl
 
     Once the library is built and you're satisfied that it's working
     correctly, you can run the install.bat file at the project
@@ -28,28 +42,34 @@ Using MySQL++ in Your Own Projects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 (This material is based on a post by Steve Hulet <krigare@gmail.com>)
 
-    Fire up VS .NET, create a Blank Solution.  Add a new project.
-    Choose Empty Project (.NET) under Visual C++ Projects.  Add a
-    .cpp file to the solution so it _knows_ it's a C/C++ solution.
-    Go to the solution Property Pages and make the following changes.
-    (Where it doesn't specify Debug or Release, make the change to
-    both configurations.)
+    Fire up Visual Studio and create a Blank Solution.  Add a
+    new project.  Choose Empty Project (.NET) under Visual C++
+    Projects.  Add a .cpp file to the solution so it _knows_ it's a
+    C/C++ solution.  Go to the solution Property Pages and make the
+    following changes.  (Where it doesn't specify Debug or Release,
+    make the change to both configurations.)
 
         o Under Configuration Properties::General change "Use
           Managed Extensions" to "No"
 
-        o Under C/C++::General add to "Additional Include
-          Directories": c:\mysql++\include, c:\mysql\include
+        o Under C/C++::General::Additional Include Directories:
+		
+			C:\Program Files\MySQL\MySQL Server 5.0\include,
+		  	C:\mysql++\include
 
         o Under C/C++::Code Generation change "Runtime Library" to
           "Multi-threaded Debug DLL (/MDd)" for the Debug
           configuration.  For the Release configuration, make it
           "Multi-threaded DLL (/MD)".
 
-        o Under Linker::General add to "Additional Library
-          Directories": "c:\mysql\lib\debug, c:\mysql++\vc\debug"
-          for the Debug configuration.  For the Release configuration,
-          make it "c:\mysql\lib\opt, c:\mysql++\vc\release"
+		o Under Linker::General::Additional Library Directories,
+		  in the Debug configuration:
+
+			C:\Program Files\MySQL\MySQL Server 5.0\lib\debug,
+			C:\mysql++\vc\debug
+
+		  For the Release configuration, make it the same, but
+		  change the 'debug' directory names to 'opt'.
 
         o Under Linker::Input add to "Additional Dependencies":
           "libmysql.lib wsock32.lib mysqlpp.lib"
@@ -59,7 +79,7 @@ If You Run into Problems...
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Especially if you have linking problems, make sure your project
     settings match the above.  Visual C++ is very picky about things
-    like run time library settings.  If you still can't get things
-    going, try running one of the example programs.  If it works,
-    the problem is likely in your project settings, not in MySQL++.
+    like run time library settings.  When in doubt, try running one
+    of the example programs.  If it works, the problem is likely in
+    your project settings, not in MySQL++.
 

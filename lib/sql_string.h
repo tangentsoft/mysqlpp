@@ -34,7 +34,7 @@
 #ifndef MYSQLPP_SQL_STRING_H
 #define MYSQLPP_SQL_STRING_H
 
-#include "defs.h"
+#include "common.h"
 
 #include <stdio.h>
 #include <string>
@@ -44,7 +44,7 @@ namespace mysqlpp {
 /// \brief A specialized \c std::string that will convert from any
 /// valid MySQL type.
 
-class SQLString : public std::string {
+class MYSQLPP_EXPORT SQLString : public std::string {
 public:
 	/// \brief If true, the object's string data is a copy of another
 	/// string.  Otherwise, it's the string form of an integral type.
@@ -67,51 +67,55 @@ public:
 	bool processed;
 
 	/// \brief Default constructor; empty string
-	MYSQLPP_EXPORT SQLString();
+	SQLString();
 
 	/// \brief Create object as a copy of a C++ string
-	MYSQLPP_EXPORT SQLString(const std::string& str);
+	SQLString(const std::string& str);
 
 	/// \brief Create object as a copy of a C string
-	MYSQLPP_EXPORT SQLString(const char* str);
+	SQLString(const char* str);
+
+	/// \brief Create object as a copy of a known-length string of
+	/// characters.
+	SQLString(const char* str, size_t len);
 
 	/// \brief Create object as the string form of a \c char value
-	MYSQLPP_EXPORT SQLString(char i);
+	SQLString(char i);
 
 	/// \brief Create object as the string form of an \c unsigned
 	/// \c char value
-	MYSQLPP_EXPORT SQLString(unsigned char i);
+	SQLString(unsigned char i);
 
 	/// \brief Create object as the string form of a \c short \c int
 	/// value
-	MYSQLPP_EXPORT SQLString(short int i);
+	SQLString(short int i);
 
 	/// \brief Create object as the string form of an \c unsigned
 	/// \c short \c int value
-	MYSQLPP_EXPORT SQLString(unsigned short int i);
+	SQLString(unsigned short int i);
 
 	/// \brief Create object as the string form of an \c int value
-	MYSQLPP_EXPORT SQLString(int i);
+	SQLString(int i);
 
 	/// \brief Create object as the string form of an \c unsigned
 	/// \c int value
-	MYSQLPP_EXPORT SQLString(unsigned int i);
+	SQLString(unsigned int i);
 
 	/// \brief Create object as the string form of a \c longlong
 	/// value
-	MYSQLPP_EXPORT SQLString(longlong i);
+	SQLString(longlong i);
 
 	/// \brief Create object as the string form of an \c unsigned
 	/// \c longlong value
-	MYSQLPP_EXPORT SQLString(ulonglong i);
+	SQLString(ulonglong i);
 
 	/// \brief Create object as the string form of a \c float
 	/// value
-	MYSQLPP_EXPORT SQLString(float i);
+	SQLString(float i);
 
 	/// \brief Create object as the string form of a \c double
 	/// value
-	MYSQLPP_EXPORT SQLString(double i);
+	SQLString(double i);
 
 	/// \brief Copy a C string into this object
 	SQLString& operator =(const char* str)

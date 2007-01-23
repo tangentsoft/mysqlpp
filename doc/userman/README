@@ -23,7 +23,7 @@ like this:
            {XSL stylesheets}
 
 "DocBook" above is a file in DocBook XML format.  In this case,
-it's in userman.xml.
+it's in userman.dbx.
 
 There are many alternatives for the tools in the square brackets:
 

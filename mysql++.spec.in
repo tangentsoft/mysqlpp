@@ -31,10 +31,10 @@ it's so large, and it doesn't change with every release.
 
 %prep
 %setup -q
-./bootstrap noexamples --prefix=/usr --disable-dependency-tracking
+./configure --prefix=/usr --disable-dependency-tracking
 
 %build
-make RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
+%{__make} RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -46,9 +46,9 @@ mkdir -p $LIBDIR
 mkdir -p $INCDIR
 mkdir -p $EXDIR
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
-install -m644 examples/*.cpp examples/*.h $EXDIR
-install -m644 examples/Makefile.simple $EXDIR/Makefile
-cp examples/README doc/README.examples
+install -m644 examples/*.{cpp,h} exrun $EXDIR
+install -m644 Makefile.simple $EXDIR/Makefile
+cp README.examples doc
 cp LICENSE doc
 mv doc/README.mysql++ doc/README
 mv $LIBDIR/*.so $LIBDIR/libmysqlpp.so.%{version}

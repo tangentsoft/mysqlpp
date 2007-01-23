@@ -25,7 +25,7 @@
 ***********************************************************************/
 
 #define MYSQLPP_NOT_HEADER
-#include "platform.h"
+#include "common.h"
 
 #include "connection.h"
 
@@ -134,9 +134,25 @@ connecting_(false)
 }
 
 
+Connection::Connection(const Connection& other) :
+OptionalExceptions(),
+Lockable(false)
+{
+	copy(other);
+}
+
+
 Connection::~Connection()
 {
 	disconnect();
+}
+
+
+Connection&
+Connection::operator=(const Connection& rhs)
+{
+	copy(rhs);
+	return *this;
 }
 
 
@@ -187,6 +203,38 @@ Connection::connect(cchar* db, cchar* host, cchar* user,
 	}
 
 	return success_;
+}
+
+
+bool
+Connection::connect(const MYSQL& mysql)
+{
+	return connect(mysql.db, mysql.host, mysql.user, mysql.passwd,
+			mysql.port, mysql.options.compress,
+			mysql.options.connect_timeout, mysql.unix_socket,
+			mysql.client_flag);
+}
+
+
+void
+Connection::copy(const Connection& other)
+{
+	if (connected()) {
+		disconnect();
+	}
+
+	mysql_init(&mysql_);
+	set_exceptions(other.throw_exceptions());
+
+	if (other.connected()) {
+		// Try to reconnect to server using same parameters
+		connect(other.mysql_);
+	}
+	else {
+		is_connected_ = false;
+		connecting_ = false;
+		success_ = false;
+	}
 }
 
 

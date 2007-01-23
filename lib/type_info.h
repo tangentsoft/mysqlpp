@@ -31,7 +31,7 @@
 #ifndef MYSQLPP_TYPE_INFO_H
 #define MYSQLPP_TYPE_INFO_H
 
-#include "defs.h"
+#include "common.h"
 
 #include <mysql.h>
 
@@ -43,16 +43,16 @@ namespace mysqlpp {
 #if !defined(DOXYGEN_IGNORE)
 // Doxygen will not generate documentation for this section.
 
-class mysql_type_info;
-class mysql_ti_sql_type_info_lookup;
+class MYSQLPP_EXPORT mysql_type_info;
+class MYSQLPP_EXPORT mysql_ti_sql_type_info_lookup;
 
-class mysql_ti_sql_type_info
+class MYSQLPP_EXPORT mysql_ti_sql_type_info
 {
 private:
 	friend class mysql_type_info;
 	friend class mysql_ti_sql_type_info_lookup;
 
-	MYSQLPP_EXPORT mysql_ti_sql_type_info& operator=(
+	mysql_ti_sql_type_info& operator=(
 			const mysql_ti_sql_type_info& b);
 	
 	// Not initting _base_type and _default because only mysql_type_info
@@ -91,14 +91,14 @@ struct type_info_cmp
 	}
 };
 
-class mysql_ti_sql_type_info_lookup
+class MYSQLPP_EXPORT mysql_ti_sql_type_info_lookup
 {
 private:
 	friend class mysql_type_info;
 
 	typedef mysql_ti_sql_type_info sql_type_info;
 
-	MYSQLPP_EXPORT mysql_ti_sql_type_info_lookup(
+	mysql_ti_sql_type_info_lookup(
 			const sql_type_info types[], const int size);
 
 	const unsigned char& operator [](
@@ -116,7 +116,7 @@ private:
 /// \brief Holds basic type information for ColData.
 ///
 /// Class to hold basic type information for mysqlpp::ColData.
-class mysql_type_info
+class MYSQLPP_EXPORT mysql_type_info
 {
 public:
 	/// \brief Create object
@@ -130,6 +130,8 @@ public:
 	/// default mysql_type_info object.  This is a very wrong thing
 	/// to do.
 	mysql_type_info(unsigned char n = static_cast<unsigned char>(-1)) :
+	_length(0),
+	_max_length(0),
 	num_(n)
 	{
 	}
@@ -139,16 +141,28 @@ public:
 	/// \param t the MySQL C API type ID for this type
 	/// \param _unsigned if true, this is the unsigned version of the type
 	/// \param _null if true, this type can hold a SQL null
-	inline mysql_type_info(enum_field_types t,
-			bool _unsigned, bool _null);
+	mysql_type_info(enum_field_types t, bool _unsigned, bool _null) :
+	_length(0),
+	_max_length(0),
+	num_(type(t, _unsigned, _null))
+	{
+	}
 
 	/// \brief Create object from a MySQL C API field
 	///
 	/// \param f field from which we extract the type info
-	inline mysql_type_info(const MYSQL_FIELD& f);
+	mysql_type_info(const MYSQL_FIELD& f) :
+	_length(f.length),
+	_max_length(f.max_length),
+	num_(type(f.type, (f.flags & UNSIGNED_FLAG) != 0,
+			(f.flags & NOT_NULL_FLAG) == 0))
+	{
+	}
 
 	/// \brief Create object as a copy of another
 	mysql_type_info(const mysql_type_info& t) :
+	_length(0),
+	_max_length(0),
 	num_(t.num_)
 	{
 	}
@@ -157,9 +171,9 @@ public:
 	///
 	/// This tries to map a C++ type to the closest MySQL data type.
 	/// It is necessarily somewhat approximate.
-	mysql_type_info(const std::type_info& t)
+	mysql_type_info(const std::type_info& t) :
+	num_(lookups[t])
 	{
-		num_ = lookups[t];
 	}
 
 	/// \brief Assign a new internal type value
@@ -194,37 +208,40 @@ public:
 	///
 	/// Returns the name that would be returned by typeid().name() for
 	/// the C++ type associated with the SQL type.
-	inline const char* name() const;
+	const char* name() const { return deref().c_type_->name(); }
 
 	/// \brief Returns the name of the SQL type.
 	///
 	/// Returns the SQL name for the type.
-	inline const char* sql_name() const;
+	const char* sql_name() const { return deref().sql_name_; }
 
 	/// \brief Returns the type_info for the C++ type associated with
 	/// the SQL type.
 	///
 	/// Returns the C++ type_info record corresponding to the SQL type.
-	inline const std::type_info& c_type() const;
+	const std::type_info& c_type() const { return *deref().c_type_; }
 
 	/// \brief Return length of data in this field
 	///
 	/// This only works if you initialized this object from a
 	/// MYSQL_FIELD object.
-	inline const unsigned int length() const;
+	const unsigned int length() const { return _length; }
 
 	/// \brief Return maximum length of data in this field
 	///
 	/// This only works if you initialized this object from a
 	/// MYSQL_FIELD object.
-	inline const unsigned int max_length() const;
+	const unsigned int max_length() const { return _max_length; }
 
 	/// \brief Returns the type_info for the C++ type inside of the
 	/// mysqlpp::Null type.
 	///
 	/// Returns the type_info for the C++ type inside the mysqlpp::Null
 	/// type.  If the type is not Null then this is the same as c_type().
-	inline const mysql_type_info base_type() const;
+	const mysql_type_info base_type() const
+	{
+		return mysql_type_info(deref().base_type_);
+	}
 
 	/// \brief Returns the ID of the SQL type.
 	///
@@ -241,14 +258,14 @@ public:
 	///
 	/// \return true if the type needs to be quoted for syntactically
 	/// correct SQL.
-	MYSQLPP_EXPORT bool quote_q() const;
+	bool quote_q() const;
 
 	/// \brief Returns true if the SQL type is of a type that needs to
 	/// be escaped.
 	///
 	/// \return true if the type needs to be escaped for syntactically
 	/// correct SQL.
-	MYSQLPP_EXPORT bool escape_q() const;
+	bool escape_q() const;
 
 	/// \brief Provides a way to compare two types for sorting.
 	///
@@ -272,14 +289,14 @@ private:
 	typedef mysql_ti_sql_type_info sql_type_info;
 	typedef mysql_ti_sql_type_info_lookup sql_type_info_lookup;
 
-	MYSQLPP_EXPORT static const sql_type_info types[62];
+	static const sql_type_info types[62];
 
-	MYSQLPP_EXPORT static const unsigned char offset = 0;
-	MYSQLPP_EXPORT static const unsigned char unsigned_offset = 21;
-	MYSQLPP_EXPORT static const unsigned char null_offset = 31;
-	MYSQLPP_EXPORT static const unsigned char unsigned_null_offset = 52;
+	static const unsigned char offset = 0;
+	static const unsigned char unsigned_offset = 21;
+	static const unsigned char null_offset = 31;
+	static const unsigned char unsigned_null_offset = 52;
 
-	MYSQLPP_EXPORT static const sql_type_info_lookup lookups;
+	static const sql_type_info_lookup lookups;
 
 	/// \brief Return an index into mysql_type_info::types array given
 	/// MySQL type information.
@@ -296,7 +313,7 @@ private:
 	/// MySQL type
 	/// \param _null if true, indicates the variant of the MySQL type
 	/// that can also hold an SQL 'null' instead of regular data.
-	MYSQLPP_EXPORT static unsigned char type(enum_field_types t,
+	static unsigned char type(enum_field_types t,
 			bool _unsigned, bool _null = false);
 
 	const sql_type_info& deref() const
@@ -306,50 +323,6 @@ private:
 
 	unsigned char num_;
 };
-
-inline const char* mysql_type_info::name() const 
-{
-	return deref().c_type_->name();
-}
-
-inline const char* mysql_type_info::sql_name() const
-{
-	return deref().sql_name_;
-}
-
-inline const unsigned int mysql_type_info::length() const
-{
-	return _length;
-}
-
-inline const unsigned int mysql_type_info::max_length() const
-{
-	return _max_length;
-}
-
-inline const std::type_info& mysql_type_info::c_type() const
-{
-	return *deref().c_type_;
-}
-
-inline const mysql_type_info mysql_type_info::base_type() const
-{
-	return mysql_type_info(deref().base_type_);
-}
-
-inline mysql_type_info::mysql_type_info(enum_field_types t,
-		bool _unsigned, bool _null)
-{
-	num_ = type(t, _unsigned, _null);
-}
-
-inline mysql_type_info::mysql_type_info(const MYSQL_FIELD& f)
-{
-	num_ = type(f.type, (f.flags & UNSIGNED_FLAG) != 0,
-			(f.flags & NOT_NULL_FLAG) == 0);
-	_length = f.length;
-	_max_length = f.max_length;
-}
 
 /// \brief Returns true if two mysql_type_info objects are equal.
 inline bool operator ==(const mysql_type_info& a, const mysql_type_info& b)

@@ -46,7 +46,7 @@ namespace mysqlpp {
 /// \brief Abstract base class for lock implementation, used by
 /// Lockable.
 
-class Lock
+class MYSQLPP_EXPORT Lock
 {
 public:
 	/// \brief Destroy object
@@ -75,7 +75,7 @@ public:
 /// MySQL++.  It will be supplemented with a better implementation for
 /// use with threads at a later date.
 
-class BasicLock : public Lock
+class MYSQLPP_EXPORT BasicLock : public Lock
 {
 public:
 	/// \brief Create object
@@ -118,7 +118,7 @@ private:
 /// A class derives from this one to acquire a standard interface for
 /// serializing operations that may not be thread-safe.
 
-class Lockable
+class MYSQLPP_EXPORT Lockable
 {
 protected:
 	/// \brief Default constructor

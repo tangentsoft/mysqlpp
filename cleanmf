@@ -1,4 +1,4 @@
 #!/bin/sh
-rm -f {.,examples,lib}/*.{ds?,ncb,sln,suo,vcproj}
-rm -f {.,examples,lib}/Makefile
-rm -f {.,examples,lib}/Makefile.{in,mingw,simple}
+rm -f *.{ds?,ncb,sln,suo,vcproj}
+rm -f Makefile
+rm -f Makefile.{in,mingw,simple}

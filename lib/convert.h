@@ -31,9 +31,7 @@
 #ifndef MYSQLPP_CONVERT_H
 #define MYSQLPP_CONVERT_H
 
-#include "platform.h"
-
-#include "defs.h"
+#include "common.h"
 
 #include <stdlib.h>
 

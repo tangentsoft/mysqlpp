@@ -99,5 +99,47 @@ void escape_string(std::string & s)
 	}
 }
 
+
+void
+str_to_upr(std::string& s)
+{
+	for (std::string::size_type i = 0; i < s.length(); ++i) {
+		s[i] = toupper(s[i]);
+	}
+}
+
+
+void
+str_to_lwr(std::string& s)
+{
+	for (std::string::size_type i = 0; i < s.length(); ++i) {
+		s[i] = tolower(s[i]);
+	}
+}
+
+
+void
+strip_all_blanks(std::string& s)
+{
+	for (std::string::size_type i = 0; i < s.length(); ++i) {
+		if (s[i] == ' ') {
+			s.erase(i, 1);
+			--i;
+		}
+	}
+}
+
+
+void
+strip_all_non_num(std::string& s)
+{
+	for (std::string::size_type i = 0; i < s.length(); ++i) {
+		if (!isdigit(s[i])) {
+			s.erase(i, 1);
+			--i;
+		}
+	}
+}
+
 } // end namespace mysqlpp
 

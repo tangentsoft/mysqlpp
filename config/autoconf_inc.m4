@@ -30,3 +30,27 @@ dnl ### begin block 20_COND_DEPS_TRACKING_1[./mysql++.bkl] ###
         COND_DEPS_TRACKING_1=""
     fi
     AC_SUBST(COND_DEPS_TRACKING_1)
+dnl ### begin block 20_COND_PLATFORM_MACOSX_1[./mysql++.bkl] ###
+    COND_PLATFORM_MACOSX_1="#"
+    if test "x$PLATFORM_MACOSX" = "x1" ; then
+        COND_PLATFORM_MACOSX_1=""
+    fi
+    AC_SUBST(COND_PLATFORM_MACOSX_1)
+dnl ### begin block 20_COND_PLATFORM_MAC_1[./mysql++.bkl] ###
+    COND_PLATFORM_MAC_1="#"
+    if test "x$PLATFORM_MAC" = "x1" ; then
+        COND_PLATFORM_MAC_1=""
+    fi
+    AC_SUBST(COND_PLATFORM_MAC_1)
+dnl ### begin block 20_COND_PLATFORM_OS2_1[./mysql++.bkl] ###
+    COND_PLATFORM_OS2_1="#"
+    if test "x$PLATFORM_OS2" = "x1" ; then
+        COND_PLATFORM_OS2_1=""
+    fi
+    AC_SUBST(COND_PLATFORM_OS2_1)
+dnl ### begin block 20_COND_WINDOWS_IMPLIB_1[./mysql++.bkl] ###
+    COND_WINDOWS_IMPLIB_1="#"
+    if test "x$WINDOWS_IMPLIB" = "x1" ; then
+        COND_WINDOWS_IMPLIB_1=""
+    fi
+    AC_SUBST(COND_WINDOWS_IMPLIB_1)

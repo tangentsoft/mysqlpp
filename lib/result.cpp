@@ -69,11 +69,14 @@ ResUse::~ResUse()
 }
 
 
-void ResUse::copy(const ResUse& other)
+void
+ResUse::copy(const ResUse& other)
 {
 	if (initialized_) {
 		purge();
 	}
+
+	set_exceptions(other.throw_exceptions());
 
 	if (!other.result_) {
 		result_ = 0;
@@ -83,7 +86,6 @@ void ResUse::copy(const ResUse& other)
 		return;
 	}
 
-	set_exceptions(other.throw_exceptions());
 	result_ = other.result_;
 	fields_ = Fields(this);
 
@@ -105,6 +107,132 @@ void ResUse::copy(const ResUse& other)
 
 	conn_ = other.conn_;
 	initialized_ = true;
+}
+
+
+int
+ResUse::field_num(const std::string& i) const
+{
+	if (!names_) {
+		names_ = new FieldNames(this);
+	}
+
+	size_t index = (*names_)[i];
+	if ((index >= names_->size()) && throw_exceptions()) {
+		throw BadFieldName(i.c_str());
+	}
+	
+	return int(index);
+}
+
+
+std::string&
+ResUse::field_name(int i)
+{
+	if (!names_) {
+		names_ = new FieldNames(this);
+	}
+	return (*names_)[i];
+}
+
+
+const std::string&
+ResUse::field_name(int i) const
+{
+	if (!names_) {
+		names_ = new FieldNames(this);
+	}
+	return (*names_)[i];
+}
+
+
+FieldNames&
+ResUse::field_names()
+{
+	if (!names_) {
+		names_ = new FieldNames(this);
+	}
+	return *names_;
+}
+
+
+const FieldNames&
+ResUse::field_names() const
+{
+	if (!names_) {
+		names_ = new FieldNames(this);
+	}
+	return *names_;
+}
+
+
+void
+ResUse::reset_field_names()
+{
+	delete names_;
+	names_ = 0;
+	names_ = new FieldNames(this);
+}
+
+
+mysql_type_info&
+ResUse::field_type(int i)
+{
+	if (!types_) {
+		types_ = new FieldTypes(this);
+	}
+	return (*types_)[i];
+}
+
+
+const mysql_type_info&
+ResUse::field_type(int i) const
+{
+	if (!types_) {
+		types_ = new FieldTypes(this);
+	}
+	return (*types_)[i];
+}
+
+
+FieldTypes&
+ResUse::field_types()
+{
+	if (!types_) {
+		types_ = new FieldTypes(this);
+	}
+	return *types_;
+}
+
+
+const FieldTypes&
+ResUse::field_types() const
+{
+	if (!types_) {
+		types_ = new FieldTypes(this);
+	}
+	return *types_;
+}
+
+
+void
+ResUse::reset_field_types()
+{
+	delete types_;
+	types_ = 0;
+	types_ = new FieldTypes(this);
+}
+
+
+ResUse&
+ResUse::operator =(const ResUse& other)
+{
+	if (this == &other) {
+		return *this;
+	}
+	copy(other);
+	other.result_ = 0;
+	return *this;
 }
 
 } // end namespace mysqlpp

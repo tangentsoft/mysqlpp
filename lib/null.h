@@ -43,7 +43,7 @@ namespace mysqlpp {
 ///
 /// This class is for internal use only.  Normal code should use
 /// Null instead.
-class null_type
+class MYSQLPP_EXPORT null_type
 {
 public:
 #if !defined(DOXYGEN_IGNORE)

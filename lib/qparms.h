@@ -7,7 +7,7 @@
 
 /***********************************************************************
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ MySQL AB, and (c) 2004-2007 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -38,12 +38,14 @@
 
 namespace mysqlpp {
 
-class Query;
-
+#if !defined(DOXYGEN_IGNORE)
+// Make Doxygen ignore this
+class MYSQLPP_EXPORT Query;
+#endif
 
 /// \brief This class holds the parameter values for filling
 /// template queries. 
-class SQLQueryParms : public std::vector<SQLString>
+class MYSQLPP_EXPORT SQLQueryParms : public std::vector<SQLString>
 {
 public:
 	/// \brief Abbreviation so some of the declarations below don't
@@ -52,7 +54,8 @@ public:
 
 	/// \brief Default constructor
 	SQLQueryParms() :
-	parent_(0)
+	parent_(0),
+	processing_(false)
 	{
 	}
 	
@@ -61,7 +64,8 @@ public:
 	/// \param p pointer to the query object these parameters are tied
 	/// to
 	SQLQueryParms(Query* p) :
-	parent_(p)
+	parent_(p),
+	processing_(false)
 	{
 	}
 	
@@ -94,10 +98,10 @@ public:
 	}
 	
 	/// \brief Access the value of the element with a key of str.
-	MYSQLPP_EXPORT SQLString& operator [](const char *str);
+	SQLString& operator [](const char *str);
 
 	/// \brief Access the value of the element with a key of str.
-	MYSQLPP_EXPORT const SQLString& operator [](const char *str) const;
+	const SQLString& operator [](const char *str) const;
 
 	/// \brief Adds an element to the list
 	SQLQueryParms& operator <<(const SQLString& str)
@@ -122,7 +126,7 @@ public:
 	///
 	/// If the two lists are the same length or this list is longer than
 	/// the \c other list, a copy of this list is returned.
-	MYSQLPP_EXPORT SQLQueryParms operator +(
+	SQLQueryParms operator +(
 			const SQLQueryParms& other) const;
 
 #if !defined(DOXYGEN_IGNORE)
@@ -200,6 +204,7 @@ private:
 	friend class Query;
 
 	Query* parent_;
+	bool processing_;	///< true if we're building a query string
 };
 
 
@@ -232,7 +237,7 @@ struct SQLParseElement
 	/// \param b the 'before' value
 	/// \param o the 'option' value
 	/// \param n the 'num' value
-	SQLParseElement(std::string b, char o, char n) :
+	SQLParseElement(std::string b, char o, signed char n) :
 	before(b),
 	option(o),
 	num(n)
@@ -241,7 +246,7 @@ struct SQLParseElement
 	
 	std::string before;		///< string inserted before the parameter
 	char option;			///< the parameter option, or blank if none
-	char num;				///< the parameter position to use
+	signed char num;		///< the parameter position to use
 };
 
 } // end namespace mysqlpp

@@ -10,7 +10,7 @@
 
 /***********************************************************************
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004-2006 by Educational Technology Resources, Inc.
+ MySQL AB, and (c) 2004-2007 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -35,9 +35,7 @@
 #ifndef MYSQLPP_CONNECTION_H
 #define MYSQLPP_CONNECTION_H
 
-#include "platform.h"
-
-#include "defs.h"
+#include "common.h"
 
 #include "lockable.h"
 #include "noexceptions.h"
@@ -49,11 +47,14 @@
 
 namespace mysqlpp {
 
-class Query;
+#if !defined(DOXYGEN_IGNORE)
+// Make Doxygen ignore this
+class MYSQLPP_EXPORT Query;
+#endif
 
 /// \brief Manages the connection to the MySQL database.
 
-class Connection : public OptionalExceptions, public Lockable
+class MYSQLPP_EXPORT Connection : public OptionalExceptions, public Lockable
 {
 public:
 	/// \brief Legal types of option arguments
@@ -113,7 +114,7 @@ public:
 	/// \brief Create object without connecting it to the MySQL server.
 	///
 	/// \param te if true, exceptions are thrown on errors
-	MYSQLPP_EXPORT Connection(bool te = true);
+	Connection(bool te = true);
 
 	/// \brief Create object and connect to database server in one step.
 	///
@@ -141,14 +142,26 @@ public:
 	///		running on, or 0 to use default name
 	///	\param client_flag special connection flags. See MySQL C API
 	///		documentation for \c mysql_real_connect() for details.
-	MYSQLPP_EXPORT Connection(const char* db, const char* host = "",
+	Connection(const char* db, const char* host = "",
 			const char* user = "", const char* passwd = "",
 			uint port = 0, my_bool compress = 0,
 			unsigned int connect_timeout = 60, cchar* socket_name = 0,
 			unsigned int client_flag = 0);
 
+	/// \brief Establish a new connection using the same parameters as
+	/// an existing C API connection.
+	///
+	/// \param other existing Connection object
+	Connection(const Connection& other);
+
+	/// \brief Establish a new connection using the same parameters as
+	/// an existing C API connection.
+	///
+	/// \param mysql existing MySQL C API connection object
+	bool connect(const MYSQL& mysql);
+
 	/// \brief Destroy connection object
-	MYSQLPP_EXPORT ~Connection();
+	~Connection();
 
 	/// \brief Connect to database after object is created.
 	///
@@ -158,7 +171,7 @@ public:
 	/// If you call this method on an object that is already connected
 	/// to a database server, the previous connection is dropped and a
 	/// new connection is established.
-	MYSQLPP_EXPORT bool connect(cchar* db = "", cchar* host = "",
+	bool connect(cchar* db = "", cchar* host = "",
 			cchar* user = "", cchar* passwd = "", uint port = 0,
 			my_bool compress = 0, unsigned int connect_timeout = 60,
 			cchar* socket_name = 0, unsigned int client_flag = 0);
@@ -174,7 +187,7 @@ public:
 	
 	/// \brief Calls MySQL C API function \c mysql_info() and returns
 	/// result as a C++ string.
-	MYSQLPP_EXPORT std::string info();
+	std::string info();
 
 	/// \brief return true if connection was established successfully
 	///
@@ -200,7 +213,7 @@ public:
 	/// \link mysqlpp::Query::execute() execute() \endlink
 	/// on that object, the query is sent to the server this object
 	/// is connected to.
-	MYSQLPP_EXPORT Query query();
+	Query query();
 
 	/// \brief Alias for success()
 	///
@@ -218,6 +231,10 @@ public:
 	///	    }
 	/// \endcode
 	operator bool() { return success(); }
+
+	/// \brief Copy an existing Connection object's state into this
+	/// object.
+	Connection& operator=(const Connection& rhs);
 
 	/// \brief Return error message for last MySQL error associated with
 	/// this connection.
@@ -322,14 +339,14 @@ public:
 	/// \param db name of database to create
 	///
 	/// \return true if database was created successfully
-	MYSQLPP_EXPORT bool create_db(const std::string& db);
+	bool create_db(const std::string& db);
 
 	/// \brief Drop a database
 	///
 	/// \param db name of database to destroy
 	///
 	/// \return true if database was created successfully
-	MYSQLPP_EXPORT bool drop_db(const std::string& db);
+	bool drop_db(const std::string& db);
 
 	/// \brief Change to a different database
 	bool select_db(const std::string& db)
@@ -338,7 +355,7 @@ public:
 	}
 
 	/// \brief Change to a different database
-	MYSQLPP_EXPORT bool select_db(const char* db);
+	bool select_db(const char* db);
 
 	/// \brief Ask MySQL server to reload the grant tables
 	/// 
@@ -347,14 +364,14 @@ public:
 	/// Simply wraps \c mysql_reload() in the C API.  Since that
 	/// function is deprecated, this one is, too.  The MySQL++
 	/// replacement is execute("FLUSH PRIVILEGES").
-	MYSQLPP_EXPORT bool reload();
+	bool reload();
 	
 	/// \brief Ask MySQL server to shut down.
 	///
 	/// User must have the "shutdown" privilege.
 	///
 	/// Simply wraps \c mysql_shutdown() in the C API.
-	MYSQLPP_EXPORT bool shutdown();
+	bool shutdown();
 
 	/// \brief Return the connection options object
 	st_mysql_options get_options() const
@@ -394,16 +411,16 @@ public:
 	/// of range, or the option is not supported by the C API, most
 	/// because it isn't a high enough version. These latter cases will
 	/// cause BadOption exceptions otherwise.
-	MYSQLPP_EXPORT bool set_option(Option option);
+	bool set_option(Option option);
 
 	/// \brief Sets a connection option, with string argument
-	MYSQLPP_EXPORT bool set_option(Option option, const char* arg);
+	bool set_option(Option option, const char* arg);
 
 	/// \brief Sets a connection option, with integer argument
-	MYSQLPP_EXPORT bool set_option(Option option, unsigned int arg);
+	bool set_option(Option option, unsigned int arg);
 
 	/// \brief Sets a connection option, with Boolean argument
-	MYSQLPP_EXPORT bool set_option(Option option, bool arg);
+	bool set_option(Option option, bool arg);
 
 	/// \brief Enable SSL-encrypted connection.
 	///
@@ -417,7 +434,7 @@ public:
 	/// Must be called before connection is established.
 	///
 	/// Wraps \c mysql_ssl_set() in MySQL C API.
-	MYSQLPP_EXPORT void enable_ssl(const char* key = 0,
+	void enable_ssl(const char* key = 0,
 			const char* cert = 0, const char* ca = 0,
 			const char* capath = 0, const char* cipher = 0);
 
@@ -452,7 +469,7 @@ protected:
 	/// This method is protected because it should only be used within
 	/// the library.  Unless you use the default constructor, this
 	/// object should always be connected.
-	MYSQLPP_EXPORT void disconnect();
+	void disconnect();
 
 	/// \brief Returns true if the given option is to be set once
 	/// connection comes up.
@@ -495,6 +512,11 @@ protected:
 	/// overloads above.
 	bool set_option_impl(enum_mysql_set_option msoption);
 #endif
+
+	/// \brief Establish a new connection as a copy of an existing one
+	///
+	/// \param other the connection to copy
+	void copy(const Connection& other);
 
 private:
 	friend class ResNSel;

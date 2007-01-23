@@ -29,7 +29,7 @@
 #ifndef MYSQLPP_DATETIME_H
 #define MYSQLPP_DATETIME_H
 
-#include "defs.h"
+#include "common.h"
 
 #include "coldata.h"
 #include "stream2string.h"
@@ -177,6 +177,9 @@ struct DateTime : public DTbase<DateTime>
 		convert(str.c_str());
 	}
 
+	/// \brief Initialize object from a time_t
+	DateTime(time_t t);
+
 	/// \brief Compare this datetime to another.
 	///
 	/// Returns < 0 if this datetime is before the other, 0 of they are
@@ -188,6 +191,9 @@ struct DateTime : public DTbase<DateTime>
 
 	/// \brief Parse a MySQL date and time string into this object.
 	MYSQLPP_EXPORT cchar* convert(cchar*);
+
+	/// Convert to time_t
+	operator time_t() const;
 };
 
 

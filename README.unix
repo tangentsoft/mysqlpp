@@ -8,6 +8,11 @@ Building the Library and Example Programs
 	$ su
 	# make install
 
+	On Linux, you also need to run 'ldconfig' as root after
+	installing the library.  You may need to add the library's
+	installation directory to /etc/ld.so.conf before you do this,
+	particularly if you installed to /usr/local.
+
 
 Configure Options
 ~~~~~~~~~~~~~~~~~

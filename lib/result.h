@@ -28,7 +28,7 @@
 #ifndef MYSQLPP_RESULT_H
 #define MYSQLPP_RESULT_H
 
-#include "defs.h"
+#include "common.h"
 
 #include "exceptions.h"
 #include "fields.h"
@@ -46,7 +46,10 @@
 
 namespace mysqlpp {
 
-class Connection;
+#if !defined(DOXYGEN_IGNORE)
+// Make Doxygen ignore this
+class MYSQLPP_EXPORT Connection;
+#endif
 
 /// \brief A basic result set class, for use with "use" queries.
 ///
@@ -58,7 +61,7 @@ class Connection;
 /// empty row if exceptions are disabled), you can process the result
 /// set one row at a time.
 
-class ResUse : public OptionalExceptions
+class MYSQLPP_EXPORT ResUse : public OptionalExceptions
 {
 public:
 	/// \brief Default constructor
@@ -74,7 +77,7 @@ public:
 	}
 	
 	/// \brief Create the object, fully initialized
-	MYSQLPP_EXPORT ResUse(MYSQL_RES* result, Connection* c = 0, bool te = true);
+	ResUse(MYSQL_RES* result, Connection* c = 0, bool te = true);
 	
 	/// \brief Create a copy of another ResUse object
 	ResUse(const ResUse& other) :
@@ -86,7 +89,7 @@ public:
 	}
 	
 	/// \brief Destroy object
-	MYSQLPP_EXPORT virtual ~ResUse();
+	virtual ~ResUse();
 
 	/// \brief Copy another ResUse object's data into this object
 	ResUse& operator =(const ResUse& other);
@@ -216,87 +219,81 @@ public:
 	/// \brief Get the index of the named field.
 	///
 	/// This is the inverse of field_name().
-	inline int field_num(const std::string&) const;
+	int field_num(const std::string&) const;
 
 	/// \brief Get the name of the field at the given index.
 	///
 	/// This is the inverse of field_num().
-	inline std::string& field_name(int);
+	std::string& field_name(int);
 
 	/// \brief Get the name of the field at the given index.
-	inline const std::string& field_name(int) const;
+	const std::string& field_name(int) const;
 
 	/// \brief Get the names of the fields within this result set.
-	inline FieldNames& field_names();
+	FieldNames& field_names();
 
 	/// \brief Get the names of the fields within this result set.
-	inline const FieldNames& field_names() const;
+	const FieldNames& field_names() const;
 
 	/// \brief Reset the names in the field list to their original
 	/// values.
-	inline void reset_field_names();
+	void reset_field_names();
 
 	/// \brief Get the MySQL type for a field given its index.
-	inline mysql_type_info& field_type(int i);
+	mysql_type_info& field_type(int i);
 
 	/// \brief Get the MySQL type for a field given its index.
-	inline const mysql_type_info& field_type(int) const;
+	const mysql_type_info& field_type(int) const;
 
 	/// \brief Get a list of the types of the fields within this
 	/// result set.
-	inline FieldTypes& field_types();
+	FieldTypes& field_types();
 
 	/// \brief Get a list of the types of the fields within this
 	/// result set.
-	inline const FieldTypes& field_types() const;
+	const FieldTypes& field_types() const;
 
 	/// \brief Reset the field types to their original values.
-	inline void reset_field_types();
+	void reset_field_types();
 
 	/// \brief Alias for field_num()
-	inline int names(const std::string & s) const;
+	int names(const std::string & s) const { return field_num(s); }
 
 	/// \brief Alias for field_name()
-	inline std::string& names(int i);
+	std::string& names(int i) { return field_name(i); }
 
 	/// \brief Alias for field_name()
-	inline const std::string& names(int i) const;
+	const std::string& names(int i) const { return field_name(i); }
 
 	/// \brief Alias for field_names()
-	inline FieldNames& names();
+	FieldNames& names() { return field_names(); }
 
 	/// \brief Alias for field_names()
-	inline const FieldNames& names() const;
+	const FieldNames& names() const { return field_names(); }
 
 	/// \brief Alias for reset_field_names()
-	inline void reset_names();
+	void reset_names() { reset_field_names(); }
 
 	/// \brief Alias for field_type()
-	inline mysql_type_info& types(int i);
+	mysql_type_info& types(int i) { return field_type(i); }
 
 	/// \brief Alias for field_type()
-	inline const mysql_type_info& types(int i) const;
+	const mysql_type_info& types(int i) const { return field_type(i); }
 
 	/// \brief Alias for field_types()
-	inline FieldTypes& types();
+	FieldTypes& types() { return field_types(); }
 
 	/// \brief Alias for field_types()
-	inline const FieldTypes& types() const;
+	const FieldTypes& types() const { return field_types(); }
 
 	/// \brief Alias for reset_field_types()
-	inline void reset_types();
+	void reset_types() { reset_field_types(); }
 
 	/// \brief Get the underlying Fields structure.
-	const Fields& fields() const
-	{
-		return fields_;
-	}
+	const Fields& fields() const { return fields_; }
 
 	/// \brief Get the underlying Field structure given its index.
-	const Field& fields(unsigned int i) const
-	{
-		return fields_.at(i);
-	}
+	const Field& fields(unsigned int i) const { return fields_.at(i); }
 	
 	/// \brief Returns true if the other ResUse object shares the same
 	/// underlying C API result set as this one.
@@ -327,7 +324,7 @@ protected:
 	/// \brief Copy another ResUse object's contents into this one.
 	///
 	/// Self-copy is not allowed.
-	MYSQLPP_EXPORT void copy(const ResUse& other);
+	void copy(const ResUse& other);
 };
 
 
@@ -343,7 +340,7 @@ protected:
 /// provides a reverse random-access iterator in addition to the normal
 /// forward one.
 
-class Result : public ResUse,
+class MYSQLPP_EXPORT Result : public ResUse,
 		public const_subscript_container<Result, Row, const Row>
 {
 public:
@@ -451,7 +448,7 @@ inline void swap(Result& x, Result& y)
 
 /// \brief Holds the information on the success of queries that
 /// don't return any results.
-class ResNSel
+class MYSQLPP_EXPORT ResNSel
 {
 public:
 	bool success;			///< if true, query was successful
@@ -465,169 +462,12 @@ public:
 	}
 
 	/// \brief Initialize object
-	MYSQLPP_EXPORT ResNSel(Connection* q);
+	ResNSel(Connection* q);
 
 	/// \brief Returns true if the query was successful
 	operator bool() { return success; }
 };
 
-
-inline int ResUse::field_num(const std::string& i) const
-{
-	if (!names_) {
-		names_ = new FieldNames(this);
-	}
-
-	size_t index = (*names_)[i];
-	if ((index >= names_->size()) && throw_exceptions()) {
-		throw BadFieldName(i.c_str());
-	}
-	
-	return int(index);
-}
-
-inline std::string& ResUse::field_name(int i)
-{
-	if (!names_) {
-		names_ = new FieldNames(this);
-	}
-	return (*names_)[i];
-}
-
-inline const std::string& ResUse::field_name(int i) const
-{
-	if (!names_) {
-		names_ = new FieldNames(this);
-	}
-	return (*names_)[i];
-}
-
-inline FieldNames& ResUse::field_names()
-{
-	if (!names_) {
-		names_ = new FieldNames(this);
-	}
-	return *names_;
-}
-
-inline const FieldNames& ResUse::field_names() const
-{
-	if (!names_) {
-		names_ = new FieldNames(this);
-	}
-	return *names_;
-}
-
-inline void ResUse::reset_field_names()
-{
-	delete names_;
-	names_ = 0;
-	names_ = new FieldNames(this);
-}
-
-inline mysql_type_info& ResUse::field_type(int i)
-{
-	if (!types_) {
-		types_ = new FieldTypes(this);
-	}
-	return (*types_)[i];
-}
-
-inline const mysql_type_info& ResUse::field_type(int i) const
-{
-	if (!types_) {
-		types_ = new FieldTypes(this);
-	}
-	return (*types_)[i];
-}
-
-inline FieldTypes& ResUse::field_types()
-{
-	if (!types_) {
-		types_ = new FieldTypes(this);
-	}
-	return *types_;
-}
-
-inline const FieldTypes& ResUse::field_types() const
-{
-	if (!types_) {
-		types_ = new FieldTypes(this);
-	}
-	return *types_;
-}
-
-inline void ResUse::reset_field_types()
-{
-	delete types_;
-	types_ = 0;
-	types_ = new FieldTypes(this);
-}
-
-inline int ResUse::names(const std::string& s) const
-{
-	return field_num(s);
-}
-
-inline std::string& ResUse::names(int i)
-{
-	return field_name(i);
-}
-
-inline const std::string& ResUse::names(int i) const
-{
-	return field_name(i);
-}
-
-inline FieldNames& ResUse::names()
-{
-	return field_names();
-}
-
-inline const FieldNames& ResUse::names() const
-{
-	return field_names();
-}
-
-inline void ResUse::reset_names()
-{
-	reset_field_names();
-}
-
-inline mysql_type_info& ResUse::types(int i)
-{
-	return field_type(i);
-}
-
-inline const mysql_type_info& ResUse::types(int i) const
-{
-	return field_type(i);
-}
-
-inline FieldTypes& ResUse::types()
-{
-	return field_types();
-}
-
-inline const FieldTypes& ResUse::types() const
-{
-	return field_types();
-}
-
-inline void ResUse::reset_types()
-{
-	reset_field_types();
-}
-
-inline ResUse& ResUse::operator =(const ResUse& other)
-{
-	if (this == &other) {
-		return *this;
-	}
-	copy(other);
-	other.result_ = 0;
-	return *this;
-}
 
 } // end namespace mysqlpp
 

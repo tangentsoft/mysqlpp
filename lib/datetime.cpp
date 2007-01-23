@@ -26,11 +26,13 @@
 ***********************************************************************/
 
 #define MYSQLPP_NOT_HEADER
-#include "platform.h"
+#include "common.h"
 
 #include "datetime.h"
 
 #include <iomanip>
+
+#include <time.h>
 
 using namespace std;
 
@@ -169,6 +171,39 @@ short int DateTime::compare(const DateTime& other) const
 	else {
 		return t.compare(ot);
 	}
+}
+
+DateTime::operator time_t() const
+{
+	struct tm tm;
+	tm.tm_sec = second;
+	tm.tm_min = minute;
+	tm.tm_hour = hour;
+	tm.tm_mday = day;
+	tm.tm_mon = month - (tiny_int)1;
+	tm.tm_year = year - 1900;
+	tm.tm_isdst = -1;
+
+	return mktime(&tm);
+};
+
+DateTime::DateTime(time_t t)
+{
+	struct tm tm;
+#if defined(_MSC_VER) && !defined(_STLP_VERSION)
+	localtime_s(&tm, &t);
+#elif defined(__MINGW32_VERSION)
+	memcpy(&tm, localtime(&t), sizeof(tm));
+#else
+	localtime_r(&t, &tm);
+#endif
+
+	year = tm.tm_year + 1900;
+	month = tm.tm_mon + 1;
+	day = tm.tm_mday;
+	hour = tm.tm_hour;
+	minute = tm.tm_min;
+	second = tm.tm_sec;
 }
 
 } // end namespace mysqlpp

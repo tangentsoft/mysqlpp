@@ -1,3 +1,101 @@
+2.2.0, 2007.01.23 (r1417)
+
+	o ColData, const_string, and SQLString can now be constructed
+	  with an explicit length parameter.  Furthermore, Query
+	  class's execute(), store() and use() call chains terminate
+	  in a version taking an explicit length parameter, instead
+	  of one taking a simple C string.  Together, this means
+	  that it's now easier to handle data from the SQL server
+	  containing nulls.  The library is almost certainly not yet
+	  capable of handling embedded nulls in all cases, but this
+	  is a big first step towards that.
+
+	o Can now construct a DateTime object from a time_t, and
+	  convert a DateTime back to a time_t.  Patch by Korolyov Ilya.
+
+	o Changed the way we're handling exported functions in the
+	  Windows DLL case so that it works more reliably under MinGW.
+
+	o Added proper copy semantics to Connection, so that you get a
+	  new connection with the same parameters, not just a bitwise
+	  copy of the object.
+
+	o Using an explicitly thread-safe variant of localtime() for
+	  time conversions where one is available.
+
+	o Removed ListInsert template from myset.h.  This wasn't used
+	  within the library, and was never documented, so I'm betting
+	  that no one actually uses it.
+
+	o Result::copy() was not copying the exception flag in
+	  all cases.  Fix by Steven Van Ingelgem.
+
+	o Added exrun shell script and exrun.bat files to distribution,
+	  to avoid linkage errors when running the examples while
+	  you still have an older version of MySQL++ installed.
+
+	o Renamed MYSQLPP_LIB_VERSION to MYSQLPP_HEADER_VERSION, as
+	  what it really encodes is the version number in the mysql++.h
+	  file you're using, not the actual library version number.
+
+	o Added mysqlpp::get_library_version(), which returns the
+	  library version number at build time.  Between this and
+	  the header version constant, you can check that you're not
+	  mixing MySQL++ header and library versions.
+
+	o resetdb example uses these new version number affordances to
+	  double-check that you're not mixing libraries and headers
+	  from different versions.  This happens easily unless you
+	  take care of it (such as by using exrun) when you have one
+	  version of MySQL++ installed and you're trying to build and
+	  test a new version without blowing away the old one first
+	  or overwriting it.
+
+	o No longer using recursive Makefiles on Unixy platforms
+	  or split lib + examples project files on VC++.  Everything is
+	  handled by a single top-level Makefile or project file, which
+	  is simpler for the end user, and makes better dependency
+	  management possible.
+
+	o When looking for the MySQL C library on systems using
+	  autoconf, looking in .../lib64 wherever we are also looking
+	  in .../lib.
+
+	o RPM build process no longer depends on Bakefile.  It means
+	  you have to build the examples when building an RPM even
+	  though they're never used within the RPM, but it's a better
+	  tradeoff in my opinion.
+
+	o Updated include and library paths on Windows to reflect
+	  changes in the most recent MySQL installers.
+
+	o Merged lib/defs.h and lib/platform.h into new file,
+	  lib/common.h.  Just cleans up the library internals.
+
+	o Fixed build errors on Windows due to recent changes in MySQL.
+
+	o Fixed a few memory leaks and double-deletes in Query class.
+
+	o Fixed compatibility with STLPort's string implementation.
+	  Patch by dengxy at cse.buaa.edu.cn.
+
+	o Fixed a compatibility problem between Set<> template and
+	  SSQLS.  Patch by Korolyov Ilya.
+
+	o Fixed build bug in SQLQueryParms due to a character
+	  signedness issue on PowerPC with GCC.  Patch by Michael
+	  Hanselmann.
+
+	o ~Transaction() can no longer throw exceptions.  It'll just
+	  quietly eat them, to avoid program termination.  Fix
+	  suggested by Alex Burton.
+
+	o Fixed thread safety testing in autoconf case, accidentally
+	  broken during v2.1.0 development cycle.
+
+	o Using Doxygen 1.5.1 to generate documentation.
+
+
 2.1.1, 2006.04.04 (r1289)
 
 	o MinGW and Cygwin will now build and link to mysqlpp DLLs.

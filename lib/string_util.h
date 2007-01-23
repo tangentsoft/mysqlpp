@@ -29,7 +29,7 @@
 #ifndef MYSQLPP_STRING_UTIL_H
 #define MYSQLPP_STRING_UTIL_H
 
-#include "defs.h"
+#include "common.h"
 
 #include <ctype.h>
 
@@ -44,34 +44,16 @@ MYSQLPP_EXPORT extern void strip(std::string& s);
 MYSQLPP_EXPORT extern void escape_string(std::string& s);
 
 /// \brief Changes case of string to upper
-inline void str_to_upr(std::string& s)
-{
-	for (unsigned int cnt=0; cnt < s.length(); cnt++) {
-		char c = s[cnt]; s[cnt]=toupper(c);
-	}
-}
+MYSQLPP_EXPORT extern void str_to_upr(std::string& s);
 
 /// \brief Changes case of string to lower
-inline void str_to_lwr (std::string& s)
-{
-	for (unsigned int cnt=0; cnt < s.length(); cnt++) {
-		char c = s[cnt]; s[cnt]=tolower(c);
-	}
-}
+MYSQLPP_EXPORT extern void str_to_lwr(std::string& s);
 
 /// \brief Removes all blanks
-inline void strip_all_blanks (std::string& s)
-{
-	for (unsigned int counter=0;counter < s.size();counter++)
-		if (s[counter] == ' ') { s.erase(counter,1); counter--;}
-}
+MYSQLPP_EXPORT extern void strip_all_blanks(std::string& s);
 
 /// \brief Removes all non-numerics
-inline void strip_all_non_num (std::string& s)
-{
-	for (unsigned int counter=0;counter < s.size();counter++)
-		if (!isdigit(s[counter])) { s.erase(counter,1); counter--;}
-}
+MYSQLPP_EXPORT extern void strip_all_non_num(std::string& s);
 
 } // end namespace mysqlpp
 

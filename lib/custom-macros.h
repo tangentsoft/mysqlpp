@@ -113,13 +113,15 @@
   template <mysqlpp::sql_dummy_type dummy> \
   int sql_compare_##NAME (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C2 , y.C2 ); \
   } \
   template <mysqlpp::sql_dummy_type dummy> \
   int compare (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C2 , y.C2 ); \
   }
 
@@ -161,15 +163,19 @@
   template <mysqlpp::sql_dummy_type dummy> \
   int sql_compare_##NAME (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C3 , y.C3 ); \
   } \
   template <mysqlpp::sql_dummy_type dummy> \
   int compare (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C3 , y.C3 ); \
   }
 
@@ -213,17 +219,23 @@
   template <mysqlpp::sql_dummy_type dummy> \
   int sql_compare_##NAME (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C4 , y.C4 ); \
   } \
   template <mysqlpp::sql_dummy_type dummy> \
   int compare (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C4 , y.C4 ); \
   }
 
@@ -269,19 +281,27 @@
   template <mysqlpp::sql_dummy_type dummy> \
   int sql_compare_##NAME (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C5 , y.C5 ); \
   } \
   template <mysqlpp::sql_dummy_type dummy> \
   int compare (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C5 , y.C5 ); \
   }
 
@@ -329,21 +349,31 @@
   template <mysqlpp::sql_dummy_type dummy> \
   int sql_compare_##NAME (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C6 , y.C6 ); \
   } \
   template <mysqlpp::sql_dummy_type dummy> \
   int compare (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C6 , y.C6 ); \
   }
 
@@ -393,23 +423,35 @@
   template <mysqlpp::sql_dummy_type dummy> \
   int sql_compare_##NAME (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C7 , y.C7 ); \
   } \
   template <mysqlpp::sql_dummy_type dummy> \
   int compare (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C7 , y.C7 ); \
   }
 
@@ -461,25 +503,39 @@
   template <mysqlpp::sql_dummy_type dummy> \
   int sql_compare_##NAME (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C8 , y.C8 ); \
   } \
   template <mysqlpp::sql_dummy_type dummy> \
   int compare (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C8 , y.C8 ); \
   }
 
@@ -533,27 +589,43 @@
   template <mysqlpp::sql_dummy_type dummy> \
   int sql_compare_##NAME (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C9 , y.C9 ); \
   } \
   template <mysqlpp::sql_dummy_type dummy> \
   int compare (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C9 , y.C9 ); \
   }
 
@@ -609,29 +681,47 @@
   template <mysqlpp::sql_dummy_type dummy> \
   int sql_compare_##NAME (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C10 , y.C10 ); \
   } \
   template <mysqlpp::sql_dummy_type dummy> \
   int compare (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C10 , y.C10 ); \
   }
 
@@ -689,31 +779,51 @@
   template <mysqlpp::sql_dummy_type dummy> \
   int sql_compare_##NAME (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C11 , y.C11 ); \
   } \
   template <mysqlpp::sql_dummy_type dummy> \
   int compare (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C11 , y.C11 ); \
   }
 
@@ -773,33 +883,55 @@
   template <mysqlpp::sql_dummy_type dummy> \
   int sql_compare_##NAME (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C12 , y.C12 ); \
   } \
   template <mysqlpp::sql_dummy_type dummy> \
   int compare (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C12 , y.C12 ); \
   }
 
@@ -861,35 +993,59 @@
   template <mysqlpp::sql_dummy_type dummy> \
   int sql_compare_##NAME (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C13 , y.C13 ); \
   } \
   template <mysqlpp::sql_dummy_type dummy> \
   int compare (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C13 , y.C13 ); \
   }
 
@@ -953,37 +1109,63 @@
   template <mysqlpp::sql_dummy_type dummy> \
   int sql_compare_##NAME (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C13 , y.C13 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C13 , y.C13 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C14 , y.C14 ); \
   } \
   template <mysqlpp::sql_dummy_type dummy> \
   int compare (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C13 , y.C13 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C13 , y.C13 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C14 , y.C14 ); \
   }
 
@@ -1049,39 +1231,67 @@
   template <mysqlpp::sql_dummy_type dummy> \
   int sql_compare_##NAME (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C13 , y.C13 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C14 , y.C14 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C13 , y.C13 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C14 , y.C14 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C15 , y.C15 ); \
   } \
   template <mysqlpp::sql_dummy_type dummy> \
   int compare (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C13 , y.C13 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C14 , y.C14 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C13 , y.C13 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C14 , y.C14 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C15 , y.C15 ); \
   }
 
@@ -1149,41 +1359,71 @@
   template <mysqlpp::sql_dummy_type dummy> \
   int sql_compare_##NAME (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C13 , y.C13 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C14 , y.C14 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C15 , y.C15 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C13 , y.C13 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C14 , y.C14 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C15 , y.C15 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C16 , y.C16 ); \
   } \
   template <mysqlpp::sql_dummy_type dummy> \
   int compare (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C13 , y.C13 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C14 , y.C14 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C15 , y.C15 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C13 , y.C13 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C14 , y.C14 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C15 , y.C15 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C16 , y.C16 ); \
   }
 
@@ -1253,43 +1493,75 @@
   template <mysqlpp::sql_dummy_type dummy> \
   int sql_compare_##NAME (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C13 , y.C13 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C14 , y.C14 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C15 , y.C15 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C16 , y.C16 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C13 , y.C13 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C14 , y.C14 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C15 , y.C15 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C16 , y.C16 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C17 , y.C17 ); \
   } \
   template <mysqlpp::sql_dummy_type dummy> \
   int compare (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C13 , y.C13 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C14 , y.C14 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C15 , y.C15 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C16 , y.C16 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C13 , y.C13 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C14 , y.C14 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C15 , y.C15 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C16 , y.C16 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C17 , y.C17 ); \
   }
 
@@ -1361,45 +1633,79 @@
   template <mysqlpp::sql_dummy_type dummy> \
   int sql_compare_##NAME (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C13 , y.C13 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C14 , y.C14 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C15 , y.C15 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C16 , y.C16 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C17 , y.C17 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C13 , y.C13 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C14 , y.C14 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C15 , y.C15 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C16 , y.C16 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C17 , y.C17 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C18 , y.C18 ); \
   } \
   template <mysqlpp::sql_dummy_type dummy> \
   int compare (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C13 , y.C13 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C14 , y.C14 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C15 , y.C15 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C16 , y.C16 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C17 , y.C17 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C13 , y.C13 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C14 , y.C14 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C15 , y.C15 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C16 , y.C16 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C17 , y.C17 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C18 , y.C18 ); \
   }
 
@@ -1473,47 +1779,83 @@
   template <mysqlpp::sql_dummy_type dummy> \
   int sql_compare_##NAME (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C13 , y.C13 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C14 , y.C14 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C15 , y.C15 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C16 , y.C16 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C17 , y.C17 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C18 , y.C18 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C13 , y.C13 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C14 , y.C14 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C15 , y.C15 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C16 , y.C16 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C17 , y.C17 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C18 , y.C18 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C19 , y.C19 ); \
   } \
   template <mysqlpp::sql_dummy_type dummy> \
   int compare (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C13 , y.C13 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C14 , y.C14 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C15 , y.C15 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C16 , y.C16 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C17 , y.C17 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C18 , y.C18 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C13 , y.C13 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C14 , y.C14 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C15 , y.C15 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C16 , y.C16 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C17 , y.C17 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C18 , y.C18 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C19 , y.C19 ); \
   }
 
@@ -1589,49 +1931,87 @@
   template <mysqlpp::sql_dummy_type dummy> \
   int sql_compare_##NAME (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C13 , y.C13 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C14 , y.C14 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C15 , y.C15 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C16 , y.C16 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C17 , y.C17 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C18 , y.C18 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C19 , y.C19 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C13 , y.C13 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C14 , y.C14 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C15 , y.C15 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C16 , y.C16 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C17 , y.C17 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C18 , y.C18 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C19 , y.C19 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C20 , y.C20 ); \
   } \
   template <mysqlpp::sql_dummy_type dummy> \
   int compare (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C13 , y.C13 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C14 , y.C14 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C15 , y.C15 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C16 , y.C16 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C17 , y.C17 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C18 , y.C18 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C19 , y.C19 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C13 , y.C13 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C14 , y.C14 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C15 , y.C15 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C16 , y.C16 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C17 , y.C17 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C18 , y.C18 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C19 , y.C19 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C20 , y.C20 ); \
   }
 
@@ -1709,51 +2089,91 @@
   template <mysqlpp::sql_dummy_type dummy> \
   int sql_compare_##NAME (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C13 , y.C13 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C14 , y.C14 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C15 , y.C15 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C16 , y.C16 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C17 , y.C17 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C18 , y.C18 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C19 , y.C19 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C20 , y.C20 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C13 , y.C13 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C14 , y.C14 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C15 , y.C15 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C16 , y.C16 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C17 , y.C17 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C18 , y.C18 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C19 , y.C19 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C20 , y.C20 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C21 , y.C21 ); \
   } \
   template <mysqlpp::sql_dummy_type dummy> \
   int compare (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C13 , y.C13 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C14 , y.C14 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C15 , y.C15 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C16 , y.C16 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C17 , y.C17 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C18 , y.C18 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C19 , y.C19 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C20 , y.C20 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C13 , y.C13 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C14 , y.C14 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C15 , y.C15 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C16 , y.C16 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C17 , y.C17 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C18 , y.C18 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C19 , y.C19 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C20 , y.C20 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C21 , y.C21 ); \
   }
 
@@ -1833,53 +2253,95 @@
   template <mysqlpp::sql_dummy_type dummy> \
   int sql_compare_##NAME (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C13 , y.C13 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C14 , y.C14 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C15 , y.C15 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C16 , y.C16 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C17 , y.C17 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C18 , y.C18 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C19 , y.C19 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C20 , y.C20 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C21 , y.C21 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C13 , y.C13 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C14 , y.C14 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C15 , y.C15 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C16 , y.C16 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C17 , y.C17 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C18 , y.C18 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C19 , y.C19 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C20 , y.C20 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C21 , y.C21 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C22 , y.C22 ); \
   } \
   template <mysqlpp::sql_dummy_type dummy> \
   int compare (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C13 , y.C13 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C14 , y.C14 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C15 , y.C15 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C16 , y.C16 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C17 , y.C17 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C18 , y.C18 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C19 , y.C19 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C20 , y.C20 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C21 , y.C21 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C13 , y.C13 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C14 , y.C14 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C15 , y.C15 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C16 , y.C16 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C17 , y.C17 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C18 , y.C18 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C19 , y.C19 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C20 , y.C20 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C21 , y.C21 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C22 , y.C22 ); \
   }
 
@@ -1961,55 +2423,99 @@
   template <mysqlpp::sql_dummy_type dummy> \
   int sql_compare_##NAME (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C13 , y.C13 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C14 , y.C14 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C15 , y.C15 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C16 , y.C16 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C17 , y.C17 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C18 , y.C18 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C19 , y.C19 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C20 , y.C20 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C21 , y.C21 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C22 , y.C22 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C13 , y.C13 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C14 , y.C14 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C15 , y.C15 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C16 , y.C16 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C17 , y.C17 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C18 , y.C18 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C19 , y.C19 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C20 , y.C20 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C21 , y.C21 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C22 , y.C22 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C23 , y.C23 ); \
   } \
   template <mysqlpp::sql_dummy_type dummy> \
   int compare (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C13 , y.C13 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C14 , y.C14 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C15 , y.C15 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C16 , y.C16 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C17 , y.C17 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C18 , y.C18 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C19 , y.C19 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C20 , y.C20 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C21 , y.C21 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C22 , y.C22 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C13 , y.C13 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C14 , y.C14 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C15 , y.C15 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C16 , y.C16 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C17 , y.C17 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C18 , y.C18 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C19 , y.C19 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C20 , y.C20 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C21 , y.C21 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C22 , y.C22 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C23 , y.C23 ); \
   }
 
@@ -2093,57 +2599,103 @@
   template <mysqlpp::sql_dummy_type dummy> \
   int sql_compare_##NAME (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C13 , y.C13 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C14 , y.C14 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C15 , y.C15 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C16 , y.C16 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C17 , y.C17 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C18 , y.C18 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C19 , y.C19 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C20 , y.C20 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C21 , y.C21 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C22 , y.C22 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C23 , y.C23 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C13 , y.C13 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C14 , y.C14 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C15 , y.C15 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C16 , y.C16 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C17 , y.C17 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C18 , y.C18 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C19 , y.C19 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C20 , y.C20 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C21 , y.C21 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C22 , y.C22 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C23 , y.C23 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C24 , y.C24 ); \
   } \
   template <mysqlpp::sql_dummy_type dummy> \
   int compare (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C13 , y.C13 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C14 , y.C14 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C15 , y.C15 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C16 , y.C16 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C17 , y.C17 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C18 , y.C18 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C19 , y.C19 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C20 , y.C20 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C21 , y.C21 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C22 , y.C22 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C23 , y.C23 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C13 , y.C13 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C14 , y.C14 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C15 , y.C15 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C16 , y.C16 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C17 , y.C17 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C18 , y.C18 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C19 , y.C19 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C20 , y.C20 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C21 , y.C21 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C22 , y.C22 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C23 , y.C23 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C24 , y.C24 ); \
   }
 
@@ -2229,59 +2781,107 @@
   template <mysqlpp::sql_dummy_type dummy> \
   int sql_compare_##NAME (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C13 , y.C13 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C14 , y.C14 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C15 , y.C15 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C16 , y.C16 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C17 , y.C17 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C18 , y.C18 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C19 , y.C19 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C20 , y.C20 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C21 , y.C21 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C22 , y.C22 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C23 , y.C23 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C24 , y.C24 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C13 , y.C13 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C14 , y.C14 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C15 , y.C15 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C16 , y.C16 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C17 , y.C17 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C18 , y.C18 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C19 , y.C19 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C20 , y.C20 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C21 , y.C21 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C22 , y.C22 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C23 , y.C23 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C24 , y.C24 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C25 , y.C25 ); \
   } \
   template <mysqlpp::sql_dummy_type dummy> \
   int compare (const NAME &x, const NAME &y) { \
     int cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C1 , y.C1 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C2 , y.C2 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C3 , y.C3 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C4 , y.C4 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C5 , y.C5 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C6 , y.C6 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C7 , y.C7 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C8 , y.C8 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C9 , y.C9 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C10 , y.C10 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C11 , y.C11 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C12 , y.C12 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C13 , y.C13 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C14 , y.C14 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C15 , y.C15 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C16 , y.C16 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C17 , y.C17 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C18 , y.C18 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C19 , y.C19 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C20 , y.C20 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C21 , y.C21 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C22 , y.C22 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C23 , y.C23 )) return cmp; \
-    if (cmp = mysqlpp::sql_cmp(x.C24 , y.C24 )) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C1 , y.C1 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C2 , y.C2 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C3 , y.C3 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C4 , y.C4 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C5 , y.C5 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C6 , y.C6 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C7 , y.C7 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C8 , y.C8 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C9 , y.C9 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C10 , y.C10 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C11 , y.C11 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C12 , y.C12 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C13 , y.C13 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C14 , y.C14 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C15 , y.C15 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C16 , y.C16 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C17 , y.C17 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C18 , y.C18 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C19 , y.C19 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C20 , y.C20 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C21 , y.C21 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C22 , y.C22 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C23 , y.C23 ); \
+    if (cmp) return cmp; \
+    cmp = mysqlpp::sql_cmp(x.C24 , y.C24 ); \
+    if (cmp) return cmp; \
     return mysqlpp::sql_cmp(x.C25 , y.C25 ); \
   }
 

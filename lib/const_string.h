@@ -29,11 +29,12 @@
 #ifndef MYSQLPP_CONST_STRING_H
 #define MYSQLPP_CONST_STRING_H
 
-#include "defs.h"
+#include "common.h"
 
+#include <algorithm>
+#include <iostream>
 #include <stdexcept>
 #include <string>
-#include <iostream>
 
 namespace mysqlpp {
 
@@ -46,7 +47,7 @@ namespace mysqlpp {
 /// by copying the pointer only.  Therefore, the object pointed to by
 /// that pointer needs to exist for at least as long as the const_string
 /// object that wraps it.
-class const_string
+class MYSQLPP_EXPORT const_string
 {
 public:
 	/// \brief Type of the data stored in this object, when it is not
@@ -77,13 +78,22 @@ public:
 
 	/// \brief Create empty string
 	const_string() :
-	str_data_("")
+	str_data_(""),
+	length_(0)
 	{
 	}
 	
 	/// \brief Initialize string from existing C string
 	const_string(const char* str) :
-	str_data_(str)
+	str_data_(str),
+	length_(strlen(str))
+	{
+	}
+	
+	/// \brief Initialize string from existing C string of known length
+	const_string(const char* str, size_type len) :
+	str_data_(str),
+	length_(len)
 	{
 	}
 	
@@ -91,53 +101,34 @@ public:
 	const_string& operator=(const char* str)
 	{
 		str_data_ = str;
+		length_ = strlen(str);
 		return *this;
 	}
 
+	/// \brief Return number of characters in the string
+	size_type length() const { return length_; }
+
 	/// \brief Return number of characters in string
-	size_type size() const
-	{
-		register int i = 0;
-		while (str_data_[i])
-			 i++;
-		 return i;
-	}
-	
+	size_type size() const { return length(); }
+
 	/// \brief Return iterator pointing to the first character of
 	/// the string
-	const_iterator begin() const
-	{
-		return str_data_;
-	}
+	const_iterator begin() const { return str_data_; }
 	
 	/// \brief Return iterator pointing to one past the last character
 	/// of the string.
-	const_iterator end() const
-	{
-		return str_data_ + size();
-	}
-	
-	/// \brief Return number of characters in the string
-	size_type length() const
-	{
-		return size();
-	}
+	const_iterator end() const { return str_data_ + size(); }
 	
 	/// \brief Return the maximum number of characters in the string.
 	///
 	/// Because this is a \c const string, this is just an alias for
 	/// size(); its size is always equal to the amount of data currently
 	/// stored.
-	size_type max_size() const
-	{
-		return size();
-	}
+	size_type max_size() const { return size(); }
 	
 	/// \brief Return a reference to a character within the string.
 	const_reference operator [](size_type pos) const
-	{
-		return str_data_[pos];
-	}
+			{ return str_data_[pos]; }
 	
 	/// \brief Return a reference to a character within the string.
 	///
@@ -151,18 +142,12 @@ public:
 			return str_data_[pos];
 	}
 	
-	/// \brief Return a const pointer to the string data,
-	/// null-terminated.
-	const char* c_str() const
-	{
-		return str_data_;
-	}
+	/// \brief Return a const pointer to the string data.  Not
+	/// necessarily null-terminated!
+	const char* c_str() const { return str_data_; }
 	
-	/// \brief Alias for c_str()
-	const char* data() const
-	{
-		return str_data_;
-	}
+	/// \brief Alias for \c c_str()
+	const char* data() const { return str_data_; }
 	
 	/// \brief Lexically compare this string to another.
 	///
@@ -173,17 +158,16 @@ public:
 	/// \retval >0 if str1 is lexically "greater than" str2
 	int compare(const const_string& str) const
 	{
-		const char* str1 = str_data_;
-		const char* str2 = str.str_data_;
-		while (*str1 == *str2 && (*str1 && *str2)) {
-			str1++;
-			str2++;
+		size_type i = 0, short_len = std::min(length(), str.length());
+		while ((i < short_len) && (str_data_[i] != str.str_data_[i])) {
+			++i;
 		}
-		return *str1 - *str2;
+		return str_data_[i] - str.str_data_[i];
 	}
 
 private:
 	const char* str_data_;
+	size_type length_;
 };
 
 

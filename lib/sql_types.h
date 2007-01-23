@@ -27,7 +27,7 @@
 #if !defined(MYSQLPP_SQL_TYPES_H)
 #define MYSQLPP_SQL_TYPES_H
 
-#include "defs.h"
+#include "common.h"
 #include "myset.h"
 
 #include <string>
@@ -62,7 +62,7 @@ typedef DateTime		sql_datetime;
 
 typedef std::string		sql_enum;
 
-typedef Set<std::string> sql_set;
+typedef Set<>			sql_set;
 
 typedef std::string		sql_blob;
 typedef std::string		sql_tinyblob;

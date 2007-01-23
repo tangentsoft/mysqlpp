@@ -56,16 +56,17 @@ bool dont_quote_auto = false;
 SQLQueryParms& operator <<(quote_type2 p, SQLString& in)
 {
 	if (in.is_string) {
+		SQLString in2;
 		if (in.dont_escape) {
-			SQLString in2 = '\'' + in + '\'';
-			 in2.processed = true;
-			 return *p.qparms << in2;
+			in2 = '\'' + in + '\'';
+			in2.processed = true;
+			return *p.qparms << in2;
 		}
 		else {
 			char* s = new char[in.size() * 2 + 1];
 			mysql_escape_string(s, in.c_str(),
 					static_cast<unsigned long>(in.size()));
-			SQLString in2 = SQLString('\'') + s + '\'';
+			in2 = SQLString('\'') + s + '\'';
 			in2.processed = true;
 			*p.qparms << in2;
 			delete[] s;
@@ -305,7 +306,8 @@ Query& operator <<(Query& o, const ColData_Tmpl<const_string>& in)
 SQLQueryParms& operator <<(quote_only_type2 p, SQLString& in)
 {
 	if (in.is_string) {
-		SQLString in2 = '\'' + in + '\'';
+		SQLString in2;
+		in2 = '\'' + in + '\'';
 		in2.processed = true;
 		return *p.qparms << in2;
 	}
@@ -363,7 +365,8 @@ ostream& operator <<(quote_only_type1 o,
 SQLQueryParms& operator <<(quote_double_only_type2 p, SQLString& in)
 {
 	if (in.is_string) {
-		SQLString in2 = "\"" + in + "\"";
+		SQLString in2;
+		in2 = "\"" + in + "\"";
 		in2.processed = true;
 		return *p.qparms << in2;
 	}
@@ -419,7 +422,7 @@ SQLQueryParms& operator <<(escape_type2 p, SQLString& in)
 		char* s = new char[in.size() * 2 + 1];
 		mysql_escape_string(s, in.c_str(), 
 				static_cast<unsigned long>(in.size()));
-		SQLString in2 = s;
+		SQLString in2(s);
 		in2.processed = true;
 		*p.qparms << in2;
 		delete[] s;

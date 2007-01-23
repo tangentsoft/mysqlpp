@@ -40,7 +40,7 @@ namespace mysqlpp {
 /// but internally we store the data as a \c char. Beware of integer
 /// overflows!
 
-class tiny_int
+class MYSQLPP_EXPORT tiny_int
 {
 public:
 	/// \brief Default constructor

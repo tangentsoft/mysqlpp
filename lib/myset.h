@@ -29,7 +29,7 @@
 #ifndef MYSQLPP_MYSET_H
 #define MYSQLPP_MYSET_H
 
-#include "defs.h"
+#include "common.h"
 
 #include "coldata.h"
 #include "stream2string.h"
@@ -43,19 +43,8 @@ namespace mysqlpp {
 #if !defined(DOXYGEN_IGNORE)
 // Doxygen will not generate documentation for this section.
 
-template <class T, class value_type = typename T::value_type>
-class ListInsert
-{
-public:
-	ListInsert(T* o) : object_(o) { }
-	void operator ()(const value_type& data) { object_->push_back(data); }
-
-private:
-	T* object_;
-};
-
 template <class T, class key_type = typename T::key_type>
-class SetInsert
+class MYSQLPP_EXPORT SetInsert
 {
 public:
 	SetInsert(T* o) : object_(o) { }
@@ -71,12 +60,6 @@ inline SetInsert< std::set<T> > set_insert(std::set<T>* o)
 	return SetInsert< std::set<T> >(o);
 }
 
-template <class T>
-inline ListInsert< std::vector<T> > set_insert(std::vector<T> *o)
-{
-	return ListInsert< std::vector<T> >(o);
-}
-
 template <class Insert>
 void set2container(const char* str, Insert insert);
 
@@ -86,9 +69,12 @@ void set2container(const char* str, Insert insert);
 /// \brief A special std::set derivative for holding MySQL data sets.
 
 template <class Container = std::set<std::string> >
-class Set : public Container
+class MYSQLPP_EXPORT Set : public Container
 {
 public:
+	/// \brief Default constructor
+	Set() {};
+
 	/// \brief Create object from a comma-separated list of values
 	Set(const char* str)
 	{
@@ -127,7 +113,7 @@ public:
 
 	/// \brief Convert this set's data to a string containing
 	/// comma-separated items.
-	operator std::string();
+	operator std::string() { return stream2string<std::string>(*this); }
 };
 
 
@@ -137,13 +123,6 @@ inline std::ostream& operator <<(std::ostream& s,
 		const Set<Container>& d)
 {
 	return d.out_stream(s);
-}
-
-
-template <class Container>
-inline Set<Container>::operator std::string()
-{
-	return stream2string<std::string>(*this);
 }
 
 

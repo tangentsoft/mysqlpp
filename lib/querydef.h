@@ -7,8 +7,6 @@
 #define MYSQLPP_QUERYDEF_H
 
 #define mysql_query_define0(RETURN, FUNC) \
-	RETURN FUNC(const SQLString& arg0) \
-		{ return FUNC(SQLQueryParms() << arg0); } \
 	RETURN FUNC(const SQLString& arg0, const SQLString& arg1) \
 		{ return FUNC(SQLQueryParms() << arg0 << arg1); } \
 	RETURN FUNC(const SQLString& arg0, const SQLString& arg1, const SQLString& arg2) \
@@ -59,7 +57,7 @@
 		{ return FUNC(SQLQueryParms() << arg0 << arg1 << arg2 << arg3 << arg4 << arg5 << arg6 << arg7 << arg8 << arg9 << arg10 << arg11 << arg12 << arg13 << arg14 << arg15 << arg16 << arg17 << arg18 << arg19 << arg20 << arg21 << arg22 << arg23 << arg24); } \
 
 #define mysql_query_define1(RETURN, FUNC) \
-	MYSQLPP_EXPORT RETURN FUNC(SQLQueryParms& p); \
+	RETURN FUNC(SQLQueryParms& p); \
 	mysql_query_define0(RETURN, FUNC)
 
 #define mysql_query_define2(FUNC) \

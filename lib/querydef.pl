@@ -6,9 +6,9 @@
 #	number limits the number of parameters a MySQL++ template query can
 #	accept.  This value can be changed from its default, below.
 #
-# Copyright (c) 2006 by Educational Technology Resources, Inc.  Others
-# may also hold copyrights on code in this file.  See the CREDITS file
-# in the top directory of the distribution for details.
+# Copyright (c) 2006-2007 by Educational Technology Resources, Inc.
+# Others may also hold copyrights on code in this file.  See the CREDITS
+# file in the top directory of the distribution for details.
 #
 # This file is part of MySQL++.
 #
@@ -55,7 +55,7 @@ print OUT << "---";
 
 ## Build mysql_query_define0 macro
 print OUT "#define mysql_query_define0(RETURN, FUNC) \\\n";
-for (my $i = 0; $i < $max_parameters; ++$i) {
+for (my $i = 1; $i < $max_parameters; ++$i) {
 	print OUT "\tRETURN FUNC(";
 	for (my $j = 0; $j < $i + 1; ++$j) {
 		print OUT 'const SQLString& arg', $j;
@@ -74,7 +74,7 @@ for (my $i = 0; $i < $max_parameters; ++$i) {
 print OUT << "---";
 
 #define mysql_query_define1(RETURN, FUNC) \\
-	MYSQLPP_EXPORT RETURN FUNC(SQLQueryParms& p); \\
+	RETURN FUNC(SQLQueryParms& p); \\
 	mysql_query_define0(RETURN, FUNC)
 ---
 

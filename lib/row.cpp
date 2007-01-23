@@ -71,7 +71,9 @@ Row::size_type Row::size() const
 const ColData Row::at(size_type i) const
 {
 	if (initialized_) {
-		return ColData(data_.at(i).c_str(), res_->types(i), is_nulls_[i]);
+		const std::string& s = data_.at(i);
+		return ColData(s.c_str(), s.length(), res_->types(i),
+				is_nulls_[i]);
 	}
 	else {
 		if (throw_exceptions())

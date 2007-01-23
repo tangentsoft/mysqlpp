@@ -40,7 +40,10 @@
 
 namespace mysqlpp {
 
-class NoExceptions;
+#if !defined(DOXYGEN_IGNORE)
+// Make Doxygen ignore this
+class MYSQLPP_EXPORT NoExceptions;
+#endif
 
 /// \brief Interface allowing a class to have optional exceptions.
 ///
@@ -48,7 +51,7 @@ class NoExceptions;
 /// disabling exceptions, possibly only temporarily.  By default,
 /// exceptions are enabled.
 
-class OptionalExceptions
+class MYSQLPP_EXPORT OptionalExceptions
 {
 public:
 	/// \brief Default constructor
@@ -96,7 +99,7 @@ private:
 /// exception state, and disable exceptions. On destruction, we restore
 /// our associate's previous state.
 
-class NoExceptions
+class MYSQLPP_EXPORT NoExceptions
 {
 public:
 	/// \brief Constructor

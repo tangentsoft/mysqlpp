@@ -49,29 +49,67 @@ Submitting Patches
 
 Adding Support for a Different Compiler
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	MySQL++ now uses the Bakefile system for creating project
-	files and makefiles.  This allows us to make changes to a
-	single set of files, and have the proper changes be made
-	to all generated project files and makefiles.  In the past,
-	we used more ad-hoc systems, and we'd frequently forget to
-	update individual project files and makefiles, so at any
-	given time, at least one target was likely to be broken.
+	MySQL++ uses the Bakefile system for creating project files
+	and makefiles.	This allows us to make changes to a single set
+	of files, and have the proper changes be made to all generated
+	project files and makefiles.  In the past, we used more ad-hoc
+	systems, and we'd frequently forget to update individual project
+	files and makefiles, so at any given time, at least one target
+	was likely to be broken.
 
-	If MySQL++ doesn't currently ship with project files or
-	makefiles tuned for your compiler of choice, you need
-	to work through the Bakefile mechanism to add support.
-	We're not willing to do ad-hoc platform support any more,
-	so please don't ask if you can send us project files instead;
-	we don't want them.
+	If MySQL++ doesn't currently ship with project files or makefiles
+	tuned for your compiler of choice, you need to work through
+	the Bakefile mechanism to add support.	We're not willing to
+	do ad-hoc platform support any more, so please don't ask if you
+	can send us project files instead; we don't want them.
 
-	If you want to port MySQL++ to another platform, we need to
-	be confident that the entire library works on your platform
-	before we'll accept patches.  In the past, we've had broken
-	ports that were missing important library features, or
-	that crashed when built in certain ways.  Few people will
-	knowingly use a crippled version of MySQL++, since there are
-	usually acceptable alternatives.  Therefore, such ports become
-	maintenance baggage with little compensating value.
+	If you want to port MySQL++ to another platform, we need to be
+	confident that the entire library works on your platform before
+	we'll accept patches.  In the past, we've had broken ports
+	that were missing important library features, or that crashed
+	when built in certain ways.  Few people will knowingly use a
+	crippled version of MySQL++, since there are usually acceptable
+	alternatives.  Therefore, such ports become maintenance baggage
+	with little compensating value.
+
+
+On Manipulating the Bakefiles and Autoconf Files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	If you're on a Unixy platform and change any of mysql++.bkl,
+	configure.ac, or config/*, you must re-run the bootstrap
+	script to regenerate the build files.  The bootstrap script
+	also has other functions:
+
+		$ ./bootstrap [pedantic] [noexamples] [nolibrary] [configure options]
+
+	If you pass 'pedantic' to the bootstrap script, it will set
+	up the autoconf build system so it turns on all of GCC's
+	warnings and such.  It's useful to build the library in this
+	mode when making changes to make sure there are no obvious
+	problems with the code.
+
+	If you pass 'noexamples', the generated Makefiles and project
+	files won't try to build any of the examples.
+
+	If you pass 'nolibrary', the generated Makefiles and project
+	files won't try to build the MySQL++ library.
+
+	You can pass any of the previous options in any order.
+	As soon as the bootstrap script sees an option that it
+	doesn't understand, it stops processing the command line.
+	Any subsequent options are passed to the configure script.
+	See README.unix for more on configure script options.
+
+	If you're on Windows and you change the Bakefile (mysql++.bkl),
+	re-generating the Makefiles and project files from it is
+	a little tricky.  The above procedure doesn't work because
+	the native Win32 port of Bakefile is incomplete, and Bakefile
+	doesn't build correctly under Cygwin.  Therefore, you need to
+	run the bakefile program directly.  You'll use one of these
+	two commands, depending on which compiler you're using:
+
+		C:\> bakefile -f msvc6prj mysql++.bkl
+		C:\> bakefile -f mingw -o Makefile.mingw mysql++.bkl
 
 
 Maintaining a Private CVS Repository
@@ -98,30 +136,4 @@ Maintaining a Private CVS Repository
 
 		$ cvs rdiff -ru mysql++-1_7_35 -r mysql++-1_7_35_equal_list \
 			$(cat CVS/Repository) > equal_list.patch
-
-
-On Manipulating the Bakefiles and Autoconf Files
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	If change any of the Bakefiles (*.bkl) or the autoconf stuff
-	(configure.ac and everything in the config subdir), you need
-	to run the command:
-
-		$ ./bootstrap [pedantic] [noexamples] [configure options]
-
-	This command rebuilds all of the project files and makefiles
-	that depend on the Bakefiles and Autoconf stuff.
-
-	If you pass 'pedantic' to the bootstrap script, it will set
-	up the autoconf build system so it turns on all of GCC's
-	warnings and such.  It's useful to build the library in this
-	mode when making changes to make sure there are no obvious
-	problems with the code.
-
-	If you pass 'noexamples', the examples won't be built.
-
-	You can pass any of the previous options in any order.
-	As soon as the bootstrap script sees an options that it
-	doesn't understand, it stops processing the command line.
-	Any subsequent options are passed (indirectly) to the configure
-	script.  See README.unix for more on configure script options.
 

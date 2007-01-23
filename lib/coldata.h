@@ -7,7 +7,7 @@
 
 /***********************************************************************
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ MySQL AB, and (c) 2004-2007 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -32,11 +32,10 @@
 #ifndef MYSQLPP_COLDATA_H
 #define MYSQLPP_COLDATA_H
 
-#include "platform.h"
+#include "common.h"
 
 #include "const_string.h"
 #include "convert.h"
-#include "defs.h"
 #include "exceptions.h"
 #include "null.h"
 #include "string_util.h"
@@ -84,7 +83,7 @@ namespace mysqlpp {
 /// than a trivial implementation would allow.
 
 template <class Str>
-class ColData_Tmpl : public Str
+class MYSQLPP_EXPORT ColData_Tmpl : public Str
 {
 public:
 	/// \brief Default constructor
@@ -111,7 +110,7 @@ public:
 	{
 	}
 
-	/// \brief Full constructor.
+	/// \brief Null-terminated C string version of full ctor
 	///
 	/// \param str the string this object represents
 	/// \param t MySQL type information for data within str
@@ -126,25 +125,32 @@ public:
 	{
 	}
 
-	/// \brief Get this object's current MySQL type.
-	mysql_type_info type() const
+	/// \brief Full constructor.
+	///
+	/// \param str the string this object represents
+	/// \param len the length of the string; embedded nulls are legal
+	/// \param t MySQL type information for data within str
+	/// \param n if true, str is a SQL null
+	explicit ColData_Tmpl(const char* str, typename Str::size_type len,
+			mysql_type_info t = mysql_type_info::string_type,
+			bool n = false) :
+	Str(str, len),
+	type_(t),
+	buf_(str),
+	null_(n)
 	{
-		return type_;
 	}
+
+	/// \brief Get this object's current MySQL type.
+	mysql_type_info type() const { return type_; }
 
 	/// \brief Returns true if data of this type should be quoted, false
 	/// otherwise.
-	bool quote_q() const
-	{
-		return type_.quote_q();
-	}
+	bool quote_q() const { return type_.quote_q(); }
 
 	/// \brief Returns true if data of this type should be escaped, false
 	/// otherwise.
-	bool escape_q() const
-	{
-		return type_.escape_q();
-	}
+	bool escape_q() const { return type_.escape_q(); }
 	
 	/// \brief Template for converting data from one type to another.
 	template <class Type> Type conv(Type dummy) const;
@@ -156,10 +162,7 @@ public:
 	inline const bool is_null() const { return null_; }
 	
 	/// \brief Returns the string form of this object's data.
-	inline const std::string& get_string() const
-	{
-		return buf_;
-	}
+	inline const std::string& get_string() const { return buf_; }
 	
 	/// \brief Returns a const char pointer to the string form of
 	/// this object's data.
@@ -287,8 +290,6 @@ operator_binary_int(ulonglong, ulonglong)
 #endif
 #endif // NO_BINARY_OPERS
 
-/// \endif
-
 /// \brief Converts this object to a SQL null
 ///
 /// Returns a copy of the global null object if the string data held by
@@ -314,7 +315,7 @@ Type ColData_Tmpl<Str>::conv(Type /* dummy */) const
 {
 	std::string strbuf = buf_;
 	strip_all_blanks(strbuf);
-	size_t len = strbuf.size();
+	std::string::size_type len = strbuf.size();
 	const char* str = strbuf.c_str();
 	const char* end = str;
 	Type num = mysql_convert<Type>(str, end);

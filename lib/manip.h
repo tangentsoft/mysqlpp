@@ -42,7 +42,7 @@
 #ifndef MYSQLPP_MANIP_H
 #define MYSQLPP_MANIP_H
 
-#include "defs.h"
+#include "common.h"
 
 #include "datetime.h"
 #include "myset.h"
@@ -614,7 +614,7 @@ MYSQLPP_EXPORT SQLQueryParms& operator <<(do_nothing_type2 p,
 /// The 'ignore' manipulator.
 ///
 /// Only valid when used with SQLQueryParms. It's a dummy manipulator
-/// like the <a href="#do_nothing_manip>do_nothing manipulator</a>,
+/// like the <a href="#do_nothing_manip">do_nothing manipulator</a>,
 /// except that it will not override formatting set by the template
 /// query.  It is simply ignored.
 

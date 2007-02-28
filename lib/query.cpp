@@ -32,7 +32,7 @@
 namespace mysqlpp {
 
 Query::Query(Connection* c, bool te) :
-#if defined(_MSC_VER) && !defined(_STLP_VERSION)
+#if defined(_MSC_VER) && !defined(_STLP_VERSION) && !defined(_STLP_VERSION_STR)
 // prevents a double-init memory leak in native VC++ RTL (not STLport!)
 std::ostream(std::_Noinit), 
 #else
@@ -349,11 +349,9 @@ Query::pprepare(char option, SQLString& S, bool replace)
 char*
 Query::preview_char()
 {
-	*this << std::ends;
-	size_t length = sbuffer_.str().size();
-	char* s = new char[length + 1];
-	strncpy(s, sbuffer_.str().c_str(), length);
-	s[length] = '\0';
+	const std::string& str(sbuffer_.str());
+	char* s = new char[str.size() + 1];
+	memcpy(s, str.c_str(), str.size() + 1); 
 	return s;
 }
 
@@ -545,8 +543,6 @@ Query::str(SQLQueryParms& p)
 	if (!parse_elems_.empty()) {
 		proc(p);
 	}
-
-	*this << std::ends;
 
 	return sbuffer_.str();
 }

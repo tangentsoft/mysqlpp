@@ -18,6 +18,11 @@ v2.3 Plan
 	list and help discuss it.  Or even better, provide a patch;
 	we rarely reject working code outright.
 
+	o Extend the manipulators to handle nullable versions of
+	  the types we already support.  Should just be a matter of
+	  duplicating the existing type-specific manipulator functions,
+	  and wrapping the types in Null<>.
+
 	o Update examples/cgi_image and examples/load_file to use new
 	  binary-aware ColData, const_string and Query classes.
 

@@ -1,3 +1,26 @@
+2.2.1, 2007.02.28 (r1433)
+
+	o Fixed the new localtime() alternative selection code
+	  for VS2003 and various uses of STLport.
+
+	o No longer inserting a null character into the query stream
+	  on calling one of the preview() functions.  This was harmless
+	  in v2.1, which used C strings more extensively, but began
+	  causing problems in v2.2 due to its wider use of C++ strings.
+
+	o Fixed a bug in the Connection copy ctor where it didn't
+	  completely initialize the object.
+
+	o Optimized Query::preview_char() a bit.  Patch by Jonathan
+	  Wakely.
+
+	o Reordered directory list used by autconf when locating the
+	  MySQL C API library.	The list is now ordered with the
+	  most likely locations for the library first, so we're less
+	  distracted by incorrect libraries.  This fixes a specific
+	  build error under RHEL4 with recent versions of MySQL 5.0.
+
+
 2.2.0, 2007.01.23 (r1417)
 
 	o ColData, const_string, and SQLString can now be constructed

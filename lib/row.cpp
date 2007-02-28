@@ -44,10 +44,12 @@ initialized_(false)
 			return;
 		}
 	}
+
 	data_.clear();
 	is_nulls_.clear();
 	initialized_ = true;
-	for (unsigned int i = 0; i < size(); i++) {
+
+	for (size_type i = 0; i < size(); ++i) {
 		data_.insert(data_.end(),
 				(d[i] ?  std::string(d[i], jj[i]) : std::string("NULL")));
 		is_nulls_.insert(is_nulls_.end(), d[i] ? false : true);

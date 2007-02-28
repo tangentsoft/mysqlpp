@@ -80,7 +80,7 @@ rm -f doc/README.examples doc/LICENSE
 
 %files manuals
 %defattr(-,root,root)
-#%doc doc/*.pdf doc/refman doc/userman
+%doc doc/*.pdf doc/refman doc/userman
 
 %changelog
 * Sat Apr 30 2005 Warren Young <mysqlpp@etr-usa.com> 1.7.34-1

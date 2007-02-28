@@ -136,7 +136,8 @@ connecting_(false)
 
 Connection::Connection(const Connection& other) :
 OptionalExceptions(),
-Lockable(false)
+Lockable(false),
+is_connected_(false)
 {
 	copy(other);
 }

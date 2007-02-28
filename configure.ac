@@ -14,7 +14,7 @@
 # USA
 
 # Standard autotools stuff
-AC_INIT(mysql++, 2.2.0, plusplus@lists.mysql.com, mysql++)
+AC_INIT(mysql++, 2.2.1, plusplus@lists.mysql.com, mysql++)
 AC_CONFIG_HEADER(config.h)
 AC_DISABLE_STATIC
 AC_CANONICAL_SYSTEM
@@ -33,12 +33,8 @@ AC_SUBST(MYSQLPP_VERSION_BUGFIX)
 AC_BAKEFILE([m4_include(config/autoconf_inc.m4)])
 
 
-# Checks for build system tools
-AC_PROG_CC
-AC_PROG_CXX
-
-
 # Check for Standard C support
+AC_PROG_CC
 AC_HEADER_STDC
 
 
@@ -63,14 +59,8 @@ LIB_SOCKET_NSL
 MYSQL_API_LOCATION
 MYSQL_SHUTDOWN_ARG
 MYSQL_WITH_SSL
+AX_C_LOCALTIME_R
 AC_CHECK_LIB(intl, main)
-
-
-# Check for Standard C++ support, and extensions.  This must be near
-# the end, because the CPLUSPLUS directive makes autoconf use C++
-# compiler for all subsequent tests!
-AC_LANG_CPLUSPLUS
-STL_SLIST_EXTENSION
 
 
 # If this is Cygwin, add a linker flag to suppress a silly link message.
@@ -79,6 +69,14 @@ case "${host}" in
 		LDFLAGS="$LDFLAGS -Wl,--enable-auto-import"
 		;;
 esac
+
+
+# Check for Standard C++ support, and extensions.  This must be near
+# the end, because the CPLUSPLUS directive makes autoconf use C++
+# compiler for all subsequent tests!
+AC_PROG_CXX
+AC_LANG_CPLUSPLUS
+STL_SLIST_EXTENSION
 
 
 #

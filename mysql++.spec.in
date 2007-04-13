@@ -1,12 +1,14 @@
-Summary: C++ wrapper for the MySQL C API
-Name: @PACKAGE_NAME@
-Version: @PACKAGE_VERSION@
-Release: 1
-Copyright: LGPL
-Group: Development/Databases
-Requires: MySQL-shared
-Source: http://tangentsoft.net/mysql++/releases/mysql++-%{version}.tar.gz
-BuildRoot: /var/tmp/%{name}-buildroot
+Summary:    C++ wrapper for the MySQL C API
+Name:       @PACKAGE_NAME@
+Version:    @PACKAGE_VERSION@
+Release:    1%{?dist}
+License:    LGPL
+Group:      Development/Libraries
+URL:        http://tangentsoft.net/mysql++/
+Source0:    http://tangentsoft.net/mysql++/releases/mysql++-%{version}.tar.gz
+BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root
+BuildRequires: MySQL-shared mysql-devel
+
 %description
 MySQL++ makes working with MySQL server queries as easy as working
 with STL containers.  This package contains only the libraries needed to
@@ -14,75 +16,116 @@ run MySQL++-based programs.  If you are building your own MySQL++-based
 programs, you also need to install the -devel package.
 
 %package devel
-Summary: MySQL++ developer files (headers, examples, etc.)
-Group: Development/Databases
-Requires: mysql++
+Summary:   MySQL++ developer files (headers, examples, etc.)
+Group:     Development/Libraries
+Requires:  mysql++ = %{version}-%{release}
+
 %description devel
 These are the files needed to compile MySQL++ based programs, plus
 some sample code to get you started.  If you aren't building your own
 programs, you probably don't need to install this package.
 
 %package manuals
-Summary: MySQL++ user and reference manuals
-Group: Development/Databases
+Summary:   MySQL++ user and reference manuals
+Group:     Development/Libraries
+
 %description manuals
 This is the MySQL++ documentation.  It's a separate RPM just because
 it's so large, and it doesn't change with every release.
 
 %prep
 %setup -q
-./configure --prefix=/usr --disable-dependency-tracking
 
 %build
-%{__make} RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
+%configure --disable-dependency-tracking
+%{__make} %{?_smp_mflags}
 
 %install
-rm -rf $RPM_BUILD_ROOT
-BDIR=$RPM_BUILD_ROOT/usr
-LIBDIR=$BDIR/lib
-INCDIR=$BDIR/include
-EXDIR=$BDIR/src/mysql++/examples
-mkdir -p $LIBDIR
-mkdir -p $INCDIR
-mkdir -p $EXDIR
-%{__make} install DESTDIR=$RPM_BUILD_ROOT
-install -m644 examples/*.{cpp,h} exrun $EXDIR
-install -m644 Makefile.simple $EXDIR/Makefile
-cp README.examples doc
-cp LICENSE doc
-mv doc/README.mysql++ doc/README
-mv $LIBDIR/*.so $LIBDIR/libmysqlpp.so.%{version}
+rm -rf %{buildroot} doc/examples
+
+%{__mkdir_p} %{buildroot}{%{_libdir},%{_includedir}}
+
+%{__make} DESTDIR=%{buildroot} install
+
+# Copy example programs to doc directory
+%{__mkdir_p} doc/examples
+%{__install} -m644 examples/*.{cpp,h} doc/examples/
+
+# Fix up simple example Makefile to allow it to build on the install
+# system, as opposed to the system where the Makefile was created.
+%{__sed} -e 's@./examples/@@' \
+  -e 's@^CPPFLAGS =.*$@CPPFLAGS = $(shell mysql_config --cflags)@' \
+  -e 's@^LDFLAGS =.*$@LDFLAGS = $(shell mysql_config --libs)@' \
+  -e 's@ -Ilib -I/usr/include/mysql@@' \
+  Makefile.simple > doc/examples/Makefile
 
 %clean
-rm -rf $RPM_BUILD_ROOT
-rm -f doc/README.examples doc/LICENSE
+rm -rf %{buildroot} doc/examples
 
-%post
-	ln -sf /usr/lib/libmysqlpp.so.%{version} /usr/lib/libmysqlpp.so
-	/sbin/ldconfig
+%post -p /sbin/ldconfig 
 
-%postun
-	rm /usr/lib/libmysqlpp.so
-	/sbin/ldconfig
+%postun -p /sbin/ldconfig
 
 %files
-%defattr(-,root,root)
-%doc doc/LICENSE doc/README
-
-/usr/lib/libmysqlpp.*
+%defattr(-,root,root,-)
+%doc ChangeLog COPYING CREDITS LICENSE README
+%{_libdir}/libmysqlpp.so.*
 
 %files devel
-%defattr(-,root,root)
-%doc doc/README.devel doc/README.examples
-
-/usr/include/mysql++
-/usr/src/mysql++/examples
+%defattr(-,root,root,-)
+%doc doc/examples doc/README.devel README.examples Wishlist
+%{_includedir}/mysql++
+%{_libdir}/libmysqlpp.so
 
 %files manuals
-%defattr(-,root,root)
-%doc doc/*.pdf doc/refman doc/userman
+%defattr(-,root,root,-)
+%doc doc/*.pdf doc/html doc/README.manuals
 
 %changelog
+* Mon Mar 19 2007 Warren Young <mysqlpp@etr-usa.com> 2.2.1-4
+- Reorganized locations of generated documentation
+
+* Mon Mar 19 2007 Warren Young <mysqlpp@etr-usa.com> 2.2.1-3
+- Merge of Remi Collet's spec file with official one
+
+* Sun Mar 18 2007 Remi Collet <rpms@FamilleCollet.com> 2.2.1-2
+- find perm on common.h
+- soname mysql++-2.2.1-bkl.patch
+
+* Wed Feb 28 2007 Remi Collet <rpms@FamilleCollet.com> 2.2.1-1
+- Initial spec for Extras
+
+* Wed Feb 28 2007 Remi Collet <rpms@FamilleCollet.com> 2.2.1-1.fc{3-6}.remi
+- update to version 2.2.1
+
+* Thu Jan 25 2007 Remi Collet <rpms@FamilleCollet.com> 2.2.0-1.fc{3-6}.remi
+- update to version 2.2.0
+
+* Mon Nov 13 2006 Remi Collet <rpms@FamilleCollet.com> 2.1.1.fc6.remi
+- FC6.x86_64 build
+- dynamic (sed) patch for Makefile (use mysql_config)
+
+* Thu Nov 02 2006 Remi Collet <rpms@FamilleCollet.com> 2.1.1.fc6.remi
+- FC6 build
+
+* Sat Apr  8 2006 Remi Collet <rpms@FamilleCollet.com> 2.1.1.fc{3,4,5}.remi
+- update to version 2.1.1
+
+* Sat Nov 26 2005 Remi Collet <remi.collet@univ-reims.fr> 2.0.7-1.fc3.remi - 2.0.7-1.fc4.remi
+- update to version 2.0.4
+- build with mysql-5.0.15 (requires libmysqlclient.so.15)
+
+* Sun Sep  4 2005 Remi Collet <remi.collet@univ-reims.fr> 2.0.4-1.FC4.remi
+- version 2.0.4
+
+* Sat Aug 20 2005 Remi Collet <remi.collet@univ-reims.fr> 2.0.2-1.FC4.remi
+- built for FC4
+- spec cleanning...
+
+* Thu Jun 16 2005 Remi Collet <Remi.Collet@univ-reims.fr> 1.7.40-1.FC3.remi
+- built for FC3 and MySQL 4.1.11
+- examples in /usr/share/doc/mysql++-%%{version}/examples
+
 * Sat Apr 30 2005 Warren Young <mysqlpp@etr-usa.com> 1.7.34-1
 - Split manuals out into their own sub-package.
 

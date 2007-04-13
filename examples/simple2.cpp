@@ -3,7 +3,7 @@
  	using a "store" query, and prints it out.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ MySQL AB, and (c) 2004-2007 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -59,12 +59,10 @@ main(int argc, char *argv[])
 				"Date" << endl << endl;
 
 		// Get each row in result set, and print its contents
-		char buf[100];
 		mysqlpp::Row row;
 		mysqlpp::Row::size_type i;
 		for (i = 0; row = res.at(i); ++i) {
-			cout << setw(20) <<
-					utf8trans(row["item"], buf, sizeof(buf)) << ' ' <<
+			cout << setw(20) << row["item"] << ' ' <<
 					setw(9) << row["num"] << ' ' <<
 					setw(9) << row["weight"] << ' ' <<
 					setw(9) << row["price"] << ' ' <<

@@ -75,7 +75,7 @@ namespace mysqlpp {
 /// the result would be 14 because 2 is an integer, and C++'s type
 /// conversion rules put the ColData object in an integer context.
 ///
-/// If these automatic conversions scare you, define the micro
+/// If these automatic conversions scare you, define the macro
 /// NO_BINARY_OPERS to disable this behavior.
 ///
 /// This class also has some basic information about the type of data

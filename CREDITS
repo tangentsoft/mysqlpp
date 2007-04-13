@@ -18,9 +18,6 @@ Other contributors of note since 1.7.10:
 	Also, if there were a "steering committee" for MySQL++, he'd be
 	on it.
 
-	Totte Karlsson <tkarlsson@qm.com>: Primary force behind Borland
-	C++ Builder support.
-
 	Mark Meredino <Mark_Merendino@cnt.com>: Several fixes and
 	additions, including a lot of work on Microsoft Visual C++
 	compatibility, and discoveries made while spelunking in the
@@ -35,6 +32,10 @@ Other contributors of note since 1.7.10:
 
 	Korolyov Ilya has submitted several patches in many different
 	areas of the library.
+
+	Remi Collet <Liste@FamilleCollet.com> is maintaining offical
+	RPMs for Fedora, with other systems on the way.  His work has
+	improved the RPM spec file we distribute greatly.
 
 
 Here are the personal credits from the old 1.7.9 documentation,

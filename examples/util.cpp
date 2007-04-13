@@ -29,7 +29,6 @@
 
 #include <iostream>
 #include <iomanip>
-#include <stdlib.h>
 
 // This include isn't needed by util module.  It's just a test of the
 // new SSQLS feature allowing the structure to be defined in many
@@ -44,51 +43,6 @@
 using namespace std;
 
 const char* kpcSampleDatabase = "mysql_cpp_data";
-
-
-//// utf8trans /////////////////////////////////////////////////////////
-// Converts a Unicode string encoded in UTF-8 form (which the MySQL
-// database uses) to a form suitable for outputting to the standard C++
-// cout stream.  Functionality is platform-specific.
-
-char*
-utf8trans(const char* utf8_str, char* out_buf, int buf_len)
-{
-#ifdef MYSQLPP_PLATFORM_WINDOWS
-	// It's Win32, so assume console output, where output needs to be in
-	// local ANSI code page by default.
-	wchar_t ucs2_buf[100];
-	static const int ub_chars = sizeof(ucs2_buf) / sizeof(ucs2_buf[0]);
-
-	// First, convert UTF-8 string to UCS-2
-	if (MultiByteToWideChar(CP_UTF8, 0, utf8_str, -1,
-			ucs2_buf, ub_chars) > 0) {
-		// Next, convert UCS-2 to local code page.
-		CPINFOEX cpi;
-		GetCPInfoEx(CP_OEMCP, 0, &cpi);
-		WideCharToMultiByte(cpi.CodePage, 0, ucs2_buf, -1,
-				out_buf, buf_len, 0, 0);
-		return out_buf;
-	}
-	else {
-		int err = GetLastError();
-		if (err == ERROR_NO_UNICODE_TRANSLATION) {
-			cerr << "Bad data in UTF-8 string" << endl;
-		}
-		else {
-			cerr << "Unknown error in Unicode translation: " <<
-					GetLastError() << endl;
-		}
-		return 0;
-	}
-#else
-	// Assume a modern Unixy platform, where the system's terminal I/O
-	// code handles UTF-8 directly.  (e.g. common Linux distributions
-	// since 2001 or so, recent versions of Mac OS X, etc.)
-	strncpy(out_buf, utf8_str, buf_len);
-	return out_buf;
-#endif
-}
 
 
 //// print_stock_header ////////////////////////////////////////////////
@@ -116,11 +70,8 @@ print_stock_row(const mysqlpp::sql_char& item, mysqlpp::sql_bigint num,
 		mysqlpp::sql_double weight, mysqlpp::sql_double price,
 		const mysqlpp::sql_date& date)
 {
-	// We do UTF-8 translation on item field because there is Unicode
-	// data in this field in the sample database, and some systems
-	// cannot handle UTF-8 sent directly to cout.
 	char buf[100];
-	cout << setw(20) << utf8trans(item.c_str(), buf, sizeof(buf)) << ' ' <<
+	cout << setw(20) << item << ' ' <<
 			setw(9) << num << ' ' <<
 			setw(9) << weight << ' ' <<
 			setw(9) << price << ' ' <<
@@ -218,6 +169,32 @@ print_stock_table(mysqlpp::Query& query)
 }
 
 
+//// print_usage ///////////////////////////////////////////////////////
+// Show the program's usage message
+
+void
+print_usage(const char* program_name, const char* extra_parms)
+{
+	cout << "usage: " << program_name <<
+			" [host [user [password [port]]]] " << extra_parms << endl;
+	cout << endl;
+	cout << "    If no arguments are given, connects to database "
+			"server on localhost" << endl;
+	cout << "    using your user name and no password.  You may give "
+			"any number of" << endl;
+	cout << "    these arguments, but they must be in the order "
+			"listed, and you" << endl;
+	cout << "    cannot skip preceding arguments." << endl;
+	if (strlen(extra_parms) > 0) {
+		cout << endl;
+		cout << "    The extra parameter " << extra_parms <<
+				" is required, regardless of which" << endl;
+		cout << "    other arguments you pass." << endl;
+	}
+	cout << endl;
+}
+
+
 //// connect_to_db /////////////////////////////////////////////////////
 // Establishes a connection to a MySQL database server, optionally
 // attaching to database kdb.  This is basically a command-line parser
@@ -238,17 +215,7 @@ connect_to_db(int argc, char *argv[], mysqlpp::Connection& con,
 	}
 
 	if ((argc > 1) && (argv[1][0] == '-')) {
-		cout << "usage: " << argv[0] <<
-				" [host] [user] [password] [port]" << endl;
-		cout << endl << "\tConnects to database ";
-		if (strlen(kdb) > 0) {
-			cout << '"' << kdb << '"';
-		}
-		else {
-			cout << "server";
-		}
-		cout << " on localhost using your user" << endl;
-		cout << "\tname and no password by default." << endl << endl;
+		print_usage(argv[0]);
 		return false;
 	}
 

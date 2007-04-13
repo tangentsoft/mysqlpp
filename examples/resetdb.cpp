@@ -52,7 +52,9 @@ main(int argc, char *argv[])
 	mysqlpp::Connection con;
 	try {
 		cout << "Connecting to database server..." << endl;
-		connect_to_db(argc, argv, con, "");
+		if (!connect_to_db(argc, argv, con, "")) {
+			return 1;
+		}
 	}
 	catch (exception& er) {
 		cerr << "Connection failed: " << er.what() << endl;
@@ -68,8 +70,9 @@ main(int argc, char *argv[])
 		if (con.select_db(kpcSampleDatabase)) {
 			// Toss old table, if it exists.  If it doesn't, we don't
 			// really care, as it'll get created next.
-			cout << "Dropping existing stock table..." << endl;
+			cout << "Dropping existing sample data tables..." << endl;
 			query.execute("drop table stock");
+			query.execute("drop table images");
 		}
 		else {
 			// Database doesn't exist yet, so create and select it.
@@ -85,17 +88,17 @@ main(int argc, char *argv[])
 	}
 
 	// Create sample data table within sample database.
-	cout << "Creating new stock table..." << endl;
 	try {
-		// Send the query to create the table and execute it.
+		// Send the query to create the stock table and execute it.
+		cout << "Creating stock table..." << endl;
 		mysqlpp::Query query = con.query();
 		query << 
-				"CREATE TABLE stock " <<
-				"(item CHAR(20) NOT NULL, " <<
-				" num BIGINT, " <<
-				" weight DOUBLE, " <<
-				" price DOUBLE, " <<
-				" sdate DATE) " <<
+				"CREATE TABLE stock (" <<
+				"  item CHAR(20) NOT NULL, " <<
+				"  num BIGINT, " <<
+				"  weight DOUBLE, " <<
+				"  price DOUBLE, " <<
+				"  sdate DATE) " <<
 				"ENGINE = InnoDB " <<
 				"CHARACTER SET utf8 COLLATE utf8_general_ci";
 		query.execute();
@@ -120,6 +123,19 @@ main(int argc, char *argv[])
 		query.execute("Hot Mustard", 75, .95, .97, "1998-05-25");
 		query.execute("Hotdog Buns", 65, 1.1, 1.1, "1998-04-23");
 
+		// Now create empty images table, for testing BLOB and auto-
+		// increment column features.
+		cout << "Creating empty images table..." << endl;
+		query.reset();
+		query << 
+				"CREATE TABLE images (" <<
+				"  id INT UNSIGNED NOT NULL AUTO_INCREMENT, " <<
+				"  data BLOB, " <<
+				"  PRIMARY KEY (id)" <<
+				")";
+		query.execute();
+
+		// Report success
 		cout << (new_db ? "Created" : "Reinitialized") <<
 				" sample database successfully." << endl;
 	}

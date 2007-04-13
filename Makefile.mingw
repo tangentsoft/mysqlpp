@@ -75,14 +75,18 @@ SIMPLE3_CXXFLAGS = -mthreads $(__DEBUGINFO) -Ilib -D_UNICODE -DMYSQLPP_NO_DLL \
 	-I"C:\Program Files\MySQL\MySQL Server 5.0\include" $(CPPFLAGS) $(CXXFLAGS)
 SIMPLE3_OBJECTS =  \
 	simple3_simple3.o
-USEQUERY_CXXFLAGS = -mthreads $(__DEBUGINFO) -Ilib -D_UNICODE -DMYSQLPP_NO_DLL \
-	-I"C:\Program Files\MySQL\MySQL Server 5.0\include" $(CPPFLAGS) $(CXXFLAGS)
-USEQUERY_OBJECTS =  \
-	usequery_usequery.o
 MULTIQUERY_CXXFLAGS = -mthreads $(__DEBUGINFO) -Ilib -D_UNICODE -DMYSQLPP_NO_DLL \
 	-I"C:\Program Files\MySQL\MySQL Server 5.0\include" $(CPPFLAGS) $(CXXFLAGS)
 MULTIQUERY_OBJECTS =  \
 	multiquery_multiquery.o
+TQUERY_CXXFLAGS = -mthreads $(__DEBUGINFO) -Ilib -D_UNICODE -DMYSQLPP_NO_DLL \
+	-I"C:\Program Files\MySQL\MySQL Server 5.0\include" $(CPPFLAGS) $(CXXFLAGS)
+TQUERY_OBJECTS =  \
+	tquery_tquery.o
+USEQUERY_CXXFLAGS = -mthreads $(__DEBUGINFO) -Ilib -D_UNICODE -DMYSQLPP_NO_DLL \
+	-I"C:\Program Files\MySQL\MySQL Server 5.0\include" $(CPPFLAGS) $(CXXFLAGS)
+USEQUERY_OBJECTS =  \
+	usequery_usequery.o
 CUSTOM1_CXXFLAGS = -mthreads $(__DEBUGINFO) -Ilib -D_UNICODE -DMYSQLPP_NO_DLL \
 	-I"C:\Program Files\MySQL\MySQL Server 5.0\include" $(CPPFLAGS) $(CXXFLAGS)
 CUSTOM1_OBJECTS =  \
@@ -115,18 +119,18 @@ FIELDINF1_CXXFLAGS = -mthreads $(__DEBUGINFO) -Ilib -D_UNICODE -DMYSQLPP_NO_DLL 
 	-I"C:\Program Files\MySQL\MySQL Server 5.0\include" $(CPPFLAGS) $(CXXFLAGS)
 FIELDINF1_OBJECTS =  \
 	fieldinf1_fieldinf1.o
+LOAD_JPEG_CXXFLAGS = -mthreads $(__DEBUGINFO) -Ilib -D_UNICODE -DMYSQLPP_NO_DLL \
+	-I"C:\Program Files\MySQL\MySQL Server 5.0\include" $(CPPFLAGS) $(CXXFLAGS)
+LOAD_JPEG_OBJECTS =  \
+	load_jpeg_load_jpeg.o
 XACTION_CXXFLAGS = -mthreads $(__DEBUGINFO) -Ilib -D_UNICODE -DMYSQLPP_NO_DLL \
 	-I"C:\Program Files\MySQL\MySQL Server 5.0\include" $(CPPFLAGS) $(CXXFLAGS)
 XACTION_OBJECTS =  \
 	xaction_xaction.o
-CGI_IMAGE_CXXFLAGS = -mthreads $(__DEBUGINFO) -Ilib -D_UNICODE -DMYSQLPP_NO_DLL \
+CGI_JPEG_CXXFLAGS = -mthreads $(__DEBUGINFO) -Ilib -D_UNICODE -DMYSQLPP_NO_DLL \
 	-I"C:\Program Files\MySQL\MySQL Server 5.0\include" $(CPPFLAGS) $(CXXFLAGS)
-CGI_IMAGE_OBJECTS =  \
-	cgi_image_cgi_image.o
-LOAD_FILE_CXXFLAGS = -mthreads $(__DEBUGINFO) -Ilib -D_UNICODE -DMYSQLPP_NO_DLL \
-	-I"C:\Program Files\MySQL\MySQL Server 5.0\include" $(CPPFLAGS) $(CXXFLAGS)
-LOAD_FILE_OBJECTS =  \
-	load_file_load_file.o
+CGI_JPEG_OBJECTS =  \
+	cgi_jpeg_cgi_jpeg.o
 UPDEL_CXXFLAGS = -mthreads $(__DEBUGINFO) -Ilib -D_UNICODE -DMYSQLPP_NO_DLL \
 	-I"C:\Program Files\MySQL\MySQL Server 5.0\include" $(CPPFLAGS) $(CXXFLAGS)
 UPDEL_OBJECTS =  \
@@ -144,7 +148,7 @@ endif
 
 ### Targets: ###
 
-all: mysqlpp.dll libmysqlpp_util.a resetdb.exe simple1.exe simple2.exe simple3.exe usequery.exe multiquery.exe custom1.exe custom2.exe custom3.exe custom4.exe custom5.exe custom6.exe dbinfo.exe fieldinf1.exe xaction.exe cgi_image.exe load_file.exe updel.exe
+all: mysqlpp.dll libmysqlpp_util.a resetdb.exe simple1.exe simple2.exe simple3.exe multiquery.exe tquery.exe usequery.exe custom1.exe custom2.exe custom3.exe custom4.exe custom5.exe custom6.exe dbinfo.exe fieldinf1.exe load_jpeg.exe xaction.exe cgi_jpeg.exe updel.exe
 
 clean: 
 	-if exist .\*.o del .\*.o
@@ -156,8 +160,9 @@ clean:
 	-if exist simple1.exe del simple1.exe
 	-if exist simple2.exe del simple2.exe
 	-if exist simple3.exe del simple3.exe
-	-if exist usequery.exe del usequery.exe
 	-if exist multiquery.exe del multiquery.exe
+	-if exist tquery.exe del tquery.exe
+	-if exist usequery.exe del usequery.exe
 	-if exist custom1.exe del custom1.exe
 	-if exist custom2.exe del custom2.exe
 	-if exist custom3.exe del custom3.exe
@@ -166,9 +171,9 @@ clean:
 	-if exist custom6.exe del custom6.exe
 	-if exist dbinfo.exe del dbinfo.exe
 	-if exist fieldinf1.exe del fieldinf1.exe
+	-if exist load_jpeg.exe del load_jpeg.exe
 	-if exist xaction.exe del xaction.exe
-	-if exist cgi_image.exe del cgi_image.exe
-	-if exist load_file.exe del load_file.exe
+	-if exist cgi_jpeg.exe del cgi_jpeg.exe
 	-if exist updel.exe del updel.exe
 
 mysqlpp.dll: $(MYSQLPP_OBJECTS)
@@ -191,11 +196,14 @@ simple2.exe: $(SIMPLE2_OBJECTS) libmysqlpp_util.a mysqlpp.dll
 simple3.exe: $(SIMPLE3_OBJECTS) libmysqlpp_util.a mysqlpp.dll
 	$(CXX) -o $@ $(SIMPLE3_OBJECTS) $(LDFLAGS) -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -L..\lib -L"C:\Program Files\MySQL\MySQL Server 5.0\lib\opt"  -lmysqlpp_util -lmysqlclient -lmysqlpp
 
-usequery.exe: $(USEQUERY_OBJECTS) libmysqlpp_util.a mysqlpp.dll
-	$(CXX) -o $@ $(USEQUERY_OBJECTS) $(LDFLAGS) -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -L..\lib -L"C:\Program Files\MySQL\MySQL Server 5.0\lib\opt"  -lmysqlpp_util -lmysqlclient -lmysqlpp
-
 multiquery.exe: $(MULTIQUERY_OBJECTS) libmysqlpp_util.a mysqlpp.dll
 	$(CXX) -o $@ $(MULTIQUERY_OBJECTS) $(LDFLAGS) -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -L..\lib -L"C:\Program Files\MySQL\MySQL Server 5.0\lib\opt"  -lmysqlpp_util -lmysqlclient -lmysqlpp
+
+tquery.exe: $(TQUERY_OBJECTS) libmysqlpp_util.a mysqlpp.dll
+	$(CXX) -o $@ $(TQUERY_OBJECTS) $(LDFLAGS) -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -L..\lib -L"C:\Program Files\MySQL\MySQL Server 5.0\lib\opt"  -lmysqlpp_util -lmysqlclient -lmysqlpp
+
+usequery.exe: $(USEQUERY_OBJECTS) libmysqlpp_util.a mysqlpp.dll
+	$(CXX) -o $@ $(USEQUERY_OBJECTS) $(LDFLAGS) -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -L..\lib -L"C:\Program Files\MySQL\MySQL Server 5.0\lib\opt"  -lmysqlpp_util -lmysqlclient -lmysqlpp
 
 custom1.exe: $(CUSTOM1_OBJECTS) libmysqlpp_util.a mysqlpp.dll
 	$(CXX) -o $@ $(CUSTOM1_OBJECTS) $(LDFLAGS) -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -L..\lib -L"C:\Program Files\MySQL\MySQL Server 5.0\lib\opt"  -lmysqlpp_util -lmysqlclient -lmysqlpp
@@ -221,14 +229,14 @@ dbinfo.exe: $(DBINFO_OBJECTS) libmysqlpp_util.a mysqlpp.dll
 fieldinf1.exe: $(FIELDINF1_OBJECTS) libmysqlpp_util.a mysqlpp.dll
 	$(CXX) -o $@ $(FIELDINF1_OBJECTS) $(LDFLAGS) -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -L..\lib -L"C:\Program Files\MySQL\MySQL Server 5.0\lib\opt"  -lmysqlpp_util -lmysqlclient -lmysqlpp
 
+load_jpeg.exe: $(LOAD_JPEG_OBJECTS) libmysqlpp_util.a mysqlpp.dll
+	$(CXX) -o $@ $(LOAD_JPEG_OBJECTS) $(LDFLAGS) -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -L..\lib -L"C:\Program Files\MySQL\MySQL Server 5.0\lib\opt"  -lmysqlpp_util -lmysqlclient -lmysqlpp
+
 xaction.exe: $(XACTION_OBJECTS) libmysqlpp_util.a mysqlpp.dll
 	$(CXX) -o $@ $(XACTION_OBJECTS) $(LDFLAGS) -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -L..\lib -L"C:\Program Files\MySQL\MySQL Server 5.0\lib\opt"  -lmysqlpp_util -lmysqlclient -lmysqlpp
 
-cgi_image.exe: $(CGI_IMAGE_OBJECTS) mysqlpp.dll
-	$(CXX) -o $@ $(CGI_IMAGE_OBJECTS) $(LDFLAGS) -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -L..\lib -L"C:\Program Files\MySQL\MySQL Server 5.0\lib\opt"  -lmysqlclient -lmysqlpp
-
-load_file.exe: $(LOAD_FILE_OBJECTS) mysqlpp.dll
-	$(CXX) -o $@ $(LOAD_FILE_OBJECTS) $(LDFLAGS) -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -L..\lib -L"C:\Program Files\MySQL\MySQL Server 5.0\lib\opt"  -lmysqlclient -lmysqlpp
+cgi_jpeg.exe: $(CGI_JPEG_OBJECTS) mysqlpp.dll
+	$(CXX) -o $@ $(CGI_JPEG_OBJECTS) $(LDFLAGS) -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -L..\lib -L"C:\Program Files\MySQL\MySQL Server 5.0\lib\opt"  -lmysqlclient -lmysqlpp
 
 updel.exe: $(UPDEL_OBJECTS) mysqlpp.dll
 	$(CXX) -o $@ $(UPDEL_OBJECTS) $(LDFLAGS) -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -L..\lib -L"C:\Program Files\MySQL\MySQL Server 5.0\lib\opt"  -lmysqlclient -lmysqlpp
@@ -302,11 +310,14 @@ simple2_simple2.o: ./examples/simple2.cpp
 simple3_simple3.o: ./examples/simple3.cpp
 	$(CXX) -c -o $@ $(SIMPLE3_CXXFLAGS) $(CPPDEPS) $<
 
-usequery_usequery.o: ./examples/usequery.cpp
-	$(CXX) -c -o $@ $(USEQUERY_CXXFLAGS) $(CPPDEPS) $<
-
 multiquery_multiquery.o: ./examples/multiquery.cpp
 	$(CXX) -c -o $@ $(MULTIQUERY_CXXFLAGS) $(CPPDEPS) $<
+
+tquery_tquery.o: ./examples/tquery.cpp
+	$(CXX) -c -o $@ $(TQUERY_CXXFLAGS) $(CPPDEPS) $<
+
+usequery_usequery.o: ./examples/usequery.cpp
+	$(CXX) -c -o $@ $(USEQUERY_CXXFLAGS) $(CPPDEPS) $<
 
 custom1_custom1.o: ./examples/custom1.cpp
 	$(CXX) -c -o $@ $(CUSTOM1_CXXFLAGS) $(CPPDEPS) $<
@@ -332,14 +343,14 @@ dbinfo_dbinfo.o: ./examples/dbinfo.cpp
 fieldinf1_fieldinf1.o: ./examples/fieldinf1.cpp
 	$(CXX) -c -o $@ $(FIELDINF1_CXXFLAGS) $(CPPDEPS) $<
 
+load_jpeg_load_jpeg.o: ./examples/load_jpeg.cpp
+	$(CXX) -c -o $@ $(LOAD_JPEG_CXXFLAGS) $(CPPDEPS) $<
+
 xaction_xaction.o: ./examples/xaction.cpp
 	$(CXX) -c -o $@ $(XACTION_CXXFLAGS) $(CPPDEPS) $<
 
-cgi_image_cgi_image.o: ./examples/cgi_image.cpp
-	$(CXX) -c -o $@ $(CGI_IMAGE_CXXFLAGS) $(CPPDEPS) $<
-
-load_file_load_file.o: ./examples/load_file.cpp
-	$(CXX) -c -o $@ $(LOAD_FILE_CXXFLAGS) $(CPPDEPS) $<
+cgi_jpeg_cgi_jpeg.o: ./examples/cgi_jpeg.cpp
+	$(CXX) -c -o $@ $(CGI_JPEG_CXXFLAGS) $(CPPDEPS) $<
 
 updel_updel.o: ./examples/updel.cpp
 	$(CXX) -c -o $@ $(UPDEL_CXXFLAGS) $(CPPDEPS) $<

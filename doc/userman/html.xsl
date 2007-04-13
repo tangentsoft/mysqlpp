@@ -17,7 +17,7 @@
 
 	<!-- HTML-specific XSL parameters -->
 	<xsl:param name="chunk.fast" select="0"/>
-	<xsl:param name="html.stylesheet" select="'userman.css'"/>
+	<xsl:param name="html.stylesheet" select="'tangentsoft.css'"/>
 	<xsl:param name="use.id.as.filename" select="1"/>
 
 	<!-- Special ulink types, to reduce boilerplate link code -->
@@ -49,7 +49,7 @@
 				<tt>
 					<a>
 						<xsl:attribute name="href">
-							<xsl:text>../../refman/html/classmysqlpp_1_1</xsl:text>
+							<xsl:text>../refman/classmysqlpp_1_1</xsl:text>
 							<xsl:value-of select="@url"/>
 							<xsl:text>.html</xsl:text>
 						</xsl:attribute>
@@ -71,7 +71,7 @@
 				<tt>
 					<a>
 						<xsl:attribute name="href">
-							<xsl:text>../../refman/html/structmysqlpp_1_1</xsl:text>
+							<xsl:text>../refman/structmysqlpp_1_1</xsl:text>
 							<xsl:value-of select="@url"/>
 							<xsl:text>.html</xsl:text>
 						</xsl:attribute>

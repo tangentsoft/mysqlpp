@@ -10,53 +10,38 @@ consider whether it could be reduced to an API feature that would be
 widely useful.  Patches or proposals of this sort are always welcome.
 
 
-v2.3 Plan
----------
-	Items in this plan may slip to a future release.  This
-	typically happens when the proper solution is unclear,
-	so the best way to prevent this is to get on the mailing
-	list and help discuss it.  Or even better, provide a patch;
-	we rarely reject working code outright.
+v2.x Features
+-------------
+	Items in this section may slip to v3.0.  The only thing that
+	puts an item in this section instead of the v3.0 one is that
+	it can be done without breaking the ABI, which would force
+	a feature to v3.0.
+
+	o Try SSQLS with BLOBs.  It probably won't work, because
+	  ColData converts to std::string (the most likely BLOB
+	  receiving type) via ColData::operator cchar*(), losing
+	  length information along the way.  Will probably have
+	  to add an operator std::string to ColData_Tmpl to make
+	  this work right.
+
+	o Stop using ColData_Tmpl<T>::buf_ member.  It currently
+	  contains a duplicate (and, in the presence of nulls,
+	  truncated) copy of the data stored by the parent class when
+	  the template is instantiated with std::string.  Removal will
+	  have to wait for v3.0.
+
+	o Define HAVE_MYSQL_SSL_SET by default on Windows?  Make similar
+	  decisions for other autoconf-only macros.
 
 	o Extend the manipulators to handle nullable versions of
 	  the types we already support.  Should just be a matter of
 	  duplicating the existing type-specific manipulator functions,
 	  and wrapping the types in Null<>.
 
-	o Update examples/cgi_image and examples/load_file to use new
-	  binary-aware ColData, const_string and Query classes.
+	o Rework cgi_jpeg to use SSQLS.  If it no longer works after
+	  the conversion, there's still a code path using C strings.
 
-	o Check that SSQLS works with BLOB now that ColData, const_string
-	  and Query classes cope with embedded nulls.  If not, fix.
-
-	o Find all other code that constructs ColData without using the
-	  ctor that takes an explicit length.  If that code is in a path
-	  that can have nulls, and it has the real data length at hand,
-	  change it to use the explicit length ColData ctor.
-
-	o Have resetdb create a second table containing a BLOB column
-	  that load_file and cgi_image can use.  
-	  
-	  Rework load_image to take the standard command line
-	  parameters, and load a JPEG or something into the BLOB table.
-	  Include a suitable JPEG with the distribution.  (A cheesy
-	  Photoshopped "MySQL++ Rocks!" thing should suffice.)
-
-	  Rework cgi_image so that you can drop it into a cgi-image
-	  directory and immediately use it to query the database and
-	  return the image data in CGI format.
-
-	  Don't forget to write an example showing how to use these
-	  new mechanisms.
-
-
-v2.4 Plan
----------
-	This plan is even more nebulous than the v2.3 plan.  The only
-	thing that puts a feature on this list and not on the v3.0
-	list is that they can be done without breaking the ABI,
-	which forces a feature to v3.0.  Items on this list could
-	still easily slip to v3.0.  There might not even _be_ a v2.4...
+	o Rework the docs for load_jpeg and cgi_jpeg.
 
 	o Add a few features to date and time classes:
 
@@ -121,6 +106,26 @@ v3.0 Plan
 	the ABI.  (i.e. removing functions, changing function
 	signatures, etc.)  This plan is very tenuous.  Some of this
 	could slip to v4.0.
+
+	o Rename Query::def to Query::tquery_defaults.	Makes its
+	  purpose clearer.  Also, examine all other public data
+	  members, to see if they have a similar problem.
+
+	o Connection::error() returns const char*, while Query::error()
+	  returns std::string.  Pick one.
+
+	o Remove MutableColData.  It's only used once in the library,
+	  within myset.h, and that usage is inefficient to the point
+	  of wanting replacement anyway.
+
+	o Turn ColData_Tmpl<T> into a concrete class.  Maybe it still
+	  derives from const std::string, but privately, or maybe
+	  it just has a string member.	Either way, we don't need
+	  an is-a relationship here.  All we need is an internal
+	  representation of the data, which we transform as required.
+	  This ties into the deprecation of the buf_ member in v2.3,
+	  because it either becomes the only buffer, or it goes away
+	  in favor of the parent class's buffer.
 
 	o More robust fix for the Query stream base class init problem:
 	  http://www.boost.org/libs/utility/base_from_member.html
@@ -234,11 +239,6 @@ Future Features
 	  to mixing debug and release programs and MySQL++ DLLs.
 	  This appears to require changes to Bakefile, or some sort of
 	  post-build hackery.
-
-	o Drop recursive make.	This will make parallel building work
-	  correctly, and it makes for a single VC++ project file.
-	  It'll make the "don't build examples" case a little trickier,
-	  but that's not a deal-breaker.
 
 	o Create adaptors for std::bitset, for storing binary data in a
 	  MySQL table.	Make two options available, one for storing

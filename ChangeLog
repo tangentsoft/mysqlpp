@@ -1,3 +1,69 @@
+2.2.2, 2007.04.13 (r1519) "The Nervousmaking Friday the 13th Release"
+
+	o More small fixes to embedded null handling in Query.
+
+	o Fixed a bug in single-parameter template query handling.
+
+	o Added tquery example, to demonstrate proper use of template
+	  queries.  Previously, resetdb was the only exemplar, and
+	  it wasn't really suited for that.  This example also tests
+	  the previous item.
+
+	o Added examples/vstudio/mfc, allowing us to improve the way
+	  we demonstrate Unicode handling.  Old way wasn't realistic.
+	  On *ix, people will depend on the terminal code to handle
+	  UTF-8.  On Windows, users are almost certain to be writing
+	  a GUI program, which requires different Unicode handling
+	  than the old examples showed.
+
+	o Removed explicit Unicode conversion stuff from command line
+	  examples, and reworked the Unicode chapter in the user
+	  manual.
+	
+	o Added examples/vstudio/wforms to show integration with
+	  C++/CLI and Windows Forms.  Documented this in README.vc.
+
+	o Rewrote load_file and cgi_image examples to be more
+	  useful, renaming them to load_jpeg and cgi_jpeg along
+	  the way.  Also, resetdb now creates a second table in the
+	  sample database for these two examples' use.	Also, added
+	  examples/logo.jpg to the distribution as sample data for
+	  these examples.
+
+	o Limited the ostream base class casting stuff in Query to
+	  VC++ 2003, which is the only platform that really needed it.
+	  VC++ 2005 emits a warning with that hack in place, and on
+	  other platforms it's just replicating work that the compiler
+	  does already.
+
+	o Added library version information to main library target
+	  so that systems that version shared libraries work as
+	  expected.  Thanks for this patch go to Jack Eidsness.
+
+	o Merged much of the diffs between Remi Collet's RPM spec file
+	  into the official one.
+
+	o Reorganized the doc subdir a bit.  Generated HTML is now all
+	  under doc/html instead of scattered under other subdirs,
+	  and renamed doc/README.mysql++ to doc/README.manuals.
+
+	o Improvements to top-level manual building make targets:
+	  manuals now only rebuild at need, it's easier to request
+	  a rebuild of all manuals, and we force a rebuild attempt
+	  before building the distribution tarball so we don't ship
+	  outdated manuals.
+
+	o Added ability to run examples under gdb using exrun,
+	  using same mechanism as we currently have for valgrind.
+	  Thanks for this patch go to Michael Hanselmann.
+
+	o Added "Important Underlying C API Limitations" chapter to the
+	  user manual, to cover problems we keep seeing on the
+	  mailing list that are the result of ignorance of the way
+	  libmysqlclient behaves, not bugs MySQL++ is really in a
+	  position to fix.
+
+
 2.2.1, 2007.02.28 (r1433)
 
 	o Fixed the new localtime() alternative selection code

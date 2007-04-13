@@ -94,7 +94,7 @@ Query::error()
 bool
 Query::exec(const std::string& str)
 {
-	success_ = !mysql_real_query(&conn_->mysql_, str.c_str(),
+	success_ = !mysql_real_query(&conn_->mysql_, str.data(),
 			static_cast<unsigned long>(str.length()));
 	if (!success_ && throw_exceptions()) {
 		throw BadQuery(error());
@@ -108,17 +108,18 @@ Query::exec(const std::string& str)
 ResNSel
 Query::execute(const SQLString& str)
 {
-	if ((def.size() == 1) && !def.processing_) {
-		// Take str to be a lone parameter for a template query.  The
-		// auto-reset flag is required because we'll end up back in this
-		// function once the query string is built, but we need to take
-		// the 'else' path to avoid an infinite loop.
+	if ((parse_elems_.size() == 2) && !def.processing_) {
+		// We're a template query and we haven't gone through this path
+		// before, so take str to be a lone parameter for the query.
+		// We will come back through this function with a completed
+		// query, but the processing_ flag will be reset, allowing us to
+		// take the 'else' path, avoiding an infinite loop.
 		AutoFlag<> af(def.processing_);
 		return execute(SQLQueryParms() << str);
 	}
 	else {
 		// Take str to be the entire query string
-		return execute(str.c_str(), str.length());
+		return execute(str.data(), str.length());
 	}
 }
 
@@ -307,7 +308,7 @@ Query::pprepare(char option, SQLString& S, bool replace)
 
 	if (option == 'r' || (option == 'q' && S.is_string)) {
 		char *s = new char[S.size() * 2 + 1];
-		mysql_real_escape_string(&conn_->mysql_, s, S.c_str(),
+		mysql_real_escape_string(&conn_->mysql_, s, S.data(),
 				static_cast<unsigned long>(S.size()));
 		SQLString *ss = new SQLString("'");
 		*ss += s;
@@ -351,7 +352,7 @@ Query::preview_char()
 {
 	const std::string& str(sbuffer_.str());
 	char* s = new char[str.size() + 1];
-	memcpy(s, str.c_str(), str.size() + 1); 
+	memcpy(s, str.data(), str.size() + 1); 
 	return s;
 }
 
@@ -363,7 +364,7 @@ Query::proc(SQLQueryParms& p)
 
 	for (std::vector<SQLParseElement>::iterator i = parse_elems_.begin();
 			i != parse_elems_.end(); ++i) {
-		dynamic_cast<std::ostream&>(*this) << i->before;
+		MYSQLPP_QUERY_THISPTR << i->before;
 		int num = i->num;
 		if (num >= 0) {
 			SQLQueryParms* c;
@@ -381,7 +382,7 @@ Query::proc(SQLQueryParms& p)
 
 			SQLString& param = (*c)[num];
 			SQLString* ss = pprepare(i->option, param, c->bound());
-			dynamic_cast<std::ostream&>(*this) << *ss;
+			MYSQLPP_QUERY_THISPTR << *ss;
 			if (ss != &param) {
 				// pprepare() returned a new string object instead of
 				// updating param in place, so we need to delete it.
@@ -406,17 +407,18 @@ Query::reset()
 Result 
 Query::store(const SQLString& str)
 {
-	if ((def.size() == 1) && !def.processing_) {
-		// Take str to be a lone parameter for a template query.  The
-		// auto-reset flag is required because we'll end up back in this
-		// function once the query string is built, but we need to take
-		// the 'else' path to avoid an infinite loop.
+	if ((parse_elems_.size() == 2) && !def.processing_) {
+		// We're a template query and we haven't gone through this path
+		// before, so take str to be a lone parameter for the query.
+		// We will come back through this function with a completed
+		// query, but the processing_ flag will be reset, allowing us to
+		// take the 'else' path, avoiding an infinite loop.
 		AutoFlag<> af(def.processing_);
 		return store(SQLQueryParms() << str);
 	}
 	else {
 		// Take str to be the entire query string
-		return store(str.c_str(), str.length());
+		return store(str.data(), str.length());
 	}
 }
 
@@ -576,17 +578,18 @@ Query::unlock()
 ResUse
 Query::use(const SQLString& str)
 {
-	if ((def.size() == 1) && !def.processing_) {
-		// Take str to be a lone parameter for a template query.  The
-		// auto-reset flag is required because we'll end up back in this
-		// function once the query string is built, but we need to take
-		// the 'else' path to avoid an infinite loop.
+	if ((parse_elems_.size() == 2) && !def.processing_) {
+		// We're a template query and we haven't gone through this path
+		// before, so take str to be a lone parameter for the query.
+		// We will come back through this function with a completed
+		// query, but the processing_ flag will be reset, allowing us to
+		// take the 'else' path, avoiding an infinite loop.
 		AutoFlag<> af(def.processing_);
 		return use(SQLQueryParms() << str);
 	}
 	else {
 		// Take str to be the entire query string
-		return use(str.c_str(), str.length());
+		return use(str.data(), str.length());
 	}
 }
 

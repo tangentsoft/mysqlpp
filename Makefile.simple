@@ -60,14 +60,18 @@ SIMPLE3_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 SIMPLE3_OBJECTS =  \
 	simple3_simple3.o
-USEQUERY_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
-	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
-USEQUERY_OBJECTS =  \
-	usequery_usequery.o
 MULTIQUERY_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 MULTIQUERY_OBJECTS =  \
 	multiquery_multiquery.o
+TQUERY_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
+	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+TQUERY_OBJECTS =  \
+	tquery_tquery.o
+USEQUERY_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
+	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+USEQUERY_OBJECTS =  \
+	usequery_usequery.o
 CUSTOM1_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 CUSTOM1_OBJECTS =  \
@@ -100,18 +104,18 @@ FIELDINF1_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 FIELDINF1_OBJECTS =  \
 	fieldinf1_fieldinf1.o
+LOAD_JPEG_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
+	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+LOAD_JPEG_OBJECTS =  \
+	load_jpeg_load_jpeg.o
 XACTION_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 XACTION_OBJECTS =  \
 	xaction_xaction.o
-CGI_IMAGE_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
+CGI_JPEG_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
-CGI_IMAGE_OBJECTS =  \
-	cgi_image_cgi_image.o
-LOAD_FILE_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
-	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
-LOAD_FILE_OBJECTS =  \
-	load_file_load_file.o
+CGI_JPEG_OBJECTS =  \
+	cgi_jpeg_cgi_jpeg.o
 UPDEL_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 UPDEL_OBJECTS =  \
@@ -129,7 +133,7 @@ endif
 
 ### Targets: ###
 
-all: libmysqlpp_util.a resetdb simple1 simple2 simple3 usequery multiquery custom1 custom2 custom3 custom4 custom5 custom6 dbinfo fieldinf1 xaction cgi_image load_file updel
+all: libmysqlpp_util.a resetdb simple1 simple2 simple3 multiquery tquery usequery custom1 custom2 custom3 custom4 custom5 custom6 dbinfo fieldinf1 load_jpeg xaction cgi_jpeg updel
 
 install: all
 
@@ -143,8 +147,9 @@ clean:
 	rm -f simple1
 	rm -f simple2
 	rm -f simple3
-	rm -f usequery
 	rm -f multiquery
+	rm -f tquery
+	rm -f usequery
 	rm -f custom1
 	rm -f custom2
 	rm -f custom3
@@ -153,9 +158,9 @@ clean:
 	rm -f custom6
 	rm -f dbinfo
 	rm -f fieldinf1
+	rm -f load_jpeg
 	rm -f xaction
-	rm -f cgi_image
-	rm -f load_file
+	rm -f cgi_jpeg
 	rm -f updel
 
 libmysqlpp_util.a: $(UTIL_OBJECTS)
@@ -175,11 +180,14 @@ simple2: $(SIMPLE2_OBJECTS) libmysqlpp_util.a
 simple3: $(SIMPLE3_OBJECTS) libmysqlpp_util.a
 	$(CXX) -o $@ $(SIMPLE3_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
-usequery: $(USEQUERY_OBJECTS) libmysqlpp_util.a
-	$(CXX) -o $@ $(USEQUERY_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_util -lmysqlpp -lmysqlclient
-
 multiquery: $(MULTIQUERY_OBJECTS) libmysqlpp_util.a
 	$(CXX) -o $@ $(MULTIQUERY_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_util -lmysqlpp -lmysqlclient
+
+tquery: $(TQUERY_OBJECTS) libmysqlpp_util.a
+	$(CXX) -o $@ $(TQUERY_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_util -lmysqlpp -lmysqlclient
+
+usequery: $(USEQUERY_OBJECTS) libmysqlpp_util.a
+	$(CXX) -o $@ $(USEQUERY_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
 custom1: $(CUSTOM1_OBJECTS) libmysqlpp_util.a
 	$(CXX) -o $@ $(CUSTOM1_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_util -lmysqlpp -lmysqlclient
@@ -205,14 +213,14 @@ dbinfo: $(DBINFO_OBJECTS) libmysqlpp_util.a
 fieldinf1: $(FIELDINF1_OBJECTS) libmysqlpp_util.a
 	$(CXX) -o $@ $(FIELDINF1_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
+load_jpeg: $(LOAD_JPEG_OBJECTS) libmysqlpp_util.a
+	$(CXX) -o $@ $(LOAD_JPEG_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_util -lmysqlpp -lmysqlclient
+
 xaction: $(XACTION_OBJECTS) libmysqlpp_util.a
 	$(CXX) -o $@ $(XACTION_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_util -lmysqlpp -lmysqlclient
 
-cgi_image: $(CGI_IMAGE_OBJECTS)
-	$(CXX) -o $@ $(CGI_IMAGE_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp -lmysqlclient
-
-load_file: $(LOAD_FILE_OBJECTS)
-	$(CXX) -o $@ $(LOAD_FILE_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp -lmysqlclient
+cgi_jpeg: $(CGI_JPEG_OBJECTS)
+	$(CXX) -o $@ $(CGI_JPEG_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp -lmysqlclient
 
 updel: $(UPDEL_OBJECTS)
 	$(CXX) -o $@ $(UPDEL_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp -lmysqlclient
@@ -232,11 +240,14 @@ simple2_simple2.o: ./examples/simple2.cpp
 simple3_simple3.o: ./examples/simple3.cpp
 	$(CXX) -c -o $@ $(SIMPLE3_CXXFLAGS) $(CPPDEPS) $<
 
-usequery_usequery.o: ./examples/usequery.cpp
-	$(CXX) -c -o $@ $(USEQUERY_CXXFLAGS) $(CPPDEPS) $<
-
 multiquery_multiquery.o: ./examples/multiquery.cpp
 	$(CXX) -c -o $@ $(MULTIQUERY_CXXFLAGS) $(CPPDEPS) $<
+
+tquery_tquery.o: ./examples/tquery.cpp
+	$(CXX) -c -o $@ $(TQUERY_CXXFLAGS) $(CPPDEPS) $<
+
+usequery_usequery.o: ./examples/usequery.cpp
+	$(CXX) -c -o $@ $(USEQUERY_CXXFLAGS) $(CPPDEPS) $<
 
 custom1_custom1.o: ./examples/custom1.cpp
 	$(CXX) -c -o $@ $(CUSTOM1_CXXFLAGS) $(CPPDEPS) $<
@@ -262,14 +273,14 @@ dbinfo_dbinfo.o: ./examples/dbinfo.cpp
 fieldinf1_fieldinf1.o: ./examples/fieldinf1.cpp
 	$(CXX) -c -o $@ $(FIELDINF1_CXXFLAGS) $(CPPDEPS) $<
 
+load_jpeg_load_jpeg.o: ./examples/load_jpeg.cpp
+	$(CXX) -c -o $@ $(LOAD_JPEG_CXXFLAGS) $(CPPDEPS) $<
+
 xaction_xaction.o: ./examples/xaction.cpp
 	$(CXX) -c -o $@ $(XACTION_CXXFLAGS) $(CPPDEPS) $<
 
-cgi_image_cgi_image.o: ./examples/cgi_image.cpp
-	$(CXX) -c -o $@ $(CGI_IMAGE_CXXFLAGS) $(CPPDEPS) $<
-
-load_file_load_file.o: ./examples/load_file.cpp
-	$(CXX) -c -o $@ $(LOAD_FILE_CXXFLAGS) $(CPPDEPS) $<
+cgi_jpeg_cgi_jpeg.o: ./examples/cgi_jpeg.cpp
+	$(CXX) -c -o $@ $(CGI_JPEG_CXXFLAGS) $(CPPDEPS) $<
 
 updel_updel.o: ./examples/updel.cpp
 	$(CXX) -c -o $@ $(UPDEL_CXXFLAGS) $(CPPDEPS) $<

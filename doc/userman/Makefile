@@ -9,6 +9,7 @@ FOPDIR=/usr/local/fop
 ## Input files
 ## ------------------------
 
+HTML_DIR=../html/userman
 BASENAME=userman
 DOCFILE=$(BASENAME).dbx
 PDFFILE=$(BASENAME).pdf
@@ -16,17 +17,17 @@ FOFILE=$(BASENAME).fo
 COMMON_SS=common.xsl
 FO_SS=fo.xsl
 HTML_SS=html.xsl
-EX_TXT=cgi_image.txt custom1.txt custom2.txt custom3.txt custom4.txt \
-		custom5.txt custom6.txt fieldinf1.txt load_file.txt \
+EX_TXT=cgi_jpeg.txt custom1.txt custom2.txt custom3.txt custom4.txt \
+		custom5.txt custom6.txt fieldinf1.txt load_jpeg.txt \
 		resetdb.txt simple1.txt simple2.txt simple3.txt stock.txt \
-		updel.txt util.txt xaction.txt
+		updel.txt xaction.txt
 
 
 ## ------------------------
 ## Major output rules
 ## ------------------------
 
-html: html/index.html
+html: $(HTML_DIR)/index.html
 
 pdf: $(PDFFILE)
 
@@ -43,7 +44,7 @@ pdf: $(PDFFILE)
 all: html pdf
 
 clean:
-	rm -f tags *.fo html/*.html *.log *.out *.pdf *.txt
+	rm -f tags *.fo $(HTML_DIR)/*.html *.log *.out *.pdf *.txt
 
 
 ## ------------------------
@@ -53,12 +54,11 @@ clean:
 $(PDFFILE): $(DOCFILE) $(FO_SS) $(COMMON_SS)
 	xsltproc --xinclude $(FO_SS) $(DOCFILE) > $(FOFILE)
 	$(FOPDIR)/fop -q -fo $(FOFILE) $(PDFFILE)
-	cp $(PDFFILE) ../mysqlpp-$(PDFFILE)
+	cp $(PDFFILE) ..
 
-html/index.html: $(DOCFILE) $(EX_TXT) $(HTML_SS) $(COMMON_SS)
-	@mkdir -p html
+$(HTML_DIR)/index.html: $(DOCFILE) $(EX_TXT) $(HTML_SS) $(COMMON_SS)
 	@xmllint --xinclude --postvalid --noent --noout $(DOCFILE)
-	xsltproc --xinclude -o html/ $(HTML_SS) $(DOCFILE)
+	xsltproc --xinclude -o $(HTML_DIR)/ $(HTML_SS) $(DOCFILE)
 
 
 ## ------------------------

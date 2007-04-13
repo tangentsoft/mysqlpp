@@ -7,6 +7,8 @@ What It Is
 	generation of repetitive SQL statements, and manual creation
 	of C++ data structures to mirror the database schema.
 
+	Its home page is http://tangentsoft.net/mysql++/
+
 
 Prerequisites
 ~~~~~~~~~~~~~

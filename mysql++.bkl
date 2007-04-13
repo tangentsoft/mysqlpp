@@ -5,6 +5,7 @@
 	<include file="presets/simple.bkl"/>
 
 	<set var="DBLDOLLAR">$(DOLLAR)$(DOLLAR)</set>
+	<set var="AND">&amp;&amp;</set>
 	<set var="ZLIB">yes</set>
 
 	<set var="THREAD_TYPE">single</set>
@@ -32,6 +33,9 @@
 
 	<if cond="BUILDLIBRARY=='yes'">
 		<dll id="mysqlpp">
+			<libname>mysqlpp</libname>
+			<so_version>2.2.2</so_version>
+
 			<sources>
 				lib/coldata.cpp
 				lib/connection.cpp
@@ -196,11 +200,14 @@
 		<exe id="simple3" template="util-example,common-example">
 			<sources>examples/simple3.cpp</sources>
 		</exe>
-		<exe id="usequery" template="util-example,common-example">
-			<sources>examples/usequery.cpp</sources>
-		</exe>
 		<exe id="multiquery" template="util-example,common-example">
 			<sources>examples/multiquery.cpp</sources>
+		</exe>
+		<exe id="tquery" template="util-example,common-example">
+			<sources>examples/tquery.cpp</sources>
+		</exe>
+		<exe id="usequery" template="util-example,common-example">
+			<sources>examples/usequery.cpp</sources>
 		</exe>
 		<exe id="custom1" template="util-example,common-example">
 			<sources>examples/custom1.cpp</sources>
@@ -226,16 +233,16 @@
 		<exe id="fieldinf1" template="util-example,common-example">
 			<sources>examples/fieldinf1.cpp</sources>
 		</exe>
+		<exe id="load_jpeg" template="util-example,common-example">
+			<sources>examples/load_jpeg.cpp</sources>
+		</exe>
 		<exe id="xaction" template="util-example,common-example">
 			<sources>examples/xaction.cpp</sources>
 		</exe>
 
 		<!-- The few examples that don't use the util module -->
-		<exe id="cgi_image" template="common-example">
-			<sources>examples/cgi_image.cpp</sources>
-		</exe>
-		<exe id="load_file" template="common-example">
-			<sources>examples/load_file.cpp</sources>
+		<exe id="cgi_jpeg" template="common-example">
+			<sources>examples/cgi_jpeg.cpp</sources>
 		</exe>
 		<exe id="updel" template="common-example">
 			<sources>examples/updel.cpp</sources>
@@ -243,10 +250,13 @@
 	</if>	<!-- build examples -->
 
 	<if cond="FORMAT=='autoconf'">
-		<set var="PKGNAME">mysql++-@PACKAGE_VERSION@</set>
+		<set var="PKGNAME">@PACKAGE_NAME@-@PACKAGE_VERSION@</set>
 
 		<modify-target target="clean">
-			<command>rm -f libmysqlpp.so.2</command>
+			<command>
+				cd doc/html/refman $(AND) \
+					rm -f doxygen.css [a-z]*.{dot,html,map,md5,png}
+			</command>
 		</modify-target>
 			
 		<action id="lib/custom.h">
@@ -261,38 +271,38 @@
 
 		<action id="tags">
 			<is-phony/>
-			<command>ctags {examples,lib}/*.cpp {examples,lib}/*.h</command>
+			<command>ctags `pwd`/{examples,lib}/*.{cpp,h}</command>
+			<command>for d in examples lib ; do cd $(DBLDOLLAR)d ; ln -sf ../tags . ; cd .. ; done</command>
 		</action>
 		<action id="ctags"><depends>tags</depends></action>
 
-		<action id="refman">
-			<command>cd lib ; doxygen</command>
+		<action id="doc/html/refman/index.html">
+			<depends-on-file>lib/Doxyfile</depends-on-file>
+			<depends-on-file>lib/*.cpp</depends-on-file>
+			<depends-on-file>lib/*.h</depends-on-file>
 			<command>
-				cd doc/refman/latex &amp;&amp; \
-				make pdf &amp;&amp; \
-				mv refman.pdf ../../mysqlpp-refman.pdf
+				mkdir -p doc/latex ; cd lib ; doxygen > /dev/null $(AND) \
+					cd ../doc/latex $(AND) make pdf > /dev/null $(AND) \
+					cp refman.pdf ..
 			</command>
 		</action>
 
-		<action id="userman">
+		<action id="doc/html/userman/index.html">
+			<depends-on-file>doc/userman/userman.dbx</depends-on-file>
 			<command>cd doc/userman ; make html pdf</command>
 		</action>
 
 		<action id="doc">
-			<depends>userman</depends>
-			<depends>refman</depends>
+			<depends>doc/html/userman/index.html</depends>
+			<depends>doc/html/refman/index.html</depends>
 		</action>
 
 		<action id="dist">
-			<depends>dist-build</depends>
-			<command>tar czf $(PKGNAME).tar.gz $(PKGNAME)</command>
-			<command>rm -rf $(PKGNAME)</command>
-		</action>
+			<depends>doc</depends>
 
-		<action id="dist-build">
 			<!-- Set up package directory -->
 			<command>
-				for d in config doc/refman/html doc/userman/html examples lib ; \
+				for d in config doc/{.,html}/{refman,userman} examples lib ; \
 				do \
 					mkdir -p $(PKGNAME)/$(DBLDOLLAR)d ; \
 				done
@@ -325,22 +335,27 @@
 			<command>
 				for d in refman userman ; do \
 					for f in *.{css,html} ; do \
-						cp doc/$(DBLDOLLAR)d/html/$(DBLDOLLAR)f \
-								$(PKGNAME)/doc/$(DBLDOLLAR)d/html ; \
+						cp doc/html/$(DBLDOLLAR)d/$(DBLDOLLAR)f \
+								$(PKGNAME)/doc/html/$(DBLDOLLAR)d ; \
 					done ; \
 				done ; \
-				cp doc/refman/html/*.png $(PKGNAME)/doc/refman/html
+				cp doc/html/refman/*.png $(PKGNAME)/doc/html/refman
 			</command>
 
 			<!-- examples subdir -->
 			<command>
-				cp examples/*.{cpp,h} $(PKGNAME)/examples
+				cp examples/*.{cpp,h,jpg} $(PKGNAME)/examples
 			</command>
 
 			<!-- lib subdir -->
 			<command>
 				cp lib/*.{cpp,h,in,pl} $(PKGNAME)/lib
 			</command>
+
+			<!-- distribution dir created, so pack up a copy and 
+			     nuke the temporary -->
+			<command>tar czf $(PKGNAME).tar.gz $(PKGNAME)</command>
+			<command>rm -rf $(PKGNAME)</command>
 		</action>
 
 		<action id="rpm-setup">

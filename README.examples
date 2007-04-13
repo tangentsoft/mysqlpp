@@ -1,77 +1,149 @@
 Building the Examples
 ~~~~~~~~~~~~~~~~~~~~~
-	If you're installing MySQL++ from the source tarball, the
-	example programs should have been built when you built the
-	library.  If you change any example code, just say 'make'
-	at the top level MySQL++ directory to rebuild the examples.
-	The examples are built against the headers and library in
-	the lib subdirectory.
+    If you're installing MySQL++ from the source tarball, the
+    example programs should have been built when you built the
+    library.  If you change any example code, just say 'make'
+    at the top level MySQL++ directory to rebuild the examples.
+    The examples are built against the headers and library in
+    the lib subdirectory.
 
-	If these example files were installed on your system as part
-	of the -devel RPM, copy all the files to a directory you can
-	write to, then say 'make' in that directory.  This uses a
-	simplified Makefile, which builds the examples against the
-	headers and libraries installed in the system directories.
-
-
-General Instructions
-~~~~~~~~~~~~~~~~~~~~
-
-	Start with resetdb:
-
-		$ ./exrun resetdb [host] [user] [password] [port]
-
-	This sets up the mysql_cpp_data database used by most of the
-	other examples.
-
-	You can give as few of the parameters as you want, but they must
-	be in that order.  That is, if you want to give a user name,
-	you must give the host first.  It defaults to localhost with
-	your user name, no password, and the default MySQL port (3306).
-
-	The exrun wrapper script ensures that your system's dynamic
-	linker doesn't mistakenly use the installed MySQL++ library
-	with programs linked against a different version of the
-	MySQL++ header files.  This is easy to do if you have one
-	version of MySQL++ already installed, and are trying to build
-	a new version.	resetdb double-checks this, and reports an
-	error if it detects a mismatch.
+    If these example files were installed on your system as part
+    of the -devel RPM, copy all the files to a directory you can
+    write to, then say 'make' in that directory.  This uses a
+    simplified Makefile, which builds the examples against the
+    headers and libraries installed in the system directories.
 
 
-	The following examples use the database set up by resetdb,
-	and have the same command line format as resetdb:
+Getting Started with the Examples
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    MySQL++ is built as a shared library on most systems, and a DLL
+    on Windows.  Since it isn't built in the same directory as the
+    examples, this means that your system won't be able to find the
+    library without help until you install it.  Since you generally
+    want to run the examples _before_ installing the library, to test
+    that the library actually works, we need a workaround.
 
-		simple1: Gets all records in the table resetdb set up and
-			displays them.  Try this one if you do nothing else.
+    That workaround is the exrun script.  There are two versions,
+    a Bourne shell script called just exrun for POSIX systems, and
+    exrun.bat for Windows.
 
-		simple2: Same as simple1, except that it retrieves
-			the data with a "use" query instead of a
-			"store" query.	See the user manual for the
-			difference between these.
+    Before running the other examples, you must first create the
+    sample database.  On POSIX systems, you do that like so:
 
-		simple3: Similar to simple2, but uses a different
-			querying method, the "use" query, which is
-			more memory efficient but requires that you
-			process all results in order.
+        $ ./exrun resetdb [host] [user] [password] [port]
 
-		fieldinf1: Shows how to get information about the fields in
-			a result set.  (Types, etc.)
+    On Windows, that would instead be:
 
-		custom1-6: Demonstrates the SQLSS features.  (See the user
-			manual.)
+        C:\mysql++\> exrun.bat resetdb [host] [user] [pass] [port]
 
-		dbinfo: Dumps a bunch of information about the database
-			server and the tables in its 'mysql' database.
+    If you mistakenly run resetdb directly instead of through exrun,
+    it will either fail to run because it can't find the MySQL++
+    library, or it will find an old version and complain about it.
+    None of the other examples are protected against mixed versions
+    in this way, but since you have to run resetdb before all the
+    other examples, this should pose no problem.
+
+    You can give as few of the parameters as you want, but they must
+    be in that order.  That is, if you want to give a user name,
+    you must give the host first.  It defaults to localhost with
+    your user name, no password, and the default MySQL port (3306).
 
 
-	The following are kind of oddballs.  You will have to change
-	the source code to get them to run, since they use hard-coded
-	table and database names which aren't the same as those set up
-	by resetdb.
+Running the Other Command Line Examples
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    The following examples use the database set up by resetdb, and
+    have the same command line format as resetdb:
 
-		load_file, cgi_image: Shows how to use a BLOB field to store
-			a file, and how to retrieve the file from the DB.
+        simple1: Shows the item names for all records in the sample
+            stock table.  Try this one if you do nothing else.
 
-		updel: Shows how to use the power of the matching syntax
-			available in MySQL's SELECT statement to do fine-grained
-			UPDATE or DELETE queries.
+        simple2: Similar to simple1, but it displays all columns
+            from the sample stock table, not just the item name.
+
+        simple3: Same as simple2, except that it retrieves the data
+            with a "use" query instead of a "store" query.  See the
+            user manual for the difference between these methods.
+
+        custom1-6: Demonstrates the SSQLS features.  These examples
+            are explained in the user manual.
+
+        load_jpeg: Inserts a JPEG file into the sample database,
+            for use by the cgi_jpeg example.  (See below.)  Unlike
+            the other examples, this one takes the last command
+            line argument to be a JPEG file name.  We've included
+            examples/logo.jpg as a sample, if you want to use that.
+
+        fieldinf1: Shows how to get information about the fields in
+            a result set.  (Types, etc.)
+
+        dbinfo: Dumps a bunch of information about the database
+            server and the tables in its 'mysql' database.
+    
+    If you run the load_jpeg example, you should consider also
+    playing with the other half of the demonstration, cgi_jpeg.
+    To run it, you'll need to install MySQL++ on a machine with
+    a web server, then copy the cgi_jpeg program to the server's
+    CGI directory.  For example, on a stock Red Hat type box,
+    that would be /var/www/cgi-bin.  At that point, a request like
+    http://my.server.com/cgi-bin/cgi_jpeg?id=1 should show the
+    JPEG you loaded.  The ID value to use will be that reported
+    by load_jpeg.
+
+    There is one other oddball, the updel example.  It shows how to
+    use the power of the matching syntax available in MySQL's SELECT
+    statement to do fine-grained UPDATE or DELETE queries.
+
+
+Dedicated Windows Examples
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+    If you're a Visual C++ user, there are two examples specially
+    created for you:
+
+        examples\vstudio\mfc.vcproj: A GUI replacement for the simple2
+            example, it simply logs in and displays the stock table's
+            contents.  Uses good old C++ and MFC.
+
+        examples\vstudio\wforms.vcproj: The same thing, only written in
+            C++/CLI and using Windows Forms.  We needed a second example
+            for two reasons.  First, string handling is quite different
+            under .NET than in unmanaged C++.  Second, many developers
+            are now using Visual Studio Express, which doesn't include
+            MFC.  Please read README.vc before trying to run this example.
+            The MySQL++ build settings must be modified before it will
+            run correctly.
+
+    Before trying to run these examples, run the updexdll.bat file
+    in the top MySQL++ directory.  This copies the built mysqlpp.dll
+    files into the Windows examples' EXE output directories so you
+    can run them before you're ready to formally install the DLL on
+    your system.
+
+    Open examples\vstudio\mysqlpp_gui_examples.sln to begin working
+    with these examples.  They only work correctly in Visual Studio
+    2005 right now.  If you want to backport them to VS 2003, it's
+    probably not hard, and we will accept patches for this.  The main
+    difficulty is that VS 2003 supports Managed C++, which isn't
+    the same thing as C++/CLI.
+
+    The main justification for these examples is that Unicode is
+    handled differently in Windows GUI programs than on the POSIX
+    systems where MySQL++ was born and raised.  In earlier versions
+    of MySQL++, the command line examples had very limited Unicode
+    support on Windows, but it was unrealistic and confusing.  Now the
+    command line examples don't even try to handle Unicode on Windows,
+    leaving that up to these new GUI examples.
+
+
+Special exrun Capabilities
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+    The Bourne shell version of the exrun script has a few features
+    not avaiable in the Windows batch file version.  These features
+    let you run the examples under various debugging tools.
+
+    You can get simple gdb debugging if you run an example like this:
+
+        $ ./exrun gdb simple1 foo bar qux
+
+    The script also supports valgrind, in memory leak testing mode:
+
+        $ ./exrun valgrind simple1 foo bar qux

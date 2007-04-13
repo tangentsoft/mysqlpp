@@ -17,31 +17,38 @@ TOOL=
 PROG=$1
 if [ "$PROG" == 'valgrind' ]
 then
-	TOOL=valgrind
+	TOOL='valgrind'
 	shift
-	if [ -z "$1" ]
-	then
-		echo "usage: $0 valgrind <example> [args...]"
-		echo
-		echo "   Run $0 without arguments for more detailed usage info."
-		echo
-		exit 1
-	fi
+	PROG=$1
+elif [ "$PROG" == 'gdb' ]
+then
+	TOOL='gdb --args'
+	shift
 	PROG=$1
 fi
-shift
 
-if [ ! -e libmysqlpp.so.2 ]
+if [ -n "$1" ]
 then
-	( ln -sf libmysqlpp.so libmysqlpp.so.2 )
-fi
+	shift
 
-if [ -e /usr/bin/ldd ]
-then
-	LD_LIBRARY_PATH=. $TOOL ./$PROG $*
-elif [ -e /usr/bin/otool ]
-then
-	DYLD_LIBRARY_PATH=. $TOOL ./$PROG $*
+	if [ ! -e libmysqlpp.so.2 ]
+	then
+		( ln -sf libmysqlpp.so libmysqlpp.so.2 )
+	fi
+
+	if [ -e /usr/bin/ldd ]
+	then
+		LD_LIBRARY_PATH=. $TOOL ./$PROG $*
+	elif [ -e /usr/bin/otool ]
+	then
+		DYLD_LIBRARY_PATH=. $TOOL ./$PROG $*
+	else
+		echo ERROR: I don\'t grok this system\'s dynamic linkage system.
+	fi
 else
-	echo ERROR: I don\'t grok this system\'s dynamic linkage system.
+	echo "usage: $0 $TOOL <example> [args...]"
+	echo
+	echo "   Run $0 without arguments for more detailed usage info."
+	echo
+	exit 1
 fi

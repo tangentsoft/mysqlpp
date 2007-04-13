@@ -86,14 +86,14 @@ public:
 	/// \brief Initialize string from existing C string
 	const_string(const char* str) :
 	str_data_(str),
-	length_(strlen(str))
+	length_(size_type(strlen(str)))
 	{
 	}
 	
 	/// \brief Initialize string from existing C string of known length
 	const_string(const char* str, size_type len) :
 	str_data_(str),
-	length_(len)
+	length_(size_type(len))
 	{
 	}
 	
@@ -101,7 +101,7 @@ public:
 	const_string& operator=(const char* str)
 	{
 		str_data_ = str;
-		length_ = strlen(str);
+		length_ = size_type(strlen(str));
 		return *this;
 	}
 

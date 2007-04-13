@@ -57,6 +57,9 @@
 #		pragma warning(disable: 4800)
 		// Disable nagging about new "secure" functions like strncpy_s()
 #		pragma warning(disable: 4996)
+		// Disable complaints about STL data members: VC++ believes
+		// these need to be __declspec(dllexport) for some reason.
+#		pragma warning(disable: 4251)
 		// Call _snprintf() for VC++ version of snprintf() function
 #		define snprintf _snprintf
 #	endif

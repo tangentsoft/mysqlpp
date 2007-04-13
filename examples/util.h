@@ -40,9 +40,10 @@ void print_stock_row(const mysqlpp::sql_char& item,
 void print_stock_rows(mysqlpp::Result& res);
 void print_stock_table(mysqlpp::Query& query);
 void get_stock_table(mysqlpp::Query& query, mysqlpp::Result& res);
+void print_usage(const char* program_name,
+		const char* extra_parms = "");
 bool connect_to_db(int argc, char *argv[], mysqlpp::Connection& con,
 		const char* kdb = 0);
-char* utf8trans(const char* utf8_str, char* ansi_str, int ansi_len);
 
 #endif // !defined(MYSQLPP_UTIL_H)
 

@@ -1,9 +1,6 @@
 Patches for any of these thoughtfully considered!  See the HACKERS file
 for instructions on sending patches.
 
-The items in the bug fix/maintenance section are the easiest to do
-without breaking things, so if you're looking for a project....
-
 Here's a meta-item that doesn't really fit into any of the categories
 below: any time you must hand-roll some SQL code in your program,
 consider whether it could be reduced to an API feature that would be
@@ -17,12 +14,13 @@ v2.x Features
 	it can be done without breaking the ABI, which would force
 	a feature to v3.0.
 
-	o Try SSQLS with BLOBs.  It probably won't work, because
-	  ColData converts to std::string (the most likely BLOB
-	  receiving type) via ColData::operator cchar*(), losing
-	  length information along the way.  Will probably have
-	  to add an operator std::string to ColData_Tmpl to make
-	  this work right.
+	o Fix SSQLS to work with BLOBs.  Most likely source of problems
+	  is that ColData converts to std::string (the most likely BLOB
+	  receiving type) via ColData::operator cchar*(), losing length
+	  information along the way.  Will probably have to add an
+	  operator std::string to ColData_Tmpl to make this work right.
+
+	o That done, rework cgi_jpeg to use SSQLS as a test.
 
 	o Stop using ColData_Tmpl<T>::buf_ member.  It currently
 	  contains a duplicate (and, in the presence of nulls,
@@ -37,11 +35,6 @@ v2.x Features
 	  the types we already support.  Should just be a matter of
 	  duplicating the existing type-specific manipulator functions,
 	  and wrapping the types in Null<>.
-
-	o Rework cgi_jpeg to use SSQLS.  If it no longer works after
-	  the conversion, there's still a code path using C strings.
-
-	o Rework the docs for load_jpeg and cgi_jpeg.
 
 	o Add a few features to date and time classes:
 
@@ -230,6 +223,11 @@ Future Features
 	These changes are not assigned to any particular version.
 	They could happen at any time.	If you want one to appear at
 	some definite date, get coding and provide a patch!
+
+	o Currently, the operator= for an SSQLS assumes that the row
+	  contains the entire row's data.  By using the list of known
+	  field names, we should be able to map a row subset onto an
+	  SSQLS correctly.
 
 	o SSQLS v2.  Not sure how it will look yet, but there are ideas
 	  in play, and patches to study.

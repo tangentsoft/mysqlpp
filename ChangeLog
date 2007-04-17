@@ -1,4 +1,19 @@
-2.2.2, 2007.04.13 (r1519) "The Nervousmaking Friday the 13th Release"
+2.2.3, 2007.04.17 (r1538) "The Tax Day Release"
+
+	o Previous version left examples/vstudio/* out of the tarball
+	  by accident.
+
+	o Improved generation of RPM temporary build directory path
+	  name generation.  Was using a hacked variant of the Fedora
+	  Packaging Guidelines' second best choice.  Now we're using
+	  the choice they recommend most highly, without changes.
+
+	o Removed unnecessary resources from vstudio/wforms example.
+
+	o Minor URL fix in refman
+
+
+2.2.2, 2007.04.13 (r1526) "The Nervousmaking Friday the 13th Release"
 
 	o More small fixes to embedded null handling in Query.
 

@@ -6,7 +6,7 @@ License:    LGPL
 Group:      Development/Libraries
 URL:        http://tangentsoft.net/mysql++/
 Source0:    http://tangentsoft.net/mysql++/releases/mysql++-%{version}.tar.gz
-BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root
+BuildRoot:  %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: MySQL-shared mysql-devel
 
 %description

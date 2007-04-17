@@ -4,136 +4,136 @@ hints and commentary you may find helpful.
 
 Subversion Access
 ~~~~~~~~~~~~~~~~~
-	To check out the current development version from the Gna!
-	Subversion repository, say:
+    To check out the current development version from the Gna!
+    Subversion repository, say:
 
-		$ svn co svn://svn.gna.org/svn/mysqlpp/trunk mysqlpp
+        $ svn co svn://svn.gna.org/svn/mysqlpp/trunk mysqlpp
 
-	If you're a MySQL++ committer, use svn over ssh instead:
-	
-		$ svn co svn+ssh://LOGIN@svn.gna.org/svn/mysqlpp/trunk mysqlpp
+    If you're a MySQL++ committer, use svn over ssh instead:
+    
+        $ svn co svn+ssh://LOGIN@svn.gna.org/svn/mysqlpp/trunk mysqlpp
 
-	where LOGIN is your Gna! login name.  You will have to have your
-	ssh public key registered with Gna! for this to work.
+    where LOGIN is your Gna! login name.  You will have to have your
+    ssh public key(s) registered with Gna! for this to work.
 
 
 Submitting Patches
 ~~~~~~~~~~~~~~~~~~
-	If you wish to submit a patch to the library, please send it to
-	the MySQL++ mailing list.  We want it in unified diff format.
+    If you wish to submit a patch to the library, please send it to
+    the MySQL++ mailing list, or attach it to an entry in our bug
+    tracker on Gna!  We want patches in unified diff format.
 
-	The easiest way to do this is to check out a copy of the current
-	MySQL++ tree as described in the previous section.  Then make
-	your change, cd to the root directory of the project, and ask
-	Subversion to generate the diff for you:
+    The easiest way to get a unified diff is to check out a copy of
+    the current MySQL++ tree as described in the previous section.
+    Then make your change, cd to the MySQL++ root directory, and ask
+    Subversion to generate the diff for you:
 
-		$ svn diff > mychange.patch
+        $ svn diff > mychange.patch
 
-	If your patch adds new files to the distribution, you can say
-	"svn add newfile" before you do the diff, which will include
-	the contents of that file in the patch.  (You can do this even
-	when you've checked out the tree anonymously.)	Then say "svn
-	revert newfile" to make Subversion forget about the new file.
+    If your patch adds new files to the distribution, you can say
+    "svn add newfile" before you do the diff, which will include
+    the contents of that file in the patch.  (You can do this even
+    when you've checked out the tree anonymously.)  Then say "svn
+    revert newfile" to make Subversion forget about the new file.
 
-	If you're making a patch against a MySQL++ distribution tarball,
-	then you can generate the diff this way:
+    If you're making a patch against a MySQL++ distribution tarball,
+    then you can generate the diff this way:
 
-		$ diff -ruN mysql++-olddir mysql++-newdir > mychange.patch
+        $ diff -ruN mysql++-olddir mysql++-newdir > mychange.patch
 
-	The diff command is part of every Unix and Linux system, and
-	should be installed by default.  If you're on a Windows machine,
-	GNU diff is part of Cygwin (http://cygwin.com/).  Subversion is
-	also available for all of these systems.  There are no excuses
-	for not being able to make unified diffs.  :)
+    The diff command is part of every Unix and Linux system, and
+    should be installed by default.  If you're on a Windows machine,
+    GNU diff is part of Cygwin (http://cygwin.com/).  Subversion is
+    also available for all of these systems.  There are no excuses
+    for not being able to make unified diffs.  :)
 
 
 Adding Support for a Different Compiler
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	MySQL++ uses the Bakefile system for creating project files
-	and makefiles.	This allows us to make changes to a single set
-	of files, and have the proper changes be made to all generated
-	project files and makefiles.  In the past, we used more ad-hoc
-	systems, and we'd frequently forget to update individual project
-	files and makefiles, so at any given time, at least one target
-	was likely to be broken.
+    MySQL++ uses the Bakefile system for creating project files
+    and makefiles.  This allows us to make changes to a single set
+    of files, and have the proper changes be made to all generated
+    project files and makefiles.  In the past, we used more ad-hoc
+    systems, and we'd frequently forget to update individual project
+    files and makefiles, so at any given time, at least one target
+    was likely to be broken.
 
-	If MySQL++ doesn't currently ship with project files or makefiles
-	tuned for your compiler of choice, you need to work through
-	the Bakefile mechanism to add support.	We're not willing to
-	do ad-hoc platform support any more, so please don't ask if you
-	can send us project files instead; we don't want them.
+    If MySQL++ doesn't currently ship with project files or makefiles
+    tuned for your compiler of choice, you need to work through the
+    Bakefile mechanism to add support.  We're not willing to do ad-hoc
+    platform support any more, so please don't ask if you can send
+    us project files instead; we don't want them.
 
-	If you want to port MySQL++ to another platform, we need to be
-	confident that the entire library works on your platform before
-	we'll accept patches.  In the past, we've had broken ports
-	that were missing important library features, or that crashed
-	when built in certain ways.  Few people will knowingly use a
-	crippled version of MySQL++, since there are usually acceptable
-	alternatives.  Therefore, such ports become maintenance baggage
-	with little compensating value.
+    If you want to port MySQL++ to another platform, we need to be
+    confident that the entire library works on your platform before
+    we'll accept patches.  In the past, we've had broken ports that
+    were missing important library features, or that crashed when built
+    in certain ways.  Few people will knowingly use a crippled version
+    of MySQL++, since there are usually acceptable alternatives.
+    Therefore, such ports become maintenance baggage with little
+    compensating value.
 
 
 On Manipulating the Bakefiles and Autoconf Files
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	If you're on a Unixy platform and change any of mysql++.bkl,
-	configure.ac, or config/*, you must re-run the bootstrap
-	script to regenerate the build files.  The bootstrap script
-	also has other functions:
+    If you're on a Unixy platform and change any of mysql++.bkl,
+    configure.ac, or config/*, you must re-run the bootstrap script
+    to regenerate the build files.  The bootstrap script also has
+    other functions:
 
-		$ ./bootstrap [pedantic] [noexamples] [nolibrary] [configure options]
+        $ ./bootstrap [pedantic] [noexamples] [nolibrary] [configure options]
 
-	If you pass 'pedantic' to the bootstrap script, it will set
-	up the autoconf build system so it turns on all of GCC's
-	warnings and such.  It's useful to build the library in this
-	mode when making changes to make sure there are no obvious
-	problems with the code.
+    If you pass 'pedantic' to the bootstrap script, it will set up
+    the autoconf build system so it turns on all of GCC's warnings and
+    such.  It's useful to build the library in this mode when making
+    changes to make sure there are no obvious problems with the code.
 
-	If you pass 'noexamples', the generated Makefiles and project
-	files won't try to build any of the examples.
+    If you pass 'noexamples', the generated Makefiles and project
+    files won't try to build any of the examples.
 
-	If you pass 'nolibrary', the generated Makefiles and project
-	files won't try to build the MySQL++ library.
+    If you pass 'nolibrary', the generated Makefiles and project
+    files won't try to build the MySQL++ library.
 
-	You can pass any of the previous options in any order.
-	As soon as the bootstrap script sees an option that it
-	doesn't understand, it stops processing the command line.
-	Any subsequent options are passed to the configure script.
-	See README.unix for more on configure script options.
+    You can pass any of the previous options in any order.  As soon as
+    the bootstrap script sees an option that it doesn't understand,
+    it stops processing the command line.  Any subsequent options
+    are passed to the configure script.  See README.unix for more on
+    configure script options.
 
-	If you're on Windows and you change the Bakefile (mysql++.bkl),
-	re-generating the Makefiles and project files from it is
-	a little tricky.  The above procedure doesn't work because
-	the native Win32 port of Bakefile is incomplete, and Bakefile
-	doesn't build correctly under Cygwin.  Therefore, you need to
-	run the bakefile program directly.  You'll use one of these
-	two commands, depending on which compiler you're using:
+    If you're on Windows and you change the Bakefile (mysql++.bkl),
+    re-generating the Makefiles and project files from it is a
+    little tricky.  The above procedure doesn't work because the
+    native Win32 port of Bakefile is incomplete, and Bakefile doesn't
+    build correctly under Cygwin.  Therefore, you need to run the
+    bakefile program directly.  You'll use one of these two commands,
+    depending on which compiler you're using:
 
-		C:\> bakefile -f msvc6prj mysql++.bkl
-		C:\> bakefile -f mingw -o Makefile.mingw mysql++.bkl
+        C:\> bakefile -f msvc6prj mysql++.bkl
+        C:\> bakefile -f mingw -o Makefile.mingw mysql++.bkl
 
 
 Maintaining a Private CVS Repository
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	You may find it helpful to maintain your own CVS repository.
-	Whenever there is a new MySQL++ release, import it on the vendor
-	branch like this:
+    You may find it helpful to maintain your own CVS repository.
+    Whenever there is a new MySQL++ release, import it on the vendor
+    branch like this:
 
-		$ cvs import -m "Version 1.7.35" software/mysql++ mysql++ mysql++-1_7_35
+        $ cvs import -m "Version 1.7.35" software/mysql++ mysql++ mysql++-1_7_35
 
-	(This assumes that you have your CVSROOT environment variable
-	set properly.)
+    (This assumes that you have your CVSROOT environment variable
+    set properly.)
 
-	Update the HEAD branch like this:
+    Update the HEAD branch like this:
 
-		$ cd mysql++
-		$ cvs update -PdA
-		$ cvs update -j HEAD -j mysql++-1_7_35 -Pd
-		$ cvs ci -m "merged 1.7.35 into HEAD"
-		$ cvs tag mysql++-1_7_35-merged
+        $ cd mysql++
+        $ cvs update -PdA
+        $ cvs update -j HEAD -j mysql++-1_7_35 -Pd
+        $ cvs ci -m "merged 1.7.35 into HEAD"
+        $ cvs tag mysql++-1_7_35-merged
 
-	Then any changes you make can easily be tracked, and diffs can
-	be produced with rdiff:
+    Then any changes you make can easily be tracked, and diffs can
+    be produced with rdiff:
 
-		$ cvs rdiff -ru mysql++-1_7_35 -r mysql++-1_7_35_equal_list \
-			$(cat CVS/Repository) > equal_list.patch
+        $ cvs rdiff -ru mysql++-1_7_35 -r mysql++-1_7_35_equal_list \
+            $(cat CVS/Repository) > equal_list.patch
 

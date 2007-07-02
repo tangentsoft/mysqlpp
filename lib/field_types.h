@@ -40,7 +40,7 @@ class MYSQLPP_EXPORT ResUse;
 #endif
 
 /// \brief A vector of SQL field types.
-class MYSQLPP_EXPORT FieldTypes : public std::vector<mysql_type_info>
+class FieldTypes : public std::vector<mysql_type_info>
 {
 public:
 	/// \brief Default constructor

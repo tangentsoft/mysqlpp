@@ -8,7 +8,12 @@ if ($ARGV[0] =~ /^--command\=(.+)/) {
     $command = "g++ -E";
 }
 
-$command .= " -I /usr/include/mysql++/";
+if (-e 'lib/mysql++.h') {
+	$command .= " -I lib";
+}
+else {
+	$command .= " -I /usr/include/mysql++/";
+}
 
 $/ = undef;
 $orgcode = <STDIN>;

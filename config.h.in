@@ -21,9 +21,6 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
-/* Define if mysql_shutdown() has a second 'level' argument */
-#undef HAVE_MYSQL_SHUTDOWN_LEVEL_ARG
-
 /* Define if your MySQL library has SSL functions */
 #undef HAVE_MYSQL_SSL_SET
 

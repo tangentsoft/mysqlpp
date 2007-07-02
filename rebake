@@ -1,6 +1,4 @@
 #!/bin/sh
 set -x
-bakefilize &&
-	bakefile_gen $* &&
-	unix2dos *.ds? > /dev/null 2>&1 &&
-	mv autoconf_inc.m4 config
+bakefilize && bakefile_gen $* && mv autoconf_inc.m4 config
+unix2dos *.ds? > /dev/null 2>&1

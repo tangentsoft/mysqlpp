@@ -102,8 +102,11 @@ AC_DEFUN([MYSQL_API_LOCATION],
 
 	CPPFLAGS="$CPPFLAGS -I${MYSQL_incdir}"
 
+	save_LIBS=$LIBS
+	LIBS="$LIBS $MYSQLPP_EXTRA_LIBS"
 	AC_CHECK_LIB($MYSQL_C_LIB, mysql_store_result, [], [
 			AC_MSG_ERROR([Could not find working MySQL client library!]) ])
 	AC_SUBST(MYSQL_C_LIB)
+	LIBS=$save_LIBS
 ]) dnl MYSQL_API_LOCATION
 

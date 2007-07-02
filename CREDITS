@@ -37,6 +37,11 @@ Other contributors of note since 1.7.10:
 	RPMs for Fedora, with other systems on the way.  His work has
 	improved the RPM spec file we distribute greatly.
 
+	Joel Fielder <joel.fielder@switchplane.com> came up with the
+	original idea for Query::for_each() and Query::store_in(),
+	provided the basis for examples/for_each.cpp, and provided
+	a fix for exception flag propagation in Query.
+
 
 Here are the personal credits from the old 1.7.9 documentation,
 apparently written by Kevin Atkinson:

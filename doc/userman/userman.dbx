@@ -35,7 +35,7 @@
         <holder>Educational Technology Resources</holder>
     </copyright>
 
-    <pubdate role="rcs">$Date: 2007-04-11 20:38:23 -0600 (Wed, 11 Apr 2007) $</pubdate>
+    <pubdate role="rcs">$Date: 2007-06-28 00:17:10 -0600 (Thu, 28 Jun 2007) $</pubdate>
 </articleinfo>
 
 
@@ -323,29 +323,27 @@ for (vector&lt;mystruct&gt;::iterator it = v.begin(); it != v.end(); ++it) {
         can vary on different Linuxes.)</para>
 
         <para>Before you get started, please read through any of
-        the README.* files included with the MySQL++ distribution
+        the README* files included with the MySQL++ distribution
         that are relevant to your platform. We won't repeat all of
         that here.</para>
 
-        <para>The first example you must run is the
-        <filename>resetdb</filename> example. This builds and populates
-        the sample tables used by the other examples. The usage of
-        resetdb is as follows:</para>
+        <para>Most of the examples require a test database, created
+        by <filename>resetdb</filename>. You run it like so:</para>
 
-        <screen>    ./exrun resetdb [host [user [password [port]]]]</screen>
+        <screen>        ./exrun resetdb [host [user [password [port]]]]</screen>
 
-        <para><filename>exrun</filename> is a script that ensures
-        that the MySQL++ example program you give as its first
-        argument finds the correct shared library version. If you
-        run the example program directly, it will search the system
-        directories for the MySQL++ shared library. The only way that
-        will work right is if you installed the library before running
-        the examples, but usually you want to run the examples before
-        then to ensure that the library is working correctly. The
-        <filename>exrun</filename> script solves this problem. See
+        <para><filename>exrun</filename> is a shell script that
+        ensures that the MySQL++ example program you give as its
+        first argument finds the correct shared library version. If
+        you run the example program directly, it will search the
+        system directories for the MySQL++ shared library. That
+        will only work correctly if you've installed the library
+        before running the examples. You should run the examples
+        before installing the library to ensure that the library
+        is working correctly, thus <filename>exrun</filename>. See
         <filename>README.examples</filename> for more details. (We've
         been using POSIX file and path names for simplicity above, but
-        there's a windows version of <filename>exrun</filename>, called
+        there's a Windows version of <filename>exrun</filename>, called
         <filename>exrun.bat</filename>. It works the same way.)</para>
 
         <para>As for the remaining program arguments, they are all
@@ -355,7 +353,9 @@ for (vector&lt;mystruct&gt;::iterator it = v.begin(); it != v.end(); ++it) {
         log in.  If you leave off the user name, it uses the name
         you used when logging on to the computer. And if you leave
         off the host name, it assumes the MySQL server is running on
-        the local host.</para>
+        the local host. A typical invocation is:</para>
+
+        <screen>        ./exrun resetdb localhost root nunyabinness</screen>
 
         <para>For <filename>resetdb</filename>, the user name needs to
         be for an account with permission to create databases. Once
@@ -390,12 +390,12 @@ for (vector&lt;mystruct&gt;::iterator it = v.begin(); it != v.end(); ++it) {
         is ever 0, because of the way we do overloading, so it's
         safer to call <function>at()</function> instead.</para>
 
-        <para>The only thing that isn't explicitly handled
-        in the code block above is that we delegate connection
-        establishment to <function>connect_to_db()</function> in the
-        <filename>util</filename> module.  We do this only because
-        that function also handles the command line parsing for the
-        examples, so they have a consistent interface.</para>
+        <para>The only thing that isn't explicit in the code above is
+        that we delegate command line argument parsing and connection
+        establishment to <function>connect_to_db()</function> in
+        the <filename>util</filename> module. This function exists
+        to give the examples a consistent interface, not to hide
+        important details.</para>
     </sect2>
 
 
@@ -423,30 +423,32 @@ for (vector&lt;mystruct&gt;::iterator it = v.begin(); it != v.end(); ++it) {
         errors. Most of the examples have a full set of exception
         handlers. This is worthy of emulation.</para>
 
-        <para>All of MySQL++'s custom exceptions derive from a common
-        base class, <ulink type="classref" url="Exception"/>. That
-        in turn derives from the Standard C++ exception base class,
-        <classname>std::exception</classname>.  Since the library
+        <para>All of MySQL++'s custom exceptions derive
+        from a common base class, <ulink type="classref"
+        url="Exception"/>. That in turn derives from Standard C++'s
+        <classname>std::exception</classname> class. Since the library
         can indirectly cause exceptions to come from the Standard C++
         Library, it's possible to catch all exceptions from MySQL++
-        by just catching <classname>std::exception</classname>
-        by reference. However, it's usually better to catch the
-        all of the concrete exception types that you expect,
-        and add a handler for <classname>Exception</classname> or
+        by just catching <classname>std::exception</classname> by
+        reference. However, it's better to have individual catch blocks
+        for each of the concrete exception types that you expect, and
+        add a handler for either <classname>Exception</classname> or
         <classname>std::exception</classname> to act as a "catch-all"
         for unexpected exceptions.</para>
 
-        <para>Some of these exceptions are optional.  When disabled,
-        the object signals errors in some other way, typically by
-        returning an error code or setting an error flag. Classes
-        that support this feature derive from <ulink type="classref"
-        url="OptionalExceptions"/>.  Moreover, when such an object
-        creates another object that also derives from this interface,
-        it passes on its exception flag. Since everything flows
-        from the <ulink type="classref" url="Connection"/> object,
-        disabling exceptions on it at the start of the program disables
-        all optional exceptions. You can see this technique at work in
-        the "simple" examples, which keeps them, well, simple.</para>
+        <para>Some of these exceptions are optional. When exceptions
+        are disabled on a MySQL++ object, it signals errors in some
+        other way, typically by returning an error code or setting
+        an error flag. Classes that support this feature derive
+        from <ulink type="classref" url="OptionalExceptions"/>.
+        Moreover, when such an object creates another object
+        that also derives from this interface, it passes on its
+        exception flag. Since everything flows from the <ulink
+        type="classref" url="Connection"/> object, disabling
+        exceptions on it at the start of the program disables all
+        optional exceptions. You can see this technique at work in the
+        <filename>simple[1-3]</filename> examples, which keeps them,
+        well, simple.</para>
 
         <para>Real-world code typically can't afford to lose out on the
         additional information and control offered by exceptions. But
@@ -464,14 +466,19 @@ for (vector&lt;mystruct&gt;::iterator it = v.begin(); it != v.end(); ++it) {
         technique at work.</para>
 
         <para>When one <classname>OptionalExceptions</classname>
-        derivative creates another such object and passes on its
-        exception flag, it passes a copy of the flag. Therefore,
-        the two objects' flags operate independently after the new
-        one is created. There's no way to globally enable or disable
-        this flag on existing objects in a single call.</para>
+        derivative passes its exceptions flag to another such object,
+        it is only passing a copy. This means that the two objects'
+        flags operate independently. There's no way to globally
+        enable or disable this flag on existing objects in a single
+        call. If you're using the <classname>NoExceptions</classname>
+        feature and you're still seeing optional exceptions thrown, you
+        disabled exceptions on the wrong object. The exception thrower
+        could be unrelated to the object you disabled exceptions on,
+        it could be its parent, or it could be a child created before
+        you changed the exception throwing flag.</para>
 
-        <para>There are a few classes of exceptions MySQL++ can throw
-        that are not optional:</para>
+        <para>Some of the exceptions MySQL++ can throw are not
+        optional:</para>
 
         <itemizedlist>
             <listitem><para>The largest set of non-optional exceptions
@@ -499,6 +506,11 @@ for (vector&lt;mystruct&gt;::iterator it = v.begin(); it != v.end(); ++it) {
             don't pass enough parameters when instantiating the
             template, <classname>Query</classname> will throw
             a <ulink type="classref" url="BadParamCount"/>
+            exception.</para></listitem>
+
+            <listitem><para>If you pass a bad option value to
+            <methodname>Connection::set_option</methodname>, it will
+            throw a <classname>BadOption</classname>
             exception.</para></listitem>
         </itemizedlist>
 
@@ -826,8 +838,74 @@ cout &lt;&lt; x &lt;&lt; endl;</programlisting>
         <filename>simple2</filename>, only with a "use" query instead
         of a "store" query. If your program uses exceptions, you should
         instead look at <filename>examples/usequery.cpp</filename>,
-        which does the same thing as <filename>simple</filename>,
+        which does the same thing as <filename>simple3</filename>,
         but with exception-awareness.</para>
+    </sect2>
+
+
+    <sect2>
+        <title>Conditional Result Row Handling</title>
+
+        <para><methodname>Query::store()</methodname> is fine if
+        you really need all the rows the query returns. It sometimes
+        happens that you can't express the full selection criteria
+        in a SQL query. Instead of storing the full result set,
+        then picking over it to find the rows you want to keep,
+        use <methodname>Query::store_if()</methodname>.  This is
+        <filename>examples/store_if.cpp</filename>:</para>
+
+        <programlisting><xi:include href="store_if.txt" parse="text"
+        xmlns:xi="http://www.w3.org/2001/XInclude"/></programlisting>
+
+        <para>I doubt anyone really needs to select rows from
+        a table that have a prime number in a given field. This
+        example is meant to be just barely more complex than SQL
+        can manage, to avoid obscuring the point. Point being, the
+        <methodname>Query::store_if()</methodname> call here gives
+        you a container full of results meeting a criterion that you
+        probably can't express in SQL. You will no doubt have much
+        more useful criteria in your own programs.</para>
+
+        <para>If you need a more complex query than the one
+        <methodname>store_if()</methodname> knows how to build when
+        given an SSQLS examplar, there are two overloads that let
+        you use your own query string. One overload takes the query
+        string directly, and the other uses the query string built
+        with <classname>Query</classname>'s stream interface.</para>
+    </sect2>
+
+
+    <sect2>
+        <title>Executing Code for Each Row In a Result Set</title>
+
+        <para>SQL is more than just a database query language. Modern
+        database engines can actually do some calculations on the data
+        on the server side. But, this isn't always the best way to
+        get something done. When you need to mix code and a query,
+        MySQL++'s new <methodname>Query::for_each()</methodname>
+        facility might be just what you need. This is
+        <filename>examples/for_each.cpp</filename>:</para>
+
+        <programlisting><xi:include href="for_each.txt" parse="text"
+        xmlns:xi="http://www.w3.org/2001/XInclude"/></programlisting>
+
+        <para>You only need to read the <function>main()</function>
+        function to get a good idea of what the program
+        does. The key line of code passes an SSQLS examplar and
+        a functor to <methodname>Query::for_each()</methodname>.
+        <methodname>for_each()</methodname> uses the SSQLS instance to
+        build a <computeroutput>select * from TABLE</computeroutput>
+        query, <computeroutput>stock</computeroutput> in
+        this case. It runs that query internally, calling
+        <classname>gather_stock_stats</classname> on each row. This
+        is a pretty contrived example; you could actually do this in
+        SQL, but we're trying to prevent the complexity of the code
+        from getting in the way of the demonstration here.</para>
+
+        <para>Just as with <methodname>store_if()</methodname>,
+        described above, there are two other overloads for
+        <methodname>for_each()</methodname> that let you use your
+        own query string.</para>
     </sect2>
 
 
@@ -845,28 +923,29 @@ cout &lt;&lt; x &lt;&lt; endl;</programlisting>
 
 
     <sect2>
-        <title>Let's Do Something Useful</title>
+        <title>Dealing with Binary Data</title>
 
-        <para>These next few examples demonstrate just how powerful
-        C++ can be, allowing you to do a lot of work in few lines of
-        code without losing efficiency.</para>
-
-        <para>Since the code is meant to be re-used as-is, constants
-        that can differ from one case to another have been grouped in
-        order to simplify editing. Also, all of these examples have
-        full error checking code, showing off the power of MySQL++'s
-        exception handling features.</para>
+        <para>The tricky part about dealing with binary data in
+        MySQL++ is to ensure that you don't ever treat the data as a
+        C string, which is really easy to do accidentally. C strings
+        treat zero bytes as special end-of-string characters, but
+        they're not special at all in binary data. Recent releases
+        of MySQL++ do a better job of letting you keep data in
+        forms that don't have this problem, but it's still possible
+        to do it incorrectly. These examples demonstrate correct
+        techniques.</para>
 
         <sect3>
-            <title>Loading binary file in a BLOB column</title>
+            <title>Loading a binary file into a BLOB column</title>
 
-            <para>Since MySQL 3.23, BLOB columns have been available,
-            but their use is sometimes not straightforward. Besides
-            showing how easy it can be with MySQL++, this
-            example demonstrates several features of MySQL++.
-            The program requires one command line parameter over
-            that required by the other examples you've seen so
-            far, which is a full path to a JPEG file. This is
+            <para>This example shows how to insert binary data
+            into a MySQL table's BLOB column with MySQL++,
+            and also how to get the value of the auto-increment
+            column from the previous insert. (This MySQL feature
+            is usually used to create unique IDs for rows as
+            they're inserted.) The program requires one command
+            line parameter over that required by the other examples
+            you've seen so far, the path to a JPEG file. This is
             <filename>examples/load_jpeg.cpp</filename>:</para>
 
             <programlisting><xi:include href="load_jpeg.txt" parse="text"
@@ -879,12 +958,12 @@ cout &lt;&lt; x &lt;&lt; endl;</programlisting>
         </sect3>
 
         <sect3>
-            <title>Displaying images in HTML from BLOB column</title>
+            <title>Serving images from BLOB column via CGI</title>
 
             <para>This example is also a very short one, considering
-            the function that it performs. This one will retreive data
-            loaded by <filename>load_jpeg</filename> and print it out
-            in the form a web server can accept for a CGI call. This
+            the function that it performs. It retreives data loaded
+            by <filename>load_jpeg</filename> and prints it out in
+            the form a web server can accept for a CGI call. This
             is <filename>examples/cgi_jpeg.cpp</filename>:</para>
 
             <programlisting><xi:include href="cgi_jpeg.txt" parse="text"
@@ -897,36 +976,6 @@ cout &lt;&lt; x &lt;&lt; endl;</programlisting>
             That retrieves the JPEG with ID 1 from the table and
             returns it to the web server, which will send it on to
             the browser.</para>
-        </sect3>
-
-        <sect3>
-            <title>DELETE or UPDATE from SELECT</title>
-
-            <para>MySQL's SELECT statement has more power to winnow
-            out just the items of interest from the database than
-            do DELETE or UPDATE queries. Therefore, many people
-            have wanted the ability to execute a SELECT statement
-            that in fact deletes or updates the rows matched,
-            rather than returning them. This example implements
-            that feature in just a few lines of code. It is
-            <filename>examples/updel.cpp</filename>:</para>
-
-            <programlisting><xi:include href="updel.txt" parse="text"
-            xmlns:xi="http://www.w3.org/2001/XInclude"/></programlisting>
-
-            <para>Notice that the row values used in the IN clause
-            aren't escaped or quoted. This is because row elements are
-            <ulink type="classref" url="ColData__Tmpl">ColData</ulink>
-            types, so they have automatic escaping and quoting, as
-            appropriate to the type being inserted. If you want to
-            disable this feature, it's easily done: click the ColData
-            link for the details.</para>
-
-            <para>Users of this example should beware that one more
-            check is required in order to run this query safely:
-            in some extreme cases, the size of the query might grow
-            larger than MySQL's maximum allowed packet size. This
-            check should be added.</para>
         </sect3>
     </sect2>
 </sect1>
@@ -943,11 +992,9 @@ cout &lt;&lt; x &lt;&lt; endl;</programlisting>
     those placeholders.</para>
 
     <para>The following program demonstrates how to use this
-    feature. This is <filename>examples/resetdb.cpp</filename>, the
-    program you've run a few times now if you've worked through all
-    the examples:</para>
+    feature. This is <filename>examples/tquery.cpp</filename>:</para>
 
-    <programlisting><xi:include href="resetdb.txt" parse="text" 
+    <programlisting><xi:include href="tquery.txt" parse="text" 
     xmlns:xi="http://www.w3.org/2001/XInclude"/></programlisting>
 
     <para>The line just before the call to
@@ -961,7 +1008,7 @@ cout &lt;&lt; x &lt;&lt; endl;</programlisting>
 
 
     <sect2>
-        <title>Setting up template queries</title>
+        <title>Setting up Template Queries</title>
 
         <para>To set up a template query, you simply insert it into the
         Query object, using numbered placeholders wherever you want
@@ -1040,14 +1087,15 @@ query.parse();</programlisting>
 
 
     <sect2>
-        <title>Setting the parameters at execution time</title>
+        <title>Setting the Parameters at Execution Time</title>
 
         <para>To specify the parameters when you want to execute
         a query simply use <methodname>Query::store(const
         SQLString &amp;parm0, [..., const SQLString
         &amp;parm11])</methodname>. This type of multiple overload
-        also exists for <methodname>Query::use()</methodname>
-        and <methodname>Query::execute()</methodname>.  'parm0'
+        also exists for <methodname>Query::storein()</methodname>,
+        <methodname>Query::use()</methodname> and
+        <methodname>Query::execute()</methodname>. 'parm0'
         corresponds to the first parameter, etc. You may specify up
         to 25 parameters. For example:</para>
 
@@ -1071,46 +1119,74 @@ select (%0:field1, %1:field2) from stock where %2:wheref = %3q:what</programlist
 
 
     <sect2>
-        <title>Using defaults</title>
+        <title>Parameter Types and Function Overloads</title>
 
-        <para>You can also set the parameters one at a time by means
-        of class Query's public data member def. To change the values
-        of the def, simply use the subscript operator. You can refer
-        to the parameters either by number or by name. The following
-        two examples have the same effect:</para>
-
-        <programlisting>
-query.def[0] = "Dinner Rolls"; 
-query.def[1] = "item"; 
-query.def[2] = "item"; 
-query.def[3] = "price";</programlisting>
-
-        <para>and</para>
+        <para>There are quite a few overloads for each of
+        <classname>Query</classname>'s query execution
+        functions. (<methodname>store()</methodname>,
+        <methodname>use()</methodname>,
+        <methodname>execute()</methodname>...) It's possible to
+        have code that looks like it should work, but which doesn't,
+        because it's calling the wrong overload. For instance:</para>
 
         <programlisting>
-query.def["what"] = "Dinner Rolls"; 
-query.def["wheref"] = "item"; 
-query.def["field1"] = "item"; 
-query.def["field2"] = "price";</programlisting>
+query.storein(my_vector, "1");
+query.storein(my_vector, 1);</programlisting>
 
-        <para>Once all the parameters are set simply execute as you
-        would have executed the query before you knew about template
-        queries:</para>
+        <para>The first one works, and the second does
+        not. The cause is a vestigial second parameter to one
+        of <methodname>storein()</methodname>'s overloads that's
+        compatible with integers. Being vestigial, it's only getting
+        in the way right now, but we can't fix it until the next
+        major version of the libary, where it will be okay to break
+        the ABI. Until then, we're stuck with it.</para>
+
+        <para>If the MySQL server keeps rejecting your template
+        queries, try explicitly casting the parameters to
+        <classname>SQLString</classname>:</para>
 
         <programlisting>
-Result res = query.store()</programlisting>
+query.storein(my_vector, SQLString(1));</programlisting>
+
+        <para>This ensures that your code calls one of the overloads
+        meant to handle template query parameters. I don't recommend
+        doing this habitually, because it will clutter your code. For
+        the most part, MySQL++'s interface is set up to do the right
+        thing. It's just that there are still a few corner cases
+        that can't be fixed until the next time we can redesign the
+        interface.</para>
     </sect2>
 
-
     <sect2>
-        <title>Combining the two</title>
+        <title>Default Parameters</title>
 
-        <para>You can also combine the use of setting the parameters
-        at execution time and setting them via the def object
-        by calling <methodname>Query::store()</methodname>
-        (or <methodname>use()</methodname> or
-        <methodname>execute()</methodname>) without passing the full
-        number of parameters that the template supports:</para>
+        <para>The template query mechanism allows you to set
+        default parameter values. You simply assign a value
+        for the parameter to the appropriate position in the
+        <varname>Query::def</varname> array. You can refer to the
+        parameters either by position or by name:</para>
+
+        <programlisting>
+query.def[1] = "item";
+query.def["wheref"] = "item";</programlisting>
+
+        <para>Both do the same thing.</para>
+
+        <para>This mechanism works much like C++'s default function
+        parameter mechanism: if you set defaults for the parameters at
+        the end of the list, you can call one of
+        <classname>Query</classname>'s query execution methods without
+        passing all of the values. If the query takes four parameters
+        and you've set defaults for the last three, you can execute the
+        query using as little as just one explicit parameter.</para>
+
+        <para>Now you can see why we numbered the template query
+        parameters the way we did a few sections earlier. We ordered
+        them so that the ones less likely to change have higher
+        numbers, so we don't always have to pass them. We can just give
+        them defaults and take those defaults when applicable. This
+        is most useful when some parameters in a template query vary
+        less often than other parameters. For example:</para>
 
         <programlisting>
 query.def["field1"] = "item"; 
@@ -1118,34 +1194,35 @@ query.def["field2"] = "price";
 Result res1 = query.store("Hamburger Buns", "item"); 
 Result res2 = query.store(1.25, "price"); </programlisting>
 
-        <para>Would store the query:</para>
+        <para>This stores the result of the following queries
+        in <varname>res1</varname> and <varname>res2</varname>,
+        respectively:</para>
 
         <programlisting>
-select (item, price) from stock where item = "Hamburger Buns" </programlisting>
+select (item, price) from stock where item = "Hamburger Buns"
+select (item, price) from stock where price = 1.25</programlisting>
 
-        <para>for res1 and</para>
+        <para>Default parameters are useful in this example because
+        we have two queries to issue, and parameters 2 and 3 remain
+        the same for both, while parameters 0 and 1 vary.</para>
 
-        <programlisting>
-select (item, price) from stock where price = 1.25 </programlisting>
-
-        <para>for res2.</para>
-
-        <para>Now you see why we ordered the placeholders in the
-        template above as we did: we used positions 0 and 1 for the
-        ones we want to change frequently, and used 2 and 3 for the
-        parameters that seldom change.</para>
-
-        <para>One thing to watch out for, however, is that
-        <methodname>Query::store(const char* q)</methodname>
-        is also defined for executing the query q. Therefore,
-        when you call <methodname>Query::store()</methodname>
-        (or <methodname>use()</methodname>, or
-        <methodname>execute()</methodname>) with only one item and
-        that item is a const char*, you need to explicitly convert
-        it into a SQLString to get the right overload:</para>
+        <para>Some have been tempted into using this mechanism as a
+        way to set all of the template parameters in a query:</para>
 
         <programlisting>
-Result res = query.store(SQLString("Hamburger Buns")); </programlisting>
+query.def["what"] = "Hamburger Buns";
+query.def["wheref"] = "item";
+query.def["field1"] = "item"; 
+query.def["field2"] = "price"; 
+Result res1 = query.store();</programlisting>
+
+        <para>This can work, but it is <emphasis>not designed
+        to</emphasis>. In fact, it's known to fail horribly in one
+        common case. You will not get sympathy if you complain on
+        the mailing list about it not working. If your code doesn't
+        actively reuse at least one of the parameters in subsequent
+        queries, you're abusing MySQL++, and it is likely to take
+        its revenge on you.</para>
     </sect2>
 
 
@@ -1154,9 +1231,10 @@ Result res = query.store(SQLString("Hamburger Buns")); </programlisting>
 
         <para>If for some reason you did not specify all the parameters
         when executing the query and the remaining parameters do not
-        have their values set via def, the query object will throw a
-        <ulink type="classref" url="BadParamCount"/> object. If this
-        happens, you can get an explanation of what happened by calling
+        have their values set via <varname>Query::def</varname>,
+        the query object will throw a <ulink type="classref"
+        url="BadParamCount"/> object. If this happens, you
+        can get an explanation of what happened by calling
         <methodname>BadParamCount::what()</methodname>, like so:</para>
 
         <programlisting>
@@ -1164,9 +1242,8 @@ query.def["field1"] = "item";
 query.def["field2"] = "price"; 
 Result res = query.store(1.25); </programlisting>
 
-        <para>This would throw
-        <classname>BadParamCount</classname> because the
-        wheref is not specified.</para>
+        <para>This would throw <classname>BadParamCount</classname>
+        because the <varname>wheref</varname> is not specified.</para>
 
         <para>In theory, this exception should never be thrown. If
         the exception is thrown it probably a logic error in your
@@ -1587,12 +1664,22 @@ sql_create_complete_5(stock, 2, 5,
         <filename>doc/ssqls-pretty</filename>, like so:</para>
 
         <programlisting>
-ssqls-pretty &lt; myprog.cpp |less</programlisting>
+doc/ssqls-pretty &lt; myprog.cpp |less</programlisting>
 
-        <para>This locates the first SSQLS declaration in that file
-        and uses the C++ preprocessor to expand that macro. You
-        may have to change the script to tell it where your MySQL++
-        header files are.</para>
+        <para>This Perl script locates the first SSQLS declaration
+        in that file, then uses the C++ preprocessor to expand that
+        macro. (The script assumes that your system's preprocessor
+        is called <filename>cpp</filename>, and that its command line
+        interface follows Unix conventions.)</para>
+
+        <para>If you run it from the top MySQL++ directory, as shown
+        above, it will use the header files in the distribution's
+        <filename>lib</filename> subdirectory. Otherwise, it
+        assumes the MySQL++ headers are in their default location,
+        <filename>/usr/include/mysql++</filename>. If you want to
+        use headers in some other location, you'll need to change
+        the directory name in <command>-I</command> flag at the top
+        of the script.</para>
     </sect2>
 
 
@@ -1601,9 +1688,9 @@ ssqls-pretty &lt; myprog.cpp |less</programlisting>
 
         <para>The SSQLS headers &mdash; custom.h and custom-macros.h
         &mdash; are automatically generated by the Perl script
-        custom.pl. Although it is possible to change this script to
-        get additional functionality, it's usually better to do that
-        through inheritance.</para>
+        <filename>custom.pl</filename>. Although it is possible to
+        change this script to get additional functionality, it's
+        usually better to do that through inheritance.</para>
 
         <para>A regular user may find it helpful to change the the
         limit on the maximum number of SSQLS data members allowed.
@@ -1611,12 +1698,56 @@ ssqls-pretty &lt; myprog.cpp |less</programlisting>
         compile time, or you may require a higher value because
         you have more complex tables than that. Simply change the
         <varname>max_data_members</varname> variable at the top of
-        custom.pl and say 'make'.  The limit for Visual C++ is 31,
-        according to one report. There doesn't seem to be a practical
-        limit with GCC 3.3 at least: I set the limit to 100 and
-        the only thing that happened is that custom-macros.h
-        went from 1.3 MB to 18 MB and the build time for
-        <filename>examples/custom.*</filename> got a lot longer.</para>
+        <filename>custom.pl</filename> and say <command>make</command>.
+        The limit for Visual C++ is 31, according to one report. There
+        doesn't seem to be a practical limit with GCC 3.3 at least:
+        I set the limit to 100 and the only thing that happened
+        is that custom-macros.h went from 1.3 MB to 18 MB and the
+        build time for <filename>examples/custom.*</filename> got a
+        lot longer.</para>
+    </sect2>
+
+    <sect2>
+        <title>SSQLS and BLOB Columns</title>
+
+        <para>It takes special care to use SSQLS with BLOB
+        columns. It's safest to declare the SSQLS field as of
+        type <classname>mysqlpp::sql_blob</classname>. This
+        is currently a typedef alias for <ulink type="classref"
+        url="ColData__Tmpl">ColData</ulink>, which is the form the
+        data is in just before the SSQLS mechanism populates the
+        structure. Thus, when the data is copied from the internal
+        MySQL++ data structures into your SSQLS, you get a direct
+        copy of the <classname>ColData</classname> object's contents,
+        without interference.</para>
+
+        <para>Because <classname>ColData</classname> derives
+        from <classname>std::string</classname> and C++
+        strings handle binary data just fine, you might think
+        you can use <classname>std::string</classname> instead
+        of <classname>sql_blob</classname>, but the current
+        design of <classname>ColData</classname> converts to
+        <classname>std::string</classname> via a C string. As a
+        result, the BLOB data is truncated at the first embedded
+        null character during population of the SSQLS. There's
+        no way to fix that without completely redesigning either
+        <classname>ColData</classname> or the SSQLS mechanism.</para>
+
+        <para>The <classname>sql_blob</classname> typedef may be
+        changed to alias a different type in the future, so using it
+        instead of <classname>ColData</classname> ensures that your
+        code tracks these library changes automatically. Besides,
+        <classname>ColData</classname> is only intended to be an
+        internal mechanism within MySQL++. The only reason the layering
+        is so thin here is because it's the only way to prevent BLOB
+        data from being corrupted while staying within the current
+        library interface design.</para>
+
+        <para>You can see this technique in action in the
+        <filename>cgi_jpeg</filename> example:</para>
+
+        <programlisting><xi:include href="cgi_jpeg.txt" parse="text"
+        xmlns:xi="http://www.w3.org/2001/XInclude"/></programlisting>
     </sect2>
 </sect1>
 
@@ -2251,6 +2382,28 @@ q.execute(some_value);</programlisting>
 
             <para>(Incidentally, this change was made to allow better
             support for BLOB columns.)</para>
+        </sect3>
+
+
+        <sect3>
+            <title>v2.3.0</title>
+
+            <para><methodname>Connection::set_option()</methodname>
+            calls now set the connection option immediately, instead
+            of waiting until just before the connnection is actually
+            established. Code that relied on the old behavior could see
+            unhandled exceptions, since option setting errors are now
+            thrown from a different part of the code. You want to wrap
+            the actual <methodname>set_option()</methodname> call now,
+            not <methodname>Connection::connect()</methodname></para>
+
+            <para><classname>FieldNames</classname> and
+            <classname>FieldTypes</classname> are no longer exported
+            from the library. If you are using these classes directly
+            from Visual C++ or MinGW, your code won't be able to
+            dynamically link to a DLL version of the library any
+            more. These are internal classes, however, so no one
+            should be using them directly.</para>
         </sect3>
     </sect2>
 

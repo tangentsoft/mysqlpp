@@ -1,41 +1,49 @@
-Compatibility
+Prerequisites
 ~~~~~~~~~~~~~
-    MySQL++ only builds under Visual C++ 7.1 (a.k.a. Visual Studio
-    2003, a.k.a. cl version 13.10) or later.  Earlier versions did
-    not support a sufficiently broad set of the Standard C++ language.
+    MySQL++ requires Visual Studio 2003 or later.  Earlier versions
+    did not support a sufficiently broad subset of Standard C++.
+
+    You also need to have MySQL installed.  The installer may have
+    given you the option of whether to install the development files
+    or not; if you didn't let it install them, you need to reinstall.
 
 
 Building the Library and Example Programs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    As of MySQL++ v2.2, there is only one set of project files in
-    the top level directory for MySQL++.  We ship VC++6 project
-    files (.dsw and .dsp instead of .sln and .vcproj) due to a
-    limitation of the version of Bakefile we're using to generate
-    the project files.  Just let Visual Studio convert these to
-    the new format.
+    As of MySQL++ v2.2, there is only one set of project files
+    in the top level directory for MySQL++.  We ship VC++6 style
+    project files (.dsw and .dsp instead of .sln and .vcproj) due to
+    a limitation of the tool we use to generate the project files.
+    Just let Visual Studio convert these to the new format.
 
-    If MySQL isn't in C:\Program Files\MySQL\MySQL Server 5.0\
-    you need to change the project file settings.  You have
-    two options:
+    If you installed MySQL somewhere other than 
+    
+        C:\Program Files\MySQL\MySQL Server 5.0\
+        
+    you need to change the project file settings.  The simplest way
+    to do this is to change the link and include file directories in
+    the project settings directly.  Although these are technically
+    generated files and it's generally bad practice to change generated
+    files, if that's all the only change to MySQL++ you need, this
+    is harmless.  See below if you want to change the actual source
+    files that create the project files.
 
-        - The simplest is to change the link and include
-          file directories in the project settings directly.
-          Although it's generally bad practice to change
-          generated files, if that's all the only change to
-          MySQL++ you need, this is harmless.
+    Be sure to build both the Debug and Release versions of the
+    library.  You will need them both because when you build your
+    program in Release mode, it won't work with mysqlpp.dll built
+    in Debug mode.  The converse may also be true, but I'm not sure.
+    The simplest way to ensure that you're running your program against
+    the correct DLL is to copy the debug version of the MySQL++ DLL
+    into your program's Debug build directory, and the same for the
+    release version.
 
-        - If you're doing deeper work on MySQL++, you
-          should probably be changing mysql++.bkl instead.
-          Then to generate Visual C++ project files from that
-          file, you will need the Win32 port of Bakefile from
-          http://bakefile.sf.net/  The command to do that is:
+    With the library built, run at least the resetdb and simple1
+    examples to ensure that the library is working correctly.
+    See README.examples for further details.
 
-              bakefile -f msvc6prj mysql++.bkl
-
-    Once the library is built and you're satisfied that it's working
-    correctly, you can run the install.bat file at the project
-    root to automatically install the library files and headers in
-    subdirectories under c:\mysql++.
+    Once you're sure the library is working correctly, run the
+    install.bat file at the project root to automatically install
+    the library files and headers in subdirectories under c:\mysql++.
 
 
 Using MySQL++ in an MFC Project
@@ -132,7 +140,35 @@ Using MySQL++ in a Windows Forms C++/CLI Project
     because it can use relative paths for mysqlpp.dll.
 
 
-If You Run into Problems...
+Working With Bakefile
+~~~~~~~~~~~~~~~~~~~~~
+    MySQL++'s Visual Studio project files aren't maintained directly.
+    Instead, they're generated from mysql++.bkl using a tool called
+    Bakefile, from http://bakefile.sourceforge.net/  We do it this
+    way so we can support multiple platforms and build systems in a
+    common way.
+
+    Therefore, if you need to make changes to the project files
+    and want to submit those changes back to the MySQL++ project,
+    you need to do your changes to mysql++.bkl instead of directly to
+    the project files.  There is a native Win32 version of Bakefile up
+    on that web site.  Download that and put the directory containing
+    bakefile.exe in your Windows PATH.
+
+    The documentation on the Bakefile web site isn't wonderful, but
+    is adequate for most things.  If you can't find documentation
+    for the feature you need, it's quite likely that Bakefile just
+    doesn't support it.  There are things you can do to the project
+    settings in Visual Studio that you can't do in Bakefile, since
+    it's a cross-platform tool.
+
+    Once you've made your changes, generate the Visual C++ project
+    files with this command:
+
+        bakefile -f msvc6prj mysql++.bkl
+
+
+If You Run Into Problems...
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Especially if you have linking problems, make sure your project
     settings match the above.  Visual C++ is very picky about things

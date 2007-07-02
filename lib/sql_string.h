@@ -35,6 +35,7 @@
 #define MYSQLPP_SQL_STRING_H
 
 #include "common.h"
+#include "null.h"
 
 #include <stdio.h>
 #include <string>
@@ -116,6 +117,9 @@ public:
 	/// \brief Create object as the string form of a \c double
 	/// value
 	SQLString(double i);
+
+	/// \brief Create object representing NULL
+	SQLString(const null_type& i);
 
 	/// \brief Copy a C string into this object
 	SQLString& operator =(const char* str)

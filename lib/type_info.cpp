@@ -25,10 +25,11 @@
 ***********************************************************************/
 
 #include "common.h"
+#include "type_info.h"
 
 #include "datetime.h"
+#include "myset.h"
 #include "sql_types.h"
-#include "type_info.h"
 
 #include <mysql.h>
 

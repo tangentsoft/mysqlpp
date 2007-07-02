@@ -14,7 +14,7 @@
 # USA
 
 # Standard autotools stuff
-AC_INIT(mysql++, 2.2.3, plusplus@lists.mysql.com, mysql++)
+AC_INIT(mysql++, 2.3.0, plusplus@lists.mysql.com, mysql++)
 AC_CONFIG_HEADER(config.h)
 AC_DISABLE_STATIC
 AC_CANONICAL_SYSTEM
@@ -57,7 +57,6 @@ AC_CHECK_HEADERS(zlib.h, AC_CHECK_LIB(z, gzread, [],
 LIB_MATH
 LIB_SOCKET_NSL
 MYSQL_API_LOCATION
-MYSQL_SHUTDOWN_ARG
 MYSQL_WITH_SSL
 AX_C_LOCALTIME_R
 AC_CHECK_LIB(intl, main)

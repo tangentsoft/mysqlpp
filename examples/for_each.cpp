@@ -1,10 +1,11 @@
 /***********************************************************************
- usequery.cpp - Same as simple3 example, only with exceptions enabled.
-	The end of the result set is signalled differently in this case.
+ for_each.cpp - Demonstrates Query::for_each(), showing how to perform
+	an arbitrary action on each row in a result set.
 
- Copyright (c) 2005 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the CREDITS
- file in the top directory of the distribution for details.
+ Copyright (c) 2005-2007 by Joel Fielder and Educational Technology
+ Resources, Inc.  Others may also hold copyrights on code in this file.
+ See the CREDITS file in the top directory of the distribution for
+ details.
 
  This file is part of MySQL++.
 
@@ -25,10 +26,53 @@
 ***********************************************************************/
 
 #include "util.h"
+#include "stock.h"
 
 #include <mysql++.h>
 
 #include <iostream>
+
+#include <math.h>
+
+
+// Define a functor to collect statistics about the stock table
+class gather_stock_stats
+{
+public:
+	gather_stock_stats() :
+	items_(0),
+	weight_(0),
+	cost_(0)
+	{
+	}
+
+	void operator()(const stock& s)
+	{
+		items_  += s.num;
+		weight_ += (s.num * s.weight);
+		cost_   += (s.num * s.price);
+	}
+	
+private:
+	mysqlpp::sql_bigint items_;
+	mysqlpp::sql_double weight_, cost_;
+
+	friend std::ostream& operator<<(std::ostream& os,
+			const gather_stock_stats& ss);
+};
+
+
+// Dump the contents of gather_stock_stats to a stream in human-readable
+// form.
+std::ostream&
+operator<<(std::ostream& os, const gather_stock_stats& ss)
+{
+	os << ss.items_ << " items " <<
+			"weighing " << ss.weight_ << " stone and " <<
+			"costing " << ss.cost_ << " cowrie shells";
+	return os;
+}
+
 
 int
 main(int argc, char *argv[])
@@ -40,31 +84,15 @@ main(int argc, char *argv[])
 			return 1;
 		}
 
-		// Build query to retrieve the entire stock table
+		// Gather and display the stats for the entire stock table
 		mysqlpp::Query query = con.query();
-		query << "select * from stock";
-
-		// Execute the query, but don't save results in memory
-		mysqlpp::ResUse res = query.use();
-		if (!res) {
-			std::cerr << "Result set is empty!" << std::endl;
-			return 1;
-		}
-
-		// Iterate through result set, printing each row.
-		mysqlpp::Row r;
-		while (r = res.fetch_row()) {
-			print_stock_row(r);
-		}
+		std::cout << "There are " << query.for_each(stock(),
+				gather_stock_stats()) << '.' << std::endl;
 	}
 	catch (const mysqlpp::BadQuery& e) {
 		// Something went wrong with the SQL query.
 		std::cerr << "Query failed: " << e.what() << std::endl;
 		return 1;
-	}
-	catch (const mysqlpp::EndOfResults&) {
-		// Last query result received.  Exit normally.
-		return 0;
 	}
 	catch (const mysqlpp::Exception& er) {
 		// Catch-all for any other MySQL++ exceptions
@@ -72,8 +100,5 @@ main(int argc, char *argv[])
 		return 1;
 	}
 
-	// Shouldn't happen!  Program should either error out through one of
-	// the "return 1" cases above, or successfully walk off the end of
-	// the result set and go through the EndOfResults path above.
-	return 2;
+	return 0;
 }

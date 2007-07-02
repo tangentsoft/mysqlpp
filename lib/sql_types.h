@@ -28,7 +28,6 @@
 #define MYSQLPP_SQL_TYPES_H
 
 #include "common.h"
-#include "myset.h"
 
 #include <string>
 
@@ -55,22 +54,28 @@ typedef float			sql_float;
 typedef double			sql_double;
 typedef double			sql_decimal;
 
-typedef Date			sql_date;
-typedef Time			sql_time;
-typedef Time			sql_timestamp;
-typedef DateTime		sql_datetime;
-
 typedef std::string		sql_enum;
 
-typedef Set<>			sql_set;
-
-typedef std::string		sql_blob;
-typedef std::string		sql_tinyblob;
-typedef std::string		sql_mediumblob;
-typedef std::string		sql_longblob;
+typedef ColData			sql_blob;
+typedef ColData			sql_tinyblob;
+typedef ColData			sql_mediumblob;
+typedef ColData			sql_longblob;
 
 typedef std::string		sql_char;
 typedef std::string		sql_varchar;
+
+#ifdef MYSQLPP_DATETIME_H
+    // MySQL++ date and time types are defined, so make aliases for
+    // them matching the style of the above types.
+    typedef Date		sql_date;
+    typedef Time		sql_time;
+    typedef Time		sql_timestamp;
+    typedef DateTime	sql_datetime;
+#endif
+#ifdef MYSQLPP_MYSET_H
+    // Ditto for MySQL++'s SQL set type
+    typedef Set<>		sql_set;
+#endif
 
 #endif // !defined(DOXYGEN_IGNORE)
 

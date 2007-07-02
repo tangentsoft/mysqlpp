@@ -1,1445 +1,1559 @@
+2.3.0, 2007.07.02 (r1645)
+
+    o Added Query::for_each() and Query::store_if() methods
+      proposed by Joel Fielder, and added examples for each.
+
+    o It's now possible to store BLOB data in an SSQLS.  It's not
+      foolproof, so added a section to the user manual (5.9) to
+      document the method.  Also, changed examples/cgi_jpeg to use
+      this new mechanism, instead of the ugly "raw row data" method
+      it used to use.
+
+    o Revamped Connection::set_option() handling.  These options
+      used to be queued up, and applied only just before actually
+      establishing the connection.  This made error reporting less
+      helpful because the diagnostic was separated from the cause.
+      Plus, the error messages were misleading to begin with.  Now,
+      set_option() takes effect immediately if the connection is not
+      yet up (excepting one special option that can actually be set
+      after the connection is up) and issues better diagnostics when
+      it detects errors.
+
+    o Connection::connect() used to set a few options in such a
+      way that the user couldn't override them.  Now it's smart enough
+      to set them with the desired default values only when we see
+      that the user hasn't given them other values.
+
+    o SQLString can now be initialized from a mysqlpp::null,
+      giving a "NULL" string.  This is useful for template queries.
+      Patch by Michael Hanselmann.
+
+    o resetdb error message about mixing library and header version
+      numbers is now more explicit.
+
+    o Changed BadConversion exception's "what" message text to be
+      more like the other exceptions.  The inconsistency lead one
+      to incorrectly copy-paste code from another exception handler,
+      expecting it to behave the same way.  Now it does.
+
+    o Added Row::raw_size(), as a shortcut for Row::at().size().
+
+    o ssqls-pretty now detects when it's being run from within
+      the MySQL++ distribution tree and gives a different -I flag
+      to the compiler, so that it picks up the distribution headers
+      instead of those that may be on the system already.
+
+	o The quote manipulator now works for char[] correctly.
+	  Thanks for this patch go to Andrew Sayers.  (It's always
+	  worked for char*, but C++ doesn't consider that to be the
+	  same type, so it used the generic quote handling path,
+	  which doesn't do anything for char[].)
+
+    o Fixed a build bug on older Solaris versions where the
+      test for the C API library was erroneously failing, stopping
+      the configuration process.
+
+    o Simplified mysql_shutdown() level argument detection.
+      Already had to do a version number ifdef check for the
+      Windows case, so there's really no point to doing it with
+      autoconf on Unixy platforms.  Moved version number check
+      into lib/connection.cpp, and nuked the separate autoconf and
+      Windows tests.
+
+    o Removed dependency of sql_types.h on myset.h and (indirectly)
+      datetime.h.  Now we only define sql_* typedef aliases for those
+      MySQL++ types if the headers are included before sql_types.h.
+
+    o Fixed a typo in one of the storein_sequence() template
+      overloads, which is apparently rarely (or never?) used, because
+      no one reported the compiler error you'd get if you tried.
+
+    o Fixed a few more embedded null handling problems.
+
+    o ColData used to keep two copies of all data it held.
+      Now it keeps just one.
+
+    o Fixed install.bat script to track the unified Bakefile change
+      and the lack of separate debug and release builds under MinGW.
+
+    o Yet another STLport + Query memory leak fix.
+
+    o Squished a warning in newer GCCs having to do with identifier
+      shadowing.  Patch by Jonathan Wakely.
+
+    o Fixed a null-termination bug in Query::parse().  If you
+      somehow constructed a query string without a terminating null
+      character, then tried to parse it as a template query, it could
+      walk off the end of the string.  Patch by Worster Chen.
+
+    o Removed MYSQLPP_EXPORT tag from FieldNames and FieldTypes
+      class declarations, as this can cause problems in programs
+      that use vector<string> in VC++.  It has to do with multiply
+      defined templates, since these classes derive from that
+      template, and VC++ can't resolve the conflict without help.
+      Since these classes aren't actually used outside the library,
+      this shouldn't cause a problem.  Patch by Nils Woetzel.
+
+    o Partial fix to Doxygen PDF build on RHEL4 and 5.  Needs
+      hand-coaxing to complete successfully on RHEL4, and doesn't
+      yet work at all on RHEL5.
+
+    o Shortened the "no*" options to the bootstrap script, so that
+      the usage message fits on a single line.
+
+    o Added "nodoc" bootstrap script option, for disabling the
+      documentation build during the dist target build.  Allows for
+      building binary RPMs on CentOS 5.0, where doc building is
+      currently broken.
+
+    o Removed the updel example program.  It was kind of silly,
+      and if you were to rewrite it today, you'd use for_each() anyway.
+
+    o Lots of documentation improvements.
+
+
 2.2.3, 2007.04.17 (r1538) "The Tax Day Release"
 
-	o Previous version left examples/vstudio/* out of the tarball
-	  by accident.
+    o Previous version left examples/vstudio/* out of the tarball
+      by accident.
 
-	o Improved generation of RPM temporary build directory path
-	  name generation.  Was using a hacked variant of the Fedora
-	  Packaging Guidelines' second best choice.  Now we're using
-	  the choice they recommend most highly, without changes.
+    o Improved generation of RPM temporary build directory path
+      name generation.  Was using a hacked variant of the Fedora
+      Packaging Guidelines' second best choice.  Now we're using
+      the choice they recommend most highly, without changes.
 
-	o Removed unnecessary resources from vstudio/wforms example.
+    o Removed unnecessary resources from vstudio/wforms example.
 
-	o Minor URL fix in refman
+    o Minor URL fix in refman
 
 
 2.2.2, 2007.04.13 (r1526) "The Nervousmaking Friday the 13th Release"
 
-	o More small fixes to embedded null handling in Query.
+    o More small fixes to embedded null handling in Query.
 
-	o Fixed a bug in single-parameter template query handling.
+    o Fixed a bug in single-parameter template query handling.
 
-	o Added tquery example, to demonstrate proper use of template
-	  queries.  Previously, resetdb was the only exemplar, and
-	  it wasn't really suited for that.  This example also tests
-	  the previous item.
+    o Added tquery example, to demonstrate proper use of template
+      queries.  Previously, resetdb was the only exemplar, and
+      it wasn't really suited for that.  This example also tests
+      the previous item.
 
-	o Added examples/vstudio/mfc, allowing us to improve the way
-	  we demonstrate Unicode handling.  Old way wasn't realistic.
-	  On *ix, people will depend on the terminal code to handle
-	  UTF-8.  On Windows, users are almost certain to be writing
-	  a GUI program, which requires different Unicode handling
-	  than the old examples showed.
+    o Added examples/vstudio/mfc, allowing us to improve the way
+      we demonstrate Unicode handling.  Old way wasn't realistic.
+      On *ix, people will depend on the terminal code to handle
+      UTF-8.  On Windows, users are almost certain to be writing
+      a GUI program, which requires different Unicode handling
+      than the old examples showed.
 
-	o Removed explicit Unicode conversion stuff from command line
-	  examples, and reworked the Unicode chapter in the user
-	  manual.
-	
-	o Added examples/vstudio/wforms to show integration with
-	  C++/CLI and Windows Forms.  Documented this in README.vc.
+    o Removed explicit Unicode conversion stuff from command line
+      examples, and reworked the Unicode chapter in the user
+      manual.
+    
+    o Added examples/vstudio/wforms to show integration with
+      C++/CLI and Windows Forms.  Documented this in README.vc.
 
-	o Rewrote load_file and cgi_image examples to be more
-	  useful, renaming them to load_jpeg and cgi_jpeg along
-	  the way.  Also, resetdb now creates a second table in the
-	  sample database for these two examples' use.	Also, added
-	  examples/logo.jpg to the distribution as sample data for
-	  these examples.
+    o Rewrote load_file and cgi_image examples to be more
+      useful, renaming them to load_jpeg and cgi_jpeg along
+      the way.  Also, resetdb now creates a second table in the
+      sample database for these two examples' use.  Also, added
+      examples/logo.jpg to the distribution as sample data for
+      these examples.
 
-	o Limited the ostream base class casting stuff in Query to
-	  VC++ 2003, which is the only platform that really needed it.
-	  VC++ 2005 emits a warning with that hack in place, and on
-	  other platforms it's just replicating work that the compiler
-	  does already.
+    o Limited the ostream base class casting stuff in Query to
+      VC++ 2003, which is the only platform that really needed it.
+      VC++ 2005 emits a warning with that hack in place, and on
+      other platforms it's just replicating work that the compiler
+      does already.
 
-	o Added library version information to main library target
-	  so that systems that version shared libraries work as
-	  expected.  Thanks for this patch go to Jack Eidsness.
+    o Added library version information to main library target
+      so that systems that version shared libraries work as
+      expected.  Thanks for this patch go to Jack Eidsness.
 
-	o Merged much of the diffs between Remi Collet's RPM spec file
-	  into the official one.
+    o Merged much of the diffs between Remi Collet's RPM spec file
+      into the official one.
 
-	o Reorganized the doc subdir a bit.  Generated HTML is now all
-	  under doc/html instead of scattered under other subdirs,
-	  and renamed doc/README.mysql++ to doc/README.manuals.
+    o Reorganized the doc subdir a bit.  Generated HTML is now all
+      under doc/html instead of scattered under other subdirs,
+      and renamed doc/README.mysql++ to doc/README.manuals.
 
-	o Improvements to top-level manual building make targets:
-	  manuals now only rebuild at need, it's easier to request
-	  a rebuild of all manuals, and we force a rebuild attempt
-	  before building the distribution tarball so we don't ship
-	  outdated manuals.
+    o Improvements to top-level manual building make targets:
+      manuals now only rebuild at need, it's easier to request
+      a rebuild of all manuals, and we force a rebuild attempt
+      before building the distribution tarball so we don't ship
+      outdated manuals.
 
-	o Added ability to run examples under gdb using exrun,
-	  using same mechanism as we currently have for valgrind.
-	  Thanks for this patch go to Michael Hanselmann.
+    o Added ability to run examples under gdb using exrun,
+      using same mechanism as we currently have for valgrind.
+      Thanks for this patch go to Michael Hanselmann.
 
-	o Added "Important Underlying C API Limitations" chapter to the
-	  user manual, to cover problems we keep seeing on the
-	  mailing list that are the result of ignorance of the way
-	  libmysqlclient behaves, not bugs MySQL++ is really in a
-	  position to fix.
+    o Added "Important Underlying C API Limitations" chapter to the
+      user manual, to cover problems we keep seeing on the
+      mailing list that are the result of ignorance of the way
+      libmysqlclient behaves, not bugs MySQL++ is really in a
+      position to fix.
 
 
 2.2.1, 2007.02.28 (r1433)
 
-	o Fixed the new localtime() alternative selection code
-	  for VS2003 and various uses of STLport.
+    o Fixed the new localtime() alternative selection code
+      for VS2003 and various uses of STLport.
 
-	o No longer inserting a null character into the query stream
-	  on calling one of the preview() functions.  This was harmless
-	  in v2.1, which used C strings more extensively, but began
-	  causing problems in v2.2 due to its wider use of C++ strings.
+    o No longer inserting a null character into the query stream
+      on calling one of the preview() functions.  This was harmless
+      in v2.1, which used C strings more extensively, but began
+      causing problems in v2.2 due to its wider use of C++ strings.
 
-	o Fixed a bug in the Connection copy ctor where it didn't
-	  completely initialize the object.
+    o Fixed a bug in the Connection copy ctor where it didn't
+      completely initialize the object.
 
-	o Optimized Query::preview_char() a bit.  Patch by Jonathan
-	  Wakely.
+    o Optimized Query::preview_char() a bit.  Patch by Jonathan
+      Wakely.
 
-	o Reordered directory list used by autconf when locating the
-	  MySQL C API library.	The list is now ordered with the
-	  most likely locations for the library first, so we're less
-	  distracted by incorrect libraries.  This fixes a specific
-	  build error under RHEL4 with recent versions of MySQL 5.0.
+    o Reordered directory list used by autconf when locating the
+      MySQL C API library.  The list is now ordered with the
+      most likely locations for the library first, so we're less
+      distracted by incorrect libraries.  This fixes a specific
+      build error under RHEL4 with recent versions of MySQL 5.0.
 
 
 2.2.0, 2007.01.23 (r1417)
 
-	o ColData, const_string, and SQLString can now be constructed
-	  with an explicit length parameter.  Furthermore, Query
-	  class's execute(), store() and use() call chains terminate
-	  in a version taking an explicit length parameter, instead
-	  of one taking a simple C string.  Together, this means
-	  that it's now easier to handle data from the SQL server
-	  containing nulls.  The library is almost certainly not yet
-	  capable of handling embedded nulls in all cases, but this
-	  is a big first step towards that.
+    o ColData, const_string, and SQLString can now be constructed
+      with an explicit length parameter.  Furthermore, Query
+      class's execute(), store() and use() call chains terminate
+      in a version taking an explicit length parameter, instead
+      of one taking a simple C string.  Together, this means
+      that it's now easier to handle data from the SQL server
+      containing nulls.  The library is almost certainly not yet
+      capable of handling embedded nulls in all cases, but this
+      is a big first step towards that.
 
-	o Can now construct a DateTime object from a time_t, and
-	  convert a DateTime back to a time_t.  Patch by Korolyov Ilya.
+    o Can now construct a DateTime object from a time_t, and
+      convert a DateTime back to a time_t.  Patch by Korolyov Ilya.
 
-	o Changed the way we're handling exported functions in the
-	  Windows DLL case so that it works more reliably under MinGW.
+    o Changed the way we're handling exported functions in the
+      Windows DLL case so that it works more reliably under MinGW.
 
-	o Added proper copy semantics to Connection, so that you get a
-	  new connection with the same parameters, not just a bitwise
-	  copy of the object.
+    o Added proper copy semantics to Connection, so that you get a
+      new connection with the same parameters, not just a bitwise
+      copy of the object.
 
-	o Using an explicitly thread-safe variant of localtime() for
-	  time conversions where one is available.
+    o Using an explicitly thread-safe variant of localtime() for
+      time conversions where one is available.
 
-	o Removed ListInsert template from myset.h.  This wasn't used
-	  within the library, and was never documented, so I'm betting
-	  that no one actually uses it.
+    o Removed ListInsert template from myset.h.  This wasn't used
+      within the library, and was never documented, so I'm betting
+      that no one actually uses it.
 
-	o Result::copy() was not copying the exception flag in
-	  all cases.  Fix by Steven Van Ingelgem.
+    o Result::copy() was not copying the exception flag in
+      all cases.  Fix by Steven Van Ingelgem.
 
-	o Added exrun shell script and exrun.bat files to distribution,
-	  to avoid linkage errors when running the examples while
-	  you still have an older version of MySQL++ installed.
+    o Added exrun shell script and exrun.bat files to distribution,
+      to avoid linkage errors when running the examples while
+      you still have an older version of MySQL++ installed.
 
-	o Renamed MYSQLPP_LIB_VERSION to MYSQLPP_HEADER_VERSION, as
-	  what it really encodes is the version number in the mysql++.h
-	  file you're using, not the actual library version number.
+    o Renamed MYSQLPP_LIB_VERSION to MYSQLPP_HEADER_VERSION, as
+      what it really encodes is the version number in the mysql++.h
+      file you're using, not the actual library version number.
 
-	o Added mysqlpp::get_library_version(), which returns the
-	  library version number at build time.  Between this and
-	  the header version constant, you can check that you're not
-	  mixing MySQL++ header and library versions.
+    o Added mysqlpp::get_library_version(), which returns the
+      library version number at build time.  Between this and
+      the header version constant, you can check that you're not
+      mixing MySQL++ header and library versions.
 
-	o resetdb example uses these new version number affordances to
-	  double-check that you're not mixing libraries and headers
-	  from different versions.  This happens easily unless you
-	  take care of it (such as by using exrun) when you have one
-	  version of MySQL++ installed and you're trying to build and
-	  test a new version without blowing away the old one first
-	  or overwriting it.
+    o resetdb example uses these new version number affordances to
+      double-check that you're not mixing libraries and headers
+      from different versions.  This happens easily unless you
+      take care of it (such as by using exrun) when you have one
+      version of MySQL++ installed and you're trying to build and
+      test a new version without blowing away the old one first
+      or overwriting it.
 
-	o No longer using recursive Makefiles on Unixy platforms
-	  or split lib + examples project files on VC++.  Everything is
-	  handled by a single top-level Makefile or project file, which
-	  is simpler for the end user, and makes better dependency
-	  management possible.
+    o No longer using recursive Makefiles on Unixy platforms
+      or split lib + examples project files on VC++.  Everything is
+      handled by a single top-level Makefile or project file, which
+      is simpler for the end user, and makes better dependency
+      management possible.
 
-	o When looking for the MySQL C library on systems using
-	  autoconf, looking in .../lib64 wherever we are also looking
-	  in .../lib.
+    o When looking for the MySQL C library on systems using
+      autoconf, looking in .../lib64 wherever we are also looking
+      in .../lib.
 
-	o RPM build process no longer depends on Bakefile.  It means
-	  you have to build the examples when building an RPM even
-	  though they're never used within the RPM, but it's a better
-	  tradeoff in my opinion.
+    o RPM build process no longer depends on Bakefile.  It means
+      you have to build the examples when building an RPM even
+      though they're never used within the RPM, but it's a better
+      tradeoff in my opinion.
 
-	o Updated include and library paths on Windows to reflect
-	  changes in the most recent MySQL installers.
+    o Updated include and library paths on Windows to reflect
+      changes in the most recent MySQL installers.
 
-	o Merged lib/defs.h and lib/platform.h into new file,
-	  lib/common.h.  Just cleans up the library internals.
+    o Merged lib/defs.h and lib/platform.h into new file,
+      lib/common.h.  Just cleans up the library internals.
 
-	o Fixed build errors on Windows due to recent changes in MySQL.
+    o Fixed build errors on Windows due to recent changes in MySQL.
 
-	o Fixed a few memory leaks and double-deletes in Query class.
+    o Fixed a few memory leaks and double-deletes in Query class.
 
-	o Fixed compatibility with STLPort's string implementation.
-	  Patch by dengxy at cse.buaa.edu.cn.
+    o Fixed compatibility with STLPort's string implementation.
+      Patch by dengxy at cse.buaa.edu.cn.
 
-	o Fixed a compatibility problem between Set<> template and
-	  SSQLS.  Patch by Korolyov Ilya.
+    o Fixed a compatibility problem between Set<> template and
+      SSQLS.  Patch by Korolyov Ilya.
 
-	o Fixed build bug in SQLQueryParms due to a character
-	  signedness issue on PowerPC with GCC.  Patch by Michael
-	  Hanselmann.
+    o Fixed build bug in SQLQueryParms due to a character
+      signedness issue on PowerPC with GCC.  Patch by Michael
+      Hanselmann.
 
-	o ~Transaction() can no longer throw exceptions.  It'll just
-	  quietly eat them, to avoid program termination.  Fix
-	  suggested by Alex Burton.
+    o ~Transaction() can no longer throw exceptions.  It'll just
+      quietly eat them, to avoid program termination.  Fix
+      suggested by Alex Burton.
 
-	o Fixed thread safety testing in autoconf case, accidentally
-	  broken during v2.1.0 development cycle.
+    o Fixed thread safety testing in autoconf case, accidentally
+      broken during v2.1.0 development cycle.
 
-	o Using Doxygen 1.5.1 to generate documentation.
+    o Using Doxygen 1.5.1 to generate documentation.
 
 
 2.1.1, 2006.04.04 (r1289)
 
-	o MinGW and Cygwin will now build and link to mysqlpp DLLs.
+    o MinGW and Cygwin will now build and link to mysqlpp DLLs.
 
-	o Fixed bug in Query, causing it to initialize the "throw
-	  exceptions" flag incorrectly.  Thanks for this patch go to
-	  Joel Fielder.
+    o Fixed bug in Query, causing it to initialize the "throw
+      exceptions" flag incorrectly.  Thanks for this patch go to
+      Joel Fielder.
 
-	o Added -v flag for custom.pl script, which turns off the
-	  multiply-defined static variable fix.  Needed for VS 2003,
-	  which doesn't support variadic macros.  Also, added
-	  a diagnostic to detect the need for the -v flag, and
-	  suppressed the test for this feature in examples/util.cpp.
+    o Added -v flag for custom.pl script, which turns off the
+      multiply-defined static variable fix.  Needed for VS 2003,
+      which doesn't support variadic macros.  Also, added
+      a diagnostic to detect the need for the -v flag, and
+      suppressed the test for this feature in examples/util.cpp.
 
 
 2.1.0, 2006.03.24 (r1269)
 
-	o Converted automake and makemake files to their equivalents in
-	  Bakefile format.
+    o Converted automake and makemake files to their equivalents in
+      Bakefile format.
 
-	o Added the Transaction class, which makes it easy to use
-	  transaction sets in MySQL++.
+    o Added the Transaction class, which makes it easy to use
+      transaction sets in MySQL++.
 
-	o Added xaction example to test new Transaction class.
+    o Added xaction example to test new Transaction class.
 
-	o Resetdb example now creates its example table using the
-	  InnoDB storage engine, in order to test the new transaction
-	  support.  Resetdb also declares the table as using UTF-8
-	  text; this doesn't change anything, but it does correctly
-	  document what we're doing.
+    o Resetdb example now creates its example table using the
+      InnoDB storage engine, in order to test the new transaction
+      support.  Resetdb also declares the table as using UTF-8
+      text; this doesn't change anything, but it does correctly
+      document what we're doing.
 
-	o Added sql_types.h header, containing C++ typedefs
-	  corresponding to each MySQL column type.  Using those new
-	  types in the type_info module, and in the SSQLS examples.
+    o Added sql_types.h header, containing C++ typedefs
+      corresponding to each MySQL column type.  Using those new
+      types in the type_info module, and in the SSQLS examples.
 
-	o Replaced the way we were handling the template query
-	  version of Query member functions, to allow an arbitrary
-	  number of template query parameters.	By default, we
-	  now support 25 parameters, up from the old limit of 12.
-	  It's now possible to change just one number, run a script,
-	  and have a new limit.
+    o Replaced the way we were handling the template query
+      version of Query member functions, to allow an arbitrary
+      number of template query parameters.  By default, we
+      now support 25 parameters, up from the old limit of 12.
+      It's now possible to change just one number, run a script,
+      and have a new limit.
 
-	o Connection class does a better job of returning error
-	  messages if you call certain member functions that depend
-	  on a connection to the server before the connection is
-	  established.
+    o Connection class does a better job of returning error
+      messages if you call certain member functions that depend
+      on a connection to the server before the connection is
+      established.
 
-	o Updated libmysqlclient.def for newer versions of MySQL.  (Fixes
-	  build errors having to do with mysql_more_results() and
-	  mysql_next_result().
+    o Updated libmysqlclient.def for newer versions of MySQL.  (Fixes
+      build errors having to do with mysql_more_results() and
+      mysql_next_result().
 
-	o Replaced final use of strcpy() with strncpy().
+    o Replaced final use of strcpy() with strncpy().
 
-	o custom.pl now runs without complaint in strict mode, with
-	  warnings turned on.  Thanks for this patch go to "Waba".
+    o custom.pl now runs without complaint in strict mode, with
+      warnings turned on.  Thanks for this patch go to "Waba".
 
-	o Fixed a bug in custom.pl where incorrect code would be
-	  generated for some SSQLS set() methods.  Thanks for this
-	  patch go to "Waba".
+    o Fixed a bug in custom.pl where incorrect code would be
+      generated for some SSQLS set() methods.  Thanks for this
+      patch go to "Waba".
 
-	o SSQLS structures now support long and unsigned long fields.
-	  Thanks for this patch go to "Waba".
+    o SSQLS structures now support long and unsigned long fields.
+      Thanks for this patch go to "Waba".
 
-	o It's now possible to put SSQLS definitions in a header
-	  file used by multiple modules in a program without
-	  getting multiple static member definition errors.  See the
-	  documentation for details.  Thanks for this patch go to
-	  Viktor Stark.
+    o It's now possible to put SSQLS definitions in a header
+      file used by multiple modules in a program without
+      getting multiple static member definition errors.  See the
+      documentation for details.  Thanks for this patch go to
+      Viktor Stark.
 
-	o Moved the definition of the 'stock' SSQLS out of the
-	  custom*.cpp example files and into a new stock.h file.
-	  Also, #including that file in the util module to test out
-	  the new SSQLS multiple static definition fix.
+    o Moved the definition of the 'stock' SSQLS out of the
+      custom*.cpp example files and into a new stock.h file.
+      Also, #including that file in the util module to test out
+      the new SSQLS multiple static definition fix.
 
-	o Using all of the digits of precision guaranteed by the
-	  IEEE 754 spec when stringizing floating point numbers
-	  to build queries.  Previously, we would use the platform
-	  default, which can be as few as 6 digits.
+    o Using all of the digits of precision guaranteed by the
+      IEEE 754 spec when stringizing floating point numbers
+      to build queries.  Previously, we would use the platform
+      default, which can be as few as 6 digits.
 
-	o Removed lib/compare.h.  Not used within the library, never
-	  documented, and nobody seems to want to defend it.
+    o Removed lib/compare.h.  Not used within the library, never
+      documented, and nobody seems to want to defend it.
 
 
 2.0.7, 2005.11.23 (r1147)
 
-	o Added explicit mysqlpp namespace qualifiers to generated code in
-	  custom*.h so you can use SSQLS in places where it doesn't make
-	  sense to say "using namespace mysqlpp" before the declaration.
-	  Also updated some of the examples to not have this "using"
-	  declaration to make it clear to users that it isn't needed, if you
-	  want to use explicit namespace qualifiers as well.  Thanks for
-	  this patch to Chris Frey.
+    o Added explicit mysqlpp namespace qualifiers to generated code in
+      custom*.h so you can use SSQLS in places where it doesn't make
+      sense to say "using namespace mysqlpp" before the declaration.
+      Also updated some of the examples to not have this "using"
+      declaration to make it clear to users that it isn't needed, if you
+      want to use explicit namespace qualifiers as well.  Thanks for
+      this patch to Chris Frey.
 
-	o Removed an apparently useless unlock() call from ResUse; there is
-	  no nearby lock() call, so if this unlock() is in fact necessary,
-	  it shouldn't be here anyway, because the two calls should be
-	  nearby each other.  Thanks for this patch to Chris Frey.
+    o Removed an apparently useless unlock() call from ResUse; there is
+      no nearby lock() call, so if this unlock() is in fact necessary,
+      it shouldn't be here anyway, because the two calls should be
+      nearby each other.  Thanks for this patch to Chris Frey.
 
-	o Fixed Query ostream initialization bug affecting SunPro CC (at
-	  least).  While this bug violates the Standard, it doesn't affect
-	  many real compilers because they don't enforce this rule.  Fixed
-	  by Chris Frey.
+    o Fixed Query ostream initialization bug affecting SunPro CC (at
+      least).  While this bug violates the Standard, it doesn't affect
+      many real compilers because they don't enforce this rule.  Fixed
+      by Chris Frey.
 
-	o Previously, we only used the C99 style "long long" support when
-	  building under GNU CC.  This is now the default.  This should
-	  allow the code to work under SunPro CC.
+    o Previously, we only used the C99 style "long long" support when
+      building under GNU CC.  This is now the default.  This should
+      allow the code to work under SunPro CC.
 
-	o Added another dynamic cast needed for proper Query ostream
-	  subclass overloading under VC++.  (7.1 at least...)
+    o Added another dynamic cast needed for proper Query ostream
+      subclass overloading under VC++.  (7.1 at least...)
 
-	o Detecting whether MySQL is built with SSL support on platforms
-	  using autotools.  Needed on some old Sun systems, for instance.
-	  Thanks for this patch to Ovidiu Bivolaru.
+    o Detecting whether MySQL is built with SSL support on platforms
+      using autotools.  Needed on some old Sun systems, for instance.
+      Thanks for this patch to Ovidiu Bivolaru.
 
-	o Fixed a potential memory bug in ColData's conversion to SQL null.
+    o Fixed a potential memory bug in ColData's conversion to SQL null.
 
-	o Many minor packaging tweaks.  (README clarifications, file
-	  permission fixes, better adherence to GNU packaging standards,
-	  etc.)
+    o Many minor packaging tweaks.  (README clarifications, file
+      permission fixes, better adherence to GNU packaging standards,
+      etc.)
 
-	
+    
 2.0.6, 2005.09.28 (r1123)
 
-	o Fixed makemake.bat so it works on cmd.exe, not just 4NT.
+    o Fixed makemake.bat so it works on cmd.exe, not just 4NT.
 
-	o Documentation fixes.
+    o Documentation fixes.
 
 
 2.0.5, 2005.09.13 (r1114)
 
-	o Visual C++ build now requires GNU make.  It is tested to work
-	  with either the Cygwin or the MinGW versions.  The previous
-	  version of MySQL++ used nmake.  This change enabled the
-	  following features:
+    o Visual C++ build now requires GNU make.  It is tested to work
+      with either the Cygwin or the MinGW versions.  The previous
+      version of MySQL++ used nmake.  This change enabled the
+      following features:
 
-		o Debug and Release versions are both built into
-		  separate subdirectories.
+        o Debug and Release versions are both built into
+          separate subdirectories.
 
-		o Dependency tracking for release version works
-		  correctly now.  (Previously dependencies worked
-		  only for debug version.)
+        o Dependency tracking for release version works
+          correctly now.  (Previously dependencies worked
+          only for debug version.)
 
-		o 'make clean' removes release version binaries
-		  in addition to debug versions.
+        o 'make clean' removes release version binaries
+          in addition to debug versions.
 
-	o MinGW makemake support updated to support new release/debug
-	  subdirectory system.	This is probationary support, since
-	  this code currently can't be built as a DLL.	As a result,
-	  it is no more useful than the Cygwin version, for licensing
-	  reasons.
+    o MinGW makemake support updated to support new release/debug
+      subdirectory system.  This is probationary support, since
+      this code currently can't be built as a DLL.  As a result,
+      it is no more useful than the Cygwin version, for licensing
+      reasons.
 
-	o Several fixes to allow building on Solaris 8.  These fixes may
-	  also help on other SVR4-derived systems.
+    o Several fixes to allow building on Solaris 8.  These fixes may
+      also help on other SVR4-derived systems.
 
-	o Removed Borland C++ makemake support, because this version
-	  of the library does not work completely, and there seems
-	  to be almost no user interest in fixing it.
-	  
-	o Clarified "Handling SQL Nulls" section of user manual's
-	  Tutorial chapter.
+    o Removed Borland C++ makemake support, because this version
+      of the library does not work completely, and there seems
+      to be almost no user interest in fixing it.
+      
+    o Clarified "Handling SQL Nulls" section of user manual's
+      Tutorial chapter.
 
 
 2.0.4, 2005.08.29 (r1076)
 
-	o Made mysql_shutdown() second parameter autoconf check less
-	  sensitive to compiler pedantry.
+    o Made mysql_shutdown() second parameter autoconf check less
+      sensitive to compiler pedantry.
 
-	o VC++ library Makefile is now smart enough to re-create the
-	  import library, if it is deleted while leaving the DLL alone.
+    o VC++ library Makefile is now smart enough to re-create the
+      import library, if it is deleted while leaving the DLL alone.
 
-	o Added libmysqlclient.def to tarball.
+    o Added libmysqlclient.def to tarball.
 
-	o Reworked most of the top-level README* files.
+    o Reworked most of the top-level README* files.
 
-	o Renamed LGPL file to LICENSE.
+    o Renamed LGPL file to LICENSE.
 
 
 2.0.3, 2005.08.25 (r1060)
 
-	o Visual C++ makemake system updated to build both debug and
-	  release versions of library DLL.
+    o Visual C++ makemake system updated to build both debug and
+      release versions of library DLL.
 
-	o Fixed bug in simple1 example that caused crashes on Windows.
+    o Fixed bug in simple1 example that caused crashes on Windows.
 
-	o Doing UTF-8 to ANSI text translation in simple examples now.
+    o Doing UTF-8 to ANSI text translation in simple examples now.
 
-	o Previous two releases built libmysqlpp with wrong soname on
-	  autotools-based systems.  Fixed.
+    o Previous two releases built libmysqlpp with wrong soname on
+      autotools-based systems.  Fixed.
 
 
 2.0.2, 2005.08.18 (r1050)
 
-	o Fixes to makemake system for cmd.exe.
+    o Fixes to makemake system for cmd.exe.
 
-	o Fixed the case where the system's C++ library includes an slist
-	  implementation in namespace std.
+    o Fixed the case where the system's C++ library includes an slist
+      implementation in namespace std.
 
 
 2.0.1, 2005.08.17 (r1046)
 
-	o Added new simple1 example, showing how to retrieve just one
-	  column from a table.  Old simple1 is now called simple2, and
-	  simple2 is likewise shifted to simple3.
+    o Added new simple1 example, showing how to retrieve just one
+      column from a table.  Old simple1 is now called simple2, and
+      simple2 is likewise shifted to simple3.
 
-	o Added custom6 example, showing how to do the same thing with
-	  SSQLS.
+    o Added custom6 example, showing how to do the same thing with
+      SSQLS.
 
-	o Updated user manual to cover new examples.
+    o Updated user manual to cover new examples.
 
-	o Was accidentally shipping Subversion crap with tarball.  Fixed.
+    o Was accidentally shipping Subversion crap with tarball.  Fixed.
 
 
 2.0.0, 2005.08.16 (r1031) The "Excess Hair Removal" release
 
-	THIS IS NOT A DROP-IN REPLACEMENT FOR MySQL++ v1.7!
-
-	At minimum, you will have to recompile your program against
-	this library.  You may also have to make code changes.
-	Please see the "Incompatible Library Changes" chapter of
-	the user manual for a guide to migrating your code to this
-	new version:
-
-	http://tangentsoft.net/mysql++/doc/userman/html/breakages.html
-
-	o The library's shared object file name (soname) scheme has
-	  changed.  (This mainly affects POSIX systems.)
-	  
-	  The soname for the last 1.7.x releases of MySQL++ was
-	  libmysqlpp.so.4, meaning the fourth version of the library's
-	  application binary interface (ABI).  (The first ABI version
-	  in this scheme was that provided by 1.7.9.)  MySQL++
-	  2.0.0's soname is libmysqlpp.so.2.0.0.  Since the dynamic
-	  linker setup on some systems will create a symlink to
-	  that file called libmysqlpp.so.2, it's possible that this
-	  library could be confused with that for MySQL++ 1.7.19
-	  through .21, which also used this number.  Do not install
-	  this library on a system which still has binaries linked
-	  against that version of the library!
-
-	  The new scheme is {ABI}.{feature}.{bug fix}.  That is,
-	  the first number changes whenever we break the library's
-	  binary interface; the second changes when adding features
-	  that do not break the ABI; and the last changes when the
-	  release contains only internal bug fixes.  This means
-	  that we will probably end up with MySQL++ 3.0 and 4.0 at
-	  some point, so there will be further soname conflicts.
-	  Hopefully we can put these ABI changes off long enough
-	  to avoid any real problems.
-
-	o autoconf now installs headers into $prefix/include/mysql++,
-	  instead of $prefix/include.  If you were using the
-	  --includedir configure script option to get this behavior
-	  before, you no longer need it.
-
-	o Linux binary RPMs will henceforth include only the
-	  libmysqlpp.so.X.Y.Z file, and create any short names
-	  required, to allow multiple versions to be installed at
-	  once.  Currently, you cannot install two MySQL++ library
-	  RPMs at once, because they both have /usr/lib/libmysqlpp.so.X,
-	  for instance.
-
-	o Replaced the Visual C++ and Borland C++ project files with
-	  a new "makemake" system, which creates Makefiles specific
-	  to a particular toolchain.  This new mechanism also supports
-	  MinGW and generic GCC-on-*ix.  This was done partly to reduce
-	  the number of places we have to change when changing the
-	  file names in MySQL++ or adding new ones, and partly so we're
-	  not tied to one particular version of each of these tools.
-
-	o VC++ Makefiles create a DLL version of the library only
-	  now, so there's no excuse for LGPL violations now.
-	  This same mechanism should make DLL builds under other
-	  Windows compilers easy.
-
-	o Added Connection::enable_ssl(), which enables encrypted
-	  connections to the database server using SSL.
-
-	o Connection::create_db() and drop_db() now return true on
-	  success, not false.
-
-	o Connection::create_db() and drop_db() use Query::exec()
-	  now, for efficiency, rather than Query::execute().
-
-	o Removed Connection::infoo().  Apparently just there to
-	  save you from a typo when calling the info() method, since
-	  it was a mere alias.
-
-	o Renamed Connection::real_connect() to connect(), gave
-	  several more of its parameters defaults, and removed old
-	  connect() function.  Then changed user manual and examples
-	  to use new APIs.
-
-	o Replaced Connection::read_option() with new set_option()
-	  mechanism.  The name change matches the method's purpose
-	  better.  Functional changes are that it returns true on
-	  success instead of 0, it supports a broader set of options
-	  than read_option() did, and it enforces the correct option
-	  argument type.
-
-	o You can now call Connection::set_option() before the
-	  connection is established, which will simply queue the option
-	  request up until the connection comes up.  If you use this
-	  feature, you should use exceptions, because that's the only
-	  way an option setting failure can be signalled in this case.
-
-	o Removed query-building functions (exec*(), store*(),
-	  use()) from class Connection, and moved all the implementation
-	  code to class Query.  Query no longer delegates the final
-	  step of sending the query to the database server to
-	  Connection().
-
-	o Added Connection::enable_ssl(), for turning on SSL support on
-	  a connection.
-
-	o Extracted exception disabling mechanism out of the many
-	  classes that had the feature into a new OptionalExceptions
-	  base class, which all classes having this feature now
-	  derive from.  Also, removed all per-method exception
-	  handling flags.  Finally, added NoExceptions class.  With
-	  all of these changes, there is now a common way to disable
-	  exceptions with fine granularity on all objects that
-	  support the feature.
-
-	o All custom MySQL++ exceptions now derive from the new
-	  Exceptions class.  This regularizes the exception interface
-	  and allows you to use a single catch() block if you want.
-
-	o The "throw exceptions" flag is passed from parent to child
-	  in all situations now.  (Or if not, please report it as
-	  a bug.) This fulfills a promise made in the v1.7.9 user
-	  manual, with the cost being that some programs will see
-	  new exceptions thrown that they're not expecting.
-
-	o Added a bunch of new exception types: BadOption,
-	  ConnectionFailed, DBSelectionFailed, EndOfResults,
-	  EndOfResultSets, LockFailed, and ObjectNotInitialized.
-	  Some of these replace the use of BadQuery, which in v1.7.x
-	  was a kind of generic exception, thrown when something more
-	  specific wasn't available.  Beware, this means that programs
-	  may start crashing after recompiling them under v2.0 due to
-	  uncaught exceptions, if they were only trying to catch BadQuery.
-
-	  There are additional instances where the library will
-	  throw new exceptions.  One is when calling a method that
-	  forces the internals to use an out-of-bounds index on a
-	  vector; previously, this would just make the program
-	  likely to crash.  Another is that the library uses the
-	  BadFieldName exception -- created in v1.7.30 -- in more
-	  apropos situations.
-
-	o Renamed SQLQueryNEParms to BadParamCount, to match naming
-	  style of other concrete exception types.
-
-	o Extracted lock()/unlock() functions from Connection and
-	  Query classes into a new Lockable interface class.  Locking
-	  is implemented in terms of a different class hierarchy, Lock,
-	  which allows multiple locking strategies with a single ABI.
-
-	o Removed ResUse::eof().  It's based on a deprecated MySQL
-	  C API feature, and it isn't needed anyway.
-
-	o Removed arrow operator (->) for iterator returned by Fields,
-	  Result and Row containers.  It was inherently buggy, because
-	  a correct arrow operator must return the address of an
-	  object, but the underlying element access functions in these
-	  classes (e.g. at()) return objects by value, of necessity.
-	  Therefore, this operator could only return the address of
-	  a temporary, which cannot be safely dereferenced.
-
-	o Returned Row subscripting to something more like the
-	  v1.7.9 scheme: there are two operator[] overloads, one for an
-	  integer (field by index) and another for const char* (field
-	  by name).  lookup_by_name() has been removed.  Because row[0]
-	  is ambiguous again, added Row::at() (by analogy with STL
-	  sequence containers), which always works.
-
-	o Collapsed two of the Row::value_list*() overloads into
-	  two other similar functions using default parameters.
-	  This changes the API, but the removed functions aren't
-	  used within the library, and I doubt they are used outside,
-	  either.
-
-	o Merged RowTemplate into Row.
-
-	o Merged SQLQuery class into Query class.
-
-	o Query is now derived from std::ostream instead of
-	  std::stringstream, and we manage our own internal string
-	  buffer.
-
-	o Moved SQLParseElement and SQLQueryParms into their own
-	  module, qparms.
-
-	o Added multiple result set handling to Query.	MySQL 4.1
-	  and higher allow you to give multiple SQL statements in a
-	  single "store" call, which requires extensions to MySQL++
-	  so you can iterate through the multiple result sets.	Also,
-	  stored procedures in MySQL 5.0 reportedly return multiple
-	  result sets.	Thanks for the initial patch go to Arnon Jalon;
-	  I reworked it quite a bit.
-
-	o Query::storein*() now supports more varieties of the
-	  nonstandard slist comtainer.	(Singly-linked version of
-	  STL std::list.)
-
-	o Template query mechanism and user manual had several
-	  mismatches.  Made manual match actual behavior, or
-	  made library match documented behavior, as apropriate.
-	  Initial patch by Jürgen MF Gleiss, with corrections and
-	  enhancements by Warren Young.
-
-	o Collapsed mysql_* date and time base classes' methods and
-	  data into the subclasses.  Also, DateTime no longer derives
-	  from Date and Time; you could get away with that in the
-	  old hierarchy, but now it creates an inheritance diamond,
-	  and allows unsupported concepts like comparing a Time to
-	  a DateTime.
-
-	o Removed "field name" form of Row::field_list().  It was
-	  pretty much redundant -- if you have the field names, why
-	  do you need a list of field names?
-
-	o ColData can convert itself to bool now.  Thanks for this
-	  patch go to Byrial Jensen.
-
-	o Removed simp_list_b type; wasn't being used, and doesn't
-	  look to be useful for end-user code.
-
-	o Several methods that used to take objects by value now
-	  do so by const reference, for efficiency.
-
-	o Several variable and function renamings so that MySQL++
-	  isn't needlessly tied to MySQL.  Even if we never make
-	  the library work with other database servers, there's
-	  little point in tying this library to MySQL blindly.
-
-	o Renamed all private data members of MySQL++ classes to
-	  have trailing underscores.
-
-	o 'private' section follows 'public' section in all classes
-	  now.
-
-	o Removed mysql++.hh and sqlplus.hh backwards-compatibility
-	  headers.
-
-	o Added copy ctors to Date/Time classes so that they will
-	  work in SSQLS under GCC 4.0.0.  Without these, the compiler
-	  couldn't make the conversion from raw MySQL row data.
-
-	o Fixed a bunch of GCC 4.0 pedantic warnings: added virtual
-	  dtors to all base classes, calling base class ctors from leaf
-	  classes, etc.
-
-	o All warnings fixed under VC++ at warning level 3.  (Mostly
-	  harmless signedness and integer conversion stuff.)
-
-	o Updated LGPL license/copyright comments at the top of
-	  several files to use FSF's new physical address.
-
-	o Relicensed user manual under a close variant of the Linux
-	  Documentation Project License, as it's designed for
-	  documentation, which the LGPL is not.  Permission for this
-	  received from Kevin Atkinson and MySQL AB.
-
-	o Added ABI and API breakages chapter to user manual.  It
-	  is basically a subset of this ChangeLog, with only the
-	  information an end-user must know when migrating between
-	  versions.
-
-	o Reworked user manual's DocBook code quite a bit after
-	  reading Bob Stayton's book "DocBook XSL" 3/e.  Better handling
-	  of stylesheets, taking advantage of some superior DocBook
-	  features, prettier output (especially the HTML version), etc.
-
-	o Rewrote doc/userman/README to make it clearer how to get
-	  started contributing to the user manual.  It's essentially a
-	  "getting started with DocBook" guide now!
-
-	o Lots of small text improvements to user and reference
-	  manuals.  Aside from the obvious tracking of library changes,
-	  made a bunch of minor style and clarity improvements.
-
-	o Added CSS stylesheets for userman and refman to
-	  make the HTML versions of each a) not ugly; and b) match
-	  tangentsoft.net.  (Yes, some may say that these are incompatible
-	  goals....)
-
-	o Standardized exception handling code in the examples that
-	  use it.
-
-	o Fixed a potential memory leak due to exceptions thrown from
-	  ResUse.  Thanks for this patch go to Chris Frey.
-
-	o Using new "no exceptions" feature of library in simple1
-	  example, so it is now truly simple.
-
-	o simple1 example no longer depends as much on util module, so
-	  that all of the important code is in one place.  Makes
-	  learning MySQL++ a little less intimidating.
-
-	o Added new simple2 and usequery examples, to demonstrate
-	  the proper way to handle a "use" query, with exceptions
-	  disabled, and not, respectively.  Added them to the user
-	  manual, in the appropriate place.
-
-	o Refactored the "print stock table" example functions
-	  again, to make code using them clearer.
-
-	o UTF-8 to UCS-2 handling in examples is now automatic on
-	  Windows.
-
-	o Removed debug code from Windows Unicode output examples
-	  that slipped into previous release.
-
-	o resetdb example is now clearer, and more robust in the
-	  face of database errors.
-
-	o Simplified connect_to_db() in examples' util module.
-
-	o Added sample autoconf macro for finding MySQL++ libraries, for
-	  people to use in their own autotools-based projects.
-
-	o Lots and lots of minor cleanups not worth mentioning
-	  individually...
+    THIS IS NOT A DROP-IN REPLACEMENT FOR MySQL++ v1.7!
+
+    At minimum, you will have to recompile your program against
+    this library.  You may also have to make code changes.
+    Please see the "Incompatible Library Changes" chapter of
+    the user manual for a guide to migrating your code to this
+    new version:
+
+    http://tangentsoft.net/mysql++/doc/userman/html/breakages.html
+
+    o The library's shared object file name (soname) scheme has
+      changed.  (This mainly affects POSIX systems.)
+      
+      The soname for the last 1.7.x releases of MySQL++ was
+      libmysqlpp.so.4, meaning the fourth version of the library's
+      application binary interface (ABI).  (The first ABI version
+      in this scheme was that provided by 1.7.9.)  MySQL++
+      2.0.0's soname is libmysqlpp.so.2.0.0.  Since the dynamic
+      linker setup on some systems will create a symlink to
+      that file called libmysqlpp.so.2, it's possible that this
+      library could be confused with that for MySQL++ 1.7.19
+      through .21, which also used this number.  Do not install
+      this library on a system which still has binaries linked
+      against that version of the library!
+
+      The new scheme is {ABI}.{feature}.{bug fix}.  That is,
+      the first number changes whenever we break the library's
+      binary interface; the second changes when adding features
+      that do not break the ABI; and the last changes when the
+      release contains only internal bug fixes.  This means
+      that we will probably end up with MySQL++ 3.0 and 4.0 at
+      some point, so there will be further soname conflicts.
+      Hopefully we can put these ABI changes off long enough
+      to avoid any real problems.
+
+    o autoconf now installs headers into $prefix/include/mysql++,
+      instead of $prefix/include.  If you were using the
+      --includedir configure script option to get this behavior
+      before, you no longer need it.
+
+    o Linux binary RPMs will henceforth include only the
+      libmysqlpp.so.X.Y.Z file, and create any short names
+      required, to allow multiple versions to be installed at
+      once.  Currently, you cannot install two MySQL++ library
+      RPMs at once, because they both have /usr/lib/libmysqlpp.so.X,
+      for instance.
+
+    o Replaced the Visual C++ and Borland C++ project files with
+      a new "makemake" system, which creates Makefiles specific
+      to a particular toolchain.  This new mechanism also supports
+      MinGW and generic GCC-on-*ix.  This was done partly to reduce
+      the number of places we have to change when changing the
+      file names in MySQL++ or adding new ones, and partly so we're
+      not tied to one particular version of each of these tools.
+
+    o VC++ Makefiles create a DLL version of the library only
+      now, so there's no excuse for LGPL violations now.
+      This same mechanism should make DLL builds under other
+      Windows compilers easy.
+
+    o Added Connection::enable_ssl(), which enables encrypted
+      connections to the database server using SSL.
+
+    o Connection::create_db() and drop_db() now return true on
+      success, not false.
+
+    o Connection::create_db() and drop_db() use Query::exec()
+      now, for efficiency, rather than Query::execute().
+
+    o Removed Connection::infoo().  Apparently just there to
+      save you from a typo when calling the info() method, since
+      it was a mere alias.
+
+    o Renamed Connection::real_connect() to connect(), gave
+      several more of its parameters defaults, and removed old
+      connect() function.  Then changed user manual and examples
+      to use new APIs.
+
+    o Replaced Connection::read_option() with new set_option()
+      mechanism.  The name change matches the method's purpose
+      better.  Functional changes are that it returns true on
+      success instead of 0, it supports a broader set of options
+      than read_option() did, and it enforces the correct option
+      argument type.
+
+    o You can now call Connection::set_option() before the
+      connection is established, which will simply queue the option
+      request up until the connection comes up.  If you use this
+      feature, you should use exceptions, because that's the only
+      way an option setting failure can be signalled in this case.
+
+    o Removed query-building functions (exec*(), store*(),
+      use()) from class Connection, and moved all the implementation
+      code to class Query.  Query no longer delegates the final
+      step of sending the query to the database server to
+      Connection().
+
+    o Added Connection::enable_ssl(), for turning on SSL support on
+      a connection.
+
+    o Extracted exception disabling mechanism out of the many
+      classes that had the feature into a new OptionalExceptions
+      base class, which all classes having this feature now
+      derive from.  Also, removed all per-method exception
+      handling flags.  Finally, added NoExceptions class.  With
+      all of these changes, there is now a common way to disable
+      exceptions with fine granularity on all objects that
+      support the feature.
+
+    o All custom MySQL++ exceptions now derive from the new
+      Exceptions class.  This regularizes the exception interface
+      and allows you to use a single catch() block if you want.
+
+    o The "throw exceptions" flag is passed from parent to child
+      in all situations now.  (Or if not, please report it as
+      a bug.) This fulfills a promise made in the v1.7.9 user
+      manual, with the cost being that some programs will see
+      new exceptions thrown that they're not expecting.
+
+    o Added a bunch of new exception types: BadOption,
+      ConnectionFailed, DBSelectionFailed, EndOfResults,
+      EndOfResultSets, LockFailed, and ObjectNotInitialized.
+      Some of these replace the use of BadQuery, which in v1.7.x
+      was a kind of generic exception, thrown when something more
+      specific wasn't available.  Beware, this means that programs
+      may start crashing after recompiling them under v2.0 due to
+      uncaught exceptions, if they were only trying to catch BadQuery.
+
+      There are additional instances where the library will
+      throw new exceptions.  One is when calling a method that
+      forces the internals to use an out-of-bounds index on a
+      vector; previously, this would just make the program
+      likely to crash.  Another is that the library uses the
+      BadFieldName exception -- created in v1.7.30 -- in more
+      apropos situations.
+
+    o Renamed SQLQueryNEParms to BadParamCount, to match naming
+      style of other concrete exception types.
+
+    o Extracted lock()/unlock() functions from Connection and
+      Query classes into a new Lockable interface class.  Locking
+      is implemented in terms of a different class hierarchy, Lock,
+      which allows multiple locking strategies with a single ABI.
+
+    o Removed ResUse::eof().  It's based on a deprecated MySQL
+      C API feature, and it isn't needed anyway.
+
+    o Removed arrow operator (->) for iterator returned by Fields,
+      Result and Row containers.  It was inherently buggy, because
+      a correct arrow operator must return the address of an
+      object, but the underlying element access functions in these
+      classes (e.g. at()) return objects by value, of necessity.
+      Therefore, this operator could only return the address of
+      a temporary, which cannot be safely dereferenced.
+
+    o Returned Row subscripting to something more like the
+      v1.7.9 scheme: there are two operator[] overloads, one for an
+      integer (field by index) and another for const char* (field
+      by name).  lookup_by_name() has been removed.  Because row[0]
+      is ambiguous again, added Row::at() (by analogy with STL
+      sequence containers), which always works.
+
+    o Collapsed two of the Row::value_list*() overloads into
+      two other similar functions using default parameters.
+      This changes the API, but the removed functions aren't
+      used within the library, and I doubt they are used outside,
+      either.
+
+    o Merged RowTemplate into Row.
+
+    o Merged SQLQuery class into Query class.
+
+    o Query is now derived from std::ostream instead of
+      std::stringstream, and we manage our own internal string
+      buffer.
+
+    o Moved SQLParseElement and SQLQueryParms into their own
+      module, qparms.
+
+    o Added multiple result set handling to Query.  MySQL 4.1
+      and higher allow you to give multiple SQL statements in a
+      single "store" call, which requires extensions to MySQL++
+      so you can iterate through the multiple result sets.  Also,
+      stored procedures in MySQL 5.0 reportedly return multiple
+      result sets.  Thanks for the initial patch go to Arnon Jalon;
+      I reworked it quite a bit.
+
+    o Query::storein*() now supports more varieties of the
+      nonstandard slist comtainer.  (Singly-linked version of
+      STL std::list.)
+
+    o Template query mechanism and user manual had several
+      mismatches.  Made manual match actual behavior, or
+      made library match documented behavior, as apropriate.
+      Initial patch by Jürgen MF Gleiss, with corrections and
+      enhancements by Warren Young.
+
+    o Collapsed mysql_* date and time base classes' methods and
+      data into the subclasses.  Also, DateTime no longer derives
+      from Date and Time; you could get away with that in the
+      old hierarchy, but now it creates an inheritance diamond,
+      and allows unsupported concepts like comparing a Time to
+      a DateTime.
+
+    o Removed "field name" form of Row::field_list().  It was
+      pretty much redundant -- if you have the field names, why
+      do you need a list of field names?
+
+    o ColData can convert itself to bool now.  Thanks for this
+      patch go to Byrial Jensen.
+
+    o Removed simp_list_b type; wasn't being used, and doesn't
+      look to be useful for end-user code.
+
+    o Several methods that used to take objects by value now
+      do so by const reference, for efficiency.
+
+    o Several variable and function renamings so that MySQL++
+      isn't needlessly tied to MySQL.  Even if we never make
+      the library work with other database servers, there's
+      little point in tying this library to MySQL blindly.
+
+    o Renamed all private data members of MySQL++ classes to
+      have trailing underscores.
+
+    o 'private' section follows 'public' section in all classes
+      now.
+
+    o Removed mysql++.hh and sqlplus.hh backwards-compatibility
+      headers.
+
+    o Added copy ctors to Date/Time classes so that they will
+      work in SSQLS under GCC 4.0.0.  Without these, the compiler
+      couldn't make the conversion from raw MySQL row data.
+
+    o Fixed a bunch of GCC 4.0 pedantic warnings: added virtual
+      dtors to all base classes, calling base class ctors from leaf
+      classes, etc.
+
+    o All warnings fixed under VC++ at warning level 3.  (Mostly
+      harmless signedness and integer conversion stuff.)
+
+    o Updated LGPL license/copyright comments at the top of
+      several files to use FSF's new physical address.
+
+    o Relicensed user manual under a close variant of the Linux
+      Documentation Project License, as it's designed for
+      documentation, which the LGPL is not.  Permission for this
+      received from Kevin Atkinson and MySQL AB.
+
+    o Added ABI and API breakages chapter to user manual.  It
+      is basically a subset of this ChangeLog, with only the
+      information an end-user must know when migrating between
+      versions.
+
+    o Reworked user manual's DocBook code quite a bit after
+      reading Bob Stayton's book "DocBook XSL" 3/e.  Better handling
+      of stylesheets, taking advantage of some superior DocBook
+      features, prettier output (especially the HTML version), etc.
+
+    o Rewrote doc/userman/README to make it clearer how to get
+      started contributing to the user manual.  It's essentially a
+      "getting started with DocBook" guide now!
+
+    o Lots of small text improvements to user and reference
+      manuals.  Aside from the obvious tracking of library changes,
+      made a bunch of minor style and clarity improvements.
+
+    o Added CSS stylesheets for userman and refman to
+      make the HTML versions of each a) not ugly; and b) match
+      tangentsoft.net.  (Yes, some may say that these are incompatible
+      goals....)
+
+    o Standardized exception handling code in the examples that
+      use it.
+
+    o Fixed a potential memory leak due to exceptions thrown from
+      ResUse.  Thanks for this patch go to Chris Frey.
+
+    o Using new "no exceptions" feature of library in simple1
+      example, so it is now truly simple.
+
+    o simple1 example no longer depends as much on util module, so
+      that all of the important code is in one place.  Makes
+      learning MySQL++ a little less intimidating.
+
+    o Added new simple2 and usequery examples, to demonstrate
+      the proper way to handle a "use" query, with exceptions
+      disabled, and not, respectively.  Added them to the user
+      manual, in the appropriate place.
+
+    o Refactored the "print stock table" example functions
+      again, to make code using them clearer.
+
+    o UTF-8 to UCS-2 handling in examples is now automatic on
+      Windows.
+
+    o Removed debug code from Windows Unicode output examples
+      that slipped into previous release.
+
+    o resetdb example is now clearer, and more robust in the
+      face of database errors.
+
+    o Simplified connect_to_db() in examples' util module.
+
+    o Added sample autoconf macro for finding MySQL++ libraries, for
+      people to use in their own autotools-based projects.
+
+    o Lots and lots of minor cleanups not worth mentioning
+      individually...
 
 
 1.7.40, 2005.05.26 (r719)
 
-	o Multiple item form of insert() now works if you're using the
-	  SQLQuery class, or its derivative, Query.  Thanks to Mark
-	  Meredino for this patch.
+    o Multiple item form of insert() now works if you're using the
+      SQLQuery class, or its derivative, Query.  Thanks to Mark
+      Meredino for this patch.
 
-	o Fixed a bug in const_string::compare(), in which MySQL++
-	  would walk off the end of the shorter of the two strings.
-	  All was well if the two were the same length.
+    o Fixed a bug in const_string::compare(), in which MySQL++
+      would walk off the end of the shorter of the two strings.
+      All was well if the two were the same length.
 
-	o ResUse::operator=() now fully updates the object, so it's more
-	  like the behavior of the full ctor.
+    o ResUse::operator=() now fully updates the object, so it's more
+      like the behavior of the full ctor.
 
-	o All source files now contain a license and copyright statement
-	  somewhere within them.
+    o All source files now contain a license and copyright statement
+      somewhere within them.
 
-	o Optimized mysql++.h a bit: it now #includes only the minimum set
-	  of files required, and there is now an idempotency guard.
-	  This improves compile times a smidge, but mainly it was
-	  done to clean up the generated #include file graph in the
-	  reference manual.  Before, it was a frightful tangle because
-	  we #included everything except custom*.h.
+    o Optimized mysql++.h a bit: it now #includes only the minimum set
+      of files required, and there is now an idempotency guard.
+      This improves compile times a smidge, but mainly it was
+      done to clean up the generated #include file graph in the
+      reference manual.  Before, it was a frightful tangle because
+      we #included everything except custom*.h.
 
-	o Constness fix in MySQL++ date/time classes to avoid compiler
-	  warnings with SSQLS.	Thanks to Wolfram Arnold for this patch.
+    o Constness fix in MySQL++ date/time classes to avoid compiler
+      warnings with SSQLS.  Thanks to Wolfram Arnold for this patch.
 
-	o Fixed some compiler warnings in custom*.h.  Thanks to Chris Frey
-	  for this patch.
+    o Fixed some compiler warnings in custom*.h.  Thanks to Chris Frey
+      for this patch.
 
-	o Added "Submitting Patches" and "Maintaining a Private CVS
-	  Repository" sections to the HACKERS file.  Thanks to Chris
-	  Frey for the source material for these sections.  The HACKERS
-	  file was improved in several other ways at the same time.
+    o Added "Submitting Patches" and "Maintaining a Private CVS
+      Repository" sections to the HACKERS file.  Thanks to Chris
+      Frey for the source material for these sections.  The HACKERS
+      file was improved in several other ways at the same time.
 
-	o PDF version of user manual no longer has links to the reference
-	  manual.  They were ugly, and they were broken anyway due to the
-	  way we move the PDFs after generating them.  If you want
-	  interlinked manuals, use the HTML version.
+    o PDF version of user manual no longer has links to the reference
+      manual.  They were ugly, and they were broken anyway due to the
+      way we move the PDFs after generating them.  If you want
+      interlinked manuals, use the HTML version.
 
-	o PDF version of user manual now has hard page breaks between
-	  chapters.
+    o PDF version of user manual now has hard page breaks between
+      chapters.
 
-	o Removed complic1 example.  Wasn't pulling its own weight.
-	  Everything it is supposed to demonstrate is shown in other
-	  examples already.
+    o Removed complic1 example.  Wasn't pulling its own weight.
+      Everything it is supposed to demonstrate is shown in other
+      examples already.
 
-	o Refactored print_stock_table() in examples/util module to be
-	  four functions, and made all the examples use various of
-	  these functions where appropriate.  Before, several of
-	  the examples had one-off stock table printing code because
-	  print_stock_table() wasn't exactly the right thing, for one
-	  reason or another.  One practical problem with this is that
-	  some of the examples missed out on the recent Unicode updates;
-	  now such a change affects all examples the same way.
+    o Refactored print_stock_table() in examples/util module to be
+      four functions, and made all the examples use various of
+      these functions where appropriate.  Before, several of
+      the examples had one-off stock table printing code because
+      print_stock_table() wasn't exactly the right thing, for one
+      reason or another.  One practical problem with this is that
+      some of the examples missed out on the recent Unicode updates;
+      now such a change affects all examples the same way.
 
-	o Since so many of the examples rely on the util module, the user
-	  manual now covers it.  The simple1 example in the user manual
-	  didn't make much sense before, in particular, because it's
-	  really just a driver for the util module.
+    o Since so many of the examples rely on the util module, the user
+      manual now covers it.  The simple1 example in the user manual
+      didn't make much sense before, in particular, because it's
+      really just a driver for the util module.
 
-	o Added custom5 example.  It shows how to use the equal_list()
-	  functionality of SSQLS.  Thanks to Chris Frey for the original
-	  version of this program.  (I simplified it quite a bit after
-	  accepting it.)
+    o Added custom5 example.  It shows how to use the equal_list()
+      functionality of SSQLS.  Thanks to Chris Frey for the original
+      version of this program.  (I simplified it quite a bit after
+      accepting it.)
 
-	o New user manual now covers the value_list(), equal_list() and
-	  field_list() stuff that the old manual covered but which was
-	  left out in previous versions of the new manaul.  Most of the
-	  examples are the same, but the prose is almost completely new.
-	  This new section includes the custom5 example.
+    o New user manual now covers the value_list(), equal_list() and
+      field_list() stuff that the old manual covered but which was
+      left out in previous versions of the new manaul.  Most of the
+      examples are the same, but the prose is almost completely new.
+      This new section includes the custom5 example.
 
-	o Every declaration in MySQL++ is now documented in the reference
-	  manual, or explicitly treated as "internal only".
+    o Every declaration in MySQL++ is now documented in the reference
+      manual, or explicitly treated as "internal only".
 
-	o Improved docs for MySQL++'s mechanism to map between MySQL
-	  server types and C++ types.  Initial doc patch by Chris Frey,
-	  which I greatly reworked.
+    o Improved docs for MySQL++'s mechanism to map between MySQL
+      server types and C++ types.  Initial doc patch by Chris Frey,
+      which I greatly reworked.
 
-	o Improved a lot of existing reference manual documentation while
-	  adding the new stuff.
+    o Improved a lot of existing reference manual documentation while
+      adding the new stuff.
 
-	o Expanded greatly on the exception handling discussion in the user
-	  manual.
+    o Expanded greatly on the exception handling discussion in the user
+      manual.
 
-	o Added all-new "Quoting and Escaping" section to the user
-	  manual's Tutorial chapter.  Moved some existing comments on
-	  quoting and escaping around and added some new ones to other
-	  sections as a result.
+    o Added all-new "Quoting and Escaping" section to the user
+      manual's Tutorial chapter.  Moved some existing comments on
+      quoting and escaping around and added some new ones to other
+      sections as a result.
 
-	o Added all-new "Handling SQL Nulls" section to the user manual's
-	  Tutorial chapter.
+    o Added all-new "Handling SQL Nulls" section to the user manual's
+      Tutorial chapter.
 
-	o Many improvements to the Overview section of the user manual.
+    o Many improvements to the Overview section of the user manual.
 
-	o Row::operator[] reference now explains the right and wrong way to
-	  use the values it returns.  This is in response to a mailing list
-	  post where someone was incorrectly using this feature and getting
-	  a bunch of dangling pointers.
+    o Row::operator[] reference now explains the right and wrong way to
+      use the values it returns.  This is in response to a mailing list
+      post where someone was incorrectly using this feature and getting
+      a bunch of dangling pointers.
 
-	o Updated Doxyfile so 1.3.19.1 parses it without warnings.  Still
-	  works with versions back to 1.2.18, at least.  (These are
-	  the versions shipped with Fedora Core 3 and Red Hat Linux 9,
-	  respectively.)
+    o Updated Doxyfile so 1.3.19.1 parses it without warnings.  Still
+      works with versions back to 1.2.18, at least.  (These are
+      the versions shipped with Fedora Core 3 and Red Hat Linux 9,
+      respectively.)
 
-	o Using a superior method to make Doxygen ignore certain sections
-	  of the source code.  Between this change and the fact that
-	  everything not so ignored is documented, Doxygen no longer
-	  generates any warnings.
+    o Using a superior method to make Doxygen ignore certain sections
+      of the source code.  Between this change and the fact that
+      everything not so ignored is documented, Doxygen no longer
+      generates any warnings.
 
-	o Lots of code style updates.  Everything should now be consistently
-	  formatted.
+    o Lots of code style updates.  Everything should now be consistently
+      formatted.
 
 
 1.7.35, 2005.05.05 (r601) The "Cinco de Mayo" release
 
-	o Added a "how to use Unicode with MySQL++" chapter to the user
-	  manual.  (Too bad "Cinco de Mayo" doesn't have any accented
-	  characters.  That would be just _too_ precious.)
+    o Added a "how to use Unicode with MySQL++" chapter to the user
+      manual.  (Too bad "Cinco de Mayo" doesn't have any accented
+      characters.  That would be just _too_ precious.)
 
-	o VC++ examples now use the Unicode Win32 APIs, so they can display
-	  Unicode data from MySQL++.
+    o VC++ examples now use the Unicode Win32 APIs, so they can display
+      Unicode data from MySQL++.
 
-	o Added an optional conversion function to examples/util.cpp to
-	  handle the conversion from UTF-8 to UCS-2 on Win32.
+    o Added an optional conversion function to examples/util.cpp to
+      handle the conversion from UTF-8 to UCS-2 on Win32.
 
-	o Moved "brief history of MySQL++" from intro section of refman to
-	  intro section of userman.
+    o Moved "brief history of MySQL++" from intro section of refman to
+      intro section of userman.
 
-	o Lots of small bits of documentation polishing.
-	
-	o Made some minor constness fixes.  Thanks to Erwin van Eijk
-	  for this patch.
+    o Lots of small bits of documentation polishing.
+    
+    o Made some minor constness fixes.  Thanks to Erwin van Eijk
+      for this patch.
 
-	o Made some warning fixes for GCC 4.0.	Not all warnings are
-	  fixed, because some of the needed changes would break the ABI.
-	  Thanks to Chris Frey for this patch.
+    o Made some warning fixes for GCC 4.0.  Not all warnings are
+      fixed, because some of the needed changes would break the ABI.
+      Thanks to Chris Frey for this patch.
 
-	o Added lib/Doxyfile to distribution.
-	
+    o Added lib/Doxyfile to distribution.
+    
 
 1.7.34, 2005.04.30 (r573)
 
-	o Added a multiple-insert method for Query, which lets you insert
-	  a range of records from an STL container (or the whole thing,
-	  if you like) in a single SQL query.  This is faster, and it
-	  reduces coding errors due to less repetition.  Thanks to Mark
-	  Meredino for the patch.
+    o Added a multiple-insert method for Query, which lets you insert
+      a range of records from an STL container (or the whole thing,
+      if you like) in a single SQL query.  This is faster, and it
+      reduces coding errors due to less repetition.  Thanks to Mark
+      Meredino for the patch.
 
-	o Reference and user manual now get rebuilt automatically when
-	  required.  (E.g. on 'make dist', or explicitly now through 'make
-	  docs'.)
+    o Reference and user manual now get rebuilt automatically when
+      required.  (E.g. on 'make dist', or explicitly now through 'make
+      docs'.)
 
-	o Made it easier to change the maximum number of SSQLS data members
-	  in generated custom-macros.h file.  It used to be hard-coded in
-	  several places in lib/custom.pl; now it's a variable at the top of
-	  the file.
+    o Made it easier to change the maximum number of SSQLS data members
+      in generated custom-macros.h file.  It used to be hard-coded in
+      several places in lib/custom.pl; now it's a variable at the top of
+      the file.
 
-	o Changed default SSQLS data member limit to 25, which is what it
-	  has been documented as for a long time now.  It was actually 26
-	  within custom.pl.
+    o Changed default SSQLS data member limit to 25, which is what it
+      has been documented as for a long time now.  It was actually 26
+      within custom.pl.
 
-	o Fixed a regression in previous version.
+    o Fixed a regression in previous version.
 
-	o Trimmed some fat from the distribution packages.
+    o Trimmed some fat from the distribution packages.
 
-	o Some more small doucmentation improvements.
+    o Some more small doucmentation improvements.
 
 
 1.7.33, 2005.04.29 (r555)
 
-	o Worked around an overloaded operator lookup bug in VC++ 7.1
-	  that caused SSQLS insert, replace and update queries to get
-	  mangled.  (Symptom was that custom2 and custom3 examples didn't
-	  work right.)  Thanks to Mark Meredino for digging up the
-	  following, which explains the problem and gives the solution:
+    o Worked around an overloaded operator lookup bug in VC++ 7.1
+      that caused SSQLS insert, replace and update queries to get
+      mangled.  (Symptom was that custom2 and custom3 examples didn't
+      work right.)  Thanks to Mark Meredino for digging up the
+      following, which explains the problem and gives the solution:
 
-	  http://groups-beta.google.com/group/microsoft.public.vc.stl/browse_thread/thread/9a68d84644e64f15
+      http://groups-beta.google.com/group/microsoft.public.vc.stl/browse_thread/thread/9a68d84644e64f15
 
-	o Some VC++ warning fixes.
+    o Some VC++ warning fixes.
 
-	o Major documentation improvements:
-	
-		o Using DocBook for user manual and Doxygen for reference
-		  manual.  The former now references the latter where
-		  useful.
+    o Major documentation improvements:
+    
+        o Using DocBook for user manual and Doxygen for reference
+          manual.  The former now references the latter where
+          useful.
 
-		o Split out HACKERS and CREDITS files from main README,
-		  and improved remaining bits of README.
+        o Split out HACKERS and CREDITS files from main README,
+          and improved remaining bits of README.
 
-		o Moved the text from the old v1.7.9 LaTeX-based
-		  documentation over into the new systems, and reworked
-		  it to more closely resemble English.
+        o Moved the text from the old v1.7.9 LaTeX-based
+          documentation over into the new systems, and reworked
+          it to more closely resemble English.
 
-		o Added a lot of new material to documentation, and
-		  simplified a lot of what already existed.
+        o Added a lot of new material to documentation, and
+          simplified a lot of what already existed.
 
-		o Documentation is now being built in HTML and PDF forms.
+        o Documentation is now being built in HTML and PDF forms.
 
-	o ebuild file updated to take advantage of recent configure script
-	  features.  Thanks to Chris Frey for this patch.
+    o ebuild file updated to take advantage of recent configure script
+      features.  Thanks to Chris Frey for this patch.
 
 
 
 1.7.32, 2005.03.10 (r479)
 
-	o Example building may now be skipped with --disable-examples
-	  configure script flag.
+    o Example building may now be skipped with --disable-examples
+      configure script flag.
 
-	o Changed stock items added in resetdb.  One is now UTF-8 encoded,
-	  to show that basic use of Unicode with MySQL++ is easy, yet not
-	  foolproof.  (See formatting of table on systems where cout isn't
-	  UTF-8 aware!)  Other stock items now follow a theme, for your
-	  amusement.  :)
+    o Changed stock items added in resetdb.  One is now UTF-8 encoded,
+      to show that basic use of Unicode with MySQL++ is easy, yet not
+      foolproof.  (See formatting of table on systems where cout isn't
+      UTF-8 aware!)  Other stock items now follow a theme, for your
+      amusement.  :)
 
-	o custom3 example now changes UTF-8 item's name to the 7-bit ASCII
-	  equivalent.  Previously, this example would fix a spelling error
-	  in the table.
+    o custom3 example now changes UTF-8 item's name to the 7-bit ASCII
+      equivalent.  Previously, this example would fix a spelling error
+      in the table.
 
-	o resetdb example now says 'why' when it is unable to create the
-	  sample database.
+    o resetdb example now says 'why' when it is unable to create the
+      sample database.
 
-	o Small formatting change to print_stock_table(), used by several
-	  examples.
+    o Small formatting change to print_stock_table(), used by several
+      examples.
 
-	o Was issuing a VC++-specific warning-disable pragma when built by
-	  any Windows compiler.  Fixed.
-	
+    o Was issuing a VC++-specific warning-disable pragma when built by
+      any Windows compiler.  Fixed.
+    
 
 1.7.31, 2005.03.05 (r462) The "Inevitable Point-one Followup" release
 
-	o Check for threads support must now be explicitly requested via
-	  configure script's new --enable-thread-check flag.
+    o Check for threads support must now be explicitly requested via
+      configure script's new --enable-thread-check flag.
 
-	o Fix for contacting MySQL server on a nonstandard port number.
-	  Thanks to Chris Frey for this patch.
+    o Fix for contacting MySQL server on a nonstandard port number.
+      Thanks to Chris Frey for this patch.
 
-	o Example programs using standard command line format now accept a
-	  fourth optional parameter, a port number for the server.  Thanks
-	  to Chris Frey for this patch.
+    o Example programs using standard command line format now accept a
+      fourth optional parameter, a port number for the server.  Thanks
+      to Chris Frey for this patch.
 
-	o One more g++ 3.4 pedantic warning fix by Chris Frey.
+    o One more g++ 3.4 pedantic warning fix by Chris Frey.
 
-	o Exception handling in resetdb is no longer nested, because you'd
-	  get a segfault on some systems when an exception was thrown from
-	  one of the inner try blocks.
+    o Exception handling in resetdb is no longer nested, because you'd
+      get a segfault on some systems when an exception was thrown from
+      one of the inner try blocks.
 
-	o Improvements to Connection class's handling of locking mechanism.
-	  Concept based on patches by Rongjun Mu.
+    o Improvements to Connection class's handling of locking mechanism.
+      Concept based on patches by Rongjun Mu.
 
-	o Implemented the declared-but-never-defined Query::lock().  Thanks
-	  to Rongjun Mu for this patch.
-	
-	o Cleaned up some unclear if/else blocks in connection.cpp by
-	  adding explicit braces, correct indenting and putting normal
-	  code path in the if side instead of the else.
+    o Implemented the declared-but-never-defined Query::lock().  Thanks
+      to Rongjun Mu for this patch.
+    
+    o Cleaned up some unclear if/else blocks in connection.cpp by
+      adding explicit braces, correct indenting and putting normal
+      code path in the if side instead of the else.
 
 
 1.7.30, 2005.02.28 (r443) The "Power of Round Numbers" release
 
-	o bootstrap script now accepts a 'pedantic' argument, which sets a
-	  bunch of CFLAGS that make g++ very picky about the code it
-	  accepts without warnings.
-	  
-	o Fixed a bunch of things that generated warnings with g++ in
-	  pedantic mode. Only two warnings remain, having to do with
-	  floating point comparisons.  (See Wishlist for plans on how to
-	  deal with these.)  Thanks to Chris Frey for this patch.
+    o bootstrap script now accepts a 'pedantic' argument, which sets a
+      bunch of CFLAGS that make g++ very picky about the code it
+      accepts without warnings.
+      
+    o Fixed a bunch of things that generated warnings with g++ in
+      pedantic mode. Only two warnings remain, having to do with
+      floating point comparisons.  (See Wishlist for plans on how to
+      deal with these.)  Thanks to Chris Frey for this patch.
 
-	o Split long tests out of configure.in into M4 files in new config
-	  subdir.  This makes configure.in easier to read.
+    o Split long tests out of configure.in into M4 files in new config
+      subdir.  This makes configure.in easier to read.
 
-	o Added preliminary thread support.  Currently, this just means that
-	  we detect the required compiler and linker thread flags, and link
-	  against the proper thread-safe libraries.  THERE MAY BE
-	  UN-THREAD-SAFE CODE IN MYSQL++ STILL!
+    o Added preliminary thread support.  Currently, this just means that
+      we detect the required compiler and linker thread flags, and link
+      against the proper thread-safe libraries.  THERE MAY BE
+      UN-THREAD-SAFE CODE IN MYSQL++ STILL!
 
-	o Standard C++ exceptions are the default now.  Old pre-Standard
-	  exception stuff removed.
+    o Standard C++ exceptions are the default now.  Old pre-Standard
+      exception stuff removed.
 
-	o Row::lookup_by_name() will throw the new BadFieldName exception if
-	  you pass a bad field name.  Thanks for this patch to Chris Frey.
+    o Row::lookup_by_name() will throw the new BadFieldName exception if
+      you pass a bad field name.  Thanks for this patch to Chris Frey.
 
-	o Row::operator[] will throw a Standard C++ out of bounds exception
-	  by way of std::vector::at() if you pass it a bad index.  Thanks
-	  for this patch to Chris Frey.
+    o Row::operator[] will throw a Standard C++ out of bounds exception
+      by way of std::vector::at() if you pass it a bad index.  Thanks
+      for this patch to Chris Frey.
 
-	o Setting Connection::is_connected flag to false on close().
-	  Previously, is_connected() would continue to return true after
-	  close() was called.
+    o Setting Connection::is_connected flag to false on close().
+      Previously, is_connected() would continue to return true after
+      close() was called.
 
-	o All number-to-string conversion ctors in SQLString class now use
-	  ostringstream to do the conversion.  Previously, we used
-	  snprintf(), which isn't available on all systems.  Also, we used a
-	  C99 format specifier for the "long long" conversion, which is also
-	  not available on all systems.  This new ostringstream code should
-	  be platform-independent, finally.
+    o All number-to-string conversion ctors in SQLString class now use
+      ostringstream to do the conversion.  Previously, we used
+      snprintf(), which isn't available on all systems.  Also, we used a
+      C99 format specifier for the "long long" conversion, which is also
+      not available on all systems.  This new ostringstream code should
+      be platform-independent, finally.
 
 
 1.7.28, 2005.02.04 (r403)
 
-	o --with-mysql* flags to configure script now try the given
-	  directory explicitly, and only if that fails do they try
-	  variations, like tacking '/lib' and such onto it to try and find
-	  the MySQL includes and libraries.  Thanks to Matthew Walton for
-	  the patch.
+    o --with-mysql* flags to configure script now try the given
+      directory explicitly, and only if that fails do they try
+      variations, like tacking '/lib' and such onto it to try and find
+      the MySQL includes and libraries.  Thanks to Matthew Walton for
+      the patch.
 
-	o Finally removed sql_quote.h's dependence on custom.h, by moving
-	  the one definition it needed from custom.h to deps.h.  This will
-	  help portability to compilers that can't handle the SSQLS macros,
-	  by making that part of the library truly optional.
+    o Finally removed sql_quote.h's dependence on custom.h, by moving
+      the one definition it needed from custom.h to deps.h.  This will
+      help portability to compilers that can't handle the SSQLS macros,
+      by making that part of the library truly optional.
 
 
 1.7.27, 2005.01.12 (r395)
 
-	o configure check for libmysqlclient now halts configuration if the
-	  library isn't found.  Previously, it would just be flagged as
-	  missing, and MySQL++ would fail to build.
+    o configure check for libmysqlclient now halts configuration if the
+      library isn't found.  Previously, it would just be flagged as
+      missing, and MySQL++ would fail to build.
 
-	o Added sql_string.cpp to VC++ and BCBuilder project files.
+    o Added sql_string.cpp to VC++ and BCBuilder project files.
 
-	o Removed Totte Karlsson's 'populate' example, which never made it
-	  into the distribution anyway.
+    o Removed Totte Karlsson's 'populate' example, which never made it
+      into the distribution anyway.
 
-	o Removed last vestiges of 'dummy.cpp'.
+    o Removed last vestiges of 'dummy.cpp'.
 
-	o Renamed *.cc to *.cpp in BCBuilder project files.
+    o Renamed *.cc to *.cpp in BCBuilder project files.
 
-	o Worked around a BCBuilder C++ syntax processing bug in row.h.
+    o Worked around a BCBuilder C++ syntax processing bug in row.h.
 
 
 1.7.26, 2004.12.17 (r382)
 
-	o Moved all of the SQLString definitions out of the header and into
-	  a new .cpp file, reformatted it all, and made the integer
-	  conversion functions use snprintf() or _snprintf() instead of
-	  sprintf().  Also, widened some of the buffers for 64-bit systems.
+    o Moved all of the SQLString definitions out of the header and into
+      a new .cpp file, reformatted it all, and made the integer
+      conversion functions use snprintf() or _snprintf() instead of
+      sprintf().  Also, widened some of the buffers for 64-bit systems.
 
-	o Using quoted #include form for internal library headers, to avoid
-	  some problems with file name clashes.  (The headers should still
-	  be installed in their own separate directory for best results,
-	  however.)  Thanks to Chris Frey and Evan Wies for the patch and
-	  the discussion that lead to it.
+    o Using quoted #include form for internal library headers, to avoid
+      some problems with file name clashes.  (The headers should still
+      be installed in their own separate directory for best results,
+      however.)  Thanks to Chris Frey and Evan Wies for the patch and
+      the discussion that lead to it.
 
-	o Removed unnecessary semicolons on namespace block closures.
-	  Thanks to Evan Wies for this patch.
+    o Removed unnecessary semicolons on namespace block closures.
+      Thanks to Evan Wies for this patch.
 
-	o Fixed namespace handling in the legacy headers mysql++.hh and
-	  sqlplus.hh.  Thanks to Chris Frey for this patch.
+    o Fixed namespace handling in the legacy headers mysql++.hh and
+      sqlplus.hh.  Thanks to Chris Frey for this patch.
 
-	o #including iostream instead of ostream in lib/null.h for
-	  broader C++ compatibility.  (This may allow MySQL++ to work on GCC
-	  2.95.2 again, but this is unconfirmed.)
+    o #including iostream instead of ostream in lib/null.h for
+      broader C++ compatibility.  (This may allow MySQL++ to work on GCC
+      2.95.2 again, but this is unconfirmed.)
 
-	o Detecting proper mysql_shutdown() argument handling automatically
-	  in platform.h for the Windows compiler case instead of making the
-	  user edit the file.  Thanks to Evan Wies for this patch.
-	
-	o Fixed examples/Makefile.simple to use new *.cpp file naming.
+    o Detecting proper mysql_shutdown() argument handling automatically
+      in platform.h for the Windows compiler case instead of making the
+      user edit the file.  Thanks to Evan Wies for this patch.
+    
+    o Fixed examples/Makefile.simple to use new *.cpp file naming.
 
-	o Fix to Gentoo ebuild file's exception configure switch handling.
-	  Thanks to Chris Frey for this patch.
+    o Fix to Gentoo ebuild file's exception configure switch handling.
+      Thanks to Chris Frey for this patch.
 
-	o Rebuilding lib/custom*.h intelligently now, to avoid unnecessary
-	  recompiles after running bootstrap script.
+    o Rebuilding lib/custom*.h intelligently now, to avoid unnecessary
+      recompiles after running bootstrap script.
 
 
 1.7.25, 2004.12.09 (r360)
 
-	o Yet more fixes to the --with-mysql-lib and --with-mysql-include
-	  flags.
+    o Yet more fixes to the --with-mysql-lib and --with-mysql-include
+      flags.
 
-	o Added DLLEXPORT stuff to platform.h, hopefully so that someone
-	  can figure out how to make VC++ make a DLL version of MySQL++.
+    o Added DLLEXPORT stuff to platform.h, hopefully so that someone
+      can figure out how to make VC++ make a DLL version of MySQL++.
 
-	o Renamed *.cc to *.cpp.
+    o Renamed *.cc to *.cpp.
 
-	o Made 'set -> myset' change in VC++ project files.
+    o Made 'set -> myset' change in VC++ project files.
 
-	o Some style changes (mostly whitespace) in header files.
+    o Some style changes (mostly whitespace) in header files.
 
 
 1.7.24, 2004.12.08 (r343)
 
-	o Fixed the --with-mysql-lib and --with-mysql-include flags'
-	  behavior, and extended their search ability to handle one other
-	  common case.  (Fixed by Steve Roberts)
+    o Fixed the --with-mysql-lib and --with-mysql-include flags'
+      behavior, and extended their search ability to handle one other
+      common case.  (Fixed by Steve Roberts)
 
-	o Fixes to put freestanding functions in namespace mysqlpp.  (They
-	  weren't in the namespace, while all the class member functions
-	  were.)  This required bumping the ABI version number to 4.
-	  
-	o Renamed set module to myset, to avoid conflicts with Standard C++
-	  Library's set.h when MySQL++ headers were installed into one of
-	  the standard system include directories.
+    o Fixes to put freestanding functions in namespace mysqlpp.  (They
+      weren't in the namespace, while all the class member functions
+      were.)  This required bumping the ABI version number to 4.
+      
+    o Renamed set module to myset, to avoid conflicts with Standard C++
+      Library's set.h when MySQL++ headers were installed into one of
+      the standard system include directories.
 
-	o Renamed all the idempotency guards to make them consistent in
-	  style and unique to MySQL++.
+    o Renamed all the idempotency guards to make them consistent in
+      style and unique to MySQL++.
 
-	o Reformatted all of lib/*.cc.
+    o Reformatted all of lib/*.cc.
 
 
 1.7.23, 2004.11.20 (r333)
 
-	o Query::reset() now empties the stored query string.  If you
-	  subsequently stored a longer query in the object, you'd overwrite
-	  the previous query, but otherwise the longer part of the previous
-	  one would stick out past the new query.
+    o Query::reset() now empties the stored query string.  If you
+      subsequently stored a longer query in the object, you'd overwrite
+      the previous query, but otherwise the longer part of the previous
+      one would stick out past the new query.
 
-	o We now look to the NO_LONG_LONGS macro only to decide whether to
-	  fake 64-bit integer support using 32-bit integers.
+    o We now look to the NO_LONG_LONGS macro only to decide whether to
+      fake 64-bit integer support using 32-bit integers.
 
-	o 64-bit integer support under Visual C++ may be working now, using
-	  that platform's __int64_t type.  This has not been tested.
+    o 64-bit integer support under Visual C++ may be working now, using
+      that platform's __int64_t type.  This has not been tested.
 
-	o Removed 64-bit integer support for Codewarrior on Mac OS 9 and
-	  earlier.  OS X uses GCC, so it requires no special support.
+    o Removed 64-bit integer support for Codewarrior on Mac OS 9 and
+      earlier.  OS X uses GCC, so it requires no special support.
 
-	o Added MinGW detection in platform.h.
-	
-	o If you pass a flag (-X) to the examples that take the standard
-	  parameters (resetdb, simple1, etc.), it prints a usage message.
-	
-	o Better error handling in resetdb example, where errors are the
-	  most critical.  (If that one runs without errors, the others
-	  probably will, too, and you have to run that one first.)
+    o Added MinGW detection in platform.h.
+    
+    o If you pass a flag (-X) to the examples that take the standard
+      parameters (resetdb, simple1, etc.), it prints a usage message.
+    
+    o Better error handling in resetdb example, where errors are the
+      most critical.  (If that one runs without errors, the others
+      probably will, too, and you have to run that one first.)
 
-	o resetdb now reports success, rather than succeeding silently.
+    o resetdb now reports success, rather than succeeding silently.
 
-	o Removed the code in sample1 example that duplicated util module's
-	  print_stock_table(), and called that function instead.
+    o Removed the code in sample1 example that duplicated util module's
+      print_stock_table(), and called that function instead.
 
-	o Moved the preview() calls in the example programs to before the
-	  query execution calls, because execution modifies the query.
+    o Moved the preview() calls in the example programs to before the
+      query execution calls, because execution modifies the query.
 
-	o All examples that take the standard command line parameters now 
-	  exit when connect_to_db() fails in one of the ways that don't
-	  throw an exception, rather than bulling onward until the next
-	  MySQL database call fails because the connection isn't up.
+    o All examples that take the standard command line parameters now 
+      exit when connect_to_db() fails in one of the ways that don't
+      throw an exception, rather than bulling onward until the next
+      MySQL database call fails because the connection isn't up.
 
-	o dbinfo example now takes the standard command line parameters.
+    o dbinfo example now takes the standard command line parameters.
 
-	o Much better output formatting in dbinfo example.
+    o Much better output formatting in dbinfo example.
 
-	o Calling reset() where appropriate in the various example programs.
-	  Before, the programs may have worked, but not for the right
-	  reason.  This lead some people to believe that calling reset()
-	  was not necessary.
+    o Calling reset() where appropriate in the various example programs.
+      Before, the programs may have worked, but not for the right
+      reason.  This lead some people to believe that calling reset()
+      was not necessary.
 
-	o Fixed an incorrect use of row["string"] in complic1 example.
+    o Fixed an incorrect use of row["string"] in complic1 example.
 
-	o Lots of code style improvements to the examples.
+    o Lots of code style improvements to the examples.
 
-	o Some VC++ type warnings squished.  Some remain.
-	
+    o Some VC++ type warnings squished.  Some remain.
+    
 
 1.7.22, 2004.11.17 (r302)
 
-	o Applied patches by Zahroof Mohammed to allow it to build under GCC
-	  3.4.2.  Tested on MinGW and Fedora Core 3 systems.
+    o Applied patches by Zahroof Mohammed to allow it to build under GCC
+      3.4.2.  Tested on MinGW and Fedora Core 3 systems.
 
-	o Removed all the forward declarations in defs.h, and added
-	  forward declarations where necessary in individual header files.
-	  #including defs.h in fewer locations as a result.
+    o Removed all the forward declarations in defs.h, and added
+      forward declarations where necessary in individual header files.
+      #including defs.h in fewer locations as a result.
 
-	o Legacy headers sqlplus.hh and mysql++.hh now declare they are
-	  using namespace mysqlpp, to allow old code to compile against the
-	  new library without changes.
+    o Legacy headers sqlplus.hh and mysql++.hh now declare they are
+      using namespace mysqlpp, to allow old code to compile against the
+      new library without changes.
 
-	o Removed query_reset parameter from several class Query member
-	  functions.  In the implementation, these parameters were always
-	  overridden!  No sense pretending that we pay attention to these
-	  parameters.  This changes the ABI version to 3.
+    o Removed query_reset parameter from several class Query member
+      functions.  In the implementation, these parameters were always
+      overridden!  No sense pretending that we pay attention to these
+      parameters.  This changes the ABI version to 3.
 
-	o #including custom.h in sql_query.h again...it's necessary on GCC
-	  3.4.
-	
-	o bootstrap script runs lib/config.pl after configure.  This is
-	  just a nicety for those running in 'maintainer mode'.
+    o #including custom.h in sql_query.h again...it's necessary on GCC
+      3.4.
+    
+    o bootstrap script runs lib/config.pl after configure.  This is
+      just a nicety for those running in 'maintainer mode'.
 
 
 1.7.21, 2004.11.05 (r273)
 
-	o Generating a main mysql++ RPM containing just the library files
-	  and basic documentation, and the -devel package containing
-	  everything else.
+    o Generating a main mysql++ RPM containing just the library files
+      and basic documentation, and the -devel package containing
+      everything else.
 
-	o Devel package contains examples now, along with a new Makefile
-	  that uses the system include and library files, rather than the
-	  automake-based Makefile.am we currently have which uses the files
-	  in the mysql++ source directory.
+    o Devel package contains examples now, along with a new Makefile
+      that uses the system include and library files, rather than the
+      automake-based Makefile.am we currently have which uses the files
+      in the mysql++ source directory.
 
-	o Renamed sqlplusint subdirectory in the package to lib.
+    o Renamed sqlplusint subdirectory in the package to lib.
 
-	o Removed the obsolete lib/README file.
+    o Removed the obsolete lib/README file.
 
-	o lib/sql_query.h no longer #includes custom.h, simplifying
-	  build-time dependencies and shortening compile times.
+    o lib/sql_query.h no longer #includes custom.h, simplifying
+      build-time dependencies and shortening compile times.
 
 
 1.7.20, 2004.11.03 (r258)
 
-	o Collapsed all numbered *.hh headers into a single *.h file.  For
-	  example, the contents of row1.hh, row2.hh and row3.hh are now in
-	  row.h.
+    o Collapsed all numbered *.hh headers into a single *.h file.  For
+      example, the contents of row1.hh, row2.hh and row3.hh are now in
+      row.h.
 
-	o While doing the previous change, broke several circular
-	  dependencies.  (The numbered file scheme was probably partly done
-	  to avoid this problem.)  The practical upshot of most of these
-	  changes is that some functions are no longer inline.
+    o While doing the previous change, broke several circular
+      dependencies.  (The numbered file scheme was probably partly done
+      to avoid this problem.)  The practical upshot of most of these
+      changes is that some functions are no longer inline.
 
-	o Removed define_short.hh and everything associated with it.  The
-	  library now uses the short names exclusively (e.g. Row instead of
-	  MysqlRow).
+    o Removed define_short.hh and everything associated with it.  The
+      library now uses the short names exclusively (e.g. Row instead of
+      MysqlRow).
 
-	o Put all definitions into namespace mysqlpp.  For most programs,
-	  simply adding a 'using namespace mysqlpp' near the top of the
-	  program will suffice to convert to this version.
+    o Put all definitions into namespace mysqlpp.  For most programs,
+      simply adding a 'using namespace mysqlpp' near the top of the
+      program will suffice to convert to this version.
 
-	o Once again, the main include file was renamed, this time to
-	  mysql++.h.  Hopefully this is the last renaming!
+    o Once again, the main include file was renamed, this time to
+      mysql++.h.  Hopefully this is the last renaming!
 
-	o mysql++.hh still exists.  It emits a compiler warning that the
-	  file is obsolete, then it #includes mysql++.h for you.
+    o mysql++.hh still exists.  It emits a compiler warning that the
+      file is obsolete, then it #includes mysql++.h for you.
 
-	o sqlplus.hh is back, being a copy of the new mysql++.hh.  Both of
-	  these files may go away at any time.  They exist simply to help
-	  people transition to the new file naming scheme.
+    o sqlplus.hh is back, being a copy of the new mysql++.hh.  Both of
+      these files may go away at any time.  They exist simply to help
+      people transition to the new file naming scheme.
 
-	o Renamed mysql++-windows.hh to platform.h, and added code to it to
-	  handle #inclusion of config.h on autotools-based systems
-	  intelligently.  This fixes the config.h error when building under
-	  Visual C++.
+    o Renamed mysql++-windows.hh to platform.h, and added code to it to
+      handle #inclusion of config.h on autotools-based systems
+      intelligently.  This fixes the config.h error when building under
+      Visual C++.
 
-	o There is now only one place where conditional inclusion of
-	  winsock.h happens: platform.h.
+    o There is now only one place where conditional inclusion of
+      winsock.h happens: platform.h.
 
-	o Beautified the example programs.
+    o Beautified the example programs.
 
 
 1.7.19, 2004.10.25 (r186)
 
-	o Fixed an infinite loop in the query mechanism resulting from the
-	  strstream change in the previous version.  There is an overloaded
-	  set of str() member functions that weren't a problem when query
-	  objects were based on strstream.
-	 
-	o Query mechanism had a bunch of const-incorrectness: there were
-	  several function parameters and functions that were const for
-	  the convenience of other parts of the code, but within these
-	  functions the constness was const_cast away!  This was evil
-	  and wrong; now there are fewer const promises, and only one is
-	  still quietly broken within the code.  (It's in the SQLQuery
-	  copy ctor implementation; it should be harmless.)
+    o Fixed an infinite loop in the query mechanism resulting from the
+      strstream change in the previous version.  There is an overloaded
+      set of str() member functions that weren't a problem when query
+      objects were based on strstream.
+     
+    o Query mechanism had a bunch of const-incorrectness: there were
+      several function parameters and functions that were const for
+      the convenience of other parts of the code, but within these
+      functions the constness was const_cast away!  This was evil
+      and wrong; now there are fewer const promises, and only one is
+      still quietly broken within the code.  (It's in the SQLQuery
+      copy ctor implementation; it should be harmless.)
 
-	o Removed operator=() in Query and SQLQuery classes.  It cannot take
-	  a const argument for the same reason we have to cast away const
-	  in the SQLQuery copy ctor.  It's tolerable to do this in the copy
-	  ctor, but intolerable in an operator.  Since the copy ctor is good
-	  enough for all code within the library and within my own code, I'm
-	  removing the operator.
+    o Removed operator=() in Query and SQLQuery classes.  It cannot take
+      a const argument for the same reason we have to cast away const
+      in the SQLQuery copy ctor.  It's tolerable to do this in the copy
+      ctor, but intolerable in an operator.  Since the copy ctor is good
+      enough for all code within the library and within my own code, I'm
+      removing the operator.
 
-	o Above changes required bumping the ABI to version 2.
+    o Above changes required bumping the ABI to version 2.
 
-	o Visual C++ projects now look for MySQL build files in c:\mysql,
-	  since that's the default install location.  (Previously, it was
-	  c:\program files\mysql.)
+    o Visual C++ projects now look for MySQL build files in c:\mysql,
+      since that's the default install location.  (Previously, it was
+      c:\program files\mysql.)
 
 
 1.7.18, 2004.10.01 (r177)
 
-	o Changed all the strstream (and friends) stuff to stringstream type
-	  classes.  Let there be much rejoicing.
+    o Changed all the strstream (and friends) stuff to stringstream type
+      classes.  Let there be much rejoicing.
 
-	o Query object now lets you use store() even when the SQL query
-	  cannot return a result, such as a DROP TABLE command.  This is
-	  useful for sending arbitrary SQL to the server.  Thanks to
-	  Jose Mortensen for the patch.
+    o Query object now lets you use store() even when the SQL query
+      cannot return a result, such as a DROP TABLE command.  This is
+      useful for sending arbitrary SQL to the server.  Thanks to
+      Jose Mortensen for the patch.
 
-	o Quote fix in configure.in, thanks to David Sward.
+    o Quote fix in configure.in, thanks to David Sward.
 
-	o Renamed undef_short file to undef_short.hh.
+    o Renamed undef_short file to undef_short.hh.
 
-	o Gentoo ebuild file is actually being shipped with the tarball,
-	  instead of just sitting in my private CVS tree since 1.7.14 was
-	  current.  Ooops....
+    o Gentoo ebuild file is actually being shipped with the tarball,
+      instead of just sitting in my private CVS tree since 1.7.14 was
+      current.  Ooops....
 
 
 1.7.17, 2004.09.16 (r170)
 
-	o Reverted one of the VC++ warning fix changes from 1.7.16 that
-	  caused crashes on Linux.
+    o Reverted one of the VC++ warning fix changes from 1.7.16 that
+      caused crashes on Linux.
 
-	o Added a configure test that conditionally adds the extra 'level'
-	  parameter to mysql_shutdown() that was added in MySQL 4.1.3 and
-	  5.0.1.
+    o Added a configure test that conditionally adds the extra 'level'
+      parameter to mysql_shutdown() that was added in MySQL 4.1.3 and
+      5.0.1.
 
 
 1.7.16, 2004.09.13 (r160)
 
-	o Building VC++ version with DLL version of C runtime libraries, and
-	  at warning level 3 with no warnings emitted.
+    o Building VC++ version with DLL version of C runtime libraries, and
+      at warning level 3 with no warnings emitted.
 
-	o VC++ build no longer attempts to fake "long long" support.  See
-	  the Wishlist for further thoughts on this.
+    o VC++ build no longer attempts to fake "long long" support.  See
+      the Wishlist for further thoughts on this.
 
 
 1.7.15, 2004.09.02 (r144)
 
-	o Renamed Configure file to common.am, to avoid file name conflict
-	  with configure script on case-sensitive file systems.
+    o Renamed Configure file to common.am, to avoid file name conflict
+      with configure script on case-sensitive file systems.
 
-	o Added ebuild file and ebuild target to top-level Makefile for
-	  Gentoo systems.  Thanks to Chris Frey for this.
+    o Added ebuild file and ebuild target to top-level Makefile for
+      Gentoo systems.  Thanks to Chris Frey for this.
 
-	o Small efficiency improvements to BadQuery exception handling.
-	  Initial idea by Chris Frey, improvements by Warren Young.
+    o Small efficiency improvements to BadQuery exception handling.
+      Initial idea by Chris Frey, improvements by Warren Young.
 
 
 1.7.14, 2004.08.26 (r130)
 
-	o Builds with Visual C++ 7.1.
+    o Builds with Visual C++ 7.1.
 
-	o Fixed a bug in custom macro generation that caused problems with
-	  GCC 3.4.  (X_cus_value_list ctor definition was broken.)
+    o Fixed a bug in custom macro generation that caused problems with
+      GCC 3.4.  (X_cus_value_list ctor definition was broken.)
 
 
 1.7.13, 2004.08.23 (r92)
 
-	o Removed USL CC support.  (System V stock system compiler.)  Use
-	  GCC on these platforms instead.
+    o Removed USL CC support.  (System V stock system compiler.)  Use
+      GCC on these platforms instead.
 
-	o Added examples/README, explaining how to use the examples, and
-	  what they all do.
+    o Added examples/README, explaining how to use the examples, and
+      what they all do.
 
-	o Most of the example programs now accept command line arguments for
-	  host name, user name and password, like resetdb does.
+    o Most of the example programs now accept command line arguments for
+      host name, user name and password, like resetdb does.
 
-	o Renamed sinisa_ex example to dbinfo.
+    o Renamed sinisa_ex example to dbinfo.
 
-	o Several Standard C++ syntax fixes to quash errors emitted by
-	  GCC 3.4 and Borland C++ Builder 6.  Thanks to Steffen Schumacher
-	  and Totte Karlsson for their testing and help with these.
+    o Several Standard C++ syntax fixes to quash errors emitted by
+      GCC 3.4 and Borland C++ Builder 6.  Thanks to Steffen Schumacher
+      and Totte Karlsson for their testing and help with these.
 
-	o Added proper #includes for BCBuilder, plus project files for same.
-	  Thanks to Totte Karlsson for these.
+    o Added proper #includes for BCBuilder, plus project files for same.
+      Thanks to Totte Karlsson for these.
 
 
 1.7.12, 2004.08.19 (r63)
 
-	o Many Standard C++ fixes, most from the GCC 3.4 patch by
-	  Rune Kleveland.
+    o Many Standard C++ fixes, most from the GCC 3.4 patch by
+      Rune Kleveland.
 
-	o Added Wishlist file to distribution.
+    o Added Wishlist file to distribution.
 
-	o Fixed a problem in the bootstrap script that caused complaints
-	  from the autotools on some systems.
+    o Fixed a problem in the bootstrap script that caused complaints
+      from the autotools on some systems.
 
-	o RPM building is working properly now.
+    o RPM building is working properly now.
 
-	o Fixed the idempotency guard in datetime1.hh.
+    o Fixed the idempotency guard in datetime1.hh.
 
 
 1.7.11, 2004.08.17 (r50)
 
-	o Renamed mysql++, defs and define_short files, adding .hh to the
-	  end of each.  (They're header files!)  This shouldn't impact
-	  library users, since these are hopefully used internal to the
-	  library only.
+    o Renamed mysql++, defs and define_short files, adding .hh to the
+      end of each.  (They're header files!)  This shouldn't impact
+      library users, since these are hopefully used internal to the
+      library only.
 
-	o Removed sqlplus.hh file.  Use mysql++.hh instead.
-	
-	o Added mysql++.spec, extracted from contributed 1.7.9 source RPM, 
-	  and updated it significantly.  Also, added an 'rpm' target to
-	  Makefile.am to automate the process of building RPMs.
+    o Removed sqlplus.hh file.  Use mysql++.hh instead.
+    
+    o Added mysql++.spec, extracted from contributed 1.7.9 source RPM, 
+      and updated it significantly.  Also, added an 'rpm' target to
+      Makefile.am to automate the process of building RPMs.
 
-	o Added bootstrap and LGPL files to distribution tarball.
+    o Added bootstrap and LGPL files to distribution tarball.
 
-	o Added pre-1.7.10 history to this file.
+    o Added pre-1.7.10 history to this file.
 
-	o Removed .version file.  Apparently it's something required by old
-	  versions of libtool.
+    o Removed .version file.  Apparently it's something required by old
+      versions of libtool.
 
 
 1.7.10, 2004.08.16 (r27)
 
-	o Maintenance taken over by Warren Young (mysqlpp at etr dash usa
-	  dot com.) See http://lists.mysql.com/plusplus/3326 for details.
+    o Maintenance taken over by Warren Young (mysqlpp at etr dash usa
+      dot com.) See http://lists.mysql.com/plusplus/3326 for details.
 
-	o Applied many of the GCC 3.x patches submitted for 1.7.9 over
-	  the years.  This allows it to build on everything from 3.0 to
-	  3.3.3, at least.  Because so many patches are rolled up in one
-	  big jump, it's difficult to describe all the changes and where
-	  they came from.  Mostly they're Standard C++ fixes, as GCC
-	  has become more strict in the source code that it will accept.
+    o Applied many of the GCC 3.x patches submitted for 1.7.9 over
+      the years.  This allows it to build on everything from 3.0 to
+      3.3.3, at least.  Because so many patches are rolled up in one
+      big jump, it's difficult to describe all the changes and where
+      they came from.  Mostly they're Standard C++ fixes, as GCC
+      has become more strict in the source code that it will accept.
 
-	o MysqlRow used to overload operator[] for string types as well as
-	  integers so you could look up a field by its name, rather than by
-	  its index.  GCC 3.3 says this is illegal C++ due to ambiguities in
-	  resolving which overload should be used in various situations.
-	  operator[] is now overloaded only for one integer type, and a
-	  new member function lookup_by_name() was added to maintain the old
-	  by-field-name functionality.
+    o MysqlRow used to overload operator[] for string types as well as
+      integers so you could look up a field by its name, rather than by
+      its index.  GCC 3.3 says this is illegal C++ due to ambiguities in
+      resolving which overload should be used in various situations.
+      operator[] is now overloaded only for one integer type, and a
+      new member function lookup_by_name() was added to maintain the old
+      by-field-name functionality.
 
-	o Fixed another operator overloading problem in SSQLS macro
-	  generation with GCC 3.3.
+    o Fixed another operator overloading problem in SSQLS macro
+      generation with GCC 3.3.
 
-	o The _table member of SSQLS-defined structures is now const char*,
-	  so you can assign to it from a const char* string.
+    o The _table member of SSQLS-defined structures is now const char*,
+      so you can assign to it from a const char* string.
 
-	o Got autoconf/automake build system working with current versions
-	  of those tools again.  Removed the generated autotools files from
-	  CVS.
+    o Got autoconf/automake build system working with current versions
+      of those tools again.  Removed the generated autotools files from
+      CVS.
 
-	o Renamed library file from libsqlplus to libmysqlpp.
+    o Renamed library file from libsqlplus to libmysqlpp.
 
 
 1.7.9 (May 1 2001) Sinisa Milivojevic <sinisa@mysql.com>

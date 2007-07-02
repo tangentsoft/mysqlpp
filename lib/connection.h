@@ -401,7 +401,8 @@ public:
 	/// C API's option setting mechanisms, so it may become further
 	/// abstracted from these mechanisms.
 	///
-	/// \retval true if option was successfully set
+	/// \retval true if option was successfully set, or at least queued
+	/// for setting during connection establishment sequence
 	///
 	/// If exceptions are enabled, a false return means the C API
 	/// rejected the option, or the connection is not established and
@@ -421,6 +422,18 @@ public:
 
 	/// \brief Sets a connection option, with Boolean argument
 	bool set_option(Option option, bool arg);
+
+	/// \brief Same as set_option(), except that it won't override
+	/// a previously-set option.
+	bool set_option_default(Option option);
+
+	/// \brief Same as set_option(), except that it won't override
+	/// a previously-set option.
+	template <typename T>
+	bool set_option_default(Option option, T arg);
+
+	/// \brief Returns true if the given option has been set already
+	bool option_set(Option option);
 
 	/// \brief Enable SSL-encrypted connection.
 	///
@@ -464,6 +477,13 @@ public:
 	std::ostream& api_version(std::ostream& os);
 
 protected:
+	/// \brief Types of option setting errors we can diagnose
+	enum OptionError {
+		opt_err_type,
+		opt_err_value,
+		opt_err_conn,
+	};
+	
 	/// \brief Drop the connection to the database server
 	///
 	/// This method is protected because it should only be used within
@@ -471,28 +491,8 @@ protected:
 	/// object should always be connected.
 	void disconnect();
 
-	/// \brief Returns true if the given option is to be set once
-	/// connection comes up.
-	///
-	/// \param option option to check for in queue
-	/// \param arg argument to match against
-	bool option_pending(Option option, bool arg) const;
-
-	/// \brief For each option in pending option queue, call
-	/// set_option()
-	///
-	/// Called within connect() method after connection is established.
-	/// Despools options in the order given to set_option().
-	void apply_pending_options();
-
-	/// \brief Generic wrapper for bad_option_*()
-	bool bad_option(Option option, OptionArgType type);
-
-	/// \brief Handles call of incorrect set_option() overload
-	bool bad_option_type(Option option);
-
-	/// \brief Handles bad option values sent to set_option()
-	bool bad_option_value(Option option);
+	/// \brief Error handling routine for set_option()
+	bool bad_option(Option option, OptionError error);
 
 	/// \brief Given option value, return its proper argument type
 	OptionArgType option_arg_type(Option option);
@@ -563,12 +563,14 @@ private:
 		{
 		}
 	};
+	typedef std::deque<OptionInfo> OptionList;
+	typedef OptionList::const_iterator OptionListIt;
 
 	MYSQL mysql_;
 	bool is_connected_;
 	bool connecting_;
 	bool success_;
-	std::deque<OptionInfo> pending_options_;
+	OptionList applied_options_;
 	static OptionArgType legal_opt_arg_types_[];
 };
 

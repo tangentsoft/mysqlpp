@@ -18,7 +18,7 @@ programs, you also need to install the -devel package.
 %package devel
 Summary:   MySQL++ developer files (headers, examples, etc.)
 Group:     Development/Libraries
-Requires:  mysql++ = %{version}-%{release}
+Requires:  mysql++=%{version}-%{release} mysql-devel
 
 %description devel
 These are the files needed to compile MySQL++ based programs, plus
@@ -79,9 +79,12 @@ rm -rf %{buildroot} doc/examples
 
 %files manuals
 %defattr(-,root,root,-)
-%doc doc/*.pdf doc/html doc/README.manuals
+%doc doc/html doc/pdf doc/README.manuals
 
 %changelog
+* Mon Jul 2 2007 Warren Young <mysqlpp@etr-usa.com> 2.3.0-1
+- Reflected changes to doc dir layout in manuals sub-package
+
 * Mon Mar 19 2007 Warren Young <mysqlpp@etr-usa.com> 2.2.1-4
 - Reorganized locations of generated documentation
 

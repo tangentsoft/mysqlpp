@@ -170,6 +170,18 @@ inline std::ostream& operator <<(quote_type1 o,
 	return operator <<(o, const_cast<const char* const&>(in));
 }
 
+inline std::ostream& operator <<(quote_type1 o,
+		char in[])
+{
+	return operator <<(o, static_cast<const char* const&>(in));
+}
+
+inline std::ostream& operator <<(quote_type1 o,
+		const char in[])
+{
+	return operator <<(o, const_cast<char* const&>(in));
+}
+
 
 template <>
 inline std::ostream& operator <<(quote_type1 o,
@@ -538,6 +550,18 @@ inline std::ostream& operator <<(escape_type1 o,
 		char* const& in)
 {
 	return operator <<(o, const_cast<const char* const&>(in));
+}
+
+inline std::ostream& operator <<(escape_type1 o,
+		char in[])
+{
+	return operator <<(o, static_cast<const char* const&>(in));
+}
+
+inline std::ostream& operator <<(escape_type1 o,
+		const char in[])
+{
+	return operator <<(o, const_cast<char* const&>(in));
 }
 
 

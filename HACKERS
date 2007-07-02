@@ -81,18 +81,29 @@ On Manipulating the Bakefiles and Autoconf Files
     to regenerate the build files.  The bootstrap script also has
     other functions:
 
-        $ ./bootstrap [pedantic] [noexamples] [nolibrary] [configure options]
+        $ ./bootstrap [pedantic] [no{doc,ex,lib,opt}] [configure flags]
 
     If you pass 'pedantic' to the bootstrap script, it will set up
     the autoconf build system so it turns on all of GCC's warnings and
     such.  It's useful to build the library in this mode when making
     changes to make sure there are no obvious problems with the code.
 
-    If you pass 'noexamples', the generated Makefiles and project
-    files won't try to build any of the examples.
+    If you pass 'nodoc', the documentation won't be considered a
+    prerequisite for building the distribution tarball.  This is
+    useful on systems where the documentation doesn't build correctly,
+    and you only need to make a binary RPM.  That process requires
+    a tarball, but doesn't need the documentation.  Don't distribute
+    the tarball or SRPM that results, as they are broken.
 
-    If you pass 'nolibrary', the generated Makefiles and project
-    files won't try to build the MySQL++ library.
+    If you pass 'noex', the generated Makefiles and project files
+    won't try to build any of the examples.
+
+    If you pass 'nolib', the generated Makefiles and project files
+    won't try to build the MySQL++ library.
+
+    If you pass 'noopt', compiler optimization will be turned off
+    on systems that use configure.  (It currently has no effect on
+    MinGW or Visual C++.)
 
     You can pass any of the previous options in any order.  As soon as
     the bootstrap script sees an option that it doesn't understand,

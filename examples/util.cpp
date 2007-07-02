@@ -30,11 +30,11 @@
 #include <iostream>
 #include <iomanip>
 
-// This include isn't needed by util module.  It's just a test of the
-// new SSQLS feature allowing the structure to be defined in many
+// This include isn't actually needed here.  It's just a test of the
+// feature added in v2.1 allowing an SSQLS to be defined in multiple
 // modules without having a multiply-defined static variable error.
-// Don't do this for VC++ 2003: it doesn't support variadic macros,
-// which this feature depends on.
+// The test is disabled for VC++ 2003, which doesn't support the
+// feature.
 #if !defined(_MSC_VER) || _MSC_VER >= 1400
 #	define MYSQLPP_SSQLS_NO_STATICS
 #	include "stock.h"		

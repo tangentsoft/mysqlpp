@@ -83,6 +83,13 @@ public:
 	{
 	}
 	
+	/// \brief Initialize string from existing C++ string
+	const_string(const std::string& str) :
+	str_data_(str.data()),
+	length_(str.length())
+	{
+	}
+	
 	/// \brief Initialize string from existing C string
 	const_string(const char* str) :
 	str_data_(str),

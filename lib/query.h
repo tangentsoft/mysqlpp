@@ -370,6 +370,166 @@ public:
 	/// than use(), but it lets you have random access to the results.
 	Result store(const char* str, size_t len);
 
+	/// \brief Execute a query, and call a functor for each returned row
+	///
+	/// This method wraps a use() query, calling the given functor for
+	/// every returned row.  It is analogous to STL's for_each()
+	/// algorithm, but instead of iterating over some range within a
+	/// container, it iterates over a result set produced by a query.
+	///
+	/// \param query the query string
+	/// \param fn the functor called for each row
+	/// \return a copy of the passed functor
+	template <typename Function>
+	Function for_each(const SQLString& query, Function fn)
+	{	
+		mysqlpp::ResUse res = use(query);
+		if (res) {
+			mysqlpp::NoExceptions ne(res);
+			while (mysqlpp::Row row = res.fetch_row()) {
+				fn(row);
+			}
+		}
+
+		return fn;
+	}
+
+	/// \brief Execute the query, and call a functor for each returned row
+	///
+	/// Just like for_each(const SQLString&, Function), but it uses
+	/// the query string held by the Query object already
+	///
+	/// \param fn the functor called for each row
+	/// \return a copy of the passed functor
+	template <typename Function>
+	Function for_each(Function fn)
+	{	
+		mysqlpp::ResUse res = use();
+		if (res) {
+			mysqlpp::NoExceptions ne(res);
+			while (mysqlpp::Row row = res.fetch_row()) {
+				fn(row);
+			}
+		}
+
+		return fn;
+	}
+
+	/// \brief Run a functor for every row in a table
+	///
+	/// Just like for_each(Function), except that it builds a
+	/// "select * from TABLE" query using the SQL table name from
+	/// the SSQLS instance you pass.
+	///
+	/// \param ssqls the SSQLS instance to get a table name from
+	/// \param fn the functor called for each row
+	///
+	/// \return a copy of the passed functor
+	template <class SSQLS, typename Function>
+	Function for_each(const SSQLS& ssqls, Function fn)
+	{	
+		SQLString query("select * from ");
+		query += ssqls._table;
+		mysqlpp::ResUse res = use(query);
+		if (res) {
+			mysqlpp::NoExceptions ne(res);
+			while (mysqlpp::Row row = res.fetch_row()) {
+				fn(row);
+			}
+		}
+
+		return fn;
+	}
+
+	/// \brief Execute a query, conditionally storing each row in a
+	/// container
+	///
+	/// This method wraps a use() query, calling the given functor for
+	/// every returned row, and storing the results in the given
+	/// sequence container if the functor returns true.
+	///
+	/// This is analogous to the STL copy_if() algorithm, except that
+	/// the source rows come from a database query instead of another
+	/// container.  (copy_if() isn't a standard STL algorithm, but only
+	/// due to an oversight by the standardization committee.)  This
+	/// fact may help you to remember the order of the parameters: the
+	/// container is the destination, the query is the source, and the
+	/// functor is the predicate; it's just like an STL algorithm.
+	///
+	/// \param seq the destination container; needs a push_back() method
+	/// \param query the query string
+	/// \param fn the functor called for each row
+	/// \return a copy of the passed functor
+	template <class Sequence, typename Function>
+	Function store_if(Sequence& seq, const SQLString& query, Function fn)
+	{	
+		mysqlpp::ResUse res = use(query);
+		if (res) {
+			mysqlpp::NoExceptions ne(res);
+			while (mysqlpp::Row row = res.fetch_row()) {
+				if (fn(row)) {
+					seq.push_back(row);
+				}
+			}
+		}
+
+		return fn;
+	}
+
+	/// \brief Pulls every row in a table, conditionally storing each
+	/// one in a container
+	///
+	/// Just like store_if(Sequence&, const SQLString&, Function), but
+	/// it uses the SSQLS instance to construct a "select * from TABLE"
+	/// query, using the table name field in the SSQLS.
+	///
+	/// \param seq the destination container; needs a push_back() method
+	/// \param ssqls the SSQLS instance to get a table name from
+	/// \param fn the functor called for each row
+	/// \return a copy of the passed functor
+	template <class Sequence, class SSQLS, typename Function>
+	Function store_if(Sequence& seq, const SSQLS& ssqls, Function fn)
+	{	
+		SQLString query("select * from ");
+		query += ssqls._table;
+		mysqlpp::ResUse res = use(query);
+		if (res) {
+			mysqlpp::NoExceptions ne(res);
+			while (mysqlpp::Row row = res.fetch_row()) {
+				if (fn(row)) {
+					seq.push_back(row);
+				}
+			}
+		}
+
+		return fn;
+	}
+
+	/// \brief Execute the query, conditionally storing each row in a
+	/// container
+	///
+	/// Just like store_if(Sequence&, const SQLString&, Function), but
+	/// it uses the query string held by the Query object already
+	///
+	/// \param seq the destination container; needs a push_back() method
+	/// \param fn the functor called for each row
+	/// \return a copy of the passed functor
+	template <class Sequence, typename Function>
+	Function store_if(Sequence& seq, Function fn)
+	{	
+		mysqlpp::ResUse res = use();
+		if (res) {
+			mysqlpp::NoExceptions ne(res);
+			while (mysqlpp::Row row = res.fetch_row()) {
+				if (fn(row)) {
+					seq.push_back(row);
+				}
+			}
+		}
+
+		return fn;
+	}
+
 	/// \brief Return next result set, when processing a multi-query
 	///
 	/// There are two cases where you'd use this function instead of
@@ -431,7 +591,7 @@ public:
 	template <class Sequence>
 	void storein_sequence(Sequence& con, query_reset r = RESET_QUERY)
 	{
-		storein_sequence_(con, def, r);
+		storein_sequence(con, def, r);
 	}
 
 	/// \brief Execute a query, storing the result set in an STL

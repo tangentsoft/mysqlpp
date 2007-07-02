@@ -103,13 +103,16 @@ public:
 	/// \param a ??
 	BadConversion(const char* tn, const char* d,
 			size_t r, size_t a) :
-	Exception(std::string("Bad type conversion: ") +
-			std::string(d ? d : "<NULL>")),
+	Exception("Bad type conversion: \""),
 	type_name(tn),
 	data(d),
 	retrieved(r),
 	actual_size(a)
 	{
+		what_ += d ? d : "<NULL>";
+		what_ += "\" incompatible with \"";
+		what_ += tn;
+		what_ += "\" type";
 	}
 
 	/// \brief Create exception object, given completed error string

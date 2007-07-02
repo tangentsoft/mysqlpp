@@ -1,17 +1,17 @@
 Building the Examples
 ~~~~~~~~~~~~~~~~~~~~~
-    If you're installing MySQL++ from the source tarball, the
-    example programs should have been built when you built the
-    library.  If you change any example code, just say 'make'
-    at the top level MySQL++ directory to rebuild the examples.
-    The examples are built against the headers and library in
-    the lib subdirectory.
+    If you're installing MySQL++ from the source tarball, the example
+    programs get built when you build the library.  If you change
+    any example code, just say 'make' to rebuild the examples.
+    The examples are built against the headers and library in the
+    lib subdirectory, not against the ones you may have installed
+    elsewhere on the system.
 
-    If these example files were installed on your system as part
-    of the -devel RPM, copy all the files to a directory you can
-    write to, then say 'make' in that directory.  This uses a
-    simplified Makefile, which builds the examples against the
-    headers and libraries installed in the system directories.
+    If these example files were installed on your system as part of
+    the -devel RPM, copy all the files to a directory you can write
+    to, then say 'make' in that directory.  This uses a simplified
+    Makefile, which builds the examples against the headers and
+    libraries installed in the system directories.
 
 
 Getting Started with the Examples
@@ -67,6 +67,35 @@ Running the Other Command Line Examples
         custom1-6: Demonstrates the SSQLS features.  These examples
             are explained in the user manual.
 
+        usequery: Demonstrates Query::use().  Unlike simple3, which
+            also showcases this function, this one shows how use
+            queries interact with exception handling: when you walk
+            past the end of a "use" query set with exceptions enabled,
+            MySQL++ throws an exception to indicate end of results,
+            which you must catch.
+
+        multiquery: MySQL++ allows you to issue multiple queries at
+            once, and get the results as separate sets.  This shows
+            that, and also how to use stored procedures, which return
+            their results in the same way as a multiquery.
+
+        tquery: A simple example showing how to use the template query
+            facility.
+
+        xaction: Shows how to use the Transaction class to create
+            transaction sets which automatically roll back if not
+            explicitly committed.
+
+        store_if: Demonstrates the Query::store_if() method, which
+            allows you to store the results of a query in an STL
+            container conditionally.  Think of it as a more powerful
+            alternative to the SQL WHERE clause.
+
+        for_each: Demonstrates the Query::for_each() method, which
+            allows you to execute a query and call a functor on each
+            returned row.  This example uses this to gather statistics
+            on the sample table's contents.
+
         load_jpeg: Inserts a JPEG file into the sample database,
             for use by the cgi_jpeg example.  (See below.)  Unlike
             the other examples, this one takes the last command
@@ -88,10 +117,6 @@ Running the Other Command Line Examples
     http://my.server.com/cgi-bin/cgi_jpeg?id=1 should show the
     JPEG you loaded.  The ID value to use will be that reported
     by load_jpeg.
-
-    There is one other oddball, the updel example.  It shows how to
-    use the power of the matching syntax available in MySQL's SELECT
-    statement to do fine-grained UPDATE or DELETE queries.
 
 
 Dedicated Windows Examples

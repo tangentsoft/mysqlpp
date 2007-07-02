@@ -166,5 +166,13 @@ processed(false)
 	assign(outs.str());
 }
 
+SQLString::SQLString(const null_type& i) :
+string("NULL"),
+is_string(false),
+dont_escape(false),
+processed(false)
+{
+}
+
 } // end namespace mysqlpp
 

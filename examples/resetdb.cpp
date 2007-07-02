@@ -35,6 +35,20 @@
 
 using namespace std;
 
+// Convert a packed version number in the format used within MySQL++
+// to a printable string.
+static string
+version_str(int packed)
+{
+	char buf[9];
+	snprintf(buf, sizeof(buf), "%d.%d.%d",
+			(packed & 0xFF0000) >> 16,
+			(packed & 0x00FF00) >> 8,
+			(packed & 0x0000FF));
+	return buf;
+}
+
+
 int
 main(int argc, char *argv[])
 {
@@ -43,8 +57,12 @@ main(int argc, char *argv[])
 	// are trying to build a new version, and run the examples directly
 	// instead of through exrun.
 	if (mysqlpp::get_library_version() != MYSQLPP_HEADER_VERSION) {
-		cerr << "Library/header version number mismatch.  Are you" << endl;
-		cerr << "using exrun to run this?  See README.examples." << endl;
+		cerr << "Version mismatch: library is v" <<
+				version_str(mysqlpp::get_library_version()) <<
+				", headers are v" <<
+				version_str(MYSQLPP_HEADER_VERSION) <<
+				".  Are you running this" << endl <<
+				"with exrun?  See README.examples." << endl;
 		return 1;
 	}
 	
@@ -118,9 +136,9 @@ main(int argc, char *argv[])
 		// have to do to store Unicode data in recent versions of MySQL
 		// is use UTF-8 encoding.
 		cout << "Populating stock table..." << endl;
-		query.execute("Nürnberger Brats", 92, 1.5, 8.79, "2005-03-10");
+		query.execute("Nürnberger Brats", 97, 1.5, 8.79, "2005-03-10");
 		query.execute("Pickle Relish", 87, 1.5, 1.75, "1998-09-04");
-		query.execute("Hot Mustard", 75, .95, .97, "1998-05-25");
+		query.execute("Hot Mustard", 73, .95, .97, "1998-05-25");
 		query.execute("Hotdog Buns", 65, 1.1, 1.1, "1998-04-23");
 
 		// Now create empty images table, for testing BLOB and auto-

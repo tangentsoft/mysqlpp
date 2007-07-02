@@ -28,6 +28,7 @@
 ***********************************************************************/
 
 #include <mysql++.h>
+#include <custom.h>
 
 using namespace std;
 using namespace mysqlpp;
@@ -37,8 +38,13 @@ using namespace mysqlpp;
 #define IMG_USER		"root"
 #define IMG_PASSWORD 	"nunyabinness"
 
+sql_create_2(images,
+	1, 2,
+	mysqlpp::sql_int_unsigned, id,
+	mysqlpp::sql_blob, data)
+
 int
-main(int argc, char *argv[])
+main()
 {
 	unsigned int img_id = 0;
 	char* cgi_query = getenv("QUERY_STRING");
@@ -57,14 +63,14 @@ main(int argc, char *argv[])
 				"directory, then" << endl;
 		cerr << "invoke it with a URL like this:" << endl;
 		cerr << endl;
-		cerr << "    http://server.name.com/cgi-bin/cgi_image?id=2" <<
+		cerr << "    http://server.name.com/cgi-bin/cgi_jpeg?id=2" <<
 				endl;
 		cerr << endl;
 		cerr << "This will retrieve the image with ID 2." << endl;
 		cerr << endl;
 		cerr << "You will probably have to change some of the #defines "
 				"at the top of" << endl;
-		cerr << "examples/cgi_image.cpp to allow the lookup to work." <<
+		cerr << "examples/cgi_jpeg.cpp to allow the lookup to work." <<
 				endl;
 		return 1;
 	}
@@ -73,14 +79,13 @@ main(int argc, char *argv[])
 	try {
 		con.connect(IMG_DATABASE, IMG_HOST, IMG_USER, IMG_PASSWORD);
 		Query query = con.query();
-		query << "SELECT data FROM images WHERE id = " << img_id;
-		Row row;
-		Result res = query.store();
-		if (res && (res.num_rows() > 0) && (row = res.at(0))) {
-			unsigned long length = row.at(0).size();
+		query << "SELECT * FROM images WHERE id = " << img_id;
+		ResUse res = query.use();
+		if (res) {
+			images img = res.fetch_row();
 			cout << "Content-type: image/jpeg" << endl;
-			cout << "Content-length: " << length << endl << endl;
-			fwrite(row.at(0).data(), 1, length, stdout);
+			cout << "Content-length: " << img.data.length() << "\n\n";
+			cout << img.data;
 		}
 		else {
 			cout << "Content-type: text/plain" << endl << endl;

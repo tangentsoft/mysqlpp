@@ -79,8 +79,8 @@ class MYSQLPP_EXPORT BasicLock : public Lock
 {
 public:
 	/// \brief Create object
-	BasicLock(bool locked = false) :
-	locked_(locked)
+	BasicLock(bool is_locked = false) :
+	locked_(is_locked)
 	{
 	}
 	
@@ -122,8 +122,8 @@ class MYSQLPP_EXPORT Lockable
 {
 protected:
 	/// \brief Default constructor
-	Lockable(bool locked) :
-	pimpl_(new BasicLock(locked))
+	Lockable(bool is_locked) :
+	pimpl_(new BasicLock(is_locked))
 	{
 	}
 

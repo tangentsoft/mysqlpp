@@ -105,6 +105,7 @@ ostream& operator <<(quote_type1 o, const string& in)
 template <>
 ostream& operator <<(quote_type1 o, const char* const& in)
 {
+	std::cout << "CRUMB 4" << std::endl;
 	size_t size = strlen(in);
 	char* s = new char[size * 2 + 1];
 	mysql_escape_string(s, in, static_cast<unsigned long>(size));
@@ -130,10 +131,10 @@ inline ostream& _manip(quote_type1 o, const ColData_Tmpl<Str>& in)
 		delete[] s;
 	}
 	else if (in.quote_q()) {
-		*o.ostr << '\'' << in << '\'';
+		*o.ostr << '\'' << in.c_str() << '\'';
 	}
 	else {
-		*o.ostr << in;
+		*o.ostr << in.c_str();
 	}
 	return *o.ostr;
 }
@@ -177,7 +178,7 @@ ostream& operator <<(ostream& o, const ColData_Tmpl<string>& in)
 {
 	if (dont_quote_auto || (o.rdbuf() == cout.rdbuf()) ||
 			(o.rdbuf() == cerr.rdbuf())) {
-		return o << in.get_string();
+		return o << in.c_str();
 	}
 
 	if (in.escape_q()) {
@@ -191,10 +192,10 @@ ostream& operator <<(ostream& o, const ColData_Tmpl<string>& in)
 		delete[] s;
 	}
 	else if (in.quote_q()) {
-		o << '\'' << in.get_string() << '\'';
+		o << '\'' << in.c_str() << '\'';
 	}
 	else {
-		o << in.get_string();
+		o << in.c_str();
 	}
 	return o;
 }
@@ -211,7 +212,9 @@ ostream& operator <<(ostream& o, const ColData_Tmpl<const_string>& in)
 {
 	if (dont_quote_auto || (o.rdbuf() == cout.rdbuf()) ||
 			(o.rdbuf() == cerr.rdbuf())) {
-		return o << in.get_string();
+		// Write out the raw data.  Have to do it this way in case
+		// it's a BLOB field.
+		return o.write(in.data(), in.length());
 	}
 
 	if (in.escape_q()) {
@@ -224,10 +227,10 @@ ostream& operator <<(ostream& o, const ColData_Tmpl<const_string>& in)
 		delete[] s;
 	}
 	else if (in.quote_q()) {
-		o << '\'' << in.get_string() << '\'';
+		o << '\'' << in.c_str() << '\'';
 	}
 	else {
-		o << in.get_string();
+		o << in.c_str();
 	}
 	return o;
 }
@@ -242,7 +245,7 @@ ostream& operator <<(ostream& o, const ColData_Tmpl<const_string>& in)
 Query& operator <<(Query& o, const ColData_Tmpl<string>& in)
 {
 	if (dont_quote_auto) {
-		o << in.get_string();
+		o << in.c_str();
 		return o;
 	}
 	if (in.escape_q()) {
@@ -256,10 +259,10 @@ Query& operator <<(Query& o, const ColData_Tmpl<string>& in)
 		delete[] s;
 	}
 	else if (in.quote_q()) {
-		static_cast<ostream&>(o) << '\'' << in.get_string() << '\'';
+		static_cast<ostream&>(o) << '\'' << in.c_str() << '\'';
 	}
 	else {
-		static_cast<ostream&>(o) << in.get_string();
+		static_cast<ostream&>(o) << in.c_str();
 	}
 	return o;
 }
@@ -274,7 +277,7 @@ Query& operator <<(Query& o, const ColData_Tmpl<string>& in)
 Query& operator <<(Query& o, const ColData_Tmpl<const_string>& in)
 {
 	if (dont_quote_auto) {
-		o << in.get_string();
+		o << in.c_str();
 		return o;
 	}
 	if (in.escape_q()) {
@@ -287,10 +290,10 @@ Query& operator <<(Query& o, const ColData_Tmpl<const_string>& in)
 		delete[] s;
 	}
 	else if (in.quote_q()) {
-		static_cast<ostream&>(o) << '\'' << in.get_string() << '\'';
+		static_cast<ostream&>(o) << '\'' << in.c_str() << '\'';
 	}
 	else {
-		static_cast<ostream&>(o) << in.get_string();
+		static_cast<ostream&>(o) << in.c_str();
 	}
 	return o;
 }
@@ -327,10 +330,10 @@ template <>
 ostream& operator <<(quote_only_type1 o, const ColData_Tmpl<string>& in)
 {
 	if (in.quote_q()) {
-		*o.ostr << '\'' << in << '\'';
+		*o.ostr << '\'' << in.c_str() << '\'';
 	}
 	else {
-		*o.ostr << in;
+		*o.ostr << in.c_str();
 	}
 	return *o.ostr;
 }
@@ -346,10 +349,10 @@ ostream& operator <<(quote_only_type1 o,
 		const ColData_Tmpl<const_string>& in)
 {
 	if (in.quote_q()) {
-		*o.ostr << '\'' << in << '\'';
+		*o.ostr << '\'' << in.c_str() << '\'';
 	}
 	else {
-		*o.ostr << in;
+		*o.ostr << in.c_str();
 	}
 	return *o.ostr;
 }
@@ -387,10 +390,10 @@ ostream& operator <<(quote_double_only_type1 o,
 		const ColData_Tmpl<string>& in)
 {
 	if (in.quote_q()) {
-		*o.ostr << '\'' << in << '\'';
+		*o.ostr << '\'' << in.c_str() << '\'';
 	}
 	else {
-		*o.ostr << in;
+		*o.ostr << in.c_str();
 	}
 	return *o.ostr;
 }
@@ -407,10 +410,10 @@ ostream& operator <<(quote_double_only_type1 o,
 		const ColData_Tmpl<const_string>& in)
 {
 	if (in.quote_q()) {
-		*o.ostr << '\'' << in << '\'';
+		*o.ostr << '\'' << in.c_str() << '\'';
 	}
 	else {
-		*o.ostr << in;
+		*o.ostr << in.c_str();
 	}
 	return *o.ostr;
 }
@@ -484,7 +487,7 @@ inline ostream& _manip(escape_type1 o, const ColData_Tmpl<Str>& in)
 		delete[] s;
 	}
 	else {
-		*o.ostr << in;
+		*o.ostr << in.c_str();
 	}
 	return *o.ostr;
 }

@@ -5,17 +5,22 @@ BF_OPTIONS=
 while [ $ARGS != 0 ]
 do
 	case "$1" in
-		noexamples)
+		nodoc)
+			BF_OPTIONS="-DBUILDDOCS=no $BF_OPTIONS"
+			shift
+			;;
+
+		noex)
 			BF_OPTIONS="-DBUILDEXAMPLES=no $BF_OPTIONS"
 			shift
 			;;
 
-		nolibrary)
+		nolib)
 			BF_OPTIONS="-DBUILDLIBRARY=no $BF_OPTIONS"
 			shift
 			;;
 
-		nooptimization)
+		noopt)
 			export CXXFLAGS="-g -O0"
 			shift
 			;;

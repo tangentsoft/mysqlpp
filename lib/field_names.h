@@ -42,7 +42,7 @@ class MYSQLPP_EXPORT ResUse;
 #endif
 
 /// \brief Holds a list of SQL field names
-class MYSQLPP_EXPORT FieldNames : public std::vector<std::string>
+class FieldNames : public std::vector<std::string>
 {
 public:
 	/// \brief Default constructor

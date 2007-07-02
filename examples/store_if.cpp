@@ -1,8 +1,10 @@
 /***********************************************************************
- usequery.cpp - Same as simple3 example, only with exceptions enabled.
-	The end of the result set is signalled differently in this case.
+ store_if.cpp - Demonstrates Query::store_if(), showing only the rows
+	from the sample table with prime quantities.  This isn't intended
+	to be useful, only to show how you can do result set filtering that
+	outstrips the power of SQL.
 
- Copyright (c) 2005 by Educational Technology Resources, Inc.
+ Copyright (c) 2005-2007 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -25,10 +27,39 @@
 ***********************************************************************/
 
 #include "util.h"
+#include "stock.h"
 
 #include <mysql++.h>
 
 #include <iostream>
+
+#include <math.h>
+
+
+// Define a functor for testing primality.
+struct is_prime
+{
+	bool operator()(const stock& s)
+	{
+		if ((s.num == 2) || (s.num == 3)) {
+			return true;	// 2 and 3 are trivial cases
+		}
+		else if ((s.num < 2) || ((s.num % 2) == 0)) {
+			return false;	// can't be prime if < 2 or even
+		}
+		else {
+			// The only possibility left is that it's divisible by an
+			// odd number that's less or equal to its square root.
+			for (int i = 3; i <= sqrt(double(s.num)); i += 2) {
+				if ((s.num % i) == 0) {
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+};
+
 
 int
 main(int argc, char *argv[])
@@ -40,21 +71,17 @@ main(int argc, char *argv[])
 			return 1;
 		}
 
-		// Build query to retrieve the entire stock table
+		// Collect the stock items with prime quantities
+		std::vector<stock> results;
 		mysqlpp::Query query = con.query();
-		query << "select * from stock";
+		query.store_if(results, stock(), is_prime());
 
-		// Execute the query, but don't save results in memory
-		mysqlpp::ResUse res = query.use();
-		if (!res) {
-			std::cerr << "Result set is empty!" << std::endl;
-			return 1;
-		}
-
-		// Iterate through result set, printing each row.
-		mysqlpp::Row r;
-		while (r = res.fetch_row()) {
-			print_stock_row(r);
+		// Show the results
+		print_stock_header(results.size());
+		std::vector<stock>::const_iterator it;
+		for (it = results.begin(); it != results.end(); ++it) {
+			print_stock_row(it->item.c_str(), it->num, it->weight,
+					it->price, it->sdate);
 		}
 	}
 	catch (const mysqlpp::BadQuery& e) {
@@ -62,18 +89,11 @@ main(int argc, char *argv[])
 		std::cerr << "Query failed: " << e.what() << std::endl;
 		return 1;
 	}
-	catch (const mysqlpp::EndOfResults&) {
-		// Last query result received.  Exit normally.
-		return 0;
-	}
 	catch (const mysqlpp::Exception& er) {
 		// Catch-all for any other MySQL++ exceptions
 		std::cerr << "Error: " << er.what() << std::endl;
 		return 1;
 	}
 
-	// Shouldn't happen!  Program should either error out through one of
-	// the "return 1" cases above, or successfully walk off the end of
-	// the result set and go through the EndOfResults path above.
-	return 2;
+	return 0;
 }

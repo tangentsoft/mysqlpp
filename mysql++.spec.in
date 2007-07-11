@@ -54,8 +54,8 @@ rm -rf %{buildroot} doc/examples
 # Fix up simple example Makefile to allow it to build on the install
 # system, as opposed to the system where the Makefile was created.
 %{__sed} -e 's@./examples/@@' \
-  -e 's@^CPPFLAGS =.*$@CPPFLAGS = $(shell mysql_config --cflags)@' \
-  -e 's@^LDFLAGS =.*$@LDFLAGS = $(shell mysql_config --libs)@' \
+  -e 's@^CPPFLAGS :=.*$@CPPFLAGS := $(shell mysql_config --cflags)@' \
+  -e 's@^LDFLAGS :=.*$@LDFLAGS := $(shell mysql_config --libs)@' \
   -e 's@ -Ilib -I/usr/include/mysql@@' \
   Makefile.simple > doc/examples/Makefile
 

@@ -33,8 +33,6 @@
 
 #include "common.h"
 
-#include <mysql.h>
-
 #include <map>
 #include <typeinfo>
 

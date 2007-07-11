@@ -38,8 +38,6 @@
 #include "resiter.h"
 #include "row.h"
 
-#include <mysql.h>
-
 #include <map>
 #include <set>
 #include <string>

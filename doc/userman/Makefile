@@ -54,7 +54,7 @@ clean:
 $(PDFFILE): $(DOCFILE) $(FO_SS) $(COMMON_SS)
 	xsltproc --xinclude $(FO_SS) $(DOCFILE) > $(FOFILE)
 	$(FOPDIR)/fop -q -fo $(FOFILE) $(PDFFILE)
-	cp $(PDFFILE) ..
+	cp $(PDFFILE) ../pdf
 
 $(HTML_DIR)/index.html: $(DOCFILE) $(EX_TXT) $(HTML_SS) $(COMMON_SS)
 	@xmllint --xinclude --postvalid --noent --noout $(DOCFILE)

@@ -14,9 +14,6 @@ v2.x Features
     it can be done without breaking the ABI, which would force
     a feature to v3.0.
 
-    o Define HAVE_MYSQL_SSL_SET by default on Windows?  Make similar
-      decisions for other autoconf-only macros.
-
     o Add ConnectionPool class, described in this post:
 
       http://lists.mysql.com/plusplus/6631

@@ -41,8 +41,6 @@
 #include "string_util.h"
 #include "type_info.h"
 
-#include <mysql.h>
-
 #include <typeinfo>
 #include <string>
 #include <sstream>
@@ -183,6 +181,38 @@ public:
 	/// \brief Returns true if this object is a SQL null.
 	inline const bool is_null() const { return null_; }
 	
+	/// \brief Returns this object's data in C++ string form.
+	///
+	/// This method is inefficient, and not recommended.  It makes a
+	/// duplicate copy of the string that lives as long as the
+	/// \c ColData object itself.
+	///
+	/// If you are using the \c MutableColData typedef for this
+	/// template, you can avoid the duplicate copy entirely.  You can
+	/// pass a \c MutableColData object to anything expecting a
+	/// \c std::string and get the right result.  (This didn't work
+	/// reliably prior to v2.3.)
+	///
+	/// This method is arguably useful with plain \c ColData objects,
+	/// but there are more efficient alternatives.  If you know your
+	/// data is a null-terminated C string, just cast this object to
+	/// a \c const \c char* or call the \c data() method.  This gives
+	/// you a pointer to our internal buffer, so the copy isn't needed.
+	/// If the \c ColData can contain embedded null characters, you do
+	/// need to make a copy, but it's better to make your own copy of 
+	/// the string, instead of calling get_string(), so you can better
+	/// control its lifetime:
+	///
+	/// \code
+	/// ColData cd = ...;
+	/// std::string s(cd.data(), cd.length());
+	/// \endcode
+	inline const std::string& get_string() const
+	{
+		temp_buf_.assign(Str::data(), Str::length());
+		return temp_buf_;
+	}
+
 	/// \brief Returns a const char pointer to the object's raw data
 	operator cchar*() const { return Str::data(); }
 	
@@ -247,11 +277,7 @@ public:
 
 private:
 	mysql_type_info type_;
-
-	// We will re-enable this field in v3.0 when we make ColData 
-	// concrete, with no parent class.  See the Wishlist for details.
-	std::string DISABLED_IN_V2_3_;	
-
+	mutable std::string temp_buf_;	
 	bool null_;
 };
 

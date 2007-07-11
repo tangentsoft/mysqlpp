@@ -1,14 +1,34 @@
-2.3.1, 2007.07.10 (r1659) The "After-the-Fireworks Release"
+2.3.2, 2007.07.11 (r1669)
 
-	o Fixed a problem with SSQLS BLOB handling due to data lifetime
-	  issues.  const_string objects now keep a copy of their
-	  data, not just a pointer to it.  This is less efficient,
-	  but necessary to allow SSQLS to work with BLOBs.
+	o Previous release's const_string change caused more problems
+	  than it fixed.  This release contains the real fix. :)
 
-	o Fixed many more embedded null handling problems in manip.h
+	o New Connection::set_option() handling deals with the multi
+	  statements option correctly again.  examples/multiquery now
+	  runs again as a result.
+
+	o Added new unit testing script, called dtest.	See the
+	  HACKERS file for details.  (This tool caught the previous
+	  two problems!)
+
+	o Squished a GCC pedantic warning.  Thanks for the patch go to
+	  Andrew Sayers.
+
+
+2.3.1, 2007.07.10 (r1659) The "After the Fireworks" release
+
+	o const_string objects now keep a copy of their data, not
+	  just a pointer to it.  This is less efficient, but necessary
+	  to allow SSQLS to work with BLOBs.  Without this, we were
+	  seeing segfaults due to accessing freed memory pointed to
+	  by the const_string, because the underlying object went
+	  out of scope.
+
+	o Fixed many more potential embedded null handling problems
+	  in manip.h.
 
 	o MySQL++ can now optionally reference MySQL C API headers as
-	  in a mysql subdirectory, a common thing on *ix systems,
+	  being in a mysql subdirectory, a common thing on *ix systems,
 	  by defining MYSQLPP_MYSQL_HEADERS_BURIED before #including
 	  mysql++.h.
 
@@ -16,12 +36,14 @@
 	  along with warnings in the docs saying why you don't want
 	  to use it, and what your alternatives are.
 
-	o VC++ and MinGW builds now define HAVE_MYSQL_SSL_SET macro,
-	  which lets you use the C API's SSL features.	This assumes
-	  your C API library does actually include them, which is
-	  the case with the official binary releases on Windows.
+	o VC++ and MinGW builds now define the HAVE_MYSQL_SSL_SET
+	  macro, which lets you use the C API's SSL features.
+	  This assumes your C API library does actually have these
+	  features enabled, which is the case with the official binary
+	  releases on Windows.	(Builds on *ix systems continue to
+	  test for these features at configure time.)
 
-    o Fixed simple examples-only Makefile generation, for RPMs
+    o Fixed simple examples-only Makefile generation, for RPMs.
 
 
 2.3.0, 2007.07.02 (r1645)
@@ -138,7 +160,7 @@
     o Lots of documentation improvements.
 
 
-2.2.3, 2007.04.17 (r1538) "The Tax Day Release"
+2.2.3, 2007.04.17 (r1538) The "Tax Day" release
 
     o Previous version left examples/vstudio/* out of the tarball
       by accident.
@@ -153,7 +175,7 @@
     o Minor URL fix in refman
 
 
-2.2.2, 2007.04.13 (r1526) "The Nervousmaking Friday the 13th Release"
+2.2.2, 2007.04.13 (r1526) The "Nervousmaking Friday the 13th" release
 
     o More small fixes to embedded null handling in Query.
 

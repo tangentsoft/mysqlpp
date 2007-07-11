@@ -48,6 +48,29 @@ Submitting Patches
     for not being able to make unified diffs.  :)
 
 
+Testing Your Proposed Change
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    In v2.3.2, we added a new script called 'dtest'.  You run it
+    like you would most of the examples, except that you don't need
+    to run it via exrun:
+
+        $ ./dtest [host] [user] [pass]
+
+    This automatically runs most of the examples, captures the outputs
+    to a file, and then compares that to a known-good run's outputs.
+    The purpose of this is that, before you submit a patch, run dtest
+    and see if it indicates that anything has changed.  If something
+    has and you can't account for it, it represents a problem that
+    you'll have to fix before submitting the patch.
+
+    If your change purposely causes different outputs from a dtest
+    run, remove the bmark.txt file, then re-run dtest and include
+    the bmark.txt diffs with your patch.  This communicates to us
+    the fact that you know there are differences and want the patch
+    evaluated anyway.  Otherwise, we are likely to view the change
+    as a bug.
+
+
 Adding Support for a Different Compiler
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     MySQL++ uses the Bakefile system for creating project files

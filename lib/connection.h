@@ -479,7 +479,7 @@ protected:
 	enum OptionError {
 		opt_err_type,
 		opt_err_value,
-		opt_err_conn,
+		opt_err_conn
 	};
 	
 	/// \brief Drop the connection to the database server

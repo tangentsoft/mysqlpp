@@ -181,6 +181,15 @@ Connection::connect(cchar* db, cchar* host, cchar* user,
 		set_option_default(opt_compress);
 	}
 
+#if MYSQL_VERSION_ID >= 40101
+	// Check to see if user turned on multi-statements before
+	// establishing the connection.  This one we handle specially, by
+	// setting a flag during connection establishment.
+	if (option_set(opt_multi_statements)) {
+		client_flag |= CLIENT_MULTI_STATEMENTS;
+	}
+#endif
+
 	// Establish connection
 	scoped_var_set<bool> sb(connecting_, true);
 	if (mysql_real_connect(&mysql_, host, user, passwd, db, port,
@@ -523,9 +532,20 @@ Connection::set_option(Option option, bool arg)
 			break;
 
 		case opt_multi_statements:
-			success = set_option_impl(arg ?
-					MYSQL_OPTION_MULTI_STATEMENTS_ON :
-					MYSQL_OPTION_MULTI_STATEMENTS_OFF);
+			// If connection is up, set the flag immediately.  If not,
+			// and caller wants this turned on, pretend success so that
+			// we store the info we need to turn this flag on when
+			// bringing the connection up.  (If the caller is turning it
+			// off before conn comes up, we effectively ignore this, 
+			// because that's the default.)
+			if (connected()) {
+				success = set_option_impl(arg ?
+						MYSQL_OPTION_MULTI_STATEMENTS_ON :
+						MYSQL_OPTION_MULTI_STATEMENTS_OFF);
+			}
+			else {
+				success = arg;
+			}
 			break;
 #endif
 #if MYSQL_VERSION_ID >= 50003

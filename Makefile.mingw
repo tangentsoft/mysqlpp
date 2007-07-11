@@ -38,7 +38,8 @@ BUILD := debug
 
 CPPDEPS = -MT$@ -MF$@.d -MD
 MYSQLPP_CXXFLAGS = $(__DEBUGINFO) -mthreads -D_UNICODE -DMYSQLPP_NO_DLL \
-	-I"C:\Program Files\MySQL\MySQL Server 5.0\include" $(CPPFLAGS) $(CXXFLAGS)
+	-DHAVE_MYSQL_SSL_SET -I"C:\Program Files\MySQL\MySQL Server 5.0\include" \
+	$(CPPFLAGS) $(CXXFLAGS)
 MYSQLPP_OBJECTS =  \
 	mysqlpp_coldata.o \
 	mysqlpp_connection.o \

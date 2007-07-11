@@ -43,10 +43,9 @@ namespace mysqlpp {
 ///
 /// This class implements a small subset of the standard string class.
 ///
-/// Objects are created from an existing <tt>const char*</tt> variable
-/// by copying the pointer only.  Therefore, the object pointed to by
-/// that pointer needs to exist for at least as long as the const_string
-/// object that wraps it.
+/// As of MySQL++ 2.3, it makes a copy of the string we are initialized
+/// with, instead of just copying the pointer.  This is required to
+/// avoid problems with the new SSQLS + BLOB support.
 class MYSQLPP_EXPORT const_string
 {
 public:
@@ -78,37 +77,61 @@ public:
 
 	/// \brief Create empty string
 	const_string() :
-	str_data_(""),
+	str_data_(0),
 	length_(0)
 	{
 	}
 	
 	/// \brief Initialize string from existing C++ string
 	const_string(const std::string& str) :
-	str_data_(str.data()),
+	str_data_(0),
 	length_(str.length())
 	{
+		str_data_ = new char[length_];
+		memcpy(str_data_, str.data(), length_);
 	}
 	
 	/// \brief Initialize string from existing C string
 	const_string(const char* str) :
-	str_data_(str),
+	str_data_(0),
 	length_(size_type(strlen(str)))
 	{
+		str_data_ = new char[length_];
+		memcpy(str_data_, str, length_);
 	}
 	
 	/// \brief Initialize string from existing C string of known length
 	const_string(const char* str, size_type len) :
-	str_data_(str),
+	str_data_(0),
 	length_(size_type(len))
 	{
+		str_data_ = new char[length_];
+		memcpy(str_data_, str, length_);
+	}
+
+	/// \brief Destroy string
+	~const_string()
+	{
+		delete[] str_data_;
 	}
 	
-	/// \brief Assignment operator
+	/// \brief Assignment operator, from C string
 	const_string& operator=(const char* str)
 	{
-		str_data_ = str;
+		delete[] str_data_;
 		length_ = size_type(strlen(str));
+		str_data_ = new char[length_];
+		memcpy(str_data_, str, length_);
+		return *this;
+	}
+
+	/// \brief Assignment operator, from other const_string
+	const_string& operator=(const const_string& cs)
+	{
+		delete[] str_data_;
+		length_ = cs.length_;
+		str_data_ = new char[length_];
+		memcpy(str_data_, cs.str_data_, length_);
 		return *this;
 	}
 
@@ -116,7 +139,7 @@ public:
 	size_type length() const { return length_; }
 
 	/// \brief Return number of characters in string
-	size_type size() const { return length(); }
+	size_type size() const { return length_; }
 
 	/// \brief Return iterator pointing to the first character of
 	/// the string
@@ -173,7 +196,7 @@ public:
 	}
 
 private:
-	const char* str_data_;
+	char* str_data_;
 	size_type length_;
 };
 

@@ -56,17 +56,18 @@ bool dont_quote_auto = false;
 SQLQueryParms& operator <<(quote_type2 p, SQLString& in)
 {
 	if (in.is_string) {
-		SQLString in2;
+		SQLString in2('\'');
 		if (in.dont_escape) {
-			in2 = '\'' + in + '\'';
+			in2 += in;
+			in2 += '\'';
 			in2.processed = true;
 			return *p.qparms << in2;
 		}
 		else {
-			char* s = new char[in.size() * 2 + 1];
-			mysql_escape_string(s, in.c_str(),
-					static_cast<unsigned long>(in.size()));
-			in2 = SQLString('\'') + s + '\'';
+			char* s = new char[in.length() * 2 + 1];
+			size_t len = mysql_escape_string(s, in.data(), in.length());
+			in2.append(s, len);
+			in2 += '\'';
 			in2.processed = true;
 			*p.qparms << in2;
 			delete[] s;
@@ -88,10 +89,13 @@ SQLQueryParms& operator <<(quote_type2 p, SQLString& in)
 template <>
 ostream& operator <<(quote_type1 o, const string& in)
 {
-	char* s = new char[in.size() * 2 + 1];
-	mysql_escape_string(s, in.c_str(),
-			static_cast<unsigned long>(in.size()));
-	*o.ostr << '\'' << s << '\'';
+	char* s = new char[in.length() * 2 + 1];
+	size_t len = mysql_escape_string(s, in.data(), in.length());
+
+	o.ostr->write("'", 1);
+	o.ostr->write(s, len);
+	o.ostr->write("'", 1);
+
 	delete[] s;
 	return *o.ostr;
 }
@@ -105,11 +109,14 @@ ostream& operator <<(quote_type1 o, const string& in)
 template <>
 ostream& operator <<(quote_type1 o, const char* const& in)
 {
-	std::cout << "CRUMB 4" << std::endl;
-	size_t size = strlen(in);
-	char* s = new char[size * 2 + 1];
-	mysql_escape_string(s, in, static_cast<unsigned long>(size));
-	*o.ostr << '\'' << s << '\'';
+	size_t len = strlen(in);
+	char* s = new char[len * 2 + 1];
+	len = mysql_escape_string(s, in, len);
+
+	o.ostr->write("'", 1);
+	o.ostr->write(s, len);
+	o.ostr->write("'", 1);
+
 	delete[] s;
 	return *o.ostr;
 }
@@ -121,21 +128,21 @@ template<class Str>
 inline ostream& _manip(quote_type1 o, const ColData_Tmpl<Str>& in)
 {
 	if (in.escape_q()) {
-		char* s = new char[in.size() * 2 + 1];
-		mysql_escape_string(s, in.c_str(),
-				static_cast<unsigned long>(in.size()));
-		if (in.quote_q())
-			*o.ostr << '\'' << s << '\'';
-		else
-			*o.ostr << s;
+		char* s = new char[in.length() * 2 + 1];
+		size_t len = mysql_escape_string(s, in.data(), in.length());
+
+		if (in.quote_q()) o.ostr->write("'", 1);
+		o.ostr->write(s, len);
+		if (in.quote_q()) o.ostr->write("'", 1);
+
 		delete[] s;
 	}
-	else if (in.quote_q()) {
-		*o.ostr << '\'' << in.c_str() << '\'';
-	}
 	else {
-		*o.ostr << in.c_str();
+		if (in.quote_q()) o.ostr->write("'", 1);
+		o.ostr->write(in.data(), in.length());
+		if (in.quote_q()) o.ostr->write("'", 1);
 	}
+
 	return *o.ostr;
 }
 
@@ -176,27 +183,30 @@ ostream& operator <<(quote_type1 o, const ColData_Tmpl<const_string>& in)
 
 ostream& operator <<(ostream& o, const ColData_Tmpl<string>& in)
 {
-	if (dont_quote_auto || (o.rdbuf() == cout.rdbuf()) ||
-			(o.rdbuf() == cerr.rdbuf())) {
-		return o << in.c_str();
-	}
+	// Decide if we're allowed to escape or quote the data.
+	bool transform_ok =
+			!dont_quote_auto &&
+			(o.rdbuf() != cout.rdbuf()) &&
+			(o.rdbuf() != cerr.rdbuf());
 
-	if (in.escape_q()) {
-		char* s = new char[in.size() * 2 + 1];
-		mysql_escape_string(s, in.c_str(),
-				static_cast<unsigned long>(in.size()));
-		if (in.quote_q())
-			o << '\'' << s << '\'';
-		else
-			o << s;
+	if (transform_ok && in.escape_q()) {
+		char* s = new char[in.length() * 2 + 1];
+		size_t len = mysql_escape_string(s, in.data(), in.length());
+
+		if (in.quote_q()) o << '\'';
+		o.write(s, len);
+		if (in.quote_q()) o << '\'';
+
 		delete[] s;
 	}
-	else if (in.quote_q()) {
-		o << '\'' << in.c_str() << '\'';
-	}
 	else {
-		o << in.c_str();
+		bool add_quote = transform_ok && in.quote_q();
+
+		if (add_quote) o << '\'';
+		o.write(in.data(), in.length());
+		if (add_quote) o << '\'';
 	}
+
 	return o;
 }
 
@@ -210,28 +220,30 @@ ostream& operator <<(ostream& o, const ColData_Tmpl<string>& in)
 
 ostream& operator <<(ostream& o, const ColData_Tmpl<const_string>& in)
 {
-	if (dont_quote_auto || (o.rdbuf() == cout.rdbuf()) ||
-			(o.rdbuf() == cerr.rdbuf())) {
-		// Write out the raw data.  Have to do it this way in case
-		// it's a BLOB field.
-		return o.write(in.data(), in.length());
-	}
+	// Decide if we're allowed to escape or quote the data.
+	bool transform_ok =
+			!dont_quote_auto &&
+			(o.rdbuf() != cout.rdbuf()) &&
+			(o.rdbuf() != cerr.rdbuf());
 
-	if (in.escape_q()) {
-		char* s = new char[in.size() * 2 + 1];
-		mysql_escape_string(s, in.c_str(), in.size());
-		if (in.quote_q())
-			o << '\'' << s << '\'';
-		else
-			o << s;
+	if (transform_ok && in.escape_q()) {
+		char* s = new char[in.length() * 2 + 1];
+		size_t len = mysql_escape_string(s, in.data(), in.length());
+
+		if (in.quote_q()) o << '\'';
+		o.write(s, len);
+		if (in.quote_q()) o << '\'';
+
 		delete[] s;
 	}
-	else if (in.quote_q()) {
-		o << '\'' << in.c_str() << '\'';
-	}
 	else {
-		o << in.c_str();
+		bool add_quote = transform_ok && in.quote_q();
+
+		if (add_quote) o << '\'';
+		o.write(in.data(), in.length());
+		if (add_quote) o << '\'';
 	}
+
 	return o;
 }
 
@@ -245,25 +257,24 @@ ostream& operator <<(ostream& o, const ColData_Tmpl<const_string>& in)
 Query& operator <<(Query& o, const ColData_Tmpl<string>& in)
 {
 	if (dont_quote_auto) {
-		o << in.c_str();
-		return o;
+		o.write(in.data(), in.length());
 	}
-	if (in.escape_q()) {
-		char* s = new char[in.size() * 2 + 1];
-		mysql_escape_string(s, in.c_str(),
-				static_cast<unsigned long>(in.size()));
-		if (in.quote_q())
-			static_cast<ostream&>(o) << '\'' << s << '\'';
-		else
-			static_cast<ostream&>(o) << s;
+	else if (in.escape_q()) {
+		char* s = new char[in.length() * 2 + 1];
+		size_t len = mysql_escape_string(s, in.data(), in.length());
+
+		if (in.quote_q()) o.write("'", 1);
+		o.write(s, len);
+		if (in.quote_q()) o.write("'", 1);
+
 		delete[] s;
 	}
-	else if (in.quote_q()) {
-		static_cast<ostream&>(o) << '\'' << in.c_str() << '\'';
-	}
 	else {
-		static_cast<ostream&>(o) << in.c_str();
+		if (in.quote_q()) o.write("'", 1);
+		o.write(in.data(), in.length());
+		if (in.quote_q()) o.write("'", 1);
 	}
+
 	return o;
 }
 
@@ -277,24 +288,24 @@ Query& operator <<(Query& o, const ColData_Tmpl<string>& in)
 Query& operator <<(Query& o, const ColData_Tmpl<const_string>& in)
 {
 	if (dont_quote_auto) {
-		o << in.c_str();
-		return o;
+		o.write(in.data(), in.length());
 	}
-	if (in.escape_q()) {
-		char* s = new char[in.size() * 2 + 1];
-		mysql_escape_string(s, in.c_str(), in.size());
-		if (in.quote_q())
-			static_cast<ostream&>(o) << '\'' << s << '\'';
-		else
-			static_cast<ostream&>(o) << s;
+	else if (in.escape_q()) {
+		char* s = new char[in.length() * 2 + 1];
+		size_t len = mysql_escape_string(s, in.data(), in.length());
+
+		if (in.quote_q()) o.write("'", 1);
+		o.write(s, len);
+		if (in.quote_q()) o.write("'", 1);
+
 		delete[] s;
 	}
-	else if (in.quote_q()) {
-		static_cast<ostream&>(o) << '\'' << in.c_str() << '\'';
-	}
 	else {
-		static_cast<ostream&>(o) << in.c_str();
+		if (in.quote_q()) o.write("'", 1);
+		o.write(in.data(), in.length());
+		if (in.quote_q()) o.write("'", 1);
 	}
+
 	return o;
 }
 
@@ -329,12 +340,10 @@ SQLQueryParms& operator <<(quote_only_type2 p, SQLString& in)
 template <>
 ostream& operator <<(quote_only_type1 o, const ColData_Tmpl<string>& in)
 {
-	if (in.quote_q()) {
-		*o.ostr << '\'' << in.c_str() << '\'';
-	}
-	else {
-		*o.ostr << in.c_str();
-	}
+	if (in.quote_q()) o.ostr->write("'", 1);
+	o.ostr->write(in.data(), in.length());
+	if (in.quote_q()) o.ostr->write("'", 1);
+
 	return *o.ostr;
 }
 
@@ -348,12 +357,10 @@ template <>
 ostream& operator <<(quote_only_type1 o,
 		const ColData_Tmpl<const_string>& in)
 {
-	if (in.quote_q()) {
-		*o.ostr << '\'' << in.c_str() << '\'';
-	}
-	else {
-		*o.ostr << in.c_str();
-	}
+	if (in.quote_q()) o.ostr->write("'", 1);
+	o.ostr->write(in.data(), in.length());
+	if (in.quote_q()) o.ostr->write("'", 1);
+
 	return *o.ostr;
 }
 
@@ -389,12 +396,10 @@ template <>
 ostream& operator <<(quote_double_only_type1 o,
 		const ColData_Tmpl<string>& in)
 {
-	if (in.quote_q()) {
-		*o.ostr << '\'' << in.c_str() << '\'';
-	}
-	else {
-		*o.ostr << in.c_str();
-	}
+	if (in.quote_q()) o.ostr->write("\"", 1);
+	o.ostr->write(in.data(), in.length());
+	if (in.quote_q()) o.ostr->write("\"", 1);
+
 	return *o.ostr;
 }
 
@@ -409,25 +414,24 @@ template <>
 ostream& operator <<(quote_double_only_type1 o,
 		const ColData_Tmpl<const_string>& in)
 {
-	if (in.quote_q()) {
-		*o.ostr << '\'' << in.c_str() << '\'';
-	}
-	else {
-		*o.ostr << in.c_str();
-	}
+	if (in.quote_q()) o.ostr->write("'", 1);
+	o.ostr->write(in.data(), in.length());
+	if (in.quote_q()) o.ostr->write("'", 1);
+
 	return *o.ostr;
 }
 
 
 SQLQueryParms& operator <<(escape_type2 p, SQLString& in)
 {
-	if (in.is_string && ! in.dont_escape) {
-		char* s = new char[in.size() * 2 + 1];
-		mysql_escape_string(s, in.c_str(), 
-				static_cast<unsigned long>(in.size()));
-		SQLString in2(s);
+	if (in.is_string && !in.dont_escape) {
+		char* s = new char[in.length() * 2 + 1];
+		size_t len = mysql_escape_string(s, in.data(), in.length());
+
+		SQLString in2(s, len);
 		in2.processed = true;
 		*p.qparms << in2;
+
 		delete[] s;
 		return *p.qparms;
 	}
@@ -447,10 +451,9 @@ SQLQueryParms& operator <<(escape_type2 p, SQLString& in)
 template <>
 std::ostream& operator <<(escape_type1 o, const std::string& in)
 {
-	char* s = new char[in.size() * 2 + 1];
-	mysql_escape_string(s, in.c_str(),
-			static_cast<unsigned long>(in.size()));
-	*o.ostr << s;
+	char* s = new char[in.length() * 2 + 1];
+	size_t len = mysql_escape_string(s, in.data(), in.length());
+	o.ostr->write(s, len);
 	delete[] s;
 	return *o.ostr;
 }
@@ -466,10 +469,10 @@ std::ostream& operator <<(escape_type1 o, const std::string& in)
 template <>
 ostream& operator <<(escape_type1 o, const char* const& in)
 {
-	size_t size = strlen(in);
-	char* s = new char[size * 2 + 1];
-	mysql_escape_string(s, in, static_cast<unsigned long>(size));
-	*o.ostr << s;
+	size_t len = strlen(in);
+	char* s = new char[len * 2 + 1];
+	len = mysql_escape_string(s, in, len);
+	o.ostr->write(s, len);
 	delete[] s;
 	return *o.ostr;
 }
@@ -481,14 +484,15 @@ template <class Str>
 inline ostream& _manip(escape_type1 o, const ColData_Tmpl<Str>& in)
 {
 	if (in.escape_q()) {
-		char* s = new char[in.size() * 2 + 1];
-		mysql_escape_string(s, in.c_str(),
-				static_cast<unsigned long>(in.size()));
+		char* s = new char[in.length() * 2 + 1];
+		size_t len = mysql_escape_string(s, in.data(), in.length());
+		o.ostr->write(s, len);
 		delete[] s;
 	}
 	else {
-		*o.ostr << in.c_str();
+		o.ostr->write(in.data(), in.length());
 	}
+
 	return *o.ostr;
 }
 

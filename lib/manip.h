@@ -48,8 +48,6 @@
 #include "myset.h"
 #include "sql_string.h"
 
-#include <mysql.h>
-
 #include <iostream>
 
 /// All global symbols in MySQL++ are in namespace mysqlpp.  This is
@@ -551,6 +549,10 @@ inline std::ostream& operator <<(escape_type1 o,
 {
 	return operator <<(o, const_cast<const char* const&>(in));
 }
+
+
+/// \brief Inserts an array of char into a stream, escaping special SQL
+/// characters.
 
 inline std::ostream& operator <<(escape_type1 o,
 		char in[])

@@ -38,8 +38,6 @@
 #include "row.h"
 #include "sql_string.h"
 
-#include <mysql.h>
-
 #include <deque>
 #include <iomanip>
 #include <list>

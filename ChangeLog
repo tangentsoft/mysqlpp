@@ -1,3 +1,29 @@
+2.3.1, 2007.07.10 (r1659) The "After-the-Fireworks Release"
+
+	o Fixed a problem with SSQLS BLOB handling due to data lifetime
+	  issues.  const_string objects now keep a copy of their
+	  data, not just a pointer to it.  This is less efficient,
+	  but necessary to allow SSQLS to work with BLOBs.
+
+	o Fixed many more embedded null handling problems in manip.h
+
+	o MySQL++ can now optionally reference MySQL C API headers as
+	  in a mysql subdirectory, a common thing on *ix systems,
+	  by defining MYSQLPP_MYSQL_HEADERS_BURIED before #including
+	  mysql++.h.
+
+	o Restored ColData_Tmpl<T>::get_string(), removed in v2.3.0,
+	  along with warnings in the docs saying why you don't want
+	  to use it, and what your alternatives are.
+
+	o VC++ and MinGW builds now define HAVE_MYSQL_SSL_SET macro,
+	  which lets you use the C API's SSL features.	This assumes
+	  your C API library does actually include them, which is
+	  the case with the official binary releases on Windows.
+
+    o Fixed simple examples-only Makefile generation, for RPMs
+
+
 2.3.0, 2007.07.02 (r1645)
 
     o Added Query::for_each() and Query::store_if() methods

@@ -12,7 +12,7 @@ Prerequisite: Create Import Library
 	Before you can build MySQL++ with MinGW, you will need to
 	create a MinGW-compatible import library for MySQL's C API
 	library.  Using the current default install path for MySQL and
-	assuming MySQL++ is in c\mysql++, the commands to do this are:
+	assuming MySQL++ is in c:\mysql++, the commands to do this are:
 
 		cd C:\Program Files\MySQL\MySQL Server 5.0\lib\opt
 	    dlltool -k -d c:\mysql++\libmysqlclient.def -l libmysqlclient.a

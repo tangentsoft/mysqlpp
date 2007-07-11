@@ -36,7 +36,7 @@
 	<if cond="BUILDLIBRARY=='yes'">
 		<dll id="mysqlpp">
 			<libname>mysqlpp</libname>
-			<so_version>2.3.0</so_version>
+			<so_version>2.3.1</so_version>
 
 			<sources>
 				lib/coldata.cpp
@@ -70,6 +70,7 @@
 			<if cond="FORMAT=='msvc6prj'">
 				<define>_UNICODE</define>
 				<define>MYSQLPP_MAKING_DLL</define>
+				<define>HAVE_MYSQL_SSL_SET</define>
 				<include>"C:\Program Files\MySQL\MySQL Server 5.0\include"</include>
 				<lib-path>C:\Program Files\MySQL\MySQL Server 5.0\lib\opt</lib-path>
 				<sys-lib>libmysql</sys-lib>
@@ -78,6 +79,7 @@
 			<if cond="FORMAT=='mingw'">
 				<define>_UNICODE</define>
 				<define>MYSQLPP_NO_DLL</define>
+				<define>HAVE_MYSQL_SSL_SET</define>
 				<include>"C:\Program Files\MySQL\MySQL Server 5.0\include"</include>
 				<lib-path>"C:\Program Files\MySQL\MySQL Server 5.0\lib\opt"</lib-path>
 				<sys-lib>mysqlclient</sys-lib>

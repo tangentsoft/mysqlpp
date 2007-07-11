@@ -40,8 +40,6 @@
 #include "lockable.h"
 #include "noexceptions.h"
 
-#include <mysql.h>
-
 #include <deque>
 #include <string>
 

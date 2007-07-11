@@ -34,8 +34,6 @@
 #if !defined(DOXYGEN_IGNORE)
 // Doxygen will not generate documentation for the following stuff.
 
-#include <mysql_version.h>
-
 // Work out major platform-specific stuff here.
 #if defined(__WIN32__) || defined(_WIN32)
 #	define MYSQLPP_PLATFORM_WINDOWS
@@ -85,6 +83,12 @@
 
 	// Make DLL stuff a no-op on this platform.
 	#define MYSQLPP_EXPORT
+#endif
+
+#if defined(MYSQLPP_MYSQL_HEADERS_BURIED)
+#	include <mysql/mysql_version.h>
+#else
+#	include <mysql_version.h>
 #endif
 
 namespace mysqlpp {
@@ -139,8 +143,12 @@ typedef unsigned long ulong;
 // Now that we've defined all the stuff above, we can pull in the full
 // MySQL header.  Basically, the above largely replaces MySQL's my_global.h
 // while actually working with C++.  This is why we disobey the MySQL
-// developer docs, which recommend using my_global.h.
-#include <mysql.h>
+// developer docs, which recommend including my_global.h before mysql.h.
+#if defined(MYSQLPP_MYSQL_HEADERS_BURIED)
+#	include <mysql/mysql.h>
+#else
+#	include <mysql.h>
+#endif
 
 
 namespace mysqlpp {

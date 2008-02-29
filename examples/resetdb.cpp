@@ -5,7 +5,7 @@
 	the examples modify the table in this database.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ MySQL AB, and (c) 2004-2008 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -27,13 +27,19 @@
  USA
 ***********************************************************************/
 
-#include "util.h"
+#include "cmdline.h"
+#include "printdata.h"
 
 #include <mysql++.h>
 
 #include <iostream>
 
 using namespace std;
+
+
+// Pull in the sample database name from the cmdline module.
+extern const char* kpcSampleDatabase;
+
 
 // Convert a packed version number in the format used within MySQL++
 // to a printable string.
@@ -67,11 +73,24 @@ main(int argc, char *argv[])
 	}
 	
 	// Connect to database server
+    const char *server = 0, *user = 0, *pass = "";
 	mysqlpp::Connection con;
 	try {
-		cout << "Connecting to database server..." << endl;
-		if (!connect_to_db(argc, argv, con, "")) {
-			return 1;
+		if (parse_command_line(argc, argv, 0, &server, &user, &pass)) {
+			extern bool dtest_mode;
+			if (dtest_mode) {
+				cout << "Connecting to database server..." << endl;
+			}
+			else {
+				cout << "Connecting to '" << 
+						(user ? user : "USERNAME") << "'@'" <<
+						(server ? server : "localhost") << "', with" <<
+						(pass[0] ? "" : "out") << " password..." << endl;
+			}
+			con.connect(0, server, user, pass);
+		}
+		else {
+			return 1;		// command line parsing failed
 		}
 	}
 	catch (exception& er) {
@@ -86,11 +105,13 @@ main(int argc, char *argv[])
 		mysqlpp::NoExceptions ne(con);
 		mysqlpp::Query query = con.query();
 		if (con.select_db(kpcSampleDatabase)) {
-			// Toss old table, if it exists.  If it doesn't, we don't
-			// really care, as it'll get created next.
+			// Toss old tables, ignoring errors because it would just
+			// mean the table doesn't exist, which doesn't matter.
 			cout << "Dropping existing sample data tables..." << endl;
-			query.execute("drop table stock");
-			query.execute("drop table images");
+			query.exec("drop table stock");
+			query.exec("drop table images");
+			query.exec("drop table deadlock_test1");
+			query.exec("drop table deadlock_test2");
 		}
 		else {
 			// Database doesn't exist yet, so create and select it.
@@ -112,11 +133,12 @@ main(int argc, char *argv[])
 		mysqlpp::Query query = con.query();
 		query << 
 				"CREATE TABLE stock (" <<
-				"  item CHAR(20) NOT NULL, " <<
-				"  num BIGINT, " <<
-				"  weight DOUBLE, " <<
-				"  price DOUBLE, " <<
-				"  sdate DATE) " <<
+				"  item CHAR(30) NOT NULL, " <<
+				"  num BIGINT NOT NULL, " <<
+				"  weight DOUBLE NOT NULL, " <<
+				"  price DECIMAL(6,2) NOT NULL, " <<
+				"  sdate DATE NOT NULL, " <<
+				"  description MEDIUMTEXT NULL) " <<
 				"ENGINE = InnoDB " <<
 				"CHARACTER SET utf8 COLLATE utf8_general_ci";
 		query.execute();
@@ -124,27 +146,33 @@ main(int argc, char *argv[])
 		// Set up the template query to insert the data.  The parse()
 		// call tells the query object that this is a template and
 		// not a literal query string.
-		query << "insert into %5:table values (%0q, %1q, %2, %3, %4q)";
+		query << "insert into %6:table values " <<
+                "(%0q, %1q, %2, %3, %4q, %5q:desc)";
 		query.parse();
 
-		// Set the template query parameter "table" to "stock".
-		query.def["table"] = "stock";
+		// Set a default for template query parameters "table" and "desc".
+		query.template_defaults["table"] = "stock";
+		query.template_defaults["desc"] = mysqlpp::null;
 
 		// Notice that we don't give a sixth parameter in these calls,
 		// so the default value of "stock" is used.  Also notice that
 		// the first row is a UTF-8 encoded Unicode string!  All you
 		// have to do to store Unicode data in recent versions of MySQL
 		// is use UTF-8 encoding.
-		cout << "Populating stock table..." << endl;
+		cout << "Populating stock table..." << flush;
 		query.execute("Nürnberger Brats", 97, 1.5, 8.79, "2005-03-10");
 		query.execute("Pickle Relish", 87, 1.5, 1.75, "1998-09-04");
-		query.execute("Hot Mustard", 73, .95, .97, "1998-05-25");
+		query.execute("Hot Mustard", 73, .95, .97, "1998-05-25",
+                "good American yellow mustard, not that European stuff");
 		query.execute("Hotdog Buns", 65, 1.1, 1.1, "1998-04-23");
+
+		// Test that above did what we wanted.
+		cout << "inserted " << con.count_rows("stock") << " rows." << endl;
 
 		// Now create empty images table, for testing BLOB and auto-
 		// increment column features.
 		cout << "Creating empty images table..." << endl;
-		query.reset();
+		query.reset();		// forget template query info
 		query << 
 				"CREATE TABLE images (" <<
 				"  id INT UNSIGNED NOT NULL AUTO_INCREMENT, " <<
@@ -153,25 +181,32 @@ main(int argc, char *argv[])
 				")";
 		query.execute();
 
+		// Create the tables used by examples/deadlock.cpp
+		cout << "Creating deadlock testing tables..." << endl;
+		query.execute("CREATE TABLE deadlock_test1 (x INT) ENGINE=innodb");
+		query.execute("CREATE TABLE deadlock_test2 (x INT) ENGINE=innodb");
+		query.execute("INSERT INTO deadlock_test1 VALUES (1);");
+		query.execute("INSERT INTO deadlock_test2 VALUES (2);");
+
 		// Report success
 		cout << (new_db ? "Created" : "Reinitialized") <<
 				" sample database successfully." << endl;
 	}
 	catch (const mysqlpp::BadQuery& er) {
 		// Handle any query errors
-		cerr << "Query error: " << er.what() << endl;
+		cerr << endl << "Query error: " << er.what() << endl;
 		return 1;
 	}
 	catch (const mysqlpp::BadConversion& er) {
 		// Handle bad conversions
-		cerr << "Conversion error: " << er.what() << endl <<
+		cerr << endl << "Conversion error: " << er.what() << endl <<
 				"\tretrieved data size: " << er.retrieved <<
 				", actual size: " << er.actual_size << endl;
 		return 1;
 	}
 	catch (const mysqlpp::Exception& er) {
 		// Catch-all for any other MySQL++ exceptions
-		cerr << "Error: " << er.what() << endl;
+		cerr << endl << "Error: " << er.what() << endl;
 		return 1;
 	}
 

@@ -25,7 +25,8 @@
  USA
 ***********************************************************************/
 
-#include "util.h"
+#include "cmdline.h"
+#include "printdata.h"
 
 #include <mysql++.h>
 
@@ -33,6 +34,13 @@
 
 using namespace std;
 using namespace mysqlpp;
+
+
+// Pull in a state variable used by att_getopt() implementation so we
+// can pick up where standard command line processing leaves off.  Feel
+// free to ignore this implementation detail.
+extern int ag_optind;
+
 
 static bool
 is_jpeg(const unsigned char* img_data)
@@ -46,41 +54,49 @@ is_jpeg(const unsigned char* img_data)
 int
 main(int argc, char *argv[])
 {
-	// Assume that the last command line argument is a file.  Try to
-	// read that file's data into img_data, and check it to see if it
-	// appears to be a JPEG file.  Bail otherwise.
-	string img_data;
-	if ((argc > 1) && (argv[1][0] != '-')) {
-		ifstream img_file(argv[argc - 1], ios::ate);
-		if (img_file) {
-			size_t img_size = img_file.tellg();
-			if (img_size > 10) {
-				img_file.seekg(0, ios::beg);
-				char* img_buffer = new char[img_size];
-				img_file.read(img_buffer, img_size);
-				if (is_jpeg((unsigned char*)img_buffer)) {
-					img_data.assign(img_buffer, img_size);
-				}
-				else {
-					cerr << "File does not appear to be a JPEG!" << endl;
-				}
-				delete[] img_buffer;
-			}
-			else {
-				cerr << "File is too short to be a JPEG!" << endl;
-			}
-		}
-	}
-	if (img_data.empty()) {
-		print_usage(argv[0], "[jpeg_file]");
+	// Get database access parameters from command line
+    const char* db = 0, *server = 0, *user = 0, *pass = "";
+	if (!parse_command_line(argc, argv, &db, &server, &user, &pass,
+			"[jpeg_file]")) {
 		return 1;
 	}
-	--argc;		// pop filename argument off end of list
 
 	try {
 		// Establish the connection to the database server.
-		mysqlpp::Connection con(mysqlpp::use_exceptions);
-		if (!connect_to_db(argc, argv, con)) {
+		mysqlpp::Connection con(db, server, user, pass);
+
+		// Assume that the last command line argument is a file.  Try
+		// to read that file's data into img_data, and check it to see
+		// if it appears to be a JPEG file.  Bail otherwise.
+		string img_name, img_data;
+		if (argc - ag_optind >= 1) {
+			img_name = argv[ag_optind];
+			ifstream img_file(img_name.c_str(), ios::ate);
+			if (img_file) {
+				size_t img_size = img_file.tellg();
+				if (img_size > 10) {
+					img_file.seekg(0, ios::beg);
+					unsigned char* img_buffer = new unsigned char[img_size];
+					img_file.read(reinterpret_cast<char*>(img_buffer),
+							img_size);
+					if (is_jpeg(img_buffer)) {
+						img_data.assign(
+								reinterpret_cast<char*>(img_buffer),
+								img_size);
+					}
+					else {
+						cerr << '"' << img_file <<
+								"\" isn't a JPEG!" << endl;
+					}
+					delete[] img_buffer;
+				}
+				else {
+					cerr << "File is too short to be a JPEG!" << endl;
+				}
+			}
+		}
+		if (img_data.empty()) {
+			print_usage(argv[0], "[jpeg_file]");
 			return 1;
 		}
 
@@ -92,12 +108,12 @@ main(int argc, char *argv[])
 		Query query = con.query();
 		query << "INSERT INTO images (data) VALUES(\"" <<
 				mysqlpp::escape << img_data << "\")";
-		ResNSel res = query.execute();
+		SimpleResult res = query.execute();
 
 		// If we get here, insertion succeeded
-		cout << "Inserted \"" << argv[argc] <<
+		cout << "Inserted \"" << img_name <<
 				"\" into images table, " << img_data.size() <<
-				" bytes, ID " << res.insert_id << endl;
+				" bytes, ID " << res.insert_id() << endl;
 	}
 	catch (const BadQuery& er) {
 		// Handle any query errors

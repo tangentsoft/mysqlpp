@@ -2,10 +2,10 @@
 /// \brief Declares a class to hold a list of field names.
 
 /***********************************************************************
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004-2007 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the CREDITS
- file in the top directory of the distribution for details.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2008 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS file in
+ the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -28,17 +28,16 @@
 #ifndef MYSQLPP_FIELD_NAMES_H
 #define MYSQLPP_FIELD_NAMES_H
 
-#include "coldata.h"
-#include "string_util.h"
-
-#include <algorithm>
+#include <string>
 #include <vector>
+
+#include <ctype.h>
 
 namespace mysqlpp {
 
 #if !defined(DOXYGEN_IGNORE)
 // Make Doxygen ignore this
-class MYSQLPP_EXPORT ResUse;
+class MYSQLPP_EXPORT ResultBase;
 #endif
 
 /// \brief Holds a list of SQL field names
@@ -47,9 +46,17 @@ class FieldNames : public std::vector<std::string>
 public:
 	/// \brief Default constructor
 	FieldNames() { }
+
+	/// \brief Copy constructor
+	FieldNames(const FieldNames& other) :
+	std::vector<std::string>()
+	{
+		assign(other.begin(), other.end());
+	}
 	
 	/// \brief Create field name list from a result set
-	FieldNames(const ResUse* res)
+	FieldNames(const ResultBase* res) :
+	std::vector<std::string>()
 	{
 		init(res);
 	}
@@ -62,7 +69,7 @@ public:
 	}
 
 	/// \brief Initializes the field list from a result set
-	FieldNames& operator =(const ResUse* res)
+	FieldNames& operator =(const ResultBase* res)
 	{
 		init(res);
 		return *this;
@@ -89,15 +96,17 @@ public:
 	}
 
 	/// \brief Get the index number of a field given its name
-	uint operator [](std::string i) const
-	{
-		std::string temp(i);
-		str_to_lwr(temp);
-		return uint(std::find(begin(), end(), temp) - begin());
-	}
+	unsigned int operator [](const std::string& s) const;
 
 private:
-	void init(const ResUse* res);
+	void init(const ResultBase* res);
+	void str_to_lwr(std::string& s) const
+	{
+		std::string::iterator it;
+		for (it = s.begin(); it != s.end(); ++it) {
+			*it = tolower(*it);
+		}
+	}
 };
 
 } // end namespace mysqlpp

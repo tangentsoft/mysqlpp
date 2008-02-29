@@ -1,9 +1,9 @@
 /***********************************************************************
  transaction.cpp - Implements the Transaction class.
 
- Copyright (c) 2006 by Educational Technology Resources, Inc.  Others
- may also hold copyrights on code in this file.  See the CREDITS file
- in the top directory of the distribution for details.
+ Copyright (c) 2006-2007 by Educational Technology Resources, Inc.
+ Others may also hold copyrights on code in this file.  See the
+ CREDITS file in the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -42,8 +42,7 @@ conn_(conn),
 finished_(true)		// don't bother rolling it back if ctor fails
 {
 	// Begin the transaction set
-	Query q(conn_.query());
-	q << "START TRANSACTION";
+	Query q(conn_.query("START TRANSACTION"));
 	if (consistent) {
 		q << " WITH CONSISTENT SNAPSHOT";
 	}
@@ -74,10 +73,7 @@ Transaction::~Transaction()
 void
 Transaction::commit()
 {
-	Query q(conn_.query());
-	q << "COMMIT";
-	q.execute();
-
+	conn_.query("COMMIT").execute();
 	finished_ = true;
 }
 
@@ -87,10 +83,7 @@ Transaction::commit()
 void
 Transaction::rollback()
 {
-	Query q(conn_.query());
-	q << "ROLLBACK";
-	q.execute();
-
+	conn_.query("ROLLBACK").execute();
 	finished_ = true;
 }
 

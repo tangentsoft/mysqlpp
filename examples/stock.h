@@ -1,10 +1,10 @@
 /***********************************************************************
  stock.h - Declares the stock SSQLS used by several of the examples.
  
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004-2006 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the CREDITS
- file in the top directory of the distribution for details.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2008 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS file in
+ the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -25,24 +25,23 @@
 ***********************************************************************/
 
 #include <mysql++.h>
-#include <custom.h>
-
-#include <string>
+#include <ssqls.h>
 
 // The following is calling a very complex macro which will create
 // "struct stock", which has the member variables:
 //
 //   sql_char item;
 //   ...
-//   sql_date sdate;
+//   Null<sql_mediumtext> description;
 //
 // plus methods to help populate the class from a MySQL row.  See the
 // SSQLS sections in the user manual for further details.
-sql_create_5(stock,
-	1, 5, // The meaning of these values is covered in the user manual
+sql_create_6(stock,
+	1, 6, // The meaning of these values is covered in the user manual
 	mysqlpp::sql_char, item,
 	mysqlpp::sql_bigint, num,
 	mysqlpp::sql_double, weight,
 	mysqlpp::sql_double, price,
-	mysqlpp::sql_date, sdate)
+	mysqlpp::sql_date, sdate,
+	mysqlpp::Null<mysqlpp::sql_mediumtext>, description)
 

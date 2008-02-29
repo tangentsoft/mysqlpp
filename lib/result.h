@@ -1,11 +1,12 @@
 /// \file result.h
-/// \brief Declares classes for holding SQL query result sets.
+/// \brief Declares classes for holding information about SQL query
+/// results.
 
 /***********************************************************************
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the CREDITS
- file in the top directory of the distribution for details.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS file in
+ the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -25,448 +26,400 @@
  USA
 ***********************************************************************/
 
-#ifndef MYSQLPP_RESULT_H
+#if !defined(MYSQLPP_RESULT_H)
 #define MYSQLPP_RESULT_H
 
 #include "common.h"
 
 #include "exceptions.h"
-#include "fields.h"
+#include "field.h"
 #include "field_names.h"
 #include "field_types.h"
 #include "noexceptions.h"
-#include "resiter.h"
+#include "refcounted.h"
 #include "row.h"
-
-#include <map>
-#include <set>
-#include <string>
 
 namespace mysqlpp {
 
-#if !defined(DOXYGEN_IGNORE)
-// Make Doxygen ignore this
-class MYSQLPP_EXPORT Connection;
-#endif
 
-/// \brief A basic result set class, for use with "use" queries.
+/// \brief Holds information about the result of queries that don't
+/// return rows.
+
+class MYSQLPP_EXPORT SimpleResult
+{
+private:
+	/// \brief Pointer to bool data member, for use by safe bool
+	/// conversion operator.
+	///
+	/// \see http://www.artima.com/cppsource/safebool.html
+    typedef bool SimpleResult::*private_bool_type;
+
+public:
+	/// \brief Default ctor
+	SimpleResult() :
+	copacetic_(false),
+	insert_id_(0),
+	rows_(0)
+	{
+	}
+
+	/// \brief Initialize object
+	SimpleResult(bool copacetic, ulonglong insert_id,
+			ulonglong rows, const std::string& info) :
+	copacetic_(copacetic),
+	insert_id_(insert_id),
+	rows_(rows),
+	info_(info)
+	{
+	}
+
+	/// \brief Test whether the query that created this result succeeded
+	///
+	/// If you test this object in bool context and it's false, it's a
+	/// signal that the query this was created from failed in some way.
+	/// Call Query::error() or Query::errnum() to find out what exactly
+	/// happened.
+	operator private_bool_type() const
+	{
+		return copacetic_ ? &SimpleResult::copacetic_ : 0;
+	}
+
+	/// \brief Get the last value used for an AUTO_INCREMENT field
+	ulonglong insert_id() const { return insert_id_; }
+
+	/// \brief Get the number of rows affected by the query
+	ulonglong rows() const { return rows_; }
+
+	/// \brief Get any additional information about the query returned
+	/// by the server.
+	const char* info() const { return info_.c_str(); }
+
+private:
+	bool copacetic_;
+	ulonglong insert_id_;
+	ulonglong rows_;
+	std::string info_;
+};
+
+
+/// \brief Base class for StoreQueryResult and UseQueryResult.
 ///
-/// A "use" query is one where you make the query and then process just
-/// one row at a time in the result instead of dealing with them all as
-/// a single large chunk.  (The name comes from the MySQL C API function
-/// that initiates this action, \c mysql_use_result().)  By calling
-/// fetch_row() until it throws a mysqlpp::BadQuery exception (or an
-/// empty row if exceptions are disabled), you can process the result
-/// set one row at a time.
+/// Not useful directly.  Just contains common functionality for its
+/// subclasses.
 
-class MYSQLPP_EXPORT ResUse : public OptionalExceptions
+class MYSQLPP_EXPORT ResultBase : public OptionalExceptions
 {
 public:
-	/// \brief Default constructor
-	ResUse() :
-	OptionalExceptions(),
-	conn_(0),
-	result_(0),
-	initialized_(false),
-	names_(0),
-	types_(0),
-	fields_(this)
-	{
-	}
-	
-	/// \brief Create the object, fully initialized
-	ResUse(MYSQL_RES* result, Connection* c = 0, bool te = true);
-	
-	/// \brief Create a copy of another ResUse object
-	ResUse(const ResUse& other) :
-	OptionalExceptions(),
-	initialized_(false)
-	{
-		copy(other);
-		other.result_ = 0;
-	}
-	
 	/// \brief Destroy object
-	virtual ~ResUse();
+	virtual ~ResultBase() { }
 
-	/// \brief Copy another ResUse object's data into this object
-	ResUse& operator =(const ResUse& other);
+	/// \brief Returns the next field in this result set
+	const Field& fetch_field() const
+			{ return fields_.at(current_field_++); }
 
-	/// \brief Return raw MySQL C API result set
-	MYSQL_RES* raw_result()
-	{
-		return result_;
-	}
+	/// \brief Returns the given field in this result set
+	const Field& fetch_field(Fields::size_type i) const
+			{ return fields_.at(i); }
 
-	/// \brief Wraps mysql_fetch_row() in MySQL C API.
-	///
-	/// This is not a thin wrapper. It does a lot of error checking before
-	/// returning the mysqlpp::Row object containing the row data.
-	Row fetch_row()
-	{
-		if (!result_) {
-			if (throw_exceptions()) {
-				throw BadQuery("Results not fetched");
-			}
-			else {
-				return Row();
-			}
-		}
-		MYSQL_ROW row = mysql_fetch_row(result_);
-		unsigned long* length = mysql_fetch_lengths(result_);
-		if (!row || !length) {
-			if (throw_exceptions()) {
-				throw EndOfResults();
-			}
-			else {
-				return Row();
-			}
-		}
-		return Row(row, this, length, throw_exceptions());
-	}
+	/// \brief Get the underlying Field structure given its index.
+	const Field& field(unsigned int i) const { return fields_.at(i); }
 
-	/// \brief Wraps mysql_fetch_lengths() in MySQL C API.
-	unsigned long *fetch_lengths() const
-	{
-		return mysql_fetch_lengths(result_);
-	}
+	/// \brief Get the underlying Fields structure.
+	const Fields& fields() const { return fields_; }
 
-	/// \brief Wraps mysql_fetch_field() in MySQL C API.
-	Field& fetch_field() const
-	{
-		return *mysql_fetch_field(result_);
-	}
+	/// \brief Get the name of the field at the given index.
+	const std::string& field_name(int i) const
+			{ return names_->at(i); }
 
-	/// \brief Wraps mysql_field_seek() in MySQL C API.
-	void field_seek(int field)
-	{
-		mysql_field_seek(result_, field);
-	}
-
-	/// \brief Wraps mysql_num_fields() in MySQL C API.
-	int num_fields() const
-	{
-		return mysql_num_fields(result_);
-	}
-	
-	/// \brief Documentation needed!
-	void parent_leaving()
-	{
-		conn_ = 0;
-	}
-
-	/// \brief Free all resources held by the object.
-	///
-	/// This class's destructor is little more than a call to purge(),
-	/// so you can think of this as a way to re-use a ResUse object,
-	/// to avoid having to completely re-create it.
-	void purge()
-	{
-		if (result_) {
-			mysql_free_result(result_);
-			result_ = 0;
-		}
-
-		delete names_;
-		names_ = 0;
-
-		delete types_;
-		types_ = 0;
-
-		table_.erase();
-	}
-
-	/// \brief Return true if we have a valid result set
-	///
-	/// This operator is primarily used to determine if a query was
-	/// successful:
-	///
-	/// \code
-	///   Query q("....");
-	///   if (q.use()) {
-	///       ...
-	/// \endcode
-	///
-	/// Query::use() returns a ResUse object, and it won't contain a
-	/// valid result set if the query failed.
-	operator bool() const
-	{
-		return result_;
-	}
-	
-	/// \brief Return the number of columns in the result set.
-	unsigned int columns() const
-	{
-		return num_fields();
-	}
-
-	/// \brief Get the name of table that the result set comes from.
-	std::string& table()
-	{
-		return table_;
-	}
-
-	/// \brief Return the name of the table
-	///
-	/// This is only valid 
-	const std::string& table() const
-	{
-		return table_;
-	}
+	/// \brief Get the names of the fields within this result set.
+	const RefCountedPointer<FieldNames>& field_names() const
+			{ return names_; }
 
 	/// \brief Get the index of the named field.
 	///
 	/// This is the inverse of field_name().
 	int field_num(const std::string&) const;
 
-	/// \brief Get the name of the field at the given index.
-	///
-	/// This is the inverse of field_num().
-	std::string& field_name(int);
-
-	/// \brief Get the name of the field at the given index.
-	const std::string& field_name(int) const;
-
-	/// \brief Get the names of the fields within this result set.
-	FieldNames& field_names();
-
-	/// \brief Get the names of the fields within this result set.
-	const FieldNames& field_names() const;
-
-	/// \brief Reset the names in the field list to their original
-	/// values.
-	void reset_field_names();
-
-	/// \brief Get the MySQL type for a field given its index.
-	mysql_type_info& field_type(int i);
-
-	/// \brief Get the MySQL type for a field given its index.
-	const mysql_type_info& field_type(int) const;
+	/// \brief Get the type of a particular field within this result set.
+	const FieldTypes::value_type& field_type(int i) const
+			{ return types_->at(i); }
 
 	/// \brief Get a list of the types of the fields within this
 	/// result set.
-	FieldTypes& field_types();
+	const RefCountedPointer<FieldTypes>& field_types() const
+			{ return types_; }
 
-	/// \brief Get a list of the types of the fields within this
-	/// result set.
-	const FieldTypes& field_types() const;
+	/// \brief Returns the number of fields in this result set
+	size_t num_fields() const { return fields_.size(); }
 
-	/// \brief Reset the field types to their original values.
-	void reset_field_types();
-
-	/// \brief Alias for field_num()
-	int names(const std::string & s) const { return field_num(s); }
-
-	/// \brief Alias for field_name()
-	std::string& names(int i) { return field_name(i); }
-
-	/// \brief Alias for field_name()
-	const std::string& names(int i) const { return field_name(i); }
-
-	/// \brief Alias for field_names()
-	FieldNames& names() { return field_names(); }
-
-	/// \brief Alias for field_names()
-	const FieldNames& names() const { return field_names(); }
-
-	/// \brief Alias for reset_field_names()
-	void reset_names() { reset_field_names(); }
-
-	/// \brief Alias for field_type()
-	mysql_type_info& types(int i) { return field_type(i); }
-
-	/// \brief Alias for field_type()
-	const mysql_type_info& types(int i) const { return field_type(i); }
-
-	/// \brief Alias for field_types()
-	FieldTypes& types() { return field_types(); }
-
-	/// \brief Alias for field_types()
-	const FieldTypes& types() const { return field_types(); }
-
-	/// \brief Alias for reset_field_types()
-	void reset_types() { reset_field_types(); }
-
-	/// \brief Get the underlying Fields structure.
-	const Fields& fields() const { return fields_; }
-
-	/// \brief Get the underlying Field structure given its index.
-	const Field& fields(unsigned int i) const { return fields_.at(i); }
-	
-	/// \brief Returns true if the other ResUse object shares the same
-	/// underlying C API result set as this one.
-	///
-	/// This works because the underlying result set is stored as a
-	/// pointer, and thus can be copied and then compared.
-	bool operator ==(const ResUse& other) const
-	{
-		return result_ == other.result_;
-	}
-	
-	/// \brief Returns true if the other ResUse object has a different
-	/// underlying C API result set from this one.
-	bool operator !=(const ResUse& other) const
-	{
-		return result_ != other.result_;
-	}
+	/// \brief Return the name of the table the result set comes from
+	const char* table() const
+			{ return fields_.empty() ? "" : fields_[0].table(); }
 
 protected:
-	Connection* conn_;			///< server result set comes from
-	mutable MYSQL_RES* result_;	///< underlying C API result set
-	bool initialized_;			///< if true, object is fully initted
-	mutable FieldNames* names_;	///< list of field names in result
-	mutable FieldTypes* types_;	///< list of field types in result
-	Fields fields_;				///< list of fields in result
-	std::string table_;			///< table result set comes from
+	/// \brief Create empty object
+	ResultBase() :
+	driver_(0),
+	current_field_(0)
+	{
+	}
+	
+	/// \brief Create the object, fully initialized
+	ResultBase(MYSQL_RES* result, DBDriver* dbd, bool te = true);
+	
+	/// \brief Create object as a copy of another ResultBase
+	ResultBase(const ResultBase& other) :
+	OptionalExceptions()
+	{
+		copy(other);
+	}
 
-	/// \brief Copy another ResUse object's contents into this one.
+	/// \brief Copy another ResultBase object's contents into this one.
+	ResultBase& copy(const ResultBase& other);
+
+	DBDriver* driver_;	///< Access to DB driver; fully initted if nonzero
+	Fields fields_;		///< list of fields in result
+
+	/// \brief list of field names in result
+	RefCountedPointer<FieldNames> names_;
+
+	/// \brief list of field types in result
+	RefCountedPointer<FieldTypes> types_;
+
+	/// \brief Default field index used by fetch_field()
 	///
-	/// Self-copy is not allowed.
-	void copy(const ResUse& other);
+	/// It's mutable because it's just internal housekeeping: it's
+	/// changed by fetch_field(void), but it doesn't change the "value"
+	/// of the result.  See mutability justification for
+	/// UseQueryResult::result_: this field provides functionality we
+	/// used to get through result_, so it's relevant here, too.
+	mutable Fields::size_type current_field_;
 };
 
 
-/// \brief This class manages SQL result sets. 
+/// \brief StoreQueryResult set type for "store" queries
 ///
-/// Objects of this class are created to manage the result of "store"
-/// queries, where the result set is handed to the program as single
-/// block of row data. (The name comes from the MySQL C API function
-/// \c mysql_store_result() which creates these blocks of row data.)
-///
-/// This class is a random access container (in the STL sense) which
-/// is neither less-than comparable nor assignable.  This container
-/// provides a reverse random-access iterator in addition to the normal
-/// forward one.
+/// This is the obvious C++ implementation of a class to hold results 
+/// from a SQL query that returns rows: a specialization of std::vector
+/// holding Row objects in memory so you get random-access semantics.
+/// MySQL++ also supports UseQueryResult which is less friendly, but has
+/// better memory performance.  See the user manual for more details on
+/// the distinction and the usage patterns required.
 
-class MYSQLPP_EXPORT Result : public ResUse,
-		public const_subscript_container<Result, Row, const Row>
+class MYSQLPP_EXPORT StoreQueryResult :
+		public ResultBase,
+		public std::vector<Row>
 {
+private:
+	/// \brief Pointer to bool data member, for use by safe bool
+	/// conversion operator.
+	///
+	/// \see http://www.artima.com/cppsource/safebool.html
+    typedef bool StoreQueryResult::*private_bool_type;
+
 public:
+	typedef std::vector<Row> list_type;	///< type of vector base class
+
 	/// \brief Default constructor
-	Result()
+	StoreQueryResult() :
+	ResultBase(),
+	copacetic_(false)
 	{
 	}
 	
 	/// \brief Fully initialize object
-	Result(MYSQL_RES* result, bool te = true) :
-	ResUse(result, 0, te)
-	{
-	}
+	StoreQueryResult(MYSQL_RES* result, DBDriver* dbd, bool te = true);
 
-	/// \brief Initialize object as a copy of another Result object
-	Result(const Result& other) :
-	ResUse(other),
-	const_subscript_container<Result, Row, const Row>() // no copying here
+	/// \brief Initialize object as a copy of another StoreQueryResult
+	/// object
+	StoreQueryResult(const StoreQueryResult& other) :
+	ResultBase(),
+	std::vector<Row>(),
+	copacetic_(false)
 	{
-		conn_ = 0;
+		copy(other);
 	}
 
 	/// \brief Destroy result set
-	virtual ~Result() { }
+	~StoreQueryResult() { }
+
+	/// \brief Returns the number of rows in this result set
+	list_type::size_type num_rows() const { return size(); }
+
+	/// \brief Copy another StoreQueryResult object's data into this
+	/// object
+	StoreQueryResult& operator =(const StoreQueryResult& rhs)
+			{ return this != &rhs ? copy(rhs) : *this; }
+
+	/// \brief Test whether the query that created this result succeeded
+	///
+	/// If you test this object in bool context and it's false, it's a
+	/// signal that the query this was created from failed in some way.
+	/// Call Query::error() or Query::errnum() to find out what exactly
+	/// happened.
+	operator private_bool_type() const
+	{
+		return copacetic_ ? &StoreQueryResult::copacetic_ : 0;
+	}
+
+private:
+	/// \brief Copy another StoreQueryResult object's contents into this
+	/// one.
+	StoreQueryResult& copy(const StoreQueryResult& other);
+
+	bool copacetic_;	///< true if initialized from a good result set
+};
+
+
+/// \brief Functor to call mysql_free_result() on the pointer you pass
+/// to it.
+///
+/// This overrides RefCountedPointer's default destroyer, which uses
+/// operator delete; it annoys the C API when you nuke its data
+/// structures this way. :)
+template <>
+struct RefCountedPointerDestroyer<MYSQL_RES>
+{
+	/// \brief Functor implementation
+	void operator()(MYSQL_RES* doomed) const
+	{
+		if (doomed) {
+			mysql_free_result(doomed);
+		}
+	}
+};
+
+
+/// \brief StoreQueryResult set type for "use" queries
+///
+/// See the user manual for the reason you might want to use this even
+/// though its interface is less friendly than StoreQueryResult's.
+
+class MYSQLPP_EXPORT UseQueryResult : public ResultBase
+{
+public:
+	/// \brief Default constructor
+	UseQueryResult() :
+	ResultBase()
+	{
+	}
+	
+	/// \brief Create the object, fully initialized
+	UseQueryResult(MYSQL_RES* result, DBDriver* dbd, bool te = true);
+	
+	/// \brief Create a copy of another UseQueryResult object
+	UseQueryResult(const UseQueryResult& other) :
+	ResultBase()
+	{
+		copy(other);
+	}
+	
+	/// \brief Destroy object
+	~UseQueryResult() { }
+
+	/// \brief Copy another UseQueryResult object's data into this object
+	UseQueryResult& operator =(const UseQueryResult& rhs)
+			{ return this != &rhs ? copy(rhs) : *this; }
+
+	/// \brief Returns the next field in this result set
+	const Field& fetch_field() const
+			{ return fields_.at(current_field_++); }
+
+	/// \brief Returns the given field in this result set
+	const Field& fetch_field(Fields::size_type i) const
+			{ return fields_.at(i); }
+
+	/// \brief Returns the lengths of the fields in the current row of
+	/// the result set.
+	///
+	/// \internal This should not be terribly useful to end-user code.
+	/// The Row object returned by fetch_row() contains these lengths.
+	const unsigned long* fetch_lengths() const;
+
+	/// \brief Returns the next row in a "use" query's result set
+	///
+	/// This is a thick wrapper around DBDriver::fetch_row().  It does a
+	/// lot of error checking before returning the Row object containing
+	/// the row data.
+	///
+	/// \sa fetch_raw_row()
+	Row fetch_row() const;
 
 	/// \brief Wraps mysql_fetch_row() in MySQL C API.
 	///
-	/// This is simply the const version of the same function in our
-	/// \link mysqlpp::ResUse parent class \endlink . Why this cannot
-	/// actually \e be in our parent class is beyond me.
-	const Row fetch_row() const
-	{
-		if (!result_) {
-			if (throw_exceptions()) {
-				throw BadQuery("Results not fetched");
-			}
-			else {
-				return Row();
-			}
-		}
-		MYSQL_ROW row = mysql_fetch_row(result_);
-		unsigned long* length = mysql_fetch_lengths(result_);
-		if (!row || !length) {
-			if (throw_exceptions()) {
-				throw EndOfResults();
-			}
-			else {
-				return Row();
-			}
-		}
-		return Row(row, this, length, throw_exceptions());
-	}
+	/// \internal You almost certainly want to call fetch_row() instead.
+	/// It is anticipated that this is only useful within the library,
+	/// to implement higher-level query types on top of raw "use"
+	/// queries. Query::storein() uses it, for example.
+	MYSQL_ROW fetch_raw_row() const;
 
-	/// \brief Wraps mysql_num_rows() in MySQL C API.
-	my_ulonglong num_rows() const
-	{
-		if (initialized_)
-			return mysql_num_rows(result_);
-		else
-			return 0;
-	}
+	/// \brief Jumps to the given field within the result set
+	///
+	/// Calling this allows you to reset the default field index used
+	/// by fetch_field().
+	void field_seek(Fields::size_type field) const
+			{ current_field_ = field; }
 
-	/// \brief Wraps mysql_data_seek() in MySQL C API.
-	void data_seek(uint offset) const
-	{
-		mysql_data_seek(result_, offset);
-	}
+	/// \brief Return the pointer to the underlying MySQL C API
+	/// result set object.
+	///
+	/// While this has obvious inherent value for those times you need
+	/// to dig beneath the MySQL++ interface, it has subtler value.
+	/// It effectively stands in for operator bool(), operator !(),
+	/// operator ==(), and operator !=(), because the C++ compiler can
+	/// implement all of these with a MYSQL_RES*.
+	///
+	/// Of these uses, the most valuable is using the UseQueryResult
+	/// object in bool context to determine if the query that created
+	// it was successful:
+	///
+	/// \code
+	///   Query q("....");
+	///   if (UseQueryResult res = q.use()) {
+	///       // Can use 'res', query succeeded
+	///   }
+	///   else {
+	///       // Query failed, call Query::error() or ::errnum() for why
+	///   }
+	/// \endcode
+	operator MYSQL_RES*() const { return result_.raw(); }
+	
+private:
+	/// \brief Copy another ResultBase object's contents into this one.
+	UseQueryResult& copy(const UseQueryResult& other);
 
-	/// \brief Alias for num_rows(), only with different return type.
-	size_type size() const
-	{
-		return size_type(num_rows());
-	}
-
-	/// \brief Alias for num_rows(), only with different return type.
-	size_type rows() const
-	{
-		return size_type(num_rows());
-	}
-
-	/// \brief Get the row with an offset of i.
-	const Row at(size_type i) const
-	{
-		data_seek(i);
-		return fetch_row();
-	}
+	/// \brief Reference to underlying C API result set
+	///
+	/// This is mutable because so many methods in this class are
+	/// are justifiably const because they don't modify the result
+	/// set's "value" but they call C API methods that take non-const
+	/// MYSQL_RES* so they can only be const if this is mutable.  It's
+	/// quite likely that these API functions do modify the MYSQL_RES
+	/// object, so strict constness says this object changed, too, but
+	/// this has always been mutable and the resulting behavior hasn't 
+	/// confused anyone yet.
+	mutable RefCountedPointer<MYSQL_RES> result_;
 };
 
 
-/// \brief Swaps two ResUse objects
-inline void swap(ResUse& x, ResUse& y)
+/// \brief Swaps two StoreQueryResult objects
+inline void
+swap(StoreQueryResult& x, StoreQueryResult& y)
 {
-	ResUse tmp = x;
+	StoreQueryResult tmp = x;
 	x = y;
 	y = tmp;
 }
 
-/// \brief Swaps two Result objects
-inline void swap(Result& x, Result& y)
+/// \brief Swaps two UseQueryResult objects
+inline void
+swap(UseQueryResult& x, UseQueryResult& y)
 {
-	Result tmp = x;
+	UseQueryResult tmp = x;
 	x = y;
 	y = tmp;
 }
-
-/// \brief Holds the information on the success of queries that
-/// don't return any results.
-class MYSQLPP_EXPORT ResNSel
-{
-public:
-	bool success;			///< if true, query was successful
-	my_ulonglong insert_id;	///< last value used for AUTO_INCREMENT field
-	my_ulonglong rows;		///< number of rows affected
-	std::string info;		///< additional info about query result
-
-	ResNSel() :
-	success(false)
-	{
-	}
-
-	/// \brief Initialize object
-	ResNSel(Connection* q);
-
-	/// \brief Returns true if the query was successful
-	operator bool() { return success; }
-};
-
 
 } // end namespace mysqlpp
 
-#endif
+#endif // !defined(MYSQLPP_RESULT_H)

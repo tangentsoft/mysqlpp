@@ -1,4 +1,3 @@
 #!/bin/sh
-rm -f *.{ds?,ncb,sln,suo,vcproj}
-rm -f Makefile
-rm -f Makefile.{in,mingw,simple}
+rm -f Makefile*
+rm -rf *.xcodeproj vc200?

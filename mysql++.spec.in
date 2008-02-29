@@ -7,7 +7,7 @@ Group:      Development/Libraries
 URL:        http://tangentsoft.net/mysql++/
 Source0:    http://tangentsoft.net/mysql++/releases/mysql++-%{version}.tar.gz
 BuildRoot:  %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildRequires: MySQL-shared mysql-devel
+BuildRequires: mysql-devel
 
 %description
 MySQL++ makes working with MySQL server queries as easy as working
@@ -18,7 +18,7 @@ programs, you also need to install the -devel package.
 %package devel
 Summary:   MySQL++ developer files (headers, examples, etc.)
 Group:     Development/Libraries
-Requires:  mysql++=%{version}-%{release} mysql-devel
+Requires:  mysql++ = %{version}-%{release}, mysql-devel
 
 %description devel
 These are the files needed to compile MySQL++ based programs, plus
@@ -50,13 +50,16 @@ rm -rf %{buildroot} doc/examples
 # Copy example programs to doc directory
 %{__mkdir_p} doc/examples
 %{__install} -m644 examples/*.{cpp,h} doc/examples/
+%{__install} -m644 config.h doc/examples/
+sed -i -e s@../config.h@config.h@ doc/examples/threads.h
 
 # Fix up simple example Makefile to allow it to build on the install
 # system, as opposed to the system where the Makefile was created.
 %{__sed} -e 's@./examples/@@' \
   -e 's@^CPPFLAGS :=.*$@CPPFLAGS := $(shell mysql_config --cflags)@' \
   -e 's@^LDFLAGS :=.*$@LDFLAGS := $(shell mysql_config --libs)@' \
-  -e 's@ -Ilib -I/usr/include/mysql@@' \
+  -e 's@ -Ilib@@' \
+  -e '/^all:/s/test_[a-z,_]* //g' \
   Makefile.simple > doc/examples/Makefile
 
 %clean
@@ -68,18 +71,18 @@ rm -rf %{buildroot} doc/examples
 
 %files
 %defattr(-,root,root,-)
-%doc ChangeLog COPYING CREDITS LICENSE README
+%doc ChangeLog COPYING.txt CREDITS.txt LICENSE.txt README.txt
 %{_libdir}/libmysqlpp.so.*
 
 %files devel
 %defattr(-,root,root,-)
-%doc doc/examples doc/README.devel README.examples Wishlist
+%doc doc/examples doc/README-devel-RPM.txt README-examples.txt Wishlist
 %{_includedir}/mysql++
 %{_libdir}/libmysqlpp.so
 
 %files manuals
 %defattr(-,root,root,-)
-%doc doc/html doc/pdf doc/README.manuals
+%doc doc/html doc/pdf doc/README-manuals-RPM.txt
 
 %changelog
 * Mon Jul 2 2007 Warren Young <mysqlpp@etr-usa.com> 2.3.0-1

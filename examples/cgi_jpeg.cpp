@@ -4,10 +4,10 @@
 	
 	Use load_jpeg.cpp to load JPEG files into the database we query.
 
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004-2007 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the CREDITS
- file in the top directory of the distribution for details.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2008 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS file in
+ the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -28,10 +28,7 @@
 ***********************************************************************/
 
 #include <mysql++.h>
-#include <custom.h>
-
-using namespace std;
-using namespace mysqlpp;
+#include <ssqls.h>
 
 #define IMG_DATABASE	"mysql_cpp_data"
 #define IMG_HOST		"localhost"
@@ -43,15 +40,14 @@ sql_create_2(images,
 	mysqlpp::sql_int_unsigned, id,
 	mysqlpp::sql_blob, data)
 
-int
-main()
+int main()
 {
 	unsigned int img_id = 0;
 	char* cgi_query = getenv("QUERY_STRING");
 	if (cgi_query) {
 		if ((strlen(cgi_query) < 4) || memcmp(cgi_query, "id=", 3)) {
-			cout << "Content-type: text/plain" << endl << endl;
-			cout << "ERROR: Bad query string" << endl;
+			std::cout << "Content-type: text/plain" << std::endl << std::endl;
+			std::cout << "ERROR: Bad query string" << std::endl;
 			return 1;
 		}
 		else {
@@ -59,49 +55,49 @@ main()
 		}
 	}
 	else {
-		cerr << "Put this program into a web server's cgi-bin "
-				"directory, then" << endl;
-		cerr << "invoke it with a URL like this:" << endl;
-		cerr << endl;
-		cerr << "    http://server.name.com/cgi-bin/cgi_jpeg?id=2" <<
-				endl;
-		cerr << endl;
-		cerr << "This will retrieve the image with ID 2." << endl;
-		cerr << endl;
-		cerr << "You will probably have to change some of the #defines "
-				"at the top of" << endl;
-		cerr << "examples/cgi_jpeg.cpp to allow the lookup to work." <<
-				endl;
+		std::cerr << "Put this program into a web server's cgi-bin "
+				"directory, then" << std::endl;
+		std::cerr << "invoke it with a URL like this:" << std::endl;
+		std::cerr << std::endl;
+		std::cerr << "    http://server.name.com/cgi-bin/cgi_jpeg?id=2" <<
+				std::endl;
+		std::cerr << std::endl;
+		std::cerr << "This will retrieve the image with ID 2." << std::endl;
+		std::cerr << std::endl;
+		std::cerr << "You will probably have to change some of the #defines "
+				"at the top of" << std::endl;
+		std::cerr << "examples/cgi_jpeg.cpp to allow the lookup to work." <<
+				std::endl;
 		return 1;
 	}
 
-	Connection con(use_exceptions);
 	try {
-		con.connect(IMG_DATABASE, IMG_HOST, IMG_USER, IMG_PASSWORD);
-		Query query = con.query();
+		mysqlpp::Connection con(IMG_DATABASE, IMG_HOST, IMG_USER,
+				IMG_PASSWORD);
+		mysqlpp::Query query = con.query();
 		query << "SELECT * FROM images WHERE id = " << img_id;
-		ResUse res = query.use();
+		mysqlpp::UseQueryResult res = query.use();
 		if (res) {
 			images img = res.fetch_row();
-			cout << "Content-type: image/jpeg" << endl;
-			cout << "Content-length: " << img.data.length() << "\n\n";
-			cout << img.data;
+			std::cout << "Content-type: image/jpeg" << std::endl;
+			std::cout << "Content-length: " << img.data.length() << "\n\n";
+			std::cout << img.data;
 		}
 		else {
-			cout << "Content-type: text/plain" << endl << endl;
-			cout << "ERROR: No such image with ID " << img_id << endl;
+			std::cout << "Content-type: text/plain" << std::endl << std::endl;
+			std::cout << "ERROR: No such image with ID " << img_id << std::endl;
 		}
 	}
-	catch (const BadQuery& er) {
+	catch (const mysqlpp::BadQuery& er) {
 		// Handle any query errors
-		cout << "Content-type: text/plain" << endl << endl;
-		cout << "QUERY ERROR: " << er.what() << endl;
+		std::cout << "Content-type: text/plain" << std::endl << std::endl;
+		std::cout << "QUERY ERROR: " << er.what() << std::endl;
 		return 1;
 	}
-	catch (const Exception& er) {
+	catch (const mysqlpp::Exception& er) {
 		// Catch-all for any other MySQL++ exceptions
-		cout << "Content-type: text/plain" << endl << endl;
-		cout << "GENERAL ERROR: " << er.what() << endl;
+		std::cout << "Content-type: text/plain" << std::endl << std::endl;
+		std::cout << "GENERAL ERROR: " << er.what() << std::endl;
 		return 1;
 	}
 

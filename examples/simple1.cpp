@@ -2,10 +2,10 @@
  simple1.cpp - Example showing the simplest way to get data from a MySQL
     table with MySQL++.
 
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004-2007 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the CREDITS
- file in the top directory of the distribution for details.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS file in
+ the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -25,7 +25,8 @@
  USA
 ***********************************************************************/
 
-#include "util.h"
+#include "cmdline.h"
+#include "printdata.h"
 
 #include <mysql++.h>
 
@@ -37,30 +38,33 @@ using namespace std;
 int
 main(int argc, char *argv[])
 {
-	// Connect to the sample database.
-	mysqlpp::Connection con(false);
-	if (!connect_to_db(argc, argv, con)) {
+	// Get database access parameters from command line
+    const char* db = 0, *server = 0, *user = 0, *pass = "";
+	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
 		return 1;
 	}
 
-	// Retrieve a subset of the sample stock table set up by resetdb
-	mysqlpp::Query query = con.query();
-	query << "select item from stock";
-	mysqlpp::Result res = query.store();
-
-	// Display the result set
-	cout << "We have:" << endl;
-	if (res) {
-		mysqlpp::Row row;
-		mysqlpp::Row::size_type i;
-		for (i = 0; row = res.at(i); ++i) {
-			cout << '\t' << row.at(0) << endl;
+	// Connect to the sample database.
+	mysqlpp::Connection conn(false);
+	if (conn.connect(db, server, user, pass)) {
+		// Retrieve a subset of the sample stock table set up by resetdb
+		// and display it.
+		mysqlpp::Query query = conn.query("select item from stock");
+		if (mysqlpp::StoreQueryResult res = query.store()) {
+			cout << "We have:" << endl;
+			for (size_t i = 0; i < res.num_rows(); ++i) {
+				cout << '\t' << res[i][0] << endl;
+			}
 		}
+		else {
+			cerr << "Failed to get item list: " << query.error() << endl;
+			return 1;
+		}
+
+		return 0;
 	}
 	else {
-		cerr << "Failed to get item list: " << query.error() << endl;
+		cerr << "DB connection failed: " << conn.error() << endl;
 		return 1;
 	}
-
-	return 0;
 }

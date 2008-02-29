@@ -1,0 +1,233 @@
+All unit tests passed
+---------------- BEGIN resetdb OUTPUT ----------------
+Connecting to database server...
+Dropping existing sample data tables...
+Creating stock table...
+Populating stock table...inserted 4 rows.
+Creating empty images table...
+Creating deadlock testing tables...
+Reinitialized sample database successfully.
+================ END resetdb OUTPUT ================
+
+---------------- BEGIN simple1 OUTPUT ----------------
+We have:
+	Nürnberger Brats
+	Pickle Relish
+	Hot Mustard
+	Hotdog Buns
+================ END simple1 OUTPUT ================
+
+---------------- BEGIN simple2 OUTPUT ----------------
+Item                           Num       Weight    Price     Date
+
+Nürnberger Brats              97        1.5       8.79      2005-03-10
+Pickle Relish                  87        1.5       1.75      1998-09-04
+Hot Mustard                    73        0.95      0.97      1998-05-25
+Hotdog Buns                    65        1.1       1.10      1998-04-23
+================ END simple2 OUTPUT ================
+
+---------------- BEGIN simple3 OUTPUT ----------------
+Item                           Num       Weight    Price     Date
+
+Nürnberger Brats              97        1.5       8.79      2005-03-10
+Pickle Relish                  87        1.5       1.75      1998-09-04
+Hot Mustard                    73        0.95      0.97      1998-05-25
+Hotdog Buns                    65        1.1       1.10      1998-04-23
+================ END simple3 OUTPUT ================
+
+---------------- BEGIN store_if OUTPUT ----------------
+Records found: 2
+
+Item                           Num       Weight    Price     Date
+
+Nürnberger Brats              97        1.5       8.79      2005-03-10
+Hot Mustard                    73        0.95      0.97      1998-05-25
+================ END store_if OUTPUT ================
+
+---------------- BEGIN for_each OUTPUT ----------------
+There are 322 items weighing 416.85 stone and costing 1147.19 cowrie shells.
+================ END for_each OUTPUT ================
+
+---------------- BEGIN multiquery OUTPUT ----------------
+Multi-query: 
+DROP TABLE IF EXISTS test_table; CREATE TABLE test_table(id INT); INSERT INTO test_table VALUES(10); UPDATE test_table SET id=20 WHERE id=10; SELECT * FROM test_table; DROP TABLE test_table
+Result set 0 is empty.
+Result set 1 is empty.
+Result set 2 is empty.
+Result set 3 is empty.
+Result set 4 has 1 row:
+  +----+
+  | id |
+  +----+
+  | 20 |
+  +----+
+Result set 5 is empty.
+Stored procedure query: 
+DROP PROCEDURE IF EXISTS get_stock; CREATE PROCEDURE get_stock( i_item varchar(20) ) BEGIN SET i_item = concat('%', i_item, '%'); SELECT * FROM stock WHERE lower(item) like lower(i_item); END;
+Result set 0 is empty.
+Result set 1 is empty.
+Query: CALL get_stock('relish')
+Result set 0 has 1 row:
+  +---------------+-----+--------+-------+------------+-------------+
+  |          item | num | weight | price |      sdate | description |
+  +---------------+-----+--------+-------+------------+-------------+
+  | Pickle Relish |  87 |    1.5 |  1.75 | 1998-09-04 |        NULL |
+  +---------------+-----+--------+-------+------------+-------------+
+Result set 1 is empty.
+================ END multiquery OUTPUT ================
+
+---------------- BEGIN tquery1 OUTPUT ----------------
+Query: select * from stock
+Records found: 4
+
+Item                           Num       Weight    Price     Date
+
+Nuerenberger Bratwurst         97        1.5       8.79      2005-03-10
+Pickle Relish                  87        1.5       1.75      1998-09-04
+Hot Mustard                    73        0.95      0.97      1998-05-25
+Hotdog Buns                    65        1.1       1.1       1998-04-23
+================ END tquery1 OUTPUT ================
+
+---------------- BEGIN resetdb OUTPUT ----------------
+Connecting to database server...
+Dropping existing sample data tables...
+Creating stock table...
+Populating stock table...inserted 4 rows.
+Creating empty images table...
+Creating deadlock testing tables...
+Reinitialized sample database successfully.
+================ END resetdb OUTPUT ================
+
+---------------- BEGIN tquery2 OUTPUT ----------------
+Query: select * from stock
+Records found: 4
+
+Item                           Num       Weight    Price     Date
+
+Nuerenberger Bratwurst         97        1.5       8.79      2005-03-10
+Pickle Relish                  87        1.5       1.75      1998-09-04
+Hot Mustard                    73        0.95      0.97      1998-05-25
+Hotdog Buns                    65        1.1       1.1       1998-04-23
+================ END tquery2 OUTPUT ================
+
+---------------- BEGIN tquery3 OUTPUT ----------------
+Stuff we have a lot of in stock:
+	Nuerenberger Bratwurst
+	Pickle Relish
+================ END tquery3 OUTPUT ================
+
+---------------- BEGIN dbinfo OUTPUT ----------------
+
+
+================================= show tables ==================================
+Tables found: 4
+	deadlock_test1
+	deadlock_test2
+	images
+	stock
+
+=========================== describe deadlock_test1 ============================
+|field                 ||type                ||null||key||default        |
+ x                       int(11)               YES        NULL            
+
+
+=========================== describe deadlock_test2 ============================
+|field                 ||type                ||null||key||default        |
+ x                       int(11)               YES        NULL            
+
+
+=============================== describe images ================================
+|field                 ||type                ||null||key||default        |
+ id                      int(10) unsigned      NO    PRI  NULL            
+ data                    blob                  YES        NULL            
+
+
+================================ describe stock ================================
+|field                 ||type                ||null||key||default        |
+ item                    char(30)              NO                         
+ num                     bigint(20)            NO                         
+ weight                  double                NO                         
+ price                   decimal(6,2)          NO                         
+ sdate                   date                  NO                         
+ description             mediumtext            YES        NULL            
+================ END dbinfo OUTPUT ================
+
+---------------- BEGIN fieldinf OUTPUT ----------------
+Field       SQL Type              Equivalent C++ Type                           
+=========== ===================== ============================================= 
+item        CHAR NOT NULL (25)    n/a                                           
+num         BIGINT NOT NULL (11)  n/a                                           
+weight      DOUBLE NOT NULL (8)   n/a                                           
+price       DECIMAL NOT NULL (0)  n/a                                           
+sdate       DATE NOT NULL (15)    n/a                                           
+description BLOB NULL (49)        n/a                                           
+
+SQL type of 'item' field most closely resembles the C++ string type.
+SQL type of 'description' field resembles a nullable variant of the C++ string type.
+================ END fieldinf OUTPUT ================
+
+---------------- BEGIN resetdb OUTPUT ----------------
+Connecting to database server...
+Dropping existing sample data tables...
+Creating stock table...
+Populating stock table...inserted 4 rows.
+Creating empty images table...
+Creating deadlock testing tables...
+Reinitialized sample database successfully.
+================ END resetdb OUTPUT ================
+
+---------------- BEGIN ssqls1 OUTPUT ----------------
+We have:
+	Nürnberger Brats
+	Pickle Relish
+	Hot Mustard
+	Hotdog Buns
+================ END ssqls1 OUTPUT ================
+
+---------------- BEGIN ssqls2 OUTPUT ----------------
+Query: INSERT INTO stock (item,num,weight,price,sdate,description) VALUES ('Hot Dogs',100,1.5,1.75,'1998-09-25',NULL)
+Query: select * from stock
+Records found: 5
+
+Item                           Num       Weight    Price     Date
+
+Nürnberger Brats              97        1.5       8.79      2005-03-10
+Pickle Relish                  87        1.5       1.75      1998-09-04
+Hot Mustard                    73        0.95      0.97      1998-05-25
+Hotdog Buns                    65        1.1       1.1       1998-04-23
+Hot Dogs                       100       1.5       1.75      1998-09-25
+================ END ssqls2 OUTPUT ================
+
+---------------- BEGIN ssqls3 OUTPUT ----------------
+Query: UPDATE stock SET item = 'Nuerenberger Bratwurst',num = 97,weight = 1.5,price = 8.789999999999999,sdate = '2005-03-10',description = NULL WHERE item = 'Nürnberger Brats'
+Query: select * from stock
+Records found: 5
+
+Item                           Num       Weight    Price     Date
+
+Nuerenberger Bratwurst         97        1.5       8.79      2005-03-10
+Pickle Relish                  87        1.5       1.75      1998-09-04
+Hot Mustard                    73        0.95      0.97      1998-05-25
+Hotdog Buns                    65        1.1       1.1       1998-04-23
+Hot Dogs                       100       1.5       1.75      1998-09-25
+================ END ssqls3 OUTPUT ================
+
+---------------- BEGIN ssqls4 OUTPUT ----------------
+Records found: 5
+
+Item                           Num       Weight    Price     Date
+
+Hot Dogs                       100       1.5       1.75      1998-09-25
+Hot Mustard                    73        0.95      0.97      1998-05-25
+Hotdog Buns                    65        1.1       1.1       1998-04-23
+Nuerenberger Bratwurst         97        1.5       8.79      2005-03-10
+Pickle Relish                  87        1.5       1.75      1998-09-04
+
+Currently 65 hotdog buns in stock.
+================ END ssqls4 OUTPUT ================
+
+---------------- BEGIN ssqls5 OUTPUT ----------------
+Custom query:
+select * from stock where weight = 1.5 and price = 8.789999999999999
+================ END ssqls5 OUTPUT ================
+

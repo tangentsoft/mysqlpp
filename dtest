@@ -1,0 +1,80 @@
+#!/bin/bash
+
+TMP=`mktemp bmXXXXXX`
+
+# Run simple unit tests first.
+typeset -i count=0
+echo -n 'Running unit tests:'
+for t in test_*
+do
+	if [ -x "$t" ]
+	then
+		errmsg=`./exrun "$t" 2>&1`
+		errno=$?
+		if [ "$errno" == 0 ]
+		then
+			count=count+1
+		else
+			rm -f $TMP
+			echo " $t FAILED ($errno)"
+			echo
+			echo "$errmsg"
+			exit $?
+		fi
+	fi
+done
+echo " $count tests succeeded"
+echo 'All unit tests passed' >> $TMP
+
+
+# Now run examples to test high-level behavior.  The repeated use of
+# resetdb is intentional!  It's run after each example that changes
+# the database in a way that will cause a subsequent example to fail
+# because data it expects isn't present.
+echo -n 'Running examples:'
+for t in \
+	resetdb simple[0-9] store_if for_each multiquery tquery1 \
+	resetdb tquery[2-9] dbinfo fieldinf \
+	resetdb ssqls[0-9]
+do
+	if [ -x $t ]
+	then
+		if [ "$t" = "resetdb" ]
+		then
+			echo
+			echo -n "   "
+		fi
+	
+		echo -n "$t "
+		echo "---------------- BEGIN $t OUTPUT ----------------" >> $TMP
+		if ! ./exrun $t -D $* >> $TMP
+		then
+			echo
+			echo 'TESTING ABORTED.'
+			rm -f $TMP
+			exit $?
+		fi
+		echo "================ END $t OUTPUT ================" >> $TMP
+		echo >> $TMP
+	fi
+done
+echo
+
+
+# Check for any changes
+BFILE=bmark.txt
+if [ -f $BFILE ]
+then
+	if diff -u -w $BFILE $TMP
+	then
+		echo
+		echo 'All tests passed.'
+	fi
+	rm -f $TMP
+else
+	mv $TMP $BFILE
+	chmod -w $BFILE
+	echo
+	echo 'BENCHMARK FILE REGENERATED.'
+	echo
+fi

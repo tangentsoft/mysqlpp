@@ -44,4 +44,28 @@
 			</xsl:otherwise>
 		</xsl:choose> 
 	</xsl:template>
+
+	<!-- Disable hyphenation.  The hyphenation patterns aren't installed
+	     as part of FOP, and we don't want it anyway. -->
+	<xsl:template name="set.flow.properties">
+		<xsl:attribute name="hyphenate">false</xsl:attribute>
+	</xsl:template>
+
+	<!-- Rag-right lines -->
+	<xsl:attribute-set name="root.properties">
+		<xsl:attribute name="text-align">left</xsl:attribute>
+	</xsl:attribute-set>
+
+	<!-- Use a smaller font for code listings to increase the chances
+	     that they can fit on a single sheet, to reduce FOP complaints
+			 about being forced to split a listing across pages. -->
+	<xsl:attribute-set name="monospace.verbatim.properties">
+		<xsl:attribute name="font-size">85%</xsl:attribute>
+	</xsl:attribute-set>
+
+	<!-- Turn on extensions in DocBook stylesheets which make it use
+	     code that FOP 0.9x likes better.  Doesn't affect anything with
+			 the 1.69.1 stylesheets we're using on EL5, but is said to help
+			 with 1.72 at least. -->
+	<xsl:param name="fop1.extensions" select="1"/>
 </xsl:stylesheet>

@@ -1,8 +1,8 @@
 /***********************************************************************
- qparms.cpp - Implements the SQLQuery class.
+ qparms.cpp - Implements the SQLQueryParms class.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ MySQL AB, and (c) 2004-2007 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -32,7 +32,21 @@ using namespace std;
 
 namespace mysqlpp {
 
-SQLString&
+size_t
+SQLQueryParms::escape_string(std::string* ps, const char* original,
+		size_t length) const
+{
+	return parent_ ? parent_->escape_string(ps, original, length) : 0;
+}
+
+size_t
+SQLQueryParms::escape_string(char* escaped, const char* original,
+		size_t length) const
+{
+	return parent_ ? parent_->escape_string(escaped, original, length) : 0;
+}
+
+SQLTypeAdapter&
 SQLQueryParms::operator [](const char* str)
 {
 	if (parent_) {
@@ -41,7 +55,7 @@ SQLQueryParms::operator [](const char* str)
 	throw ObjectNotInitialized("SQLQueryParms object has no parent!");
 }
 
-const SQLString&
+const SQLTypeAdapter&
 SQLQueryParms::operator[] (const char* str) const
 {
 	if (parent_) {

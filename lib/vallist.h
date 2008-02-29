@@ -25,7 +25,7 @@
  USA
 ***********************************************************************/
 
-#ifndef MYSQLPP_VALLIST_H
+#if !defined(MYSQLPP_VALLIST_H)
 #define MYSQLPP_VALLIST_H
 
 #include "manip.h"
@@ -68,7 +68,7 @@ struct equal_list_ba
 	const Seq2* list2;
 
 	/// \brief delimiter to use between each pair of elements
-	const char* delem;
+	const char* delim;
 
 	/// \brief "equal" sign to use between each item in each equal
 	/// pair; doesn't have to actually be " = "
@@ -92,7 +92,7 @@ struct equal_list_ba
 			const char* e, Manip m) :
 	list1(&s1),
 	list2(&s2),
-	delem(d),
+	delim(d),
 	equl(e),
 	manip(m)
 	{
@@ -127,7 +127,7 @@ struct equal_list_b
 	const std::vector<bool> fields;
 
 	/// \brief delimiter to use between each pair of elements
-	const char* delem;
+	const char* delim;
 
 	/// \brief "equal" sign to use between each item in each equal
 	/// pair; doesn't have to actually be " = "
@@ -155,7 +155,7 @@ struct equal_list_b
 	list1(&s1),
 	list2(&s2),
 	fields(f),
-	delem(d),
+	delim(d),
 	equl(e),
 	manip(m)
 	{
@@ -190,7 +190,7 @@ struct value_list_ba
 
 	/// \brief delimiter to use between each value in the list when
 	/// inserting it into a C++ stream
-	const char* delem;
+	const char* delim;
 
 	/// \brief manipulator to use when inserting the list into a
 	/// C++ stream
@@ -205,7 +205,7 @@ struct value_list_ba
 	/// 	C++ stream
 	value_list_ba(const Seq& s, const char* d, Manip m) :
 	list(&s),
-	delem(d),
+	delim(d),
 	manip(m)
 	{
 	}
@@ -234,7 +234,7 @@ struct value_list_b
 
 	/// \brief delimiter to use between each value in the list when
 	/// inserting it into a C++ stream
-	const char* delem;
+	const char* delim;
 
 	/// \brief manipulator to use when inserting the list into a C++
 	/// stream
@@ -253,7 +253,7 @@ struct value_list_b
 			const char* d, Manip m) :
 	list(&s),
 	fields(f),
-	delem(d),
+	delim(d),
 	manip(m)
 	{
 	}
@@ -281,7 +281,7 @@ std::ostream& operator <<(std::ostream& o,
 		if ((++i == el.list1->end()) || (++j == el.list2->end())) {
 			break;
 		}
-		o << el.delem;
+		o << el.delim;
 	}
 
 	return o;
@@ -309,7 +309,7 @@ std::ostream& operator <<(std::ostream& o,
 			break;
 		}
 		if (el.fields[k]) {
-			o << el.delem;
+			o << el.delim;
 		}
 	}
 
@@ -337,7 +337,7 @@ std::ostream& operator <<(std::ostream& o,
 		if (++i == cl.list->end()) {
 			break;
 		}
-		o << cl.delem;
+		o << cl.delim;
 	}
 
 	return o;
@@ -364,7 +364,7 @@ std::ostream& operator <<(std::ostream& o,
 			break; 
 		}
 		if (cl.fields[k]) {
-			o << cl.delem; 
+			o << cl.delim; 
 		}
 	}
 
@@ -683,4 +683,4 @@ equal_list(const Seq1& s1, const Seq2& s2, bool t0, bool t1 = false,
 
 } // end namespace mysqlpp
 
-#endif
+#endif // !defined(MYSQLPP_VALLIST_H)

@@ -14,7 +14,7 @@
 # USA
 
 # Standard autotools stuff
-AC_INIT(mysql++, 2.3.2, plusplus@lists.mysql.com, mysql++)
+AC_INIT(mysql++, 3.0.0, plusplus@lists.mysql.com, mysql++)
 AC_CONFIG_HEADER(config.h)
 AC_DISABLE_STATIC
 AC_CANONICAL_SYSTEM
@@ -54,6 +54,7 @@ fi
 # Checks for libraries and local system features
 AC_CHECK_HEADERS(zlib.h, AC_CHECK_LIB(z, gzread, [],
 		[ AC_MSG_ERROR([zlib is required]) ]))
+AC_CHECK_HEADERS(synch.h)
 LIB_MATH
 LIB_SOCKET_NSL
 MYSQL_API_LOCATION
@@ -81,5 +82,5 @@ STL_SLIST_EXTENSION
 #
 # Configure process complete; write out files generated from *.in.
 #
-AC_OUTPUT([Makefile mysql++.spec lib/Doxyfile lib/mysql++.h])
+AC_OUTPUT([Makefile mysql++.spec doc/userman/userman.dbx lib/Doxyfile lib/mysql++.h])
 

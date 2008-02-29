@@ -13,9 +13,9 @@
 /// the block exits.
 
 /***********************************************************************
- Copyright (c) 2005 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the CREDITS
- file in the top directory of the distribution for details.
+ Copyright (c) 2005-2007 by Educational Technology Resources, Inc.
+ Others may also hold copyrights on code in this file.  See the
+ CREDITS file in the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -38,6 +38,8 @@
 #ifndef MYSQLPP_NOEXCEPTIONS_H
 #define MYSQLPP_NOEXCEPTIONS_H
 
+#include "common.h"
+
 namespace mysqlpp {
 
 #if !defined(DOXYGEN_IGNORE)
@@ -50,6 +52,21 @@ class MYSQLPP_EXPORT NoExceptions;
 /// A class derives from this one to acquire a standard interface for
 /// disabling exceptions, possibly only temporarily.  By default,
 /// exceptions are enabled.
+///
+/// Note that all methods are const even though some of them change our
+/// internal flag indicating whether exceptions should be thrown.  This
+/// is justifiable because this is just an interface class, and it
+/// changes the behavior of our subclass literally only in exceptional
+/// conditions.  This Jesuitical interpretation of "const" is required
+/// because you may want to disable exceptions on const subclass
+/// instances.
+///
+/// If it makes you feel better about this, consider that the real
+/// change isn't within the const OptionalExceptions subclass instance.
+/// What changes is the code wrapping the method call on that instance
+/// that can optionally throw an exception.  This outside code is in
+/// a better position to say what "const" means than the subclass
+/// instance.
 
 class MYSQLPP_EXPORT OptionalExceptions
 {
@@ -66,10 +83,10 @@ public:
 	virtual ~OptionalExceptions() { }
 
 	/// \brief Enable exceptions from the object
-	void enable_exceptions() { exceptions_ = true; }
+	void enable_exceptions() const { exceptions_ = true; }
 
 	/// \brief Disable exceptions from the object
-	void disable_exceptions() { exceptions_ = false; }
+	void disable_exceptions() const { exceptions_ = false; }
 
 	/// \brief Returns true if exceptions are enabled
 	bool throw_exceptions() const { return exceptions_; }
@@ -79,14 +96,14 @@ protected:
 	///
 	/// This method is protected because it is only intended for use by
 	/// subclasses' copy constructors and the like.
-	void set_exceptions(bool e) { exceptions_ = e; }
+	void set_exceptions(bool e) const { exceptions_ = e; }
 
 	/// \brief Declare NoExceptions to be our friend so it can access
 	/// our protected functions.
 	friend class NoExceptions;
 
 private:
-	bool exceptions_;
+	mutable bool exceptions_;
 };
 
 
@@ -107,7 +124,7 @@ public:
 	/// Takes a reference to an OptionalExceptions derivative,
 	/// saves that object's current exception state, and disables
 	/// exceptions.
-	NoExceptions(OptionalExceptions& a) :
+	NoExceptions(const OptionalExceptions& a) :
 	assoc_(a),
 	exceptions_were_enabled_(a.throw_exceptions())
 	{
@@ -123,7 +140,7 @@ public:
 	}
 	
 private:
-	OptionalExceptions& assoc_;
+	const OptionalExceptions& assoc_;
 	bool exceptions_were_enabled_;
 
 	// Hidden assignment operator and copy ctor, because we should not

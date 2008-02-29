@@ -2,10 +2,10 @@
  for_each.cpp - Demonstrates Query::for_each(), showing how to perform
 	an arbitrary action on each row in a result set.
 
- Copyright (c) 2005-2007 by Joel Fielder and Educational Technology
- Resources, Inc.  Others may also hold copyrights on code in this file.
- See the CREDITS file in the top directory of the distribution for
- details.
+ Copyright (c) 2005-2008 by Educational Technology Resources, Inc. and
+ (c) 2007 by Joel Fielder.  Others may also hold copyrights on code
+ in this file.  See the CREDITS file in the top directory of the
+ distribution for details.
 
  This file is part of MySQL++.
 
@@ -25,7 +25,8 @@
  USA
 ***********************************************************************/
 
-#include "util.h"
+#include "cmdline.h"
+#include "printdata.h"
 #include "stock.h"
 
 #include <mysql++.h>
@@ -77,12 +78,15 @@ operator<<(std::ostream& os, const gather_stock_stats& ss)
 int
 main(int argc, char *argv[])
 {
+	// Get database access parameters from command line
+    const char* db = 0, *server = 0, *user = 0, *pass = "";
+	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
+		return 1;
+	}
+
 	try {
-		// Connect to the sample database
-		mysqlpp::Connection con;
-		if (!connect_to_db(argc, argv, con)) {
-			return 1;
-		}
+		// Establish the connection to the database server.
+		mysqlpp::Connection con(db, server, user, pass);
 
 		// Gather and display the stats for the entire stock table
 		mysqlpp::Query query = con.query();

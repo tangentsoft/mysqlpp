@@ -1,11 +1,11 @@
 /// \file tiny_int.h
-/// \brief Declares class for holding a SQL tiny_int
+/// \brief Declares class for holding a SQL TINYINT
 
 /***********************************************************************
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the CREDITS
- file in the top directory of the distribution for details.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS file in
+ the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -25,24 +25,40 @@
  USA
 ***********************************************************************/
 
-#ifndef MYSQLPP_TINY_INT_H
+#if !defined(MYSQLPP_TINY_INT_H)
 #define MYSQLPP_TINY_INT_H
+
+#include "common.h"
+
+#include <ostream>
 
 namespace mysqlpp {
 
-/// \brief Class for holding an SQL \c tiny_int object.
+/// \brief Class for holding an SQL \c TINYINT value
 ///
 /// This is required because the closest C++ type, \c char, doesn't
 /// have all the right semantics.  For one, inserting a \c char into a
-/// stream won't give you a number.
+/// stream won't give you a number.  For another, if you don't specify
+/// signedness explicitly, C++ doesn't give a default, so it's signed
+/// on some platforms, unsigned on others.
 ///
-/// Several of the functions below accept a \c short \c int argument,
-/// but internally we store the data as a \c char. Beware of integer
-/// overflows!
+/// The template parameter is intended to allow instantiating it as
+/// tiny_int<unsigned char> to hold \c TINYINT \c UNSIGNED values.
+/// There's nothing stopping you from using any other integer type if
+/// you want to be perverse, but please don't do that.
+///
+/// Several of the functions below accept an \c int argument, but
+/// internally we store the data as a \c char by default. Beware of
+/// integer overflows!
 
-class MYSQLPP_EXPORT tiny_int
+template <typename VT = signed char>
+class tiny_int
 {
 public:
+	//// Type aliases
+	typedef tiny_int<VT> this_type;	///< alias for this object's type
+	typedef VT value_type;			///< alias for type of internal value
+
 	/// \brief Default constructor
 	///
 	/// Value is uninitialized
@@ -50,189 +66,209 @@ public:
 	
 	/// \brief Create object from any integral type that can be
 	/// converted to a \c short \c int.
-	tiny_int(short int v) :
-	value_(char(v))
+	tiny_int(value_type v) :
+	value_(value_type(v))
 	{
 	}
 	
-	/// \brief Return value as a \c short \c int.
-	operator short int() const
+	/// \brief Return truthiness of value
+	operator bool() const
 	{
-		return static_cast<short int>(value_);
+		return value_;
 	}
 
-	/// \brief Assign a \c short \c int to the object.
-	tiny_int& operator =(short int v)
+	/// \brief Return value as an \c int.
+	operator int() const
 	{
-		value_ = char(v);
+		return static_cast<int>(value_);
+	}
+
+	/// \brief Return raw data value with no size change
+	operator value_type() const
+	{
+		return value_;
+	}
+
+	/// \brief Assign a new value to the object.
+	this_type& operator =(int v)
+	{
+		value_ = static_cast<value_type>(v);
 		return *this;
 	}
 
 	/// \brief Add another value to this object
-	tiny_int& operator +=(short int v)
+	this_type& operator +=(int v)
 	{
-		value_ += char(v);
+		value_ += static_cast<value_type>(v);
 		return *this;
 	}
 
 	/// \brief Subtract another value to this object
-	tiny_int& operator -=(short int v)
+	this_type& operator -=(int v)
 	{
-		value_ -= char(v);
+		value_ -= static_cast<value_type>(v);
 		return *this;
 	}
 
 	/// \brief Multiply this value by another object
-	tiny_int& operator *=(short int v)
+	this_type& operator *=(int v)
 	{
-		value_ *= char(v);
+		value_ *= static_cast<value_type>(v);
 		return *this;
 	}
 
 	/// \brief Divide this value by another object
-	tiny_int& operator /=(short int v)
+	this_type& operator /=(int v)
 	{
-		value_ /= char(v);
+		value_ /= static_cast<value_type>(v);
 		return *this;
 	}
 
 	/// \brief Divide this value by another object and store the
 	/// remainder
-	tiny_int& operator %=(short int v)
+	this_type& operator %=(int v)
 	{
-		value_ %= char(v);
+		value_ %= static_cast<value_type>(v);
 		return *this;
 	}
 
 	/// \brief Bitwise AND this value by another value
-	tiny_int& operator &=(short int v)
+	this_type& operator &=(int v)
 	{
-		value_ &= char(v);
+		value_ &= static_cast<value_type>(v);
 		return *this;
 	}
 
 	/// \brief Bitwise OR this value by another value
-	tiny_int& operator |=(short int v)
+	this_type& operator |=(int v)
 	{
-		value_ |= char(v);
+		value_ |= static_cast<value_type>(v);
 		return *this;
 	}
 
 	/// \brief Bitwise XOR this value by another value
-	tiny_int& operator ^=(short int v)
+	this_type& operator ^=(int v)
 	{
-		value_ ^= char(v);
+		value_ ^= static_cast<value_type>(v);
 		return *this;
 	}
 
 	/// \brief Shift this value left by \c v positions
-	tiny_int& operator <<=(short int v)
+	this_type& operator <<=(int v)
 	{
-		value_ <<= char(v);
+		value_ <<= static_cast<value_type>(v);
 		return *this;
 	}
 
 	/// \brief Shift this value right by \c v positions
-	tiny_int& operator >>=(short int v)
+	this_type& operator >>=(int v)
 	{
-		value_ >>= char(v);
+		value_ >>= static_cast<value_type>(v);
 		return *this;
 	}
 
 	/// \brief Add one to this value and return that value
-	tiny_int& operator ++()
+	this_type& operator ++()
 	{
-		value_++;
+		++value_;
 		return *this;
 	}
 
 	/// \brief Subtract one from this value and return that value
-	tiny_int& operator --()
+	this_type& operator --()
 	{
-		value_--;
+		--value_;
 		return *this;
 	}
 
 	/// \brief Add one to this value and return the previous value
-	tiny_int operator ++(int)
+	this_type operator ++(int)
 	{
-		tiny_int tmp = value_;
-		value_++;
+		this_type tmp = value_;
+		++value_;
 		return tmp;
 	}
 
 	/// \brief Subtract one from this value and return the previous
 	/// value
-	tiny_int operator --(int)
+	this_type operator --(int)
 	{
-		tiny_int tmp = value_;
-		value_--;
+		this_type tmp = value_;
+		--value_;
 		return tmp;
 	}
 
 	/// \brief Return this value minus \c i
-	tiny_int operator -(const tiny_int& i) const
+	this_type operator -(const this_type& i) const
 	{
-		return value_ - i;
+		return value_ - i.value_;
 	}
 	
 	/// \brief Return this value plus \c i
-	tiny_int operator +(const tiny_int& i) const
+	this_type operator +(const this_type& i) const
 	{
-		return value_ + i;
+		return value_ + i.value_;
 	}
 	
 	/// \brief Return this value multiplied by \c i
-	tiny_int operator *(const tiny_int& i) const
+	this_type operator *(const this_type& i) const
 	{
-		return value_ * i;
+		return value_ * i.value_;
 	}
 	
 	/// \brief Return this value divided by \c i
-	tiny_int operator /(const tiny_int& i) const
+	this_type operator /(const this_type& i) const
 	{
-		return value_ / i;
+		return value_ / i.value_;
 	}
 	
 	/// \brief Return the modulus of this value divided by \c i
-	tiny_int operator %(const tiny_int& i) const
+	this_type operator %(const this_type& i) const
 	{
-		return value_ % i;
+		return value_ % i.value_;
 	}
 	
 	/// \brief Return this value bitwise OR'd by \c i
-	tiny_int operator |(const tiny_int& i) const
+	this_type operator |(const this_type& i) const
 	{
-		return value_ | i;
+		return value_ | i.value_;
 	}
 	
 	/// \brief Return this value bitwise AND'd by \c i
-	tiny_int operator &(const tiny_int& i) const
+	this_type operator &(const this_type& i) const
 	{
-		return value_ & i;
+		return value_ & i.value_;
 	}
 	
 	/// \brief Return this value bitwise XOR'd by \c i
-	tiny_int operator ^(const tiny_int& i) const
+	this_type operator ^(const this_type& i) const
 	{
-		return value_ ^ i;
+		return value_ ^ i.value_;
 	}
 	
 	/// \brief Return this value bitwise shifted left by \c i
-	tiny_int operator <<(const tiny_int& i) const
+	this_type operator <<(const this_type& i) const
 	{
-		return value_ << i;
+		return value_ << i.value_;
 	}
 	
 	/// \brief Return this value bitwise shifted right by \c i
-	tiny_int operator >>(const tiny_int& i) const
+	this_type operator >>(const this_type& i) const
 	{
-		return value_ >> i;
+		return value_ >> i.value_;
 	}
 
 private:
-	char value_;
+	value_type value_;
 };
+
+/// \brief Insert a \c tiny_int into a C++ stream
+template <typename VT>
+std::ostream& operator <<(std::ostream& os, tiny_int<VT> i)
+{
+	os << static_cast<int>(i);
+	return os;
+}
 
 } // end namespace mysqlpp
 

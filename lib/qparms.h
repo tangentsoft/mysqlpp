@@ -6,10 +6,10 @@
 /// template, so it can assemble a SQL statement later on demand.
 
 /***********************************************************************
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004-2007 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the CREDITS
- file in the top directory of the distribution for details.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS file in
+ the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -32,7 +32,7 @@
 #ifndef MYSQLPP_QPARMS_H
 #define MYSQLPP_QPARMS_H
 
-#include "sql_string.h"
+#include "stadapter.h"
 
 #include <vector>
 
@@ -45,12 +45,12 @@ class MYSQLPP_EXPORT Query;
 
 /// \brief This class holds the parameter values for filling
 /// template queries. 
-class MYSQLPP_EXPORT SQLQueryParms : public std::vector<SQLString>
+class MYSQLPP_EXPORT SQLQueryParms : public std::vector<SQLTypeAdapter>
 {
 public:
 	/// \brief Abbreviation so some of the declarations below don't
 	/// span many lines.
-	typedef const SQLString& ss;
+	typedef const SQLTypeAdapter& sta;
 
 	/// \brief Default constructor
 	SQLQueryParms() :
@@ -72,46 +72,57 @@ public:
 	/// \brief Returns true if we are bound to a query object.
 	///
 	/// Basically, this tells you which of the two ctors were called.
-	bool bound()
-	{
-		return parent_ != 0;
-	}
+	bool bound() { return parent_ != 0; }
 
 	/// \brief Clears the list
-	void clear()
-	{
-		erase(begin(), end());
-	}
+	void clear() { erase(begin(), end()); }
+
+	/// \brief Indirect access to Query::escape_string()
+	///
+	/// \internal Needed by \c operator<<(Manip&, \c const \c T&) where
+	/// \c Manip is used on a SQLQueryParms object.  We'd have to make
+	/// all these operators friends to give access to our internal Query
+	/// object otherwise.
+	///
+	/// \see Query::escape_string(std::string*, const char*, size_t)
+	size_t escape_string(std::string* ps, const char* original = 0,
+			size_t length = 0) const;
+
+	/// \brief Indirect access to Query::escape_string()
+	///
+	/// \see escape_string(std::string*, const char*, size_t)
+	/// \see Query::escape_string(const char*, const char*, size_t)
+	size_t escape_string(char* escaped, const char* original,
+			size_t length) const;
 
 	/// \brief Access element number n
-	SQLString& operator [](size_type n)
+	SQLTypeAdapter& operator [](size_type n)
 	{
-		if (n >= size())
+		if (n >= size()) {
 			insert(end(), (n + 1) - size(), "");
-		return std::vector<SQLString>::operator [](n);
+		}
+		return std::vector<SQLTypeAdapter>::operator [](n);
 	}
 
 	/// \brief Access element number n
-	const SQLString& operator [](size_type n) const
-	{
-		return std::vector<SQLString>::operator [](n);
-	}
+	const SQLTypeAdapter& operator [](size_type n) const
+			{ return std::vector<SQLTypeAdapter>::operator [](n); }
 	
 	/// \brief Access the value of the element with a key of str.
-	SQLString& operator [](const char *str);
+	SQLTypeAdapter& operator [](const char *str);
 
 	/// \brief Access the value of the element with a key of str.
-	const SQLString& operator [](const char *str) const;
+	const SQLTypeAdapter& operator [](const char *str) const;
 
 	/// \brief Adds an element to the list
-	SQLQueryParms& operator <<(const SQLString& str)
+	SQLQueryParms& operator <<(const SQLTypeAdapter& str)
 	{
 		push_back(str);
 		return *this;
 	}
 
 	/// \brief Adds an element to the list
-	SQLQueryParms& operator +=(const SQLString& str)
+	SQLQueryParms& operator +=(const SQLTypeAdapter& str)
 	{
 		push_back(str);
 		return *this;
@@ -131,57 +142,57 @@ public:
 
 #if !defined(DOXYGEN_IGNORE)
 // Doxygen will not generate documentation for this section.
-	void set(ss a)
+	void set(sta a)
 	{
 		clear();
 		*this << a;
 	}
-	void set(ss a, ss b)
+	void set(sta a, sta b)
 	{
 		clear();
 		*this << a << b;
 	}
-	void set(ss a, ss b, ss c)
+	void set(sta a, sta b, sta c)
 	{
 		clear();
 		*this << a << b << c;
 	}
-	void set(ss a, ss b, ss c, ss d)
+	void set(sta a, sta b, sta c, sta d)
 	{
 		clear();
 		*this << a << b << c << d;
 	}
-	void set(ss a, ss b, ss c, ss d, ss e)
+	void set(sta a, sta b, sta c, sta d, sta e)
 	{
 		clear();
 		*this << a << b << c << d << e;
 	}
-	void set(ss a, ss b, ss c, ss d, ss e, ss f)
+	void set(sta a, sta b, sta c, sta d, sta e, sta f)
 	{
 		clear();
 		*this << a << b << c << d << e << f;
 	}
-	void set(ss a, ss b, ss c, ss d, ss e, ss f, ss g)
+	void set(sta a, sta b, sta c, sta d, sta e, sta f, sta g)
 	{
 		clear();
 		*this << a << b << c << d << e << f << g;
 	}
-	void set(ss a, ss b, ss c, ss d, ss e, ss f, ss g, ss h)
+	void set(sta a, sta b, sta c, sta d, sta e, sta f, sta g, sta h)
 	{
 		clear();
 		*this << a << b << c << d << e << f << g << h;
 	}
-	void set(ss a, ss b, ss c, ss d, ss e, ss f, ss g, ss h, ss i)
+	void set(sta a, sta b, sta c, sta d, sta e, sta f, sta g, sta h, sta i)
 	{
 		clear();
 		*this << a << b << c << d << e << f << g << h << i;
 	}
-	void set(ss a, ss b, ss c, ss d, ss e, ss f, ss g, ss h, ss i, ss j)
+	void set(sta a, sta b, sta c, sta d, sta e, sta f, sta g, sta h, sta i, sta j)
 	{
 		clear();
 		*this << a << b << c << d << e << f << g << h << i << j;
 	}
-	void set(ss a, ss b, ss c, ss d, ss e, ss f, ss g, ss h, ss i, ss j, ss k)
+	void set(sta a, sta b, sta c, sta d, sta e, sta f, sta g, sta h, sta i, sta j, sta k)
 	{
 		clear();
 		*this << a << b << c << d << e << f << g << h << i << j << k;
@@ -193,8 +204,8 @@ public:
 	/// Sets parameter 0 to a, parameter 1 to b, etc. There are
 	/// overloaded versions of this function that take anywhere from
 	/// one to a dozen parameters.
-	void set(ss a, ss b, ss c, ss d, ss e, ss f, ss g,
-			ss h, ss i, ss j, ss k, ss l)
+	void set(sta a, sta b, sta c, sta d, sta e, sta f, sta g,
+			sta h, sta i, sta j, sta k, sta l)
 	{
 		clear();
 		*this << a << b << c << d << e << f << g << h << i << j << k << l;

@@ -1,19 +1,20 @@
 <?xml version="1.0"?>
 <makefile>
-	<requires version="0.1.9"/>
-	<using module="datafiles"/>
-	<include file="presets/simple.bkl"/>
+    <requires version="0.2.3"/>
+    <using module="datafiles"/>
+    <include file="presets/simple.bkl"/>
 
-	<set var="DDD">$(DOLLAR)$(DOLLAR)d</set>
-	<set var="DDF">$(DOLLAR)$(DOLLAR)f</set>
-	<set var="AND">&amp;&amp;</set>
-	<set var="ZLIB">yes</set>
+    <set var="DDD">$(DOLLAR)$(DOLLAR)d</set>
+    <set var="DDF">$(DOLLAR)$(DOLLAR)f</set>
+    <set var="ZLIB">yes</set>
 
-	<set var="THREAD_TYPE">single</set>
-	<if cond="FORMAT in ['msvc6prj', 'mingw']">
-		<set var="THREAD_TYPE">multi</set>
-	</if>
-		
+    <set var="PLATFORM_WINDOWS_NATIVE">no</set>
+    <set var="THREAD_TYPE">single</set>
+    <if cond="FORMAT in ['msvs2003prj', 'msvs2005prj', 'mingw']">
+        <set var="PLATFORM_WINDOWS_NATIVE">yes</set>
+        <set var="THREAD_TYPE">multi</set>
+    </if>
+        
     <option name="BUILD">
         <values>debug,release</values>
         <values-description>Debug,Release</values-description>
@@ -23,392 +24,488 @@
         </description>
     </option>
 
+    <set var="MYSQL_WIN_DIR">
+        C:\Program Files\MySQL\MySQL Server 5.0
+    </set>
+
     <set var="DEBUGINFO">
         <if cond="BUILD=='debug'">on</if>
         <if cond="BUILD=='release'">off</if>
     </set>
 
-	<set var="BUILDDOCS">yes</set>
-	<set var="BUILDEXAMPLES">yes</set>
-	<set var="BUILDLIBRARY">yes</set>
-	<set var="HEADER_DIR">$(PREFIX)/include/mysql++</set>
+    <!-- This convoluted syntax adds "_d" to the end of library and DLL
+         file names for VC++ and Xcode, in debug mode only. -->
+    <set var="DEBUG_SUFFIX"/>
+    <set var="DEBUG_SUFFIX">
+        <if cond="FORMAT in ['msvs2003prj', 'msvs2005prj', 'xcode2'] and BUILD=='debug'">_d</if>
+    </set>
 
-	<if cond="BUILDLIBRARY=='yes'">
-		<dll id="mysqlpp">
-			<libname>mysqlpp</libname>
-			<so_version>2.3.2</so_version>
+    <set var="BUILDDOCS">yes</set>
+    <set var="BUILDEXAMPLES">yes</set>
+    <set var="BUILDLIBRARY">yes</set>
+    <set var="BUILDTEST">yes</set>
+    <set var="HEADER_DIR">$(PREFIX)/include/mysql++</set>
 
-			<sources>
-				lib/coldata.cpp
-				lib/connection.cpp
-				lib/datetime.cpp
-				lib/field_names.cpp
-				lib/fields.cpp
-				lib/field_types.cpp
-				lib/manip.cpp
-				lib/myset.cpp
-				lib/mysql++.cpp
-				lib/qparms.cpp
-				lib/query.cpp
-				lib/result.cpp
-				lib/row.cpp
-				lib/sql_string.cpp
-				lib/string_util.cpp 
-				lib/transaction.cpp
-				lib/type_info.cpp
-				lib/vallist.cpp
-			</sources>
+	<if cond="FORMAT in ['msvs2003prj', 'msvs2005prj']">
+		<set-srcdir>..</set-srcdir>
+    </if>
 
-			<debug-info>$(DEBUGINFO)</debug-info>
+    <if cond="BUILDLIBRARY=='yes'">
+        <dll id="mysqlpp">
+            <dllname>mysqlpp$(DEBUG_SUFFIX)</dllname>
+            <libname>mysqlpp$(DEBUG_SUFFIX)</libname>
+            <so_version>3.0.0</so_version>
 
-			<threading>$(THREAD_TYPE)</threading>
-			<cxx-rtti>on</cxx-rtti>
-			<cxx-exceptions>on</cxx-exceptions>
-			
-			<install-to>$(LIBDIR)</install-to>
-			
-			<if cond="FORMAT=='msvc6prj'">
-				<define>_UNICODE</define>
-				<define>MYSQLPP_MAKING_DLL</define>
-				<define>HAVE_MYSQL_SSL_SET</define>
-				<include>"C:\Program Files\MySQL\MySQL Server 5.0\include"</include>
-				<lib-path>C:\Program Files\MySQL\MySQL Server 5.0\lib\opt</lib-path>
-				<sys-lib>libmysql</sys-lib>
-			</if>
+            <sources>
+                lib/beemutex.cpp
+                lib/connection.cpp
+                lib/cpool.cpp
+                lib/datetime.cpp
+                lib/dbdriver.cpp
+                lib/field_names.cpp
+                lib/field_types.cpp
+                lib/manip.cpp
+                lib/myset.cpp
+                lib/mysql++.cpp
+                lib/mystring.cpp
+                lib/null.cpp
+                lib/options.cpp
+                lib/qparms.cpp
+                lib/query.cpp
+                lib/result.cpp
+                lib/row.cpp
+                lib/sql_buffer.cpp
+                lib/stadapter.cpp
+                lib/tcp_connection.cpp
+                lib/transaction.cpp
+                lib/type_info.cpp
+                lib/uds_connection.cpp
+                lib/vallist.cpp
+                lib/wnp_connection.cpp
+            </sources>
 
-			<if cond="FORMAT=='mingw'">
-				<define>_UNICODE</define>
-				<define>MYSQLPP_NO_DLL</define>
-				<define>HAVE_MYSQL_SSL_SET</define>
-				<include>"C:\Program Files\MySQL\MySQL Server 5.0\include"</include>
-				<lib-path>"C:\Program Files\MySQL\MySQL Server 5.0\lib\opt"</lib-path>
-				<sys-lib>mysqlclient</sys-lib>
-			</if>
+            <debug-info>$(DEBUGINFO)</debug-info>
 
-			<if cond="FORMAT=='autoconf'">
-				<depends>lib/custom.h</depends>
-				<depends>lib/querydef.h</depends>
+            <threading>$(THREAD_TYPE)</threading>
+            <cxx-rtti>on</cxx-rtti>
+            <cxx-exceptions>on</cxx-exceptions>
+            
+            <install-to>$(LIBDIR)</install-to>
+            
+            <if cond="PLATFORM_WINDOWS_NATIVE=='yes'">
+                <define>UNICODE</define>
+                <define>_UNICODE</define>
+                <sys-lib>wsock32</sys-lib>
+            </if>
 
-				<cxxflags>@PTHREAD_CFLAGS@</cxxflags>
-				<include>.</include>
-				<ldflags>@PTHREAD_LIBS@ @MYSQLPP_EXTRA_LIBS@</ldflags>
-				<sys-lib>@MYSQL_C_LIB@</sys-lib>
+			<if cond="FORMAT in ['msvs2003prj', 'msvs2005prj']">
+                <define>MYSQLPP_MAKING_DLL</define>
+                <define>HAVE_MYSQL_SSL_SET</define>
+                <include>$(MYSQL_WIN_DIR)\include</include>
+                <lib-path>$(MYSQL_WIN_DIR)\lib\opt</lib-path>
+                <sys-lib>libmysql</sys-lib>
+            </if>
 
-				<if cond="ZLIB=='yes'">
-					<sys-lib>z</sys-lib>
-				</if>
+            <if cond="FORMAT=='mingw'">
+                <define>MYSQLPP_NO_DLL</define>
+                <define>HAVE_MYSQL_SSL_SET</define>
+                <include>"$(MYSQL_WIN_DIR)\include"</include>
+                <lib-path>"$(MYSQL_WIN_DIR)\lib\opt"</lib-path>
+                <sys-lib>mysqlclient</sys-lib>
+            </if>
 
-				<modify-target target="uninstall">
-					<command>
-						rm -f $(DESTDIR)$(libdir)/$(DLLPREFIX)mysqlpp.$(SO_SUFFIX)
-					</command>
-					<command>
-						for f in *.h ; do rm -f $(HEADER_DIR)/$(DDF) ; done
-					</command>
-					<command>rmdir $(HEADER_DIR)</command>
-				</modify-target>
-			</if>
-		</dll>
+            <if cond="FORMAT=='autoconf'">
+                <depends>lib/ssqls.h</depends>
+                <depends>lib/querydef.h</depends>
 
-		<data-files>
-			<files>lib/*.h</files>
-			<install-to>$(HEADER_DIR)</install-to>
-		</data-files>
-	</if>	<!-- build library -->
+                <cxxflags>@PTHREAD_CFLAGS@</cxxflags>
+                <include>.</include>
+                <ldflags>@PTHREAD_LIBS@ @MYSQLPP_EXTRA_LIBS@</ldflags>
+                <sys-lib>@MYSQL_C_LIB@</sys-lib>
 
-	<!-- Set up build options common to all examples -->
-	<template id="examples">
-		<if cond="BUILDLIBRARY=='yes'">
-			<depends>mysqlpp</depends>
-		</if>
-	
-		<threading>$(THREAD_TYPE)</threading>
-		<cxx-rtti>on</cxx-rtti>
-		<cxx-exceptions>on</cxx-exceptions>
-		<debug-info>$(DEBUGINFO)</debug-info>
+                <if cond="ZLIB=='yes'">
+                    <sys-lib>z</sys-lib>
+                </if>
 
-		<include>lib</include>
+                <modify-target target="uninstall">
+                    <command>
+                        rm -f $(DESTDIR)$(libdir)/$(DLLPREFIX)mysqlpp.$(SO_SUFFIX)
+                    </command>
+                    <command>
+                        for f in *.h ; do rm -f $(HEADER_DIR)/$(DDF) ; done
+                    </command>
+                    <command>rmdir $(HEADER_DIR)</command>
+                </modify-target>
+            </if>
+        </dll>
 
-		<if cond="FORMAT in ['autoconf', 'mingw', 'gnu']">
-			<lib-path>.</lib-path>
-		</if>
+        <data-files>
+            <files>lib/*.h</files>
+            <install-to>$(HEADER_DIR)</install-to>
+        </data-files>
+    </if>   <!-- build library -->
 
-		<if cond="FORMAT=='msvc6prj'">
-			<define>_UNICODE</define>
-			<lib-path>$(BUILD)</lib-path>
-			<lib-path>C:\Program Files\MySQL\MySQL Server 5.0\lib\opt</lib-path>
-			<include>"C:\Program Files\MySQL\MySQL Server 5.0\include"</include>
-			<sys-lib>libmysql</sys-lib>
-			<sys-lib>mysqlpp</sys-lib>
-		</if>
+    <!-- Set up build options common to all built executables -->
+    <template id="programs">
+        <if cond="BUILDLIBRARY=='yes'">
+            <depends>mysqlpp</depends>
+        </if>
+    
+        <threading>$(THREAD_TYPE)</threading>
+        <cxx-rtti>on</cxx-rtti>
+        <cxx-exceptions>on</cxx-exceptions>
+        <debug-info>$(DEBUGINFO)</debug-info>
 
-		<if cond="FORMAT=='mingw'">
-			<define>_UNICODE</define>
-			<define>MYSQLPP_NO_DLL</define>
-			<ldflags>
-				-Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc
-			</ldflags>
-			<lib-path>..\lib</lib-path>
-			<lib-path>"C:\Program Files\MySQL\MySQL Server 5.0\lib\opt"</lib-path>
-			<include>"C:\Program Files\MySQL\MySQL Server 5.0\include"</include>
-			<sys-lib>mysqlclient</sys-lib>
-			<sys-lib>mysqlpp</sys-lib>
-		</if>
-
-		<if cond="FORMAT=='autoconf'">
-			<cxxflags>@PTHREAD_CFLAGS@</cxxflags>
-			<ldflags>@PTHREAD_LIBS@ @MYSQLPP_EXTRA_LIBS@</ldflags>
-			<sys-lib>@MYSQL_C_LIB@</sys-lib>
-
-			<warnings>max</warnings>
-			<sys-lib>mysqlpp</sys-lib>
-			<if cond="ZLIB=='yes'">
-				<sys-lib>z</sys-lib>
-			</if>
+        <if cond="FORMAT in ['autoconf', 'gnu', 'mingw', 'xcode2']">
+			<include>lib</include>
+            <lib-path>.</lib-path>
+        </if>
+		<if cond="FORMAT in ['msvs2003prj', 'msvs2005prj']">
+			<include>../lib</include>
 		</if>
 
-		<if cond="FORMAT=='gnu'">
-			<include>/usr/include/mysql</include>
-			<include>/usr/include/mysql++</include>
-			<sys-lib>mysqlpp</sys-lib>
-			<sys-lib>mysqlclient</sys-lib>
+        <if cond="PLATFORM_WINDOWS_NATIVE=='yes'">
+            <define>UNICODE</define>
+            <define>_UNICODE</define>
+        </if>
+
+        <if cond="FORMAT=='autoconf'">
+            <cxxflags>@PTHREAD_CFLAGS@</cxxflags>
+            <ldflags>@PTHREAD_LIBS@ @MYSQLPP_EXTRA_LIBS@</ldflags>
+            <sys-lib>@MYSQL_C_LIB@</sys-lib>
+            <warnings>max</warnings>
+            <sys-lib>mysqlpp</sys-lib>
+            <if cond="ZLIB=='yes'">
+                <sys-lib>z</sys-lib>
+            </if>
+        </if>
+
+        <if cond="FORMAT=='mingw'">
+            <define>MYSQLPP_NO_DLL</define>
+            <ldflags>
+                -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc
+            </ldflags>
+            <include>"$(MYSQL_WIN_DIR)\include"</include>
+            <lib-path>"$(MYSQL_WIN_DIR)\lib\opt"</lib-path>
+            <sys-lib>mysqlclient</sys-lib>
+            <sys-lib>mysqlpp$(DEBUG_SUFFIX)</sys-lib>
+        </if>
+
+		<if cond="FORMAT in ['msvs2003prj', 'msvs2005prj']">
+            <lib-path>$(BUILD)</lib-path>
+            <include>$(MYSQL_WIN_DIR)\include</include>
+            <lib-path>$(MYSQL_WIN_DIR)\lib\opt</lib-path>
+            <sys-lib>mysqlpp$(DEBUG_SUFFIX)</sys-lib>
+            <sys-lib>libmysql</sys-lib>
+        </if>
+
+        <if cond="FORMAT=='gnu'">
+            <include>/usr/include/mysql</include>
+            <include>/usr/include/mysql++</include>
+            <sys-lib>mysqlpp</sys-lib>
+            <sys-lib>mysqlclient</sys-lib>
+        </if>
+
+        <if cond="FORMAT=='xcode2'">
+            <include>/usr/local/mysql/include</include>
+            <sys-lib>mysqlclient</sys-lib>
+            <sys-lib>mysqlpp$(DEBUG_SUFFIX)</sys-lib>
+        </if>
+    </template>
+
+    <!-- Define library testing programs' output targets, if enabled -->
+    <if cond="BUILDTEST=='yes'">
+        <exe id="test_cpool" template="programs">
+            <sources>test/cpool.cpp</sources>
+        </exe>
+        <exe id="test_datetime" template="programs">
+            <sources>test/datetime.cpp</sources>
+        </exe>
+        <exe id="test_inttypes" template="programs">
+            <sources>test/inttypes.cpp</sources>
+        </exe>
+        <exe id="test_manip" template="programs">
+            <sources>test/manip.cpp</sources>
+        </exe>
+        <if cond="FORMAT!='msvs2003prj'">
+            <!-- VC++ 2003 can't compile this -->
+			<exe id="test_null_comparison" template="programs">
+				<sources>test/null_comparison.cpp</sources>
+			</exe>
 		</if>
-	</template>
+        <exe id="test_qstream" template="programs">
+            <sources>test/qstream.cpp</sources>
+        </exe>
+        <if cond="FORMAT!='msvs2003prj'">
+            <!-- VC++ 2003 can't compile this -->
+            <exe id="test_string" template="programs">
+                <sources>test/string.cpp</sources>
+            </exe>
+        </if>
+        <exe id="test_tcp" template="programs">
+            <sources>test/tcp.cpp</sources>
+        </exe>
+        <exe id="test_uds" template="programs">
+            <sources>test/uds.cpp</sources>
+        </exe>
+        <exe id="test_wnp" template="programs">
+            <sources>test/wnp.cpp</sources>
+        </exe>
+    </if>   <!-- build library test programs -->
 
-	<!-- Additional options specific to examples that depend on
-	     the util module. -->
-	<template id="libutil-user">
-		<depends>util</depends>
-		<sys-lib>mysqlpp_util</sys-lib>
-	</template>
+    <!-- Define example programs' output targets, if enabled -->
+    <if cond="BUILDEXAMPLES=='yes'">
+        <!-- Options specific to examples that depend on libexcommon -->
+        <template id="libexcommon-user">
+            <depends>excommon</depends>
+            <sys-lib>mysqlpp_excommon</sys-lib>
+        </template>
 
-	<!-- Define output targets, if exampless are enabled -->
-	<if cond="BUILDEXAMPLES=='yes'">
-		<!-- The "util" convenience library, used by the examples -->
-		<lib id="util" template="examples">
-			<libname>mysqlpp_util</libname>
-			<sources>examples/util.cpp</sources>
-		</lib>
-		
-		<!-- The examples themselves -->
-		<exe id="resetdb" template="libutil-user,examples">
-			<sources>examples/resetdb.cpp</sources>
-		</exe>
-		<exe id="simple1" template="libutil-user,examples">
-			<sources>examples/simple1.cpp</sources>
-		</exe>
-		<exe id="simple2" template="libutil-user,examples">
-			<sources>examples/simple2.cpp</sources>
-		</exe>
-		<exe id="simple3" template="libutil-user,examples">
-			<sources>examples/simple3.cpp</sources>
-		</exe>
-		<exe id="multiquery" template="libutil-user,examples">
-			<sources>examples/multiquery.cpp</sources>
-		</exe>
-		<exe id="tquery" template="libutil-user,examples">
-			<sources>examples/tquery.cpp</sources>
-		</exe>
-		<exe id="usequery" template="libutil-user,examples">
-			<sources>examples/usequery.cpp</sources>
-		</exe>
-		<exe id="custom1" template="libutil-user,examples">
-			<sources>examples/custom1.cpp</sources>
-		</exe>
-		<exe id="custom2" template="libutil-user,examples">
-			<sources>examples/custom2.cpp</sources>
-		</exe>
-		<exe id="custom3" template="libutil-user,examples">
-			<sources>examples/custom3.cpp</sources>
-		</exe>
-		<exe id="custom4" template="libutil-user,examples">
-			<sources>examples/custom4.cpp</sources>
-		</exe>
-		<exe id="custom5" template="libutil-user,examples">
-			<sources>examples/custom5.cpp</sources>
-		</exe>
-		<exe id="custom6" template="libutil-user,examples">
-			<sources>examples/custom6.cpp</sources>
-		</exe>
-		<exe id="dbinfo" template="libutil-user,examples">
-			<sources>examples/dbinfo.cpp</sources>
-		</exe>
-		<exe id="fieldinf1" template="libutil-user,examples">
-			<sources>examples/fieldinf1.cpp</sources>
-		</exe>
-		<exe id="load_jpeg" template="libutil-user,examples">
-			<sources>examples/load_jpeg.cpp</sources>
-		</exe>
-		<exe id="xaction" template="libutil-user,examples">
-			<sources>examples/xaction.cpp</sources>
-		</exe>
-		<exe id="store_if" template="libutil-user,examples">
-			<sources>examples/store_if.cpp</sources>
-		</exe>
-		<exe id="for_each" template="libutil-user,examples">
-			<sources>examples/for_each.cpp</sources>
-		</exe>
-		<exe id="cgi_jpeg" template="libutil-user,examples">
-			<sources>examples/cgi_jpeg.cpp</sources>
-		</exe>
-	</if>	<!-- build examples -->
+        <!-- Convenience library of routines used by most examples -->
+        <lib id="excommon" template="programs">
+            <libname>mysqlpp_excommon</libname>
+            <sources>examples/cmdline.cpp</sources>
+            <sources>examples/printdata.cpp</sources>
+        </lib>
 
-	<if cond="FORMAT=='autoconf'">
-		<set var="PKGNAME">@PACKAGE_NAME@-@PACKAGE_VERSION@</set>
+        <!-- The examples themselves -->
+        <if cond="FORMAT!='msvs2003prj'">
+            <!-- VC++ 2003 can't compile current SSQLS code -->
+			<exe id="cgi_jpeg" template="libexcommon-user,programs">
+				<sources>examples/cgi_jpeg.cpp</sources>
+			</exe>
+        </if>
+        <exe id="cpool" template="libexcommon-user,programs">
+            <sources>examples/cpool.cpp</sources>
+        </exe>
+        <exe id="dbinfo" template="libexcommon-user,programs">
+            <sources>examples/dbinfo.cpp</sources>
+        </exe>
+        <exe id="deadlock" template="libexcommon-user,programs">
+            <sources>examples/deadlock.cpp</sources>
+        </exe>
+        <exe id="fieldinf" template="libexcommon-user,programs">
+            <sources>examples/fieldinf.cpp</sources>
+        </exe>
+        <if cond="FORMAT!='msvs2003prj'">
+            <!-- VC++ 2003 can't compile current SSQLS code -->
+			<exe id="for_each" template="libexcommon-user,programs">
+				<sources>examples/for_each.cpp</sources>
+			</exe>
+        </if>
+        <exe id="load_jpeg" template="libexcommon-user,programs">
+            <sources>examples/load_jpeg.cpp</sources>
+        </exe>
+        <exe id="multiquery" template="libexcommon-user,programs">
+            <sources>examples/multiquery.cpp</sources>
+        </exe>
+        <exe id="resetdb" template="libexcommon-user,programs">
+            <sources>examples/resetdb.cpp</sources>
+        </exe>
+        <exe id="simple1" template="libexcommon-user,programs">
+            <sources>examples/simple1.cpp</sources>
+        </exe>
+        <exe id="simple2" template="libexcommon-user,programs">
+            <sources>examples/simple2.cpp</sources>
+        </exe>
+        <exe id="simple3" template="libexcommon-user,programs">
+            <sources>examples/simple3.cpp</sources>
+        </exe>
+        <if cond="FORMAT!='msvs2003prj'">
+            <!-- VC++ 2003 can't compile current SSQLS code -->
+			<exe id="ssqls1" template="libexcommon-user,programs">
+				<sources>examples/ssqls1.cpp</sources>
+			</exe>
+			<exe id="ssqls2" template="libexcommon-user,programs">
+				<sources>examples/ssqls2.cpp</sources>
+			</exe>
+			<exe id="ssqls3" template="libexcommon-user,programs">
+				<sources>examples/ssqls3.cpp</sources>
+			</exe>
+			<exe id="ssqls4" template="libexcommon-user,programs">
+				<sources>examples/ssqls4.cpp</sources>
+			</exe>
+			<exe id="ssqls5" template="libexcommon-user,programs">
+				<sources>examples/ssqls5.cpp</sources>
+			</exe>
+			<exe id="store_if" template="libexcommon-user,programs">
+				<sources>examples/store_if.cpp</sources>
+			</exe>
+        </if>
+        <exe id="tquery1" template="libexcommon-user,programs">
+            <sources>examples/tquery1.cpp</sources>
+        </exe>
+        <exe id="tquery2" template="libexcommon-user,programs">
+            <sources>examples/tquery2.cpp</sources>
+        </exe>
+        <exe id="tquery3" template="libexcommon-user,programs">
+            <sources>examples/tquery3.cpp</sources>
+        </exe>
+        <if cond="FORMAT!='msvs2003prj'">
+            <!-- VC++ 2003 can't compile current SSQLS code -->
+			<exe id="transaction" template="libexcommon-user,programs">
+				<sources>examples/transaction.cpp</sources>
+			</exe>
+        </if>
+    </if>   <!-- build examples -->
 
-		<modify-target target="clean">
+    <if cond="FORMAT=='autoconf'">
+        <set var="PKGNAME">@PACKAGE_NAME@-@PACKAGE_VERSION@</set>
+
+        <modify-target target="clean">
+            <command>
+                rm -rf doc/latex doc/pdf ; \
+                cd doc/html/refman ; \
+                rm -f doxygen.css [a-z]*.{dot,html,map,md5,png}
+            </command>
+        </modify-target>
+            
+        <action id="lib/ssqls.h">
+            <command>cd lib ; ./ssqls.pl</command>
+            <depends-on-file>lib/ssqls.pl</depends-on-file>
+        </action>
+
+        <action id="lib/querydef.h">
+            <command>cd lib ; ./querydef.pl</command>
+            <depends-on-file>lib/querydef.pl</depends-on-file>
+        </action>
+
+        <action id="tags">
+            <is-phony/>
+            <command>ctags `pwd`/{examples,lib}/*.{cpp,h}</command>
+            <command>for d in examples lib ; do cd $(DDD) ; ln -sf ../tags . ; cd .. ; done</command>
+        </action>
+        <action id="ctags"><depends>tags</depends></action>
+
+        <action id="doc/html/refman/index.html">
+            <depends-on-file>lib/Doxyfile</depends-on-file>
+            <depends-on-file>lib/*.cpp</depends-on-file>
+            <depends-on-file>lib/*.h</depends-on-file>
+            <command>
+                mkdir -p doc/latex ; cd lib ; doxygen > /dev/null
+            </command>
+            <command>
+                mkdir -p doc/pdf ; cd doc/latex ; make ; cp refman.pdf ../pdf
+            </command>
+        </action>
+
+        <action id="doc/html/userman/index.html">
+            <depends-on-file>doc/userman/*.dbx</depends-on-file>
+            <depends-on-file>doc/userman/userman.dbx.in</depends-on-file>
+            <command>
+                cd doc/userman ; make html pdf ; cp userman.pdf ../pdf
+            </command>
+        </action>
+
+        <action id="doc">
+            <depends>doc/html/refman/index.html</depends>
+            <depends>doc/html/userman/index.html</depends>
+        </action>
+
+        <action id="@PACKAGE_NAME@-@PACKAGE_VERSION@">
+            <!-- Set up package directory -->
+            <command>
+                for d in config doc/{.,html}/{refman,userman} examples lib test ; \
+                do \
+                    mkdir -p $(PKGNAME)/$(DDD) ; \
+                done
+            </command>
+
+            <!-- Copy files into package directory -->
+            <!-- top directory -->
+            <command>
+                cp -RL *.bat *.txt Bakefiles.bkgen bootstrap ChangeLog \
+					cleanmf config.guess config.h.in config.sub configure* \
+                    dtest exrun install-sh libmysqlclient.def Makefile.* \
+					mysql++.* osver Wishlist $(PKGNAME)
+            </command>
+
+			<!-- VC++ project file subdirs -->
 			<command>
-				cd doc/html/refman ; \
-				rm -f doxygen.css [a-z]*.{dot,html,map,md5,png} ; \
-				rm -rf doc/latex doc/pdf
+				for d in vc200? ; do \
+					mkdir -p $(PKGNAME)/$(DDD) ; \
+					cp $(DDD)/*.{sln,vcproj} $(PKGNAME)/$(DDD) ; \
+				done
 			</command>
-		</modify-target>
-			
-		<action id="lib/custom.h">
-			<command>cd lib ; ./custom.pl</command>
-			<depends-on-file>lib/custom.pl</depends-on-file>
-		</action>
 
-		<action id="lib/querydef.h">
-			<command>cd lib ; ./querydef.pl</command>
-			<depends-on-file>lib/querydef.pl</depends-on-file>
-		</action>
+            <!-- config subdir -->
+            <command>cp config/*.m4 $(PKGNAME)/config</command>
 
-		<action id="tags">
-			<is-phony/>
-			<command>ctags `pwd`/{examples,lib}/*.{cpp,h}</command>
-			<command>for d in examples lib ; do cd $(DDD) ; ln -sf ../tags . ; cd .. ; done</command>
-		</action>
-		<action id="ctags"><depends>tags</depends></action>
-
-		<action id="doc/html/refman/index.html">
-			<depends-on-file>lib/Doxyfile</depends-on-file>
-			<depends-on-file>lib/*.cpp</depends-on-file>
-			<depends-on-file>lib/*.h</depends-on-file>
+            <!-- doc subdir -->
 			<command>
-				mkdir -p doc/latex ; cd lib ; doxygen > /dev/null
+				cp -RL doc/README* doc/pdf doc/ssqls-pretty $(PKGNAME)/doc
 			</command>
 			<command>
-				mkdir -p doc/pdf ; cd doc/latex ; make ; cp refman.pdf ../pdf
+				for f in LICENSE.txt Makefile mktxt README.txt \*.{dbx,in,xsl} ; \
+				do \
+					cp doc/userman/$(DDF) $(PKGNAME)/doc/userman ; \
+				done
 			</command>
-		</action>
-
-		<action id="doc/html/userman/index.html">
-			<depends-on-file>doc/userman/userman.dbx</depends-on-file>
 			<command>
-				cd doc/userman ; make html pdf ; cp userman.pdf ../pdf
+				for d in refman userman ; do \
+					for f in *.{css,html} ; do \
+						cp doc/html/$(DDD)/$(DDF) $(PKGNAME)/doc/html/$(DDD) ; \
+					done ; \
+				done
 			</command>
-		</action>
+			<command>
+				cp doc/html/refman/*.png $(PKGNAME)/doc/html/refman
+			</command>
 
-		<action id="doc">
-			<depends>doc/html/refman/index.html</depends>
-			<depends>doc/html/userman/index.html</depends>
-		</action>
+            <!-- examples subdir -->
+            <command>
+                cp examples/*.{cpp,h,jpg} $(PKGNAME)/examples
+            </command>
+            <command>
+                for d in mfc wforms ; \
+                do \
+                    mkdir -p $(PKGNAME)/examples/vstudio/$(DDD) ; \
+                    cp examples/vstudio/$(DDD)/*.{cpp,h,r*,vcproj} \
+                        $(PKGNAME)/examples/vstudio/$(DDD) ; \
+                done
+            </command>
+
+            <!-- lib subdir -->
+            <command>
+                cp lib/*.{cpp,h,in,pl} $(PKGNAME)/lib
+            </command>
+
+            <!-- test subdir -->
+            <command>
+                cp test/*.cpp $(PKGNAME)/test
+            </command>
+
+            <!-- re-bootstrap it to get a standard configuration -->
+            <command>cd $(PKGNAME) ; ./bootstrap nodoc nomaint</command>
+            <command>rm -f $(PKGNAME)/Makefile $(PKGNAME)/config.{log,status}</command>
+            <command>rm -fr $(PKGNAME)/autom4te.cache</command>
+        </action>
 
 		<action id="dist">
-			<if cond="BUILDDOCS=='yes'">
-				<depends>doc</depends>
-			</if>
+            <depends>$(PKGNAME)</depends>
+            <command>tar czf $(PKGNAME).tar.gz $(PKGNAME)</command>
+            <command>rm -rf $(PKGNAME)</command>
+        </action>
 
-			<!-- Set up package directory -->
-			<command>
-				for d in config doc/{.,html}/{refman,userman} examples lib ; \
-				do \
-					mkdir -p $(PKGNAME)/$(DDD) ; \
-				done
-			</command>
+        <action id="rpm">
+            <if cond="BUILDDOCS=='yes'">
+                <depends>doc</depends>
+            </if>
+            <depends>dist</depends>
+            <command>cp $(PKGNAME).tar.gz /usr/src/redhat/SOURCES</command>
+            <command>cd /usr/src/redhat/SPECS</command>
+            <command>rpmbuild -ba mysql++.spec</command>
+        </action>
 
-			<!-- Copy files into package directory -->
-			<!-- top directory -->
-			<command>
-				cp Bakefiles.bkgen bootstrap ChangeLog cleanmf \
-					config.guess config.h.in config.sub configure* \
-					COPYING CREDITS exrun* HACKERS INSTALL install.bat \
-					install-sh libmysqlclient.def LICENSE Makefile.* \
-					mysql++.* mysql++_*.ds? osver README* rebake \
-					reconf Wishlist $(PKGNAME)
-			</command>
-
-			<!-- config subdir -->
-			<command>cp config/*.m4 $(PKGNAME)/config</command>
-
-			<!-- doc subdir -->
-			<if cond="BUILDDOCS=='yes'">
-				<command>
-					cp -r doc/README* doc/pdf doc/ssqls-pretty $(PKGNAME)/doc
-				</command>
-				<command>
-					for f in LICENSE Makefile mktxt README *.{dbx,xsl} ; \
-					do \
-						cp doc/userman/$(DDF) $(PKGNAME)/doc/userman ; \
-					done
-				</command>
-				<command>
-					for d in refman userman ; do \
-						for f in *.{css,html} ; do \
-							cp doc/html/$(DDD)/$(DDF) $(PKGNAME)/doc/html/$(DDD) ; \
-						done ; \
-					done ; \
-					cp doc/html/refman/*.png $(PKGNAME)/doc/html/refman
-				</command>
-			</if>
-			<if cond="BUILDDOCS=='no'">
-				<command>
-					mkdir -p $(PKGNAME)/doc/html $(PKGNAME)/doc/pdf ;
-					cp -r doc/README* doc/ssqls-pretty $(PKGNAME)/doc
-				</command>
-			</if>
-
-			<!-- examples subdir -->
-			<command>
-				cp examples/*.{cpp,h,jpg} $(PKGNAME)/examples
-			</command>
-			<command>
-				for d in mfc wforms ; \
-				do \
-					mkdir -p $(PKGNAME)/examples/vstudio/$(DDD) ; \
-					cp examples/vstudio/$(DDD)/*.{cpp,h,r*,vcproj} \
-						$(PKGNAME)/examples/vstudio/$(DDD) ; \
-				done
-			</command>
-
-			<!-- lib subdir -->
-			<command>
-				cp lib/*.{cpp,h,in,pl} $(PKGNAME)/lib
-			</command>
-
-			<!-- distribution dir created, so pack up a copy and 
-			     nuke the temporary -->
-			<command>tar czf $(PKGNAME).tar.gz $(PKGNAME)</command>
-			<command>rm -rf $(PKGNAME)</command>
-		</action>
-
-		<action id="rpm-setup">
-			<command>cp $(PKGNAME).tar.gz /usr/src/redhat/SOURCES</command>
-			<depends>dist</depends>
-		</action>
-
-		<action id="rpm">
-			<command>cd /usr/src/redhat/SPECS</command>
-			<command>rpmbuild -bb mysql++.spec</command>
-			<depends>rpm-setup</depends>
-		</action>
-
-		<action id="srpm">
-			<command>cd /usr/src/redhat/SPECS</command>
-			<command>rpmbuild -bs mysql++.spec</command>
-			<depends>rpm-setup</depends>
-		</action>
-
-		<action id="ebuild">
-			<depends>dist</depends>
-			<command>cp $(PKGNAME).tar.gz /usr/portage/distfiles</command>
-			<command>
-				cp mysql++.ebuild /usr/portage/dev-db/mysql++/$(PKGNAME).ebuild
-			</command>
-			<command>
-				ebuild /usr/portage/dev-db/mysql++/$(PKGNAME).ebuild digest
-			</command>
-		</action>
-	</if>
+        <action id="ebuild">
+            <depends>dist</depends>
+            <command>cp $(PKGNAME).tar.gz /usr/portage/distfiles</command>
+            <command>
+                cp mysql++.ebuild /usr/portage/dev-db/mysql++/$(PKGNAME).ebuild
+            </command>
+            <command>
+                ebuild /usr/portage/dev-db/mysql++/$(PKGNAME).ebuild digest
+            </command>
+        </action>
+    </if>
 </makefile>

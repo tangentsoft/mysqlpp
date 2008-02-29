@@ -5,10 +5,10 @@
 /// derivative, any of these exceptions can be thrown on error.
 
 /***********************************************************************
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the CREDITS
- file in the top directory of the distribution for details.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS file in
+ the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -28,10 +28,10 @@
  USA
 ***********************************************************************/
 
-#ifndef MYSQLPP_EXCEPTIONS_H
+#if !defined(MYSQLPP_EXCEPTIONS_H)
 #define MYSQLPP_EXCEPTIONS_H
 
-#include "connection.h"
+#include "options.h"
 
 #include <exception>
 #include <string>
@@ -161,7 +161,7 @@ class MYSQLPP_EXPORT BadFieldName : public Exception
 public:
 	/// \brief Create exception object
 	///
-	/// \param bad_field name of field the MySQL server didn't like
+	/// \param bad_field name of field the database server didn't like
 	explicit BadFieldName(const char* bad_field) :
 	Exception(std::string("Unknown field name: ") + bad_field)
 	{
@@ -172,20 +172,6 @@ public:
 };
 
 
-/// \brief Exception thrown when you attempt to convert a SQL null
-/// to an incompatible type.
-
-class MYSQLPP_EXPORT BadNullConversion : public Exception
-{
-public:
-	/// \brief Create exception object
-	explicit BadNullConversion(const char* w = "") :
-	Exception(w)
-	{
-	}
-};
-
-
 /// \brief Exception thrown when you pass an unrecognized option to
 /// Connection::set_option().
 
@@ -193,26 +179,27 @@ class MYSQLPP_EXPORT BadOption : public Exception
 {
 public:
 	/// \brief Create exception object, taking C string
-	explicit BadOption(const char* w,
-			Connection::Option o) :
+	explicit BadOption(const char* w, const std::type_info& ti) :
 	Exception(w),
-	option_(o)
+	ti_(ti)
 	{
 	}
 
 	/// \brief Create exception object, taking C++ string
-	explicit BadOption(const std::string& w,
-			Connection::Option o) :
+	explicit BadOption(const std::string& w, const std::type_info& ti) :
 	Exception(w),
-	option_(o)
+	ti_(ti)
 	{
 	}
 
-	/// \brief Return the option that failed
-	Connection::Option what_option() const { return option_; }
+	/// \brief Return type information about the option that failed
+	///
+	/// Because each option has its own C++ type, this lets you
+	/// distinguish among BadOption exceptions programmatically.
+	const std::type_info& what_option() const { return ti_; }
 
 private:
-	Connection::Option option_;
+	const std::type_info& ti_;
 };
 
 
@@ -234,101 +221,149 @@ public:
 	~BadParamCount() throw() { }
 };
 
+/// \brief Exception thrown when something goes wrong in processing a
+/// "use" query.
 
-/// \brief Exception thrown when MySQL encounters a problem while
-/// processing your query.
-///
-/// This exception is typically only thrown when the server rejects a
-/// SQL query.  In v1.7, it was used as a more generic exception type,
-/// for no particularly good reason.
-
-class MYSQLPP_EXPORT BadQuery : public Exception
+class MYSQLPP_EXPORT UseQueryError : public Exception
 {
 public:
-	/// \brief Create exception object, taking C string
-	explicit BadQuery(const char* w = "") :
-	Exception(w)
-	{
-	}
-
-	/// \brief Create exception object, taking C++ string
-	explicit BadQuery(const std::string& w) :
+	/// \brief Create exception object
+	explicit UseQueryError(const char* w = "") :
 	Exception(w)
 	{
 	}
 };
 
 
-/// \brief Exception thrown when there is a problem establishing the
-/// database server connection.  It's also thrown if
-/// Connection::shutdown() fails.
+/// \brief Exception thrown when the database server encounters a problem
+/// while processing your query.
+///
+/// Unlike most other MySQL++ exceptions, which carry just an error
+/// message, this type carries an error number to preserve
+/// Connection::errnum()'s return value at the point the exception is 
+/// thrown.  We do this because when using the Transaction class, the
+/// rollback process that occurs during stack unwinding issues a query
+/// to the database server, overwriting the error value.  This rollback
+/// should always succeed, so this effect can fool code that relies on
+/// Connection::errnum() into believing that there was no error.
+///
+/// Beware that in older versions of MySQL++, this was effectively the
+/// generic exception type.  (This is most especially true in v1.7.x,
+/// but it continued to a lesser extent through the v2.x series.)  When
+/// converting old code to new versions of MySQL++, it's therefore
+/// possible to get seemingly "new" exceptions thrown, which could crash
+/// your program if you don't also catch a more generic type like
+/// mysqlpp::Exception or std::exception.
+
+class MYSQLPP_EXPORT BadQuery : public Exception
+{
+public:
+	/// \brief Create exception object
+	///
+	/// \param w explanation for why the exception was thrown
+	/// \param e the error number from the underlying database API
+	explicit BadQuery(const char* w = "", int e = 0) :
+	Exception(w), 
+	errnum_(e)
+	{
+	}
+
+	/// \brief Create exception object
+	///
+	/// \param w explanation for why the exception was thrown
+	/// \param e the error number from the underlying database API
+	explicit BadQuery(const std::string& w, int e = 0) :
+	Exception(w), 
+	errnum_(e)
+	{
+	}
+
+	/// \brief Return the error number corresponding to the error
+	/// message returned by what()
+	///
+	/// This may return the same value as Connection::errnum(), but not
+	/// always.  See the overview documentation for this class for the
+	/// reason for the difference.
+	int errnum() const { return errnum_; }
+	
+private:	
+	int	errnum_;	///< error number associated with execption
+};
+
+
+/// \brief Exception thrown when there is a problem related to the
+/// database server connection.
+///
+/// This is thrown not just on making the connection, but also on
+/// shutdown and when calling certain of Connection's methods that
+/// require a connection when there isn't one.
 
 class MYSQLPP_EXPORT ConnectionFailed : public Exception
 {
 public:
 	/// \brief Create exception object
-	explicit ConnectionFailed(const char* w = "") :
-	Exception(w)
+	///
+	/// \param w explanation for why the exception was thrown
+	/// \param e the error number from the underlying database API
+	explicit ConnectionFailed(const char* w = "", int e = 0) :
+	Exception(w),
+	errnum_(e)
 	{
 	}
+
+	/// \brief Return the error number corresponding to the error
+	/// message returned by what(), if any.
+	///
+	/// If the error number is 0, it means that the error message
+	/// doesn't come from the underlying database API, but rather from
+	/// MySQL++ itself.  This happens when an error condition is
+	/// detected up at this higher level instead of letting the
+	/// underlying database API do it.
+	int errnum() const { return errnum_; }
+	
+private:	
+	int	errnum_;	///< error number associated with execption
 };
 
 
 /// \brief Exception thrown when the program tries to select a new
-/// database and the server refuses for some reason.
+/// database and the database server refuses for some reason.
 
 class MYSQLPP_EXPORT DBSelectionFailed : public Exception
 {
 public:
 	/// \brief Create exception object
-	explicit DBSelectionFailed(const char* w = "") :
-	Exception(w)
+	///
+	/// \param w explanation for why the exception was thrown
+	/// \param e the error number from the underlying database API
+	explicit DBSelectionFailed(const char* w = "", int e = 0) :
+	Exception(w),
+	errnum_(e)
 	{
 	}
+
+	/// \brief Return the error number corresponding to the error
+	/// message returned by what(), if any.
+	///
+	/// If the error number is 0, it means that the error message
+	/// doesn't come from the underlying database API, but rather from
+	/// MySQL++ itself.  This happens when an error condition is
+	/// detected up at this higher level instead of letting the
+	/// underlying database API do it.
+	int errnum() const { return errnum_; }
+	
+private:	
+	int	errnum_;	///< error number associated with execption
 };
 
 
-/// \brief Exception thrown when ResUse::fetch_row() walks off the end
-/// of a use-query's result set.
+/// \brief Exception thrown when a BeecryptMutex object fails.
 
-class MYSQLPP_EXPORT EndOfResults : public Exception
+class MYSQLPP_EXPORT MutexFailed : public Exception
 {
 public:
 	/// \brief Create exception object
-	explicit EndOfResults(const char* w = "end of results") :
-	Exception(w)
-	{
-	}
-};
-
-
-/// \brief Exception thrown when Query::store_next() walks off the end
-/// of a use-query's multi result sets.
-
-class MYSQLPP_EXPORT EndOfResultSets : public Exception
-{
-public:
-	/// \brief Create exception object
-	explicit EndOfResultSets(const char* w = "end of result sets") :
-	Exception(w)
-	{
-	}
-};
-
-
-/// \brief Exception thrown when a Lockable object fails.
-///
-/// Currently, "failure" means that the object is already locked when
-/// you make a call that tries to lock it again.  In the future, that
-/// case will probably result in the second thread blocking, but the
-/// thread library could assert other errors that would keep this
-/// exception relevant.
-
-class MYSQLPP_EXPORT LockFailed : public Exception
-{
-public:
-	/// \brief Create exception object
-	explicit LockFailed(const char* w = "lock failed") :
+	explicit MutexFailed(const char* w = "lock failed") :
 	Exception(w)
 	{
 	}
@@ -349,6 +384,41 @@ public:
 };
 
 
+/// \brief Used within MySQL++'s test harness only.
+
+class MYSQLPP_EXPORT SelfTestFailed : public Exception
+{
+public:
+	/// \brief Create exception object
+	explicit SelfTestFailed(const std::string& w) :
+	Exception(w)
+	{
+	}
+};
+
+
+/// \brief Thrown from the C++ to SQL data type conversion routine when
+/// it can't figure out how to map the type.
+///
+/// This exception is not optional.  The only alternatives when this
+/// happens are equally drastic: basically, either iterate past the
+/// end of an array (crashing the program) or call assert() to crash
+/// the program nicely.  At least this way you have some control over
+/// how your program ends.  You can even ignore the error and keep on
+/// going: this typically happens when building a SQL query, so you can
+/// handle it just the same as if the subsequent query execution failed.
+
+class MYSQLPP_EXPORT TypeLookupFailed : public Exception
+{
+public:
+	/// \brief Create exception object
+	explicit TypeLookupFailed(const std::string& w) :
+	Exception(w)
+	{
+	}
+};
+
+
 } // end namespace mysqlpp
 
-#endif
+#endif // !defined(MYSQLPP_EXCEPTIONS_H)

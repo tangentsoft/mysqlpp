@@ -1,10 +1,10 @@
 /***********************************************************************
  field_types.cpp - Implements the FieldTypes class.
 
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the CREDITS
- file in the top directory of the distribution for details.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS file in
+ the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -33,12 +33,12 @@
 
 namespace mysqlpp {
 
-void FieldTypes::init(const ResUse * res)
+void FieldTypes::init(const ResultBase* res)
 {
 	int num = res->num_fields();
 	reserve(num);
 	for (int i = 0; i < num; i++) {
-		push_back(res->fields(i));
+		push_back(res->field(i).type());
 	}
 }
 

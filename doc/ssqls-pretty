@@ -5,7 +5,7 @@ use IPC::Open2;
 if ($ARGV[0] =~ /^--command\=(.+)/) {
     $command = $1;
 } else {
-    $command = "g++ -E";
+    $command = "g++ -E -I /usr/include/mysql";
 }
 
 if (-e 'lib/mysql++.h') {
@@ -22,7 +22,7 @@ $orgcode = <STDIN>;
 
 $out = << "---";
 
-#include <custom-macros.h>
+#include <ssqls.h>
 
 $macro
 

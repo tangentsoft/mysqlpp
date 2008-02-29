@@ -152,7 +152,7 @@ CExampleDlg::OnBnClickedConnectButton()
 	// Retrieve a subset of the sample stock table set up by resetdb
 	mysqlpp::Query query = con.query();
 	query << "select item from stock";
-	mysqlpp::Result res = query.store();
+	mysqlpp::StoreQueryResult res = query.store();
 
 	if (res) {
 		// Display the result set
@@ -169,7 +169,7 @@ CExampleDlg::OnBnClickedConnectButton()
 	else {
 		// Retreive failed
 		AddMessage(_T("Failed to get item list:"));
-		if (ToUCS2(awcTempBuf, kTempBufSize, query.error().c_str())) {
+		if (ToUCS2(awcTempBuf, kTempBufSize, query.error())) {
 			AddMessage(awcTempBuf);
 		}
 	}

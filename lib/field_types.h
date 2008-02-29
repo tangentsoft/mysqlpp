@@ -36,7 +36,7 @@ namespace mysqlpp {
 
 #if !defined(DOXYGEN_IGNORE)
 // Make Doxygen ignore this
-class MYSQLPP_EXPORT ResUse;
+class MYSQLPP_EXPORT ResultBase;
 #endif
 
 /// \brief A vector of SQL field types.
@@ -47,7 +47,7 @@ public:
 	FieldTypes() { }
 	
 	/// \brief Create list of field types from a result set
-	FieldTypes(const ResUse* res)
+	FieldTypes(const ResultBase* res)
 	{
 		init(res);
 	}
@@ -59,7 +59,7 @@ public:
 	}
 
 	/// \brief Initialize field list based on a result set
-	FieldTypes& operator =(const ResUse* res)
+	FieldTypes& operator =(const ResultBase* res)
 	{
 		init(res);
 		return *this;
@@ -75,21 +75,8 @@ public:
 		return *this;
 	}
 
-	/// \brief Returns a field type within the list given its index.
-	mysql_type_info& operator [](int i)
-	{
-		return std::vector<mysql_type_info>::operator [](i);
-	}
-
-	/// \brief Returns a field type within the list given its index,
-	/// in const context.
-	const mysql_type_info& operator [](int i) const
-	{
-		return std::vector<mysql_type_info>::operator [](i);
-	}
-
 private:
-	void init(const ResUse* res);
+	void init(const ResultBase* res);
 };
 
 } // end namespace mysqlpp

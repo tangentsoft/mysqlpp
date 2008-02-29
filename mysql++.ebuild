@@ -35,9 +35,9 @@ src_compile() {
 src_install() {
 	make DESTDIR=${D} install || die
 	# install the docs and HTML pages
-	dodoc README LGPL
+	dodoc README* LICENSE.txt
 	dodoc doc/*
-	dohtml doc/man-html/*
+	dohtml doc/html/*
 	prepalldocs
 }
 

@@ -1,11 +1,4 @@
 ## ------------------------
-## Things you may need to diddle for your local system
-## ------------------------
-
-FOPDIR=/usr/local/fop
-
-
-## ------------------------
 ## Input files
 ## ------------------------
 
@@ -17,10 +10,11 @@ FOFILE=$(BASENAME).fo
 COMMON_SS=common.xsl
 FO_SS=fo.xsl
 HTML_SS=html.xsl
-EX_TXT=cgi_jpeg.txt custom1.txt custom2.txt custom3.txt custom4.txt \
-		custom5.txt custom6.txt fieldinf1.txt for_each.txt load_jpeg.txt \
-		resetdb.txt simple1.txt simple2.txt simple3.txt stock.txt \
-		store_if.txt tquery.txt xaction.txt
+EX_TXT=cgi_jpeg.txt cpool.txt deadlock.txt fieldinf.txt for_each.txt \
+		load_jpeg.txt multiquery.txt resetdb.txt simple1.txt \
+		simple2.txt simple3.txt ssqls1.txt ssqls2.txt ssqls3.txt \
+		ssqls4.txt ssqls5.txt stock.txt store_if.txt tquery1.txt \
+		transaction.txt
 
 
 ## ------------------------
@@ -51,12 +45,12 @@ clean:
 ## How to make output files
 ## ------------------------
 
-$(PDFFILE): $(DOCFILE) $(FO_SS) $(COMMON_SS)
+$(PDFFILE): *.dbx *.in $(FO_SS) $(COMMON_SS)
 	xsltproc --xinclude $(FO_SS) $(DOCFILE) > $(FOFILE)
-	$(FOPDIR)/fop -q -fo $(FOFILE) $(PDFFILE)
-	cp $(PDFFILE) ../pdf
+	./fo2pdf $(FOFILE) $(PDFFILE)
+	mkdir -p ../pdf && cp $(PDFFILE) ../pdf
 
-$(HTML_DIR)/index.html: $(DOCFILE) $(EX_TXT) $(HTML_SS) $(COMMON_SS)
+$(HTML_DIR)/index.html: *.dbx *.in $(EX_TXT) $(HTML_SS) $(COMMON_SS)
 	@xmllint --xinclude --postvalid --noent --noout $(DOCFILE)
 	xsltproc --xinclude -o $(HTML_DIR)/ $(HTML_SS) $(DOCFILE)
 
@@ -67,3 +61,6 @@ $(HTML_DIR)/index.html: $(DOCFILE) $(EX_TXT) $(HTML_SS) $(COMMON_SS)
 
 $(EX_TXT):
 	@./mktxt $@
+
+userman.dbx: userman.dbx.in
+	( cd ../.. ; ./config.status )

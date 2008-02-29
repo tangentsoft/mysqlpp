@@ -90,43 +90,43 @@ void create_vector(const Container& c, std::vector<bool>& v,
 {
 	v.insert(v.begin(), c.size(), false);
 
-	v[c.parent().field_num(s0)] = true;
+	v[c.field_num(s0.c_str())] = true;
 	if (s1.empty()) return;
 
-	v[c.parent().field_num(s1)] = true;
+	v[c.field_num(s1.c_str())] = true;
 	if (s2.empty()) return;
 
-	v[c.parent().field_num(s2)] = true;
+	v[c.field_num(s2.c_str())] = true;
 	if (s3.empty()) return;
 
-	v[c.parent().field_num(s3)] = true;
+	v[c.field_num(s3.c_str())] = true;
 	if (s4.empty()) return;
 
-	v[c.parent().field_num(s4)] = true;
+	v[c.field_num(s4.c_str())] = true;
 	if (s5.empty()) return;
 
-	v[c.parent().field_num(s5)] = true;
+	v[c.field_num(s5.c_str())] = true;
 	if (s6.empty()) return;
 
-	v[c.parent().field_num(s6)] = true;
+	v[c.field_num(s6.c_str())] = true;
 	if (s7.empty()) return;
 
-	v[c.parent().field_num(s7)] = true;
+	v[c.field_num(s7.c_str())] = true;
 	if (s8.empty()) return;
 
-	v[c.parent().field_num(s8)] = true;
+	v[c.field_num(s8.c_str())] = true;
 	if (s9.empty()) return;
 
-	v[c.parent().field_num(s9)] = true;
+	v[c.field_num(s9.c_str())] = true;
 	if (sa.empty()) return;
 
-	v[c.parent().field_num(sa)] = true;
+	v[c.field_num(sa.c_str())] = true;
 	if (sb.empty()) return;
 
-	v[c.parent().field_num(sb)] = true;
+	v[c.field_num(sb.c_str())] = true;
 	if (sc.empty()) return;
 
-	v[c.parent().field_num(sc)] = true;
+	v[c.field_num(sc.c_str())] = true;
 }
 
 

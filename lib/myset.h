@@ -3,10 +3,10 @@
 /// elsewhere in the library.
 
 /***********************************************************************
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the CREDITS
- file in the top directory of the distribution for details.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS file in
+ the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -31,12 +31,11 @@
 
 #include "common.h"
 
-#include "coldata.h"
+#include "mystring.h"
 #include "stream2string.h"
 
 #include <iostream>
 #include <set>
-#include <vector>
 
 namespace mysqlpp {
 
@@ -88,32 +87,17 @@ public:
 	}
 	
 	/// \brief Create object from a comma-separated list of values
-	Set(const ColData& str)
+	Set(const String& str)
 	{
 		set2container(str.c_str(), set_insert(this));
 	}
 
-	/// \brief Insert this set's data into a C++ stream in
-	/// comma-separated format.
-	std::ostream& out_stream(std::ostream& s) const
-	{
-		typename Container::const_iterator i = Container::begin();
-		typename Container::const_iterator e = Container::end();
-
-		while (true) {
-			s << *i;
-			if (++i == e) {
-				break;
-			}
-			s << ",";
-		}
-		
-		return s;
-	}
-
 	/// \brief Convert this set's data to a string containing
 	/// comma-separated items.
-	operator std::string() { return stream2string<std::string>(*this); }
+	operator std::string() const { return stream2string(*this); }
+
+	/// \brief Return our value in std::string form
+	std::string str() const { return *this; }
 };
 
 
@@ -122,7 +106,20 @@ template <class Container>
 inline std::ostream& operator <<(std::ostream& s,
 		const Set<Container>& d)
 {
-	return d.out_stream(s);
+	typename Container::const_iterator i = d.begin();
+	typename Container::const_iterator e = d.end();
+
+	if (i != e) {
+		while (true) {
+			s << *i;
+			if (++i == e) {
+				break;
+			}
+			s << ",";
+		}
+	}
+	
+	return s;
 }
 
 
@@ -132,20 +129,27 @@ inline std::ostream& operator <<(std::ostream& s,
 template <class Insert>
 void set2container(const char* str, Insert insert)
 {
-	while (1) {
-		MutableColData s("");
-		while (*str != ',' && *str) {
-			s += *str;
-			str++;
+	std::string temp;
+
+	// Break str up using comma separators
+	while (str && *str) {
+		if (*str == ',') {
+			insert(temp);
+			temp.clear();
+
+			// Handle comma at end of string case
+			if (*++str) {
+				++str;
+			}
 		}
-
-		insert(s);
-
-		if (!*str) {
-			break; 
+		else {
+			temp += *str++;
 		}
+	}
 
-		str++;
+	// Save final element of set, if any
+	if (temp.size()) {
+		insert(temp);
 	}
 }
 

@@ -9,10 +9,10 @@
 /// trivial compile time benefits, at the expense of clarity.
 
 /***********************************************************************
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004-2007 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the CREDITS
- file in the top directory of the distribution for details.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2008 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS file in
+ the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -54,8 +54,10 @@
 // This #include order gives the fewest redundancies in the #include
 // dependency chain.
 #include "connection.h"
+#include "cpool.h"
 #include "query.h"
 #include "sql_types.h"
+#include "transaction.h"
 
 namespace mysqlpp {
 
@@ -67,6 +69,19 @@ namespace mysqlpp {
 /// program is using header files from the same version of MySQL++ as
 /// the actual library you're linking to.
 MYSQLPP_EXPORT unsigned int get_library_version();
+
+// This won't exist forever!  Wean yourself away from these as soon as
+// you can!
+#if defined(MYSQLPP_OLD_CLASS_NAMES)
+#	define ColData String
+#	define NullisBlank NullIsBlank
+#	define NullisNull NullIsNull
+#	define NullisZero NullIsZero
+#	define ResNSel SimpleResult
+#	define Result StoreQueryResult
+#	define ResUse UseQueryResult
+#	define SQLString SQLTypeAdapter
+#endif
 
 } // end namespace mysqlpp
 
@@ -85,8 +100,9 @@ MYSQLPP_EXPORT unsigned int get_library_version();
 
 	\section classes Major Classes
 
-	In MySQL++, the main user-facing classes are mysqlpp::Connection,
-	mysqlpp::Query, mysqlpp::Result, and mysqlpp::Row.
+	In MySQL++, the main user-facing classes are
+	mysqlpp::Connection, mysqlpp::Query, mysqlpp::Row,
+	mysqlpp::StoreQueryResult, and mysqlpp::UseQueryResult.
 
 	In addition, MySQL++ has a mechanism called Specialized SQL
 	Structures (SSQLS), which allow you to create C++ structures

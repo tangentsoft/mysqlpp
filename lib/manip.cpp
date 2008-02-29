@@ -2,10 +2,10 @@
  manip.cpp - Implements MySQL++'s various quoting/escaping stream
 	manipulators.
 
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the CREDITS
- file in the top directory of the distribution for details.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS file in
+ the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -31,513 +31,220 @@
 
 using namespace std;
 
-// Manipulator stuff is _always_ in namespace mysqlpp.
 namespace mysqlpp {
 
-/// \brief Set to true if you want to suppress automatic quoting
-///
-/// Works only for ColData inserted into C++ streams.
-
-bool dont_quote_auto = false;
-
-
-/// \brief Inserts a SQLString into a stream, quoted and escaped.
-///
-/// If in.is_string is set and in.dont_escape is \e not set, the string
-/// is quoted and escaped.
-///
-/// If both in.is_string and in.dont_escape are set, the string is
-/// quoted but not escaped.
-///
-/// If in.is_string is not set, the data is inserted as-is.  This is
-/// the case when you initialize SQLString with one of the constructors
-/// taking an integral type, for instance.
-
-SQLQueryParms& operator <<(quote_type2 p, SQLString& in)
+SQLQueryParms&
+operator <<(quote_type2 p, SQLTypeAdapter& in)
 {
-	if (in.is_string) {
-		SQLString in2('\'');
-		if (in.dont_escape) {
-			in2 += in;
-			in2 += '\'';
-			in2.processed = true;
-			return *p.qparms << in2;
-		}
-		else {
-			char* s = new char[in.length() * 2 + 1];
-			size_t len = mysql_escape_string(s, in.data(), in.length());
-			in2.append(s, len);
-			in2 += '\'';
-			in2.processed = true;
-			*p.qparms << in2;
-			delete[] s;
-			return *p.qparms;
-		}
-	}
-	else {
-		in.processed = true;
-		return *p.qparms << in;
-	}
-}
-
-
-/// \brief Inserts a C++ string into a stream, quoted and escaped
-///
-/// Because std::string lacks the type information we need, the string
-/// is both quoted and escaped, always.
-
-template <>
-ostream& operator <<(quote_type1 o, const string& in)
-{
-	char* s = new char[in.length() * 2 + 1];
-	size_t len = mysql_escape_string(s, in.data(), in.length());
-
-	o.ostr->write("'", 1);
-	o.ostr->write(s, len);
-	o.ostr->write("'", 1);
-
-	delete[] s;
-	return *o.ostr;
-}
-
-
-/// \brief Inserts a C string into a stream, quoted and escaped
-///
-/// Because C strings lack the type information we need, the string
-/// is both quoted and escaped, always.
-
-template <>
-ostream& operator <<(quote_type1 o, const char* const& in)
-{
-	size_t len = strlen(in);
-	char* s = new char[len * 2 + 1];
-	len = mysql_escape_string(s, in, len);
-
-	o.ostr->write("'", 1);
-	o.ostr->write(s, len);
-	o.ostr->write("'", 1);
-
-	delete[] s;
-	return *o.ostr;
-}
-
-
-/// \brief Utility function used by operator<<(quote_type1, ColData)
-
-template<class Str>
-inline ostream& _manip(quote_type1 o, const ColData_Tmpl<Str>& in)
-{
-	if (in.escape_q()) {
-		char* s = new char[in.length() * 2 + 1];
-		size_t len = mysql_escape_string(s, in.data(), in.length());
-
-		if (in.quote_q()) o.ostr->write("'", 1);
-		o.ostr->write(s, len);
-		if (in.quote_q()) o.ostr->write("'", 1);
-
-		delete[] s;
-	}
-	else {
-		if (in.quote_q()) o.ostr->write("'", 1);
-		o.ostr->write(in.data(), in.length());
-		if (in.quote_q()) o.ostr->write("'", 1);
-	}
-
-	return *o.ostr;
-}
-
-
-/// \brief Inserts a ColData into a stream, quoted and escaped
-///
-/// Because ColData was designed to contain MySQL type data, we may
-/// choose not to actually quote or escape the data, if it is not
-/// needed.
-
-template <>
-ostream& operator <<(quote_type1 o, const ColData_Tmpl<string>& in)
-{
-	return _manip(o, in);
-}
-
-
-/// \brief Inserts a ColData with const string into a stream, quoted and
-/// escaped
-///
-/// Because ColData was designed to contain MySQL type data, we may
-/// choose not to actually quote or escape the data, if it is not
-/// needed.
-
-template <>
-ostream& operator <<(quote_type1 o, const ColData_Tmpl<const_string>& in)
-{
-	return _manip(o, in);
-}
-
-
-/// \brief Inserts a ColData into a stream.
-///
-/// Because ColData was designed to contain MySQL type data, this
-/// operator has the information needed to choose to quote and/or escape
-/// the data as it is inserted into the stream, even if you don't use
-/// any of the quoting or escaping manipulators.
-
-ostream& operator <<(ostream& o, const ColData_Tmpl<string>& in)
-{
-	// Decide if we're allowed to escape or quote the data.
-	bool transform_ok =
-			!dont_quote_auto &&
-			(o.rdbuf() != cout.rdbuf()) &&
-			(o.rdbuf() != cerr.rdbuf());
-
-	if (transform_ok && in.escape_q()) {
-		char* s = new char[in.length() * 2 + 1];
-		size_t len = mysql_escape_string(s, in.data(), in.length());
-
-		if (in.quote_q()) o << '\'';
-		o.write(s, len);
-		if (in.quote_q()) o << '\'';
-
-		delete[] s;
-	}
-	else {
-		bool add_quote = transform_ok && in.quote_q();
-
-		if (add_quote) o << '\'';
-		o.write(in.data(), in.length());
-		if (add_quote) o << '\'';
-	}
-
-	return o;
-}
-
-
-/// \brief Inserts a ColData with const string into a stream.
-///
-/// Because ColData was designed to contain MySQL type data, this
-/// operator has the information needed to choose to quote and/or escape
-/// the data as it is inserted into the stream, even if you don't use
-/// any of the quoting or escaping manipulators.
-
-ostream& operator <<(ostream& o, const ColData_Tmpl<const_string>& in)
-{
-	// Decide if we're allowed to escape or quote the data.
-	bool transform_ok =
-			!dont_quote_auto &&
-			(o.rdbuf() != cout.rdbuf()) &&
-			(o.rdbuf() != cerr.rdbuf());
-
-	if (transform_ok && in.escape_q()) {
-		char* s = new char[in.length() * 2 + 1];
-		size_t len = mysql_escape_string(s, in.data(), in.length());
-
-		if (in.quote_q()) o << '\'';
-		o.write(s, len);
-		if (in.quote_q()) o << '\'';
-
-		delete[] s;
-	}
-	else {
-		bool add_quote = transform_ok && in.quote_q();
-
-		if (add_quote) o << '\'';
-		o.write(in.data(), in.length());
-		if (add_quote) o << '\'';
-	}
-
-	return o;
-}
-
-
-/// \brief Insert a ColData into a SQLQuery
-///
-/// This operator appears to be a workaround for a weakness in one
-/// compiler's implementation of the C++ type system.  See Wishlist for
-/// current plan on what to do about this.
-
-Query& operator <<(Query& o, const ColData_Tmpl<string>& in)
-{
-	if (dont_quote_auto) {
-		o.write(in.data(), in.length());
-	}
-	else if (in.escape_q()) {
-		char* s = new char[in.length() * 2 + 1];
-		size_t len = mysql_escape_string(s, in.data(), in.length());
-
-		if (in.quote_q()) o.write("'", 1);
-		o.write(s, len);
-		if (in.quote_q()) o.write("'", 1);
-
-		delete[] s;
-	}
-	else {
-		if (in.quote_q()) o.write("'", 1);
-		o.write(in.data(), in.length());
-		if (in.quote_q()) o.write("'", 1);
-	}
-
-	return o;
-}
-
-
-/// \brief Insert a ColData with const string into a SQLQuery
-///
-/// This operator appears to be a workaround for a weakness in one
-/// compiler's implementation of the C++ type system.  See Wishlist for
-/// current plan on what to do about this.
-
-Query& operator <<(Query& o, const ColData_Tmpl<const_string>& in)
-{
-	if (dont_quote_auto) {
-		o.write(in.data(), in.length());
-	}
-	else if (in.escape_q()) {
-		char* s = new char[in.length() * 2 + 1];
-		size_t len = mysql_escape_string(s, in.data(), in.length());
-
-		if (in.quote_q()) o.write("'", 1);
-		o.write(s, len);
-		if (in.quote_q()) o.write("'", 1);
-
-		delete[] s;
-	}
-	else {
-		if (in.quote_q()) o.write("'", 1);
-		o.write(in.data(), in.length());
-		if (in.quote_q()) o.write("'", 1);
-	}
-
-	return o;
-}
-
-
-/// \brief Inserts a SQLString into a stream, quoting it unless it's
-/// data that needs no quoting.
-///
-/// We make the decision to quote the data based on the in.is_string
-/// flag.  You can set it yourself, but SQLString's ctors should set
-/// it correctly for you.
-
-SQLQueryParms& operator <<(quote_only_type2 p, SQLString& in)
-{
-	if (in.is_string) {
-		SQLString in2;
-		in2 = '\'' + in + '\'';
-		in2.processed = true;
-		return *p.qparms << in2;
-	}
-	else {
-		in.processed = true;
-		return *p.qparms << in;
-	}
-}
-
-
-/// \brief Inserts a ColData into a stream, quoted
-///
-/// Because ColData was designed to contain MySQL type data, we may
-/// choose not to actually quote the data, if it is not needed.
-
-template <>
-ostream& operator <<(quote_only_type1 o, const ColData_Tmpl<string>& in)
-{
-	if (in.quote_q()) o.ostr->write("'", 1);
-	o.ostr->write(in.data(), in.length());
-	if (in.quote_q()) o.ostr->write("'", 1);
-
-	return *o.ostr;
-}
-
-
-/// \brief Inserts a ColData with const string into a stream, quoted
-///
-/// Because ColData was designed to contain MySQL type data, we may
-/// choose not to actually quote the data, if it is not needed.
-
-template <>
-ostream& operator <<(quote_only_type1 o,
-		const ColData_Tmpl<const_string>& in)
-{
-	if (in.quote_q()) o.ostr->write("'", 1);
-	o.ostr->write(in.data(), in.length());
-	if (in.quote_q()) o.ostr->write("'", 1);
-
-	return *o.ostr;
-}
-
-
-/// \brief Inserts a SQLString into a stream, double-quoting it (")
-/// unless it's data that needs no quoting.
-///
-/// We make the decision to quote the data based on the in.is_string
-/// flag.  You can set it yourself, but SQLString's ctors should set
-/// it correctly for you.
-
-SQLQueryParms& operator <<(quote_double_only_type2 p, SQLString& in)
-{
-	if (in.is_string) {
-		SQLString in2;
-		in2 = "\"" + in + "\"";
-		in2.processed = true;
-		return *p.qparms << in2;
-	}
-	else {
-		in.processed = true;
-		return *p.qparms << in;
-	}
-}
-
-
-/// \brief Inserts a ColData into a stream, double-quoted (")
-///
-/// Because ColData was designed to contain MySQL type data, we may
-/// choose not to actually quote the data, if it is not needed.
-
-template <>
-ostream& operator <<(quote_double_only_type1 o,
-		const ColData_Tmpl<string>& in)
-{
-	if (in.quote_q()) o.ostr->write("\"", 1);
-	o.ostr->write(in.data(), in.length());
-	if (in.quote_q()) o.ostr->write("\"", 1);
-
-	return *o.ostr;
-}
-
-
-/// \brief Inserts a ColData with const string into a stream,
-/// double-quoted (")
-///
-/// Because ColData was designed to contain MySQL type data, we may
-/// choose not to actually quote the data, if it is not needed.
-
-template <>
-ostream& operator <<(quote_double_only_type1 o,
-		const ColData_Tmpl<const_string>& in)
-{
-	if (in.quote_q()) o.ostr->write("'", 1);
-	o.ostr->write(in.data(), in.length());
-	if (in.quote_q()) o.ostr->write("'", 1);
-
-	return *o.ostr;
-}
-
-
-SQLQueryParms& operator <<(escape_type2 p, SQLString& in)
-{
-	if (in.is_string && !in.dont_escape) {
-		char* s = new char[in.length() * 2 + 1];
-		size_t len = mysql_escape_string(s, in.data(), in.length());
-
-		SQLString in2(s, len);
-		in2.processed = true;
-		*p.qparms << in2;
-
-		delete[] s;
+	if (in.quote_q()) {
+		string temp("'", 1), escaped;
+		p.qparms->escape_string(&escaped, in.data(), in.length());
+		temp.append(escaped);
+		temp.append("'", 1);
+		*p.qparms << SQLTypeAdapter(temp, true);
 		return *p.qparms;
 	}
 	else {
-		in.processed = true;
+		in.set_processed();
 		return *p.qparms << in;
 	}
 }
 
 
-/// \brief Inserts a C++ string into a stream, escaping special SQL
-/// characters
-///
-/// Because std::string lacks the type information we need, the string
-/// is always escaped, even if it doesn't need it.
-
-template <>
-std::ostream& operator <<(escape_type1 o, const std::string& in)
+ostream&
+operator <<(quote_type1 o, const SQLTypeAdapter& in)
 {
-	char* s = new char[in.length() * 2 + 1];
-	size_t len = mysql_escape_string(s, in.data(), in.length());
-	o.ostr->write(s, len);
-	delete[] s;
-	return *o.ostr;
-}
+	Query* pq = dynamic_cast<Query*>(o.ostr);
 
+	if (pq && in.quote_q()) o.ostr->put('\'');
 
-/// \brief Inserts a C string into a stream, escaping special SQL
-/// characters
-///
-/// Because C's type system lacks the information we need to second-
-/// guess this manipulator, we always run the escaping algorithm on
-/// the data, even if it's not needed.
-
-template <>
-ostream& operator <<(escape_type1 o, const char* const& in)
-{
-	size_t len = strlen(in);
-	char* s = new char[len * 2 + 1];
-	len = mysql_escape_string(s, in, len);
-	o.ostr->write(s, len);
-	delete[] s;
-	return *o.ostr;
-}
-
-
-/// \brief Utility function used by operator<<(escape_type1, ColData)
-
-template <class Str>
-inline ostream& _manip(escape_type1 o, const ColData_Tmpl<Str>& in)
-{
-	if (in.escape_q()) {
-		char* s = new char[in.length() * 2 + 1];
-		size_t len = mysql_escape_string(s, in.data(), in.length());
-		o.ostr->write(s, len);
-		delete[] s;
+	if (pq) {
+		// It's a Query stream, so we'll be using unformatted output.
+		// Now, is escaping appropriate for source data type of 'in'?
+		if (in.escape_q()) {
+			string escaped;
+			pq->escape_string(&escaped, in.data(), in.length());
+			o.ostr->write(escaped.data(), escaped.length());
+		}
+		else {
+			o.ostr->write(in.data(), in.length());
+		}
 	}
 	else {
-		o.ostr->write(in.data(), in.length());
+		// Some other stream type, so use formatted output.  User
+		// shouldn't be trying to use the quote manipulator, but
+		// that's no reason to break their formatting.
+		*o.ostr << string(in.data(), in.length());
 	}
+
+	if (pq && in.quote_q()) o.ostr->put('\'');
 
 	return *o.ostr;
 }
 
 
-/// \brief Inserts a ColData into a stream, escaping special SQL
-/// characters
-///
-/// Because ColData was designed to contain MySQL type data, we may
-/// choose not to escape the data, if it is not needed.
-
-template <>
-std::ostream& operator <<(escape_type1 o,
-		const ColData_Tmpl<std::string>& in)
+ostream&
+operator <<(quote_only_type1 o, const SQLTypeAdapter& in)
 {
-	return _manip(o, in);
+	Query* pq = dynamic_cast<Query*>(o.ostr);
+
+	if (pq && in.quote_q()) o.ostr->put('\'');
+
+	if (pq) {
+		// It's a Query stream, so use unformatted output
+		o.ostr->write(in.data(), in.length());
+	}
+	else {
+		// Some other stream type, so use formatted output.  User
+		// shouldn't be trying to use this manipulator on a non-Query
+		// stream, but that's no reason to break their formatting.
+		*o.ostr << '\'' << in << '\'';
+	}
+
+	if (pq && in.quote_q()) o.ostr->put('\'');
+
+	return *o.ostr;
 }
 
 
-/// \brief Inserts a ColData with const string into a stream, escaping
-/// special SQL characters
-///
-/// Because ColData was designed to contain MySQL type data, we may
-/// choose not to escape the data, if it is not needed.
-
-template <>
-std::ostream& operator <<(escape_type1 o, const ColData_Tmpl<const_string>& in)
+ostream&
+operator <<(ostream& o, const SQLTypeAdapter& in)
 {
-	return _manip(o, in);
+	if (dynamic_cast<Query*>(&o)) {
+		// It's a Query stream, so use unformatted output.
+		return o.write(in.data(), in.length());
+	}
+	else {
+		// Some other stream type, so use formatted output.  We do this
+		// through the temporary so we remain null-friendly.
+		return o << string(in.data(), in.length());
+	}
 }
 
 
-/// \brief Inserts a SQLString into a stream, with no escaping or
-/// quoting.
-
-SQLQueryParms& operator <<(do_nothing_type2 p, SQLString& in)
+SQLQueryParms&
+operator <<(quote_only_type2 p, SQLTypeAdapter& in)
 {
-	in.processed = true;
+	if (in.quote_q()) {
+		string temp("'", 1);
+		temp.append(in.data(), in.length());
+		temp.append("'", 1);
+		return *p.qparms << SQLTypeAdapter(temp, true);
+	}
+	else {
+		in.set_processed();
+		return *p.qparms << in;
+	}
+}
+
+
+SQLQueryParms&
+operator <<(quote_double_only_type2 p, SQLTypeAdapter& in)
+{
+	if (in.quote_q()) {
+		string temp("\"", 1);
+		temp.append(in.data(), in.length());
+		temp.append("\"", 1);
+		return *p.qparms << SQLTypeAdapter(temp, true);
+	}
+	else {
+		in.set_processed();
+		return *p.qparms << in;
+	}
+}
+
+
+ostream&
+operator <<(quote_double_only_type1 o, const SQLTypeAdapter& in)
+{
+	Query* pq = dynamic_cast<Query*>(o.ostr);
+
+	if (pq && in.quote_q()) o.ostr->put('"');
+
+	if (pq) {
+		// It's a Query stream, so use unformatted output
+		o.ostr->write(in.data(), in.length());
+	}
+	else {
+		// Some other stream type, so use formatted output.  User
+		// shouldn't be trying to use this manipulator on a non-Query
+		// stream, but that's no reason to break their formatting.
+		*o.ostr << '"' << in << '"';
+	}
+
+	if (pq && in.quote_q()) o.ostr->put('"');
+
+	return *o.ostr;
+}
+
+
+SQLQueryParms&
+operator <<(escape_type2 p, SQLTypeAdapter& in)
+{
+	if (in.escape_q()) {
+		string escaped;
+		p.qparms->escape_string(&escaped, in.data(), in.length());
+		*p.qparms << SQLTypeAdapter(escaped, true);
+		return *p.qparms;
+	}
+	else {
+		in.set_processed();
+		return *p.qparms << in;
+	}
+}
+
+
+ostream&
+operator <<(escape_type1 o, const SQLTypeAdapter& in)
+{
+	Query* pq = dynamic_cast<Query*>(o.ostr);
+	if (pq) {
+		// It's a Query stream, so we'll be using unformatted output.
+		// Now, is escaping appropriate for source data type of 'in'?
+		if (in.escape_q()) {
+			string escaped;
+			pq->escape_string(&escaped, in.data(), in.length());
+			return o.ostr->write(escaped.data(), escaped.length());
+		}
+		else {
+			return o.ostr->write(in.data(), in.length());
+		}
+	}
+	else {
+		// Some other stream type, so use formatted output.  User
+		// shouldn't be trying to use the escape manipulator, but
+		// that's no reason to break their formatting.
+		return *o.ostr << string(in.data(), in.length());
+	}
+}
+
+
+SQLQueryParms&
+operator <<(do_nothing_type2 p, SQLTypeAdapter& in)
+{
+	in.set_processed();
 	return *p.qparms << in;
 }
 
 
-/// \brief Inserts a SQLString into a stream, with no escaping or
-/// quoting, and without marking the string as having been "processed".
+ostream&
+operator <<(do_nothing_type1 o, const SQLTypeAdapter& in)
+{
+	if (dynamic_cast<Query*>(o.ostr)) {
+		// It's a Query stream, so use unformatted output
+		return o.ostr->write(in.data(), in.length());
+	}
+	else {
+		// Some other stream type, so use formatted output.  User
+		// shouldn't be trying to use this manipulator on a non-Query
+		// stream, but that's no reason to break their formatting.
+		return *o.ostr << in;
+	}
+}
 
-SQLQueryParms& operator <<(ignore_type2 p, SQLString& in)
+
+SQLQueryParms&
+operator <<(ignore_type2 p, SQLTypeAdapter& in)
 {
 	return *p.qparms << in;
 }

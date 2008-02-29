@@ -2,7 +2,7 @@
 # mysql++.m4 - Example autoconf macro showing how to find MySQL++
 #	library and header files.
 #
-# Copyright (c) 2004-2005 by Educational Technology Resources, Inc.
+# Copyright (c) 2004-2008 by Educational Technology Resources, Inc.
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -37,7 +37,7 @@ dnl This macro depends on having the default compiler and linker flags
 dnl set up for building programs against the MySQL C API.  The mysql.m4
 dnl macro in this directory fits this bill; run it first.
 dnl
-dnl @version 1.0, 2005/07/13
+dnl @version 1.1, 2008/02/07
 dnl @author Warren Young <mysqlpp@etr-usa.com>
 
 AC_DEFUN([MYSQLPP_DEVEL],
@@ -124,7 +124,7 @@ AC_CACHE_CHECK([for MySQL++ devel stuff], ac_cv_mysqlpp_devel,
 	AC_MSG_CHECKING([that we can build MySQL++ programs])
 	AC_COMPILE_IFELSE(
 		[AC_LANG_PROGRAM([#include <mysql++.h>],
-		[std::string s; mysqlpp::escape_string(s)])],
+		[mysqlpp::Connection c(false)])],
 		ac_cv_mysqlpp_devel=yes,
 		AC_MSG_ERROR(no))
 ])]) dnl End MYSQLPP_DEVEL

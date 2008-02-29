@@ -1,12 +1,12 @@
 /// \file stream2string.h
 /// \brief Declares an adapter that converts something that can be
-/// inserted into a C++ stream into a string type.
+/// inserted into a C++ stream into a std::string type.
 
 /***********************************************************************
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the CREDITS
- file in the top directory of the distribution for details.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS file in
+ the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -26,31 +26,26 @@
  USA
 ***********************************************************************/
 
-#ifndef MYSQLPP_STREAM2STRING_H
+#if !defined(MYSQLPP_STREAM2STRING_H)
 #define MYSQLPP_STREAM2STRING_H
 
 #include <sstream>
+#include <string>
 
 namespace mysqlpp {
 
-/// \brief Converts a stream-able object to any type that can be
-/// initialized from an \c std::string.
-///
-/// This adapter takes any object that has an \c out_stream() member
-/// function and converts it to a string type.  An example of such a
-/// type within the library is mysqlpp::Date.
+/// \brief Converts anything you can insert into a C++ stream to a
+/// \c std::string via \c std::ostringstream.
 
-template <class Strng, class T>
-Strng stream2string(const T& object)
+template <class T>
+std::string stream2string(const T& object)
 {
 	std::ostringstream str;
-	object.out_stream(str);
-	str << std::ends;
-	Strng s = str.str();
-	return s;
+	str << object;
+	return str.str();
 }
 
 } // end namespace mysqlpp
 
-#endif
+#endif // !defined(MYSQLPP_STREAM2STRING_H)
 

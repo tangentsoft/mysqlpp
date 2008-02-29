@@ -1,9 +1,0 @@
-The installation procedure depends on the compiler you use to build
-MySQL++.  See:
-
-	README.unix -   for Unix, Linux, Mac OS X, etc.
-	README.cygwin - for Cygwin
-	README.mingw -  for MinGW
-	README.vc -     for Visual C++
-
-Also see the main README file for things that apply to all systems.

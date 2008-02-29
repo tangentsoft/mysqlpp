@@ -6,10 +6,10 @@
 /// the same as SQL nulls.
 
 /***********************************************************************
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the CREDITS
- file in the top directory of the distribution for details.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2008 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS file in
+ the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -35,29 +35,52 @@
 #include "exceptions.h"
 
 #include <iostream>
+#include <string>
 
 namespace mysqlpp {
+
+extern const std::string null_str;	///< "NULL" string constant
 
 
 /// \brief The type of the global mysqlpp::null object.
 ///
-/// This class is for internal use only.  Normal code should use
-/// Null instead.
+/// User code shouldn't declare variables of this type.  Use the
+/// Null template instead.
 class MYSQLPP_EXPORT null_type
 {
-public:
+protected:
 #if !defined(DOXYGEN_IGNORE)
 // Doxygen will not generate documentation for this section.
-	template <class Type> operator Type()
+	template <typename CannotConvertNullToAnyOtherDataType>
+	operator CannotConvertNullToAnyOtherDataType() const
 	{
-		throw BadNullConversion();
-		return Type();
+		return CannotConvertNullToAnyOtherDataType();
 	}
 #endif // !defined(DOXYGEN_IGNORE)
 };
 
 /// \brief Global 'null' instance.  Use wherever you need a SQL null.
-/// (As opposed to a C++ language null pointer or null character.)
+///
+/// SQL null is equal to nothing else.  It is not the same as C++'s
+/// NULL value, it is not a Boolean false....it is unique.  As such, if
+/// you use this in some other type context, you will get a compiler
+/// error saying something about \c CannotConvertNullToAnyOtherDataType.
+/// The only thing you can assign this object instance to is a variable
+/// of type Null<T>, and then only directly.  Code like this does not
+/// work:
+///
+/// \code
+/// int foo = return_some_value_for_foo();
+/// mysqlpp::Null<int> bar = foo ? foo : mysqlpp::null;
+/// \endcode
+/// 
+/// The compiler will try to convert mysqlpp::null to \c int to make
+/// all values in the conditional operation consistent, but this is
+/// not legal.  Anyway, it's questionable code because it means you're
+/// using SQL null to mean the same thing as zero here.  If zero is a
+/// special value, there's no reason to use SQL null.  SQL null exists
+/// when every value for a particular column is legal and you need
+/// something that means "no legal value".
 const null_type null = null_type();
 
 
@@ -68,11 +91,11 @@ const null_type null = null_type();
 /// "(NULL)" when you insert it into a C++ stream.
 ///
 /// Used for the behavior parameter for template Null
-struct NullisNull
+struct NullIsNull
 {
 #if !defined(DOXYGEN_IGNORE)
 // Doxygen will not generate documentation for this section.
-	static null_type null_is() { return null_type(); }
+	static null_type null_is() { return null; }
 
 	static std::ostream& null_ostr(std::ostream& o)
 	{
@@ -89,7 +112,7 @@ struct NullisNull
 /// into a C++ stream.
 ///
 /// Used for the behavior parameter for template Null
-struct NullisZero
+struct NullIsZero
 {
 #if !defined(DOXYGEN_IGNORE)
 // Doxygen will not generate documentation for this section.
@@ -109,7 +132,7 @@ struct NullisZero
 /// it into a C++ stream.
 ///
 /// Used for the behavior parameter for template Null
-struct NullisBlank
+struct NullIsBlank
 {
 #if !defined(DOXYGEN_IGNORE)
 // Doxygen will not generate documentation for this section.
@@ -143,7 +166,7 @@ struct NullisBlank
 /// for a null \c int is different than for a null \c string, to pick
 /// two random examples.  See type_info.cpp for the table SQL types that
 /// can be null.
-template <class Type, class Behavior = NullisNull> class Null
+template <class Type, class Behavior = NullIsNull> class Null
 {
 public:
 	/// \brief The object's value, when it is not SQL null
@@ -188,7 +211,7 @@ public:
 	/// Null<int> foo = null;
 	/// \endcode
 	/// ...to get a null \c int.
-	Null(const null_type& n) :
+	Null(const null_type&) :
 	is_null(true)
 	{
 	}
@@ -197,7 +220,7 @@ public:
 	///
 	/// If is_null is set, returns whatever we consider that null "is",
 	/// according to the Behavior parameter you used when instantiating
-	/// this template.  See NullisNull, NullisZero and NullisBlank.
+	/// this template.  See NullIsNull, NullIsZero and NullIsBlank.
 	///
 	/// Otherwise, just returns the 'data' member.
 	operator Type&()
@@ -227,6 +250,61 @@ public:
 		is_null = true;
 		return *this;
 	}
+
+	/// \brief Do equality comparison of two nullable values
+	///
+	/// Two null objects are equal, and null is not equal to not-null.
+	/// If neither is null, we delegate to operator == for the base
+	/// data type.
+	bool operator ==(const Null<Type>& rhs) const
+	{
+		if (is_null && rhs.is_null) {
+			return true;
+		}
+		else if (is_null != rhs.is_null) {
+			return false;	// one null, the other not
+		}
+		else {
+			return data == rhs.data;
+		}
+	}
+
+	/// \brief Do equality comparison against hard-coded SQL null
+	///
+	/// This tells you the same thing as testing is_null member.
+	bool operator ==(const null_type&) const { return is_null; }
+
+	/// \brief Do inequality comparison of two nullable values
+	bool operator !=(const Null<Type>& rhs) const
+			{ return !(*this == rhs); }
+
+	/// \brief Do inequality comparison against hard-coded SQL null
+	bool operator !=(const null_type& rhs) const
+			{ return !(*this == rhs); }
+
+	/// \brief Do less-than comparison of two nullable values
+	///
+	/// Two null objects are equal to each other, and null is less
+	/// than not-null.  If neither is null, we delegate to operator <
+	/// for the base data type.
+	bool operator <(const Null<Type>& rhs) const
+	{
+		if (is_null && rhs.is_null) {
+			return false;
+		}
+		else if (is_null && !rhs.is_null) {
+			return true;
+		}
+		else {
+			return data < rhs.data;
+		}
+	}
+
+	/// \brief Do less-than comparison against hard-coded SQL null
+	///
+	/// Always returns false because we can only be greater than or
+	/// equal to a SQL null.
+	bool operator <(const null_type&) const { return false; }
 };
 
 

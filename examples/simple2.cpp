@@ -2,10 +2,10 @@
  simple2.cpp - Retrieves the entire contents of the sample stock table
  	using a "store" query, and prints it out.
 
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004-2007 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the CREDITS
- file in the top directory of the distribution for details.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS file in
+ the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -25,7 +25,8 @@
  USA
 ***********************************************************************/
 
-#include "util.h"
+#include "cmdline.h"
+#include "printdata.h"
 
 #include <mysql++.h>
 
@@ -37,43 +38,48 @@ using namespace std;
 int
 main(int argc, char *argv[])
 {
-	// Connect to the sample database.
-	mysqlpp::Connection con(false);
-	if (!connect_to_db(argc, argv, con)) {
+	// Get database access parameters from command line
+    const char* db = 0, *server = 0, *user = 0, *pass = "";
+	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
 		return 1;
 	}
 
-	// Retrieve the sample stock table set up by resetdb
-	mysqlpp::Query query = con.query();
-	query << "select * from stock";
-	mysqlpp::Result res = query.store();
+	// Connect to the sample database.
+	mysqlpp::Connection conn(false);
+	if (conn.connect(db, server, user, pass)) {
+		// Retrieve the sample stock table set up by resetdb
+		mysqlpp::Query query = conn.query("select * from stock");
+		mysqlpp::StoreQueryResult res = query.store();
 
-	// Display results
-	if (res) {
-		// Display header
-		cout.setf(ios::left);
-		cout << setw(21) << "Item" <<
-				setw(10) << "Num" <<
-				setw(10) << "Weight" <<
-				setw(10) << "Price" <<
-				"Date" << endl << endl;
+		// Display results
+		if (res) {
+			// Display header
+			cout.setf(ios::left);
+			cout << setw(31) << "Item" <<
+					setw(10) << "Num" <<
+					setw(10) << "Weight" <<
+					setw(10) << "Price" <<
+					"Date" << endl << endl;
 
-		// Get each row in result set, and print its contents
-		mysqlpp::Row row;
-		mysqlpp::Row::size_type i;
-		for (i = 0; row = res.at(i); ++i) {
-			cout << setw(20) << row["item"] << ' ' <<
-					setw(9) << row["num"] << ' ' <<
-					setw(9) << row["weight"] << ' ' <<
-					setw(9) << row["price"] << ' ' <<
-					setw(9) << row["sdate"] <<
-					endl;
+			// Get each row in result set, and print its contents
+			for (size_t i = 0; i < res.num_rows(); ++i) {
+				cout << setw(30) << res[i]["item"] << ' ' <<
+						setw(9) << res[i]["num"] << ' ' <<
+						setw(9) << res[i]["weight"] << ' ' <<
+						setw(9) << res[i]["price"] << ' ' <<
+						setw(9) << res[i]["sdate"] <<
+						endl;
+			}
 		}
+		else {
+			cerr << "Failed to get stock table: " << query.error() << endl;
+			return 1;
+		}
+
+		return 0;
 	}
 	else {
-		cerr << "Failed to get stock table: " << query.error() << endl;
+		cerr << "DB connection failed: " << conn.error() << endl;
 		return 1;
 	}
-
-	return 0;
 }

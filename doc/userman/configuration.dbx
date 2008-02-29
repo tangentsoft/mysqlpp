@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook V4.3//EN"
+    "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd">
+
+<sect1 id="configuration">
+  <title>Configuring MySQL++</title>
+
+  <para>The default configuration of MySQL++ is suitable for most
+  purposes, but there are a few things you can change to make it meet
+  special needs.</para>
+
+  <sect2 id="mysql-loc">
+    <title>The Location of the MySQL Development Files</title>
+
+    <para>MySQL++ is built on top of the MySQL C API. It relies on
+    this low-level library for all communication with the database
+    server. Consequently, the build process for MySQL++ may fail if
+    it can&rsquo;t find the C API headers and library.</para>
+
+    <para>On platforms that use Autoconf<footnote><para>Linux,
+    Solaris, the BSDs, Mac OS X command line (as opposed to the
+    Xcode IDE), Cygwin... Basically, Unix or anything that works
+    like it.</para></footnote>, the <filename>configure</filename>
+    script can usually figure out the location of the C API
+    development files by itself. It simply tries a bunch of common
+    installation locations until it finds one that works. If
+    your MySQL server was installed in a nonstandard location,
+    you will have to tell the <filename>configure</filename>
+    script where these files are with some combination
+    of the <computeroutput>--with-mysql</computeroutput>,
+    <computeroutput>--with-mysql-include</computeroutput>, and
+    <computeroutput>--with-mysql-lib</computeroutput> flags. See
+    <filename>README-Unix.txt</filename> for details.</para>
+
+    <para>No other platform allows this sort of auto-discovery,
+    so the build files for these platforms simply hard-code the
+    default installation location for the current Generally
+    Available version of MySQL. For example, the Visual C++
+    project files currently assume MySQL is in <filename>c:\Program
+    Files\MySQL\MySQL Server 5.0</filename>. If you&rsquo;re using
+    some other release of MySQL or you installed it in a nonstandard
+    location, you will have to modify the build files.  How you do
+    this, exactly, varies based on platform and what tools you have
+    on hand. See <filename>README-Visual-C++.txt</filename>,
+    <filename>README-MinGW.txt</filename>, or
+    <filename>README-Mac-OS-X.txt</filename>, as appropriate.</para>
+  </sect2>
+
+
+  <sect2 id="max-columns">
+    <title>The Maximum Number of Columns Allowed</title>
+
+    <para>MySQL++ offers two ways to automatically build SQL
+    queries at run time: <xref linkend="tquery"/> and <xref
+    linkend="ssqlsintro"/>. There&rsquo;s a limit on the number
+    of template query parameters and the number of SSQLS fields,
+    due to the way these mechanisms work. Both are set to 25,
+    by default. We arrived at these limits empirically, partly by
+    looking at good database designs, and by testing compilers to
+    find their limits. We wanted a limit that doesn&rsquo;t often
+    need to be raised without unduly narrowing the list of supported
+    platforms by exceeding compiler limits.</para>
+
+    <para>If it happens that your database design does need more than
+    25 columns or template query parameters, first look to see if
+    there&rsquo;s a good way to change the design. It&rsquo;s usually
+    a sign of too many unrelated things in one table if you need so
+    many columns. If you decide the design is good, you can raise these
+    limits by re-generating the <filename>lib/ssqls.h</filename> and/or
+    <filename>lib/querydef.h</filename> headers using Perl scripts with
+    the same name, except with a <filename>pl</filename> extension.
+    Instructions for this are at the top of each script.</para>
+
+    <para>If you&rsquo;re on a platform that uses
+    Autoconf<footnote><para>ditto</para></footnote>, you can change
+    these scripts like you would any other part of the library. After
+    making your changes, just say <command>make</command> to rebuild
+    the library, including these headers. This requires a Perl
+    interpreter on the system to work, but Perl is nearly ubiquitous
+    on systems that also use autoconf these days.</para>
+
+    <para>On all other platforms, you&rsquo;ll have to rebuild
+    these headers by running Perl by hand. Just say <command>perl
+    ssqls.pl</command> or <command>perl querydef.pl</command> in the
+    <filename>lib</filename> subdirectory of the MySQL++ sources,
+    then build the library as you normally would.</para>
+  </sect2>
+
+
+  <sect2 id="buried-headers">
+    <title>Buried MySQL C API Headers</title>
+
+    <para>It&rsquo;s common these days on Unixy systems to install
+    the MySQL C API headers in a <filename>mysql</filename> directory
+    under some common <filename>include</filename> directory. If the
+    C API headers are in <filename>/usr/include/mysql</filename>, we
+    say they are &ldquo;buried&rdquo; underneath the system&rsquo;s
+    main include directory, <filename>/usr/include</filename>. Since
+    the MySQL++ headers depend on these C API headers, it can be
+    useful for MySQL++ to know this fact.</para>
+
+    <para>When MySQL++ includes one of the C API headers, it normally
+    does so in the obvious way:</para>
+
+    <programlisting>
+#include &lt;mysql.h&gt;
+</programlisting>
+
+    <para>But, if you define the
+    <varname>MYSQLPP_MYSQL_HEADERS_BURIED</varname> macro, it switches
+    to this style:</para>
+
+    <programlisting>
+#include &lt;mysql/mysql.h&gt;
+</programlisting>
+
+    <para>In common situations like the
+    <filename>/usr/include/mysql</filename> one, this simplifies the
+    include path options you pass to your compiler.</para>
+  </sect2>
+
+
+  <sect2 id="c99">
+    <title>Building MySQL++ on Systems Without Complete C99
+    Support</title>
+
+    <para>MySQL++ uses the <ulink
+    url="http://en.wikipedia.org/wiki/C_(programming_language)#C99">C99</ulink>
+    header <filename>stdint.h</filename> for portable fixed-size
+    integer typedefs where possible. The C99 extensions aren&rsquo;t
+    yet officially part of the C++ Standard, so there are still
+    some C++ compilers that don&rsquo;t offer this header. MySQL++
+    works around the lack of this header where it knows it needs
+    to, but your platform might not be recognized, causing
+    the build to break. If this happens, you can define the
+    <varname>MYSQLPP_NO_STDINT_H</varname> macro to make MySQL++
+    use its best guess for suitable integer types instead of relying
+    on <filename>stdint.h</filename>.</para>
+
+    <para>MySQL++ also uses C99&rsquo;s <type>long long</type>
+    data type where available. MySQL++ has workarounds for platforms
+    where this is known not to be available, but if you get errors in
+    <filename>common.h</filename> about this type, you can define the
+    macro <varname>MYSQLPP_NO_LONG_LONGS</varname> to make MySQL++
+    fall back to portable constructs.</para>
+  </sect2>
+</sect1>

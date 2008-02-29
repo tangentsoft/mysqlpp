@@ -2,10 +2,10 @@
 /// \brief Defines a class for building and executing SQL queries.
 
 /***********************************************************************
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004-2006 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the CREDITS
- file in the top directory of the distribution for details.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2008 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS file in
+ the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -25,25 +25,23 @@
  USA
 ***********************************************************************/
 
-#ifndef MYSQLPP_QUERY_H
+#if !defined(MYSQLPP_QUERY_H)
 #define MYSQLPP_QUERY_H
 
 #include "common.h"
 
-#include "lockable.h"
 #include "noexceptions.h"
 #include "qparms.h"
 #include "querydef.h"
 #include "result.h"
 #include "row.h"
-#include "sql_string.h"
+#include "stadapter.h"
 
 #include <deque>
 #include <iomanip>
 #include <list>
 #include <map>
 #include <set>
-#include <sstream>
 #include <vector>
 
 #ifdef HAVE_EXT_SLIST
@@ -54,19 +52,6 @@
 #  endif
 #endif
 
-/// \def MYSQLPP_QUERY_THISPTR
-/// \brief Helper macro used inside MySQL++ to work around a VC++ 2003 bug
-///
-/// This macro returns '*this', either directly or upcast to Query's
-/// base class to work around an error in the overloaded operator
-/// lookup logic in VC++ 2003.  For an explanation of the problem, see:
-/// http://groups.google.com/group/microsoft.public.vc.stl/browse_thread/thread/9a68d84644e64f15
-#if defined(_MSC_VER) && (_MSC_VER < 1400)
-#	define MYSQLPP_QUERY_THISPTR dynamic_cast<std::ostream&>(*this)
-#else
-#	define MYSQLPP_QUERY_THISPTR *this
-#endif
-
 namespace mysqlpp {
 
 #if !defined(DOXYGEN_IGNORE)
@@ -74,15 +59,7 @@ namespace mysqlpp {
 class MYSQLPP_EXPORT Connection;
 #endif
 
-/// \brief Used for indicating whether a query object should auto-reset
-enum query_reset { DONT_RESET, RESET_QUERY };
-
 /// \brief A class for building and executing SQL queries.
-///
-/// This class is derived from SQLQuery. It adds to that a tie between
-/// the query object and a MySQL++
-/// \link mysqlpp::Connection Connection \endlink object, so that
-/// the query can be sent to the MySQL server we're connected to.
 ///
 /// One does not generally create Query objects directly. Instead, call
 /// mysqlpp::Connection::query() to get one tied to that connection.
@@ -91,18 +68,21 @@ enum query_reset { DONT_RESET, RESET_QUERY };
 /// class.
 ///
 /// The way most like other database libraries is to pass a SQL
-/// statement to one of the
+/// statement in either the form of a C or C++ string to one of the
 /// \link mysqlpp::Query::execute() exec*(), \endlink
-/// \link mysqlpp::Query::store() store*(), \endlink or use() methods
-/// taking a C or C++ string.  The query is executed immediately, and
-/// any results returned.
+/// \link mysqlpp::Query::store() store*(), \endlink or use() methods.
+/// The query is executed immediately, and any results returned.
 ///
-/// For more complicated queries, you can use Query's stream interface.
-/// You simply build up a query using the Query instance as you would
-/// any other C++ stream object. When the query string is complete, you
-/// call the overloaded version of \c exec*(), \c store*() or \c use()
-/// that takes no parameters, which executes the built query and returns
-/// any results.
+/// For more complicated queries, it's often more convenient to build up
+/// the query string over several C++ statements using Query's stream
+/// interface. It works like any other C++ stream (\c std::cout,
+/// \c std::ostringstream, etc.) in that you can just insert things
+/// into the stream, building the query up piece by piece. When the
+/// query string is complete, you  call the overloaded version of
+/// \link mysqlpp::Query::execute() exec*(), \endlink
+/// \link mysqlpp::Query::store() store*(), \endlink or
+/// \link mysqlpp::Query::use() use() \endlink takes no parameters,
+/// which executes the built query and returns any results.
 ///
 /// If you are using the library's Specialized SQL Structures feature,
 /// Query has several special functions for generating common SQL
@@ -117,18 +97,34 @@ enum query_reset { DONT_RESET, RESET_QUERY };
 /// C's \c printf() function, in that you insert a specially-formatted
 /// query string into the object which contains placeholders for data.
 /// You call the parse() method to tell the Query object that the query
-/// string contains placeholders. Once that's done, you can call any of
-/// the many overloaded methods that take a number of SQLStrings (up to
-/// 25 by default) or any type that can be converted to SQLString, and
-/// those parameters will be inserted into the placeholders. When you
-/// call one of the parameterless functions the execute the query, the
-/// final query string is assembled and sent to the server.
+/// string contains placeholders. Having done that, you call one of the
+/// the many
+/// \link mysqlpp::Query::execute(const SQLTypeAdapter&) exec*(), \endlink
+/// \link mysqlpp::Query::store(const SQLTypeAdapter&) store*(), \endlink
+/// or \link mysqlpp::Query::use(const SQLTypeAdapter&) use() \endlink
+/// overloads that take SQLTypeAdapter objects.  There are 25 of each by
+/// default, differing only in the number of STA objects they take.
+/// (See \c lib/querydef.pl if you need to change the limit, or 
+/// \c examples/tquery2.cpp for a way around it that doesn't require 
+/// changing the library.)  Only the version taking a single STA object
+/// is documented below, as to document all of them would just be
+/// repetitive.  For each Query method that takes a single STA object,
+/// there's a good chance there's a set of undocumented overloads that
+/// take more of them for the purpose of filling out a template query.
 ///
 /// See the user manual for more details about these options.
 
-class MYSQLPP_EXPORT Query : public std::ostream,
-		public OptionalExceptions, public Lockable
+class MYSQLPP_EXPORT Query :
+        public std::ostream,
+		public OptionalExceptions
 {
+private:
+	/// \brief Pointer to bool data member, for use by safe bool
+	/// conversion operator.
+	///
+	/// \see http://www.artima.com/cppsource/safebool.html
+    typedef bool Query::*private_bool_type;
+
 public:
 	/// \brief Create a new query object attached to a connection.
 	///
@@ -136,7 +132,8 @@ public:
 	///
 	/// \param c connection the finished query should be sent out on
 	/// \param te if true, throw exceptions on errors
-	Query(Connection* c, bool te = true);
+	/// \param qstr an optional initial query string
+	Query(Connection* c, bool te = true, const char* qstr = 0);
 
 	/// \brief Create a new query object as a copy of another.
 	///
@@ -147,25 +144,117 @@ public:
 	/// what values they have in the original.
 	Query(const Query& q);
 
+	/// \brief Return the number of rows affected by the last query
+	ulonglong affected_rows();
+
+	/// \brief Return a SQL-escaped version of a character buffer
+	///
+	/// \param ps pointer to C++ string to hold escaped version; if
+	/// original is 0, also holds the original data to be escaped
+	/// \param original if given, pointer to the character buffer to
+	/// escape instead of contents of *ps
+	/// \param length if both this and original are given, number of
+	/// characters to escape instead of ps->length()
+	///
+	/// \retval number of characters placed in *ps
+	///
+	/// This method has three basic operation modes:
+	///
+	/// - Pass just a pointer to a C++ string containing the original
+	///   data to escape, plus act as receptacle for escaped version
+	/// - Pass a pointer to a C++ string to receive escaped string plus
+	///   a pointer to a C string to be escaped
+	/// - Pass nonzero for all parameters, taking original to be a
+	///   pointer to an array of char with given length; does not treat
+	///   null characters as special
+	///
+	/// There's a degenerate fourth mode, where ps is zero: simply
+	/// returns 0, because there is nowhere to store the result.
+	///
+	/// Note that if original is 0, we always ignore the length
+	/// parameter even if it is nonzero.  Length always comes from
+	/// ps->length() in this case.
+	///
+	/// ps is a pointer because if it were a reference, the other
+	/// overload would be impossible to call: the compiler would
+	/// complain that the two overloads are ambiguous because
+	/// std::string has a char* conversion ctor. A nice bonus is that
+	/// pointer syntax makes it clearer that the first parameter is an
+	/// "out" parameter.
+	///
+	/// \see comments for escape_string(char*, const char*, size_t)
+	/// for further details.
+	size_t escape_string(std::string* ps, const char* original = 0,
+			size_t length = 0) const;
+
+	/// \brief Return a SQL-escaped version of the given character
+	/// buffer
+	///
+	/// \param escaped character buffer to hold escaped version; must
+	/// point to at least (length * 2 + 1) bytes
+	/// \param original pointer to the character buffer to escape
+	/// \param length number of characters to escape
+	///
+	/// \retval number of characters placed in escaped
+	///
+	/// This is part of Query because proper SQL escaping takes the
+	/// database's current character set into account, which requires
+	/// access to the Connection object the query will go out on.  Also,
+	/// this function is very important to MySQL++'s Query stream
+	/// manipulator mechanism, so it's more convenient for this method
+	/// to live in Query rather than Connection.
+	size_t escape_string(char* escaped, const char* original,
+			size_t length) const;
+
+	/// \brief Get the last error number that was set.
+	///
+	/// This just delegates to Connection::errnum().  Query has nothing
+	/// extra to say, so use either, as makes sense in your program.
+	int errnum() const;
+
+	/// \brief Get the last error message that was set.
+	///
+	/// This just delegates to Connection::error().  Query has nothing
+	/// extra to say, so use either, as makes sense in your program.
+	const char* error() const;
+
+	/// \brief Returns information about the most recently executed
+	/// query.
+	std::string info();
+
+	/// \brief Get ID generated for an AUTO_INCREMENT column in the
+	/// previous INSERT query.
+	///
+	/// \retval 0 if the previous query did not generate an ID.  Use
+	/// the SQL function LAST_INSERT_ID() if you need the last ID
+	/// generated by any query, not just the previous one.
+	ulonglong insert_id();
+
 	/// \brief Assign another query's state to this object
 	///
 	/// The same caveats apply to this operator as apply to the copy
 	/// ctor.
 	Query& operator=(const Query& rhs);
 
-	/// \brief Get the last error message that was set.
+	/// \brief Test whether the object has experienced an error condition
 	///
-	/// This class has an internal error message string, but if it
-	/// isn't set, we return the last error message that happened
-	/// on the connection we're bound to instead.
-	std::string error();
-
-	/// \brief Returns true if the last operation succeeded
+	/// Allows for code constructs like this:
 	///
-	/// Returns true if the last query succeeded, and the associated
-	/// Connection object's success() method also returns true.  If
-	/// either object is unhappy, this method returns false.
-	bool success();
+	/// \code
+	///	Query q = conn.query();
+	///	.... use query object
+	///	if (q) {
+	///	    ... no problems in using query object
+	///	}
+	///	else {
+	///	    ... an error has occurred
+	///	}
+	/// \endcode
+	///
+	/// This method returns false if either the Query object or its
+	/// associated Connection object has seen an error condition since
+	/// the last operation.
+	operator private_bool_type() const;
 
 	/// \brief Treat the contents of the query string as a template
 	/// query.
@@ -178,40 +267,33 @@ public:
 
 	/// \brief Reset the query object so that it can be reused.
 	///
-	/// This erases the query string and the contents of the parameterized
-	/// query element list.
+	/// As of v3.0, Query objects auto-reset upon query execution unless
+	/// you've set it up for making template queries.  (It can't auto-reset
+	/// in that situation, because it would forget the template info.)
+	/// Therefore, the only time you must call this is if you have a Query
+	/// object set up for making template queries, then want to build
+	/// queries using one of the other methods.  (Static strings, SSQLS,
+	/// or the stream interface.)
 	void reset();
 
-	/// \brief Return the query string currently in the buffer.
-	std::string preview() { return str(def); }
+	/// \brief Get built query as a C++ string
+	std::string str() { return str(template_defaults); }
 
-	/// \brief Return the query string currently in the buffer with
-	/// template query parameter substitution.
+	/// \brief Get built query as a C++ string with template query
+	/// parameter substitution.
 	///
 	/// \param arg0 the value to substitute for the first template query
-	/// parameter
-	std::string preview(const SQLString& arg0)
-			{ return preview(SQLQueryParms() << arg0); }
-
-	/// \brief Return the query string currently in the buffer.
-	std::string preview(SQLQueryParms& p) { return str(p); }
-
-	/// \brief Get built query as a null-terminated C++ string
-	std::string str() { return str(def); }
-
-	/// \brief Get built query as a null-terminated C++ string with
-	/// template query parameter substitution.
+	/// parameter; because SQLTypeAdapter implicitly converts from many
+	/// different data types, this method is very flexible in what it
+	/// accepts as a parameter.  You shouldn't have to use the
+	/// SQLTypeAdapter data type directly in your code.
 	///
-	/// \param arg0 the value to substitute for the first template query
-	/// parameter
-	std::string str(const SQLString& arg0)
-			{ return preview(SQLQueryParms() << arg0); }
-
-	/// \brief Get built query as a null-terminated C++ string
-	///
-	/// \param r if equal to \c RESET_QUERY, query object is cleared
-	/// after this call
-	std::string str(query_reset r) { return str(def, r); }
+	/// There many more overloads of this type (25 total, by default;
+	/// see \c lib/querydef.pl), each taking one more SQLTypeAdapter object
+	/// than the previous one.  See the template query overview above
+	/// for more about this topic.
+	std::string str(const SQLTypeAdapter& arg0)
+			{ return str(SQLQueryParms() << arg0); }
 
 	/// \brief Get built query as a null-terminated C++ string
 	///
@@ -219,13 +301,17 @@ public:
 	/// this object holds, if any
 	std::string str(SQLQueryParms& p);
 
-	/// \brief Get built query as a null-terminated C++ string
+	/// \brief Execute a built-up query
 	///
-	/// \param p template query parameters to use, overriding the ones
-	/// this object holds, if any
-	/// \param r if equal to \c RESET_QUERY, query object is cleared
-	/// after this call
-	std::string str(SQLQueryParms& p, query_reset r);
+	/// Same as exec(), except that it uses the query string built up
+	/// within the query object already instead of accepting a query
+	/// string from the caller.
+	///
+	/// \return true if query was executed successfully
+	///
+	/// \sa exec(const std::string& str), execute(), store(),
+	/// storein(), and use()
+	bool exec() { return exec(str(template_defaults)); }
 
 	/// \brief Execute a query
 	///
@@ -244,7 +330,7 @@ public:
 	///
 	/// Use one of the execute() overloads if you don't expect the
 	/// server to return a result set. For instance, a DELETE query.
-	/// The returned ResNSel object contains status information from
+	/// The returned SimpleResult object contains status information from
 	/// the server, such as whether the query succeeded, and if so how
 	/// many rows were affected.
 	///
@@ -253,31 +339,47 @@ public:
 	/// via the insert() method, or by using the object's stream
 	/// interface.)
 	///
-	/// \return ResNSel status information about the query
+	/// \return SimpleResult status information about the query
 	///
 	/// \sa exec(), store(), storein(), and use()
-	ResNSel execute() { return execute(def); }
+	SimpleResult execute() { return execute(str(template_defaults)); }
 
-	/// \brief Execute query in a C++ string, or substitute string into
-	/// a template query and execute it.
+	/// \brief Execute template query using given parameters.
+    ///
+    /// This method should only be used by code that doesn't know,
+    /// at compile time, how many parameters it will have.  This is
+    /// useful within the library, and also for code that builds
+    /// template queries dynamically, at run time.
 	///
-	/// \param str If the object represents a compiled template query,
-	/// substitutes this string in for the first parameter.  Otherwise,
-	/// takes the string as a complete SQL query and executes it.
-	ResNSel execute(const SQLString& str);
+	/// \param p parameters to use in the template query.
+	SimpleResult execute(SQLQueryParms& p);
 
-	/// \brief Execute query in a C string
+	/// \brief Execute a query that returns no rows
 	///
-	/// Executes the query immediately, and returns the results.
-	ResNSel execute(const char* str);
+	/// \param str if this object is set up as a template query, this is
+	/// the value to substitute for the first template query parameter;
+	/// else, it is the SQL query string to execute
+	///
+	/// Because SQLTypeAdapter can be initialized from either a C string
+	/// or a C++ string, this overload accepts query strings in either
+	/// form.  Beware, SQLTypeAdapter also accepts many other data types
+	/// (this is its \e raison \e d'etre), so it will let you write code
+	/// that compiles but results in bogus SQL queries.
+	///
+	/// To support template queries, there many more overloads of this
+	/// type (25 total, by default; see \c lib/querydef.pl), each taking
+	/// one more SQLTypeAdapter object than the previous one.  See the
+	/// template query overview above for more about this topic.
+	SimpleResult execute(const SQLTypeAdapter& str);
 
 	/// \brief Execute query in a known-length string of characters.
 	/// This can include null characters.
 	///
 	/// Executes the query immediately, and returns the results.
-	ResNSel execute(const char* str, size_t len);
+	SimpleResult execute(const char* str, size_t len);
 
-	/// \brief Execute a query that can return a result set
+	/// \brief Execute a query that can return rows, with access to
+	/// the rows in sequence
 	/// 
 	/// Use one of the use() overloads if memory efficiency is
 	/// important.  They return an object that can walk through
@@ -298,31 +400,51 @@ public:
 	///
 	/// This function has the same set of overloads as execute().
 	///
-	/// \return ResUse object that can walk through result set serially
+	/// \return UseQueryResult object that can walk through result set serially
 	///
 	/// \sa exec(), execute(), store() and storein()
-	ResUse use() { return use(def); }
+	UseQueryResult use() { return use(str(template_defaults)); }
 
-	/// \brief Execute query in a C++ string
+	/// \brief Execute a template query that can return rows, with
+	/// access to the rows in sequence
+    ///
+    /// This method should only be used by code that doesn't know,
+    /// at compile time, how many parameters it will have.  This is
+    /// useful within the library, and also for code that builds
+    /// template queries dynamically, at run time.
 	///
-	/// Executes the query immediately, and returns an object that
-	/// lets you walk through the result set one row at a time, in
-	/// sequence.  This is more memory-efficient than store().
-	ResUse use(const SQLString& str);
+	/// \param p parameters to use in the template query.
+	UseQueryResult use(SQLQueryParms& p);
 
-	/// \brief Execute query in a C string
+	/// \brief Execute a query that can return rows, with access to
+	/// the rows in sequence
 	///
-	/// Executes the query immediately, and returns an object that
-	/// lets you walk through the result set one row at a time, in
-	/// sequence.  This is more memory-efficient than store().
-	ResUse use(const char* str);
+	/// \param str if this object is set up as a template query, this is
+	/// the value to substitute for the first template query parameter;
+	/// else, it is the SQL query string to execute
+	///
+	/// Because SQLTypeAdapter can be initialized from either a C string
+	/// or a C++ string, this overload accepts query strings in either
+	/// form.  Beware, SQLTypeAdapter also accepts many other data types
+	/// (this is its \e raison \e d'etre), so it will let you write code
+	/// that compiles but results in bogus SQL queries.
+	///
+	/// To support template queries, there many more overloads of this
+	/// type (25 total, by default; see \c lib/querydef.pl), each taking
+	/// one more SQLTypeAdapter object than the previous one.  See the
+	/// template query overview above for more about this topic.
+	UseQueryResult use(const SQLTypeAdapter& str);
 
-	/// \brief Execute query in a known-length C string
+	/// \brief Execute a query that can return rows, with access to
+	/// the rows in sequence
 	///
-	/// Executes the query immediately, and returns an object that
-	/// lets you walk through the result set one row at a time, in
-	/// sequence.  This is more memory-efficient than store().
-	ResUse use(const char* str, size_t len);
+	/// This overload is for situations where you have the query in a
+	/// C string and have its length already.  If you want to execute
+	/// a query in a null-terminated C string or have the query string
+	/// in some other form, you probably want to call
+	/// use(const SQLTypeAdapter&) instead.  SQLTypeAdapter converts
+	/// from plain C strings and other useful data types implicitly.
+	UseQueryResult use(const char* str, size_t len);
 
 	/// \brief Execute a query that can return a result set
 	///
@@ -342,31 +464,50 @@ public:
 	///
 	/// This function has the same set of overloads as execute().
 	///
-	/// \return Result object containing entire result set
+	/// \return StoreQueryResult object containing entire result set
 	///
 	/// \sa exec(), execute(), storein(), and use()
-	Result store() { return store(def); }
+	StoreQueryResult store() { return store(str(template_defaults)); }
 
-	/// \brief Execute query in a C++ string
+	/// \brief Store results from a template query using given parameters.
+    ///
+    /// This method should only be used by code that doesn't know,
+    /// at compile time, how many parameters it will have.  This is
+    /// useful within the library, and also for code that builds
+    /// template queries dynamically, at run time.
 	///
-	/// Executes the query immediately, and returns an object that
-	/// contains the entire result set.  This is less memory-efficient
-	/// than use(), but it lets you have random access to the results.
-	Result store(const SQLString& str);
+	/// \param p parameters to use in the template query.
+	StoreQueryResult store(SQLQueryParms& p);
 
-	/// \brief Execute query in a C string
+	/// \brief Execute a query that can return rows, returning all
+	/// of the rows in a random-access container
 	///
-	/// Executes the query immediately, and returns an object that
-	/// contains the entire result set.  This is less memory-efficient
-	/// than use(), but it lets you have random access to the results.
-	Result store(const char* str);
+	/// \param str if this object is set up as a template query, this is
+	/// the value to substitute for the first template query parameter;
+	/// else, it is the SQL query string to execute
+	///
+	/// Because SQLTypeAdapter can be initialized from either a C string
+	/// or a C++ string, this overload accepts query strings in either
+	/// form.  Beware, SQLTypeAdapter also accepts many other data types
+	/// (this is its \e raison \e d'etre), so it will let you write code
+	/// that compiles but results in bogus SQL queries.
+	///
+	/// To support template queries, there many more overloads of this
+	/// type (25 total, by default; see \c lib/querydef.pl), each taking
+	/// one more SQLTypeAdapter object than the previous one.  See the
+	/// template query overview above for more about this topic.
+	StoreQueryResult store(const SQLTypeAdapter& str);
 
-	/// \brief Execute query in a known-length C string
+	/// \brief Execute a query that can return rows, returning all
+	/// of the rows in a random-access container
 	///
-	/// Executes the query immediately, and returns an object that
-	/// contains the entire result set.  This is less memory-efficient
-	/// than use(), but it lets you have random access to the results.
-	Result store(const char* str, size_t len);
+	/// This overload is for situations where you have the query in a
+	/// C string and have its length already.  If you want to execute
+	/// a query in a null-terminated C string or have the query string
+	/// in some other form, you probably want to call
+	/// store(const SQLTypeAdapter&) instead.  SQLTypeAdapter converts
+	/// from plain C strings and other useful data types implicitly.
+	StoreQueryResult store(const char* str, size_t len);
 
 	/// \brief Execute a query, and call a functor for each returned row
 	///
@@ -379,9 +520,9 @@ public:
 	/// \param fn the functor called for each row
 	/// \return a copy of the passed functor
 	template <typename Function>
-	Function for_each(const SQLString& query, Function fn)
+	Function for_each(const SQLTypeAdapter& query, Function fn)
 	{	
-		mysqlpp::ResUse res = use(query);
+		mysqlpp::UseQueryResult res = use(query);
 		if (res) {
 			mysqlpp::NoExceptions ne(res);
 			while (mysqlpp::Row row = res.fetch_row()) {
@@ -394,7 +535,7 @@ public:
 
 	/// \brief Execute the query, and call a functor for each returned row
 	///
-	/// Just like for_each(const SQLString&, Function), but it uses
+	/// Just like for_each(const SQLTypeAdapter&, Function), but it uses
 	/// the query string held by the Query object already
 	///
 	/// \param fn the functor called for each row
@@ -402,7 +543,7 @@ public:
 	template <typename Function>
 	Function for_each(Function fn)
 	{	
-		mysqlpp::ResUse res = use();
+		mysqlpp::UseQueryResult res = use();
 		if (res) {
 			mysqlpp::NoExceptions ne(res);
 			while (mysqlpp::Row row = res.fetch_row()) {
@@ -426,9 +567,9 @@ public:
 	template <class SSQLS, typename Function>
 	Function for_each(const SSQLS& ssqls, Function fn)
 	{	
-		SQLString query("select * from ");
-		query += ssqls._table;
-		mysqlpp::ResUse res = use(query);
+		std::string query("select * from ");
+		query += ssqls.table();
+		mysqlpp::UseQueryResult res = use(query);
 		if (res) {
 			mysqlpp::NoExceptions ne(res);
 			while (mysqlpp::Row row = res.fetch_row()) {
@@ -454,19 +595,19 @@ public:
 	/// container is the destination, the query is the source, and the
 	/// functor is the predicate; it's just like an STL algorithm.
 	///
-	/// \param seq the destination container; needs a push_back() method
+	/// \param con the destination container; needs a push_back() method
 	/// \param query the query string
 	/// \param fn the functor called for each row
 	/// \return a copy of the passed functor
 	template <class Sequence, typename Function>
-	Function store_if(Sequence& seq, const SQLString& query, Function fn)
+	Function store_if(Sequence& con, const SQLTypeAdapter& query, Function fn)
 	{	
-		mysqlpp::ResUse res = use(query);
+		mysqlpp::UseQueryResult res = use(query);
 		if (res) {
 			mysqlpp::NoExceptions ne(res);
 			while (mysqlpp::Row row = res.fetch_row()) {
 				if (fn(row)) {
-					seq.push_back(row);
+					con.push_back(row);
 				}
 			}
 		}
@@ -477,25 +618,25 @@ public:
 	/// \brief Pulls every row in a table, conditionally storing each
 	/// one in a container
 	///
-	/// Just like store_if(Sequence&, const SQLString&, Function), but
+	/// Just like store_if(Sequence&, const SQLTypeAdapter&, Function), but
 	/// it uses the SSQLS instance to construct a "select * from TABLE"
 	/// query, using the table name field in the SSQLS.
 	///
-	/// \param seq the destination container; needs a push_back() method
+	/// \param con the destination container; needs a push_back() method
 	/// \param ssqls the SSQLS instance to get a table name from
 	/// \param fn the functor called for each row
 	/// \return a copy of the passed functor
 	template <class Sequence, class SSQLS, typename Function>
-	Function store_if(Sequence& seq, const SSQLS& ssqls, Function fn)
+	Function store_if(Sequence& con, const SSQLS& ssqls, Function fn)
 	{	
-		SQLString query("select * from ");
-		query += ssqls._table;
-		mysqlpp::ResUse res = use(query);
+		std::string query("select * from ");
+		query += ssqls.table();
+		mysqlpp::UseQueryResult res = use(query);
 		if (res) {
 			mysqlpp::NoExceptions ne(res);
 			while (mysqlpp::Row row = res.fetch_row()) {
 				if (fn(row)) {
-					seq.push_back(row);
+					con.push_back(row);
 				}
 			}
 		}
@@ -506,21 +647,21 @@ public:
 	/// \brief Execute the query, conditionally storing each row in a
 	/// container
 	///
-	/// Just like store_if(Sequence&, const SQLString&, Function), but
+	/// Just like store_if(Sequence&, const SQLTypeAdapter&, Function), but
 	/// it uses the query string held by the Query object already
 	///
-	/// \param seq the destination container; needs a push_back() method
+	/// \param con the destination container; needs a push_back() method
 	/// \param fn the functor called for each row
 	/// \return a copy of the passed functor
 	template <class Sequence, typename Function>
-	Function store_if(Sequence& seq, Function fn)
+	Function store_if(Sequence& con, Function fn)
 	{	
-		mysqlpp::ResUse res = use();
+		mysqlpp::UseQueryResult res = use();
 		if (res) {
 			mysqlpp::NoExceptions ne(res);
 			while (mysqlpp::Row row = res.fetch_row()) {
 				if (fn(row)) {
-					seq.push_back(row);
+					con.push_back(row);
 				}
 			}
 		}
@@ -553,8 +694,8 @@ public:
 	/// this function just wraps store() when built against older API
 	/// libraries.
 	///
-	/// \return Result object containing the next result set.
-	Result store_next();
+	/// \return StoreQueryResult object containing the next result set.
+	StoreQueryResult store_next();
 
 	/// \brief Return whether more results are waiting for a multi-query
 	/// or stored procedure response.
@@ -583,14 +724,57 @@ public:
 	/// string, or a container and template query parameters.
 	///
 	/// \param con any STL sequence container, such as \c std::vector
-	/// \param r whether the query automatically resets after being used
 	///
 	/// \sa exec(), execute(), store(), and use()
 	template <class Sequence>
-	void storein_sequence(Sequence& con, query_reset r = RESET_QUERY)
+	void storein_sequence(Sequence& con)
 	{
-		storein_sequence(con, def, r);
+		storein_sequence(con, str(template_defaults));
 	}
+
+	/// \brief Executes a query, storing the result rows in an STL
+	/// sequence container.
+	///
+	/// \param con the container to store the results in
+	///
+	/// \param s if Query is set up as a template query, this is the value
+	/// to substitute for the first template query parameter; else, the
+	/// SQL query string
+	///
+	/// There many more overloads of this type (25 total, by default;
+	/// see \c lib/querydef.pl), each taking one more SQLTypeAdapter object
+	/// than the previous one.  See the template query overview above
+	/// for more about this topic.
+	template <class Sequence>
+	void storein_sequence(Sequence& con, const SQLTypeAdapter& s)
+	{
+		UseQueryResult result = use(s);
+		while (1) {
+			MYSQL_ROW d = result.fetch_raw_row();
+			if (!d)
+				break;
+			Row row(d, &result, result.fetch_lengths(), true);
+			if (!row)
+				break;
+			con.push_back(typename Sequence::value_type(row));
+		}
+	}
+
+	/// \brief Execute template query using given parameters, storing
+    /// the results in a sequence type container.
+    ///
+    /// This method should only be used by code that doesn't know,
+    /// at compile time, how many parameters it will have.  This is
+    /// useful within the library, and also for code that builds
+    /// template queries dynamically, at run time.
+	///
+	/// \param con container that will receive the results
+	/// \param p parameters to use in the template query.
+    template <class Seq>
+    void storein_sequence(Seq& con, SQLQueryParms& p)
+    {
+        storein_sequence(con, str(p));
+    }
 
 	/// \brief Execute a query, storing the result set in an STL
 	/// associative container.
@@ -600,10 +784,54 @@ public:
 	/// that detail, that method's comments apply equally well to this
 	/// one.
 	template <class Set>
-	void storein_set(Set& con, query_reset r = RESET_QUERY)
+	void storein_set(Set& con)
 	{
-		storein_set(con, def, r);
+		storein_set(con, str(template_defaults));
 	}
+
+	/// \brief Executes a query, storing the result rows in an STL
+	/// set-associative container.
+	///
+	/// \param con the container to store the results in
+	///
+	/// \param s if Query is set up as a template query, this is the value
+	/// to substitute for the first template query parameter; else, the
+	/// SQL query string
+	///
+	/// There many more overloads of this type (25 total, by default;
+	/// see \c lib/querydef.pl), each taking one more SQLTypeAdapter object
+	/// than the previous one.  See the template query overview above
+	/// for more about this topic.
+	template <class Set>
+	void storein_set(Set& con, const SQLTypeAdapter& s)
+	{
+		UseQueryResult result = use(s);
+		while (1) {
+			MYSQL_ROW d = result.fetch_raw_row();
+			if (!d)
+				return;
+			Row row(d, &result, result.fetch_lengths(), true);
+			if (!row)
+				break;
+			con.insert(typename Set::value_type(row));
+		}
+	}
+
+	/// \brief Execute template query using given parameters, storing
+    /// the results in a set type container.
+    ///
+    /// This method should only be used by code that doesn't know,
+    /// at compile time, how many parameters it will have.  This is
+    /// useful within the library, and also for code that builds
+    /// template queries dynamically, at run time.
+	///
+	/// \param con container that will receive the results
+	/// \param p parameters to use in the template query.
+    template <class Set>
+    void storein_set(Set& con, SQLQueryParms& p)
+    {
+        storein_set(con, str(p));
+    }
 
 	/// \brief Execute a query, and store the entire result set
 	/// in an STL container.
@@ -624,28 +852,28 @@ public:
 	/// See exec(), execute(), store(), and use() for alternative
 	/// query execution mechanisms.
 	template <class Container>
-	void storein(Container& con, query_reset r = RESET_QUERY)
+	void storein(Container& con)
 	{
-		storein(con, def, r);
+		storein(con, str(template_defaults));
 	}
 
 	/// \brief Specialization of storein_sequence() for \c std::vector
 	template <class T>
-	void storein(std::vector<T>& con, const char* s)
+	void storein(std::vector<T>& con, const SQLTypeAdapter& s)
 	{
 		storein_sequence(con, s);
 	}
 
 	/// \brief Specialization of storein_sequence() for \c std::deque
 	template <class T>
-	void storein(std::deque<T>& con, const char* s)
+	void storein(std::deque<T>& con, const SQLTypeAdapter& s)
 	{
 		storein_sequence(con, s);
 	}
 
 	/// \brief Specialization of storein_sequence() for \c std::list
 	template <class T>
-	void storein(std::list<T>& con, const char* s)
+	void storein(std::list<T>& con, const SQLTypeAdapter& s)
 	{
 		storein_sequence(con, s);
 	}
@@ -654,7 +882,7 @@ public:
 	/// \brief Specialization of storein_sequence() for g++ STL
 	/// extension \c slist
 	template <class T>
-	void storein(__gnu_cxx::slist<T>& con, const char* s)
+	void storein(__gnu_cxx::slist<T>& con, const SQLTypeAdapter& s)
 	{
 		storein_sequence(con, s);
 	}
@@ -666,7 +894,7 @@ public:
 	/// in the global namespace.  This is a common language extension,
 	/// so this may also work for other compilers.
 	template <class T>
-	void storein(slist<T>& con, const char* s)
+	void storein(slist<T>& con, const SQLTypeAdapter& s)
 	{
 		storein_sequence(con, s);
 	}
@@ -677,7 +905,7 @@ public:
 	/// This is for those benighted compilers that include an \c slist
 	/// implementation, but erroneously put it in the \c std namespace!
 	template <class T>
-	void storein(std::slist<T>& con, const char* s)
+	void storein(std::slist<T>& con, const SQLTypeAdapter& s)
 	{
 		storein_sequence(con, s);
 	}
@@ -685,14 +913,14 @@ public:
 
 	/// \brief Specialization of storein_set() for \c std::set
 	template <class T>
-	void storein(std::set<T>& con, const char* s)
+	void storein(std::set<T>& con, const SQLTypeAdapter& s)
 	{
 		storein_set(con, s);
 	}
 
 	/// \brief Specialization of storein_set() for \c std::multiset
 	template <class T>
-	void storein(std::multiset<T>& con, const char* s)
+	void storein(std::multiset<T>& con, const SQLTypeAdapter& s)
 	{
 		storein_set(con, s);
 	}
@@ -796,31 +1024,24 @@ public:
 		return *this;
 	}
 
-	/// \brief Return true if the last query was successful
-	operator bool() { return success(); }
-
-	/// \brief Return true if the last query failed
-	bool operator !() { return !success(); }
-
 #if !defined(DOXYGEN_IGNORE)
 	// Declare the remaining overloads.  These are hidden down here partly
 	// to keep the above code clear, but also so that we may hide them
 	// from Doxygen, which gets confused by macro instantiations that look
 	// like method declarations.
-	mysql_query_define0(std::string, preview)
 	mysql_query_define0(std::string, str)
-	mysql_query_define1(ResNSel, execute)
-	mysql_query_define1(Result, store)
-	mysql_query_define1(ResUse, use)
-	mysql_query_define2(storein_sequence)
-	mysql_query_define2(storein_set)
-	mysql_query_define2(storein)
+	mysql_query_define0(SimpleResult, execute)
+	mysql_query_define0(StoreQueryResult, store)
+	mysql_query_define0(UseQueryResult, use)
+	mysql_query_define1(storein_sequence)
+	mysql_query_define1(storein_set)
+	mysql_query_define1(storein)
 #endif // !defined(DOXYGEN_IGNORE)
 
 	/// \brief The default template parameters
 	///
 	/// Used for filling in parameterized queries.
-	SQLQueryParms def;
+	SQLQueryParms template_defaults;
 
 private:
 	friend class SQLQueryParms;
@@ -829,7 +1050,7 @@ private:
 	Connection* conn_;
 
 	/// \brief If true, last query succeeded
-	bool success_;
+	bool copacetic_;
 
 	/// \brief List of template query parameters
 	std::vector<SQLParseElement> parse_elems_;
@@ -844,87 +1065,23 @@ private:
 	/// \brief String buffer for storing assembled query
 	std::stringbuf sbuffer_;
 
-	//// Internal support functions
-	my_ulonglong affected_rows() const;
-	my_ulonglong insert_id();
-	std::string info();
-	char* preview_char();
-
 	/// \brief Process a parameterized query list.
 	void proc(SQLQueryParms& p);
 
-	// Locking mechanism
-	bool lock();
-	void unlock();
-
-	SQLString* pprepare(char option, SQLString& S, bool replace = true);
+	SQLTypeAdapter* pprepare(char option, SQLTypeAdapter& S, bool replace = true);
 };
 
 
-#if !defined(DOXYGEN_IGNORE)
-// Doxygen will not generate documentation for this section.
-
-template <class Seq>
-void Query::storein_sequence(Seq& seq, SQLQueryParms& p, query_reset r)
+/// \brief Insert raw query string into the given stream.
+///
+/// This is just syntactic sugar for Query::str(void)
+inline std::ostream& operator <<(std::ostream& os, Query& q)
 {
-	r = parse_elems_.size() ? DONT_RESET : RESET_QUERY;
-	storein_sequence(seq, str(p, r).c_str());
+	return os << q.str();
 }
 
-
-template <class Sequence>
-void Query::storein_sequence(Sequence& con, const char* s)
-{
-	ResUse result = use(s);
-	while (1) {
-		MYSQL_ROW d = mysql_fetch_row(result.raw_result());
-		if (!d)
-			break;
-		Row row(d, &result, mysql_fetch_lengths(result.raw_result()),
-				true);
-		if (!row)
-			break;
-		con.push_back(typename Sequence::value_type(row));
-	}
-}
-
-
-template <class Set>
-void Query::storein_set(Set& sett, SQLQueryParms& p, query_reset r)
-{
-	r = parse_elems_.size() ? DONT_RESET : RESET_QUERY;
-	storein_set(sett, str(p, r).c_str());
-}
-
-
-template <class Set>
-void Query::storein_set(Set& con, const char* s)
-{
-	ResUse result = use(s);
-	while (1) {
-		MYSQL_ROW d = mysql_fetch_row(result.raw_result());
-		if (!d)
-			return;
-		Row row(d, &result, mysql_fetch_lengths(result.raw_result()),
-				true);
-		if (!row)
-			break;
-		con.insert(typename Set::value_type(row));
-	}
-}
-
-
-template <class T>
-void Query::storein(T& con, SQLQueryParms& p, query_reset r)
-{
-	r = parse_elems_.size() ? DONT_RESET : RESET_QUERY;
-	storein(con, str(p, r).c_str());
-}
-
-
-#endif // !defined(DOXYGEN_IGNORE)
 
 } // end namespace mysqlpp
 
-#endif
+#endif // !defined(MYSQLPP_QUERY_H)
 

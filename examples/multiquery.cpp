@@ -29,7 +29,8 @@
  USA
 ***********************************************************************/
 
-#include "util.h"
+#include "cmdline.h"
+#include "printdata.h"
 
 #include <mysql++.h>
 
@@ -45,11 +46,11 @@ typedef vector<int> IntVectorType;
 
 
 static void
-print_header(IntVectorType& widths, Result& res)
+print_header(IntVectorType& widths, StoreQueryResult& res)
 {
 	cout << "  |" << setfill(' ');
-	for (size_t i = 0; i < res.names().size(); i++) {
-		cout << " " << setw(widths.at(i)) << res.names(i) << " |";
+	for (size_t i = 0; i < res.field_names()->size(); i++) {
+		cout << " " << setw(widths.at(i)) << res.field_name(i) << " |";
 	}
 	cout << endl;
 }
@@ -59,8 +60,8 @@ static void
 print_row(IntVectorType& widths, Row& row)
 {
 	cout << "  |" << setfill(' ');
-	for (size_t i = 0; i < row.size(); i++) {
-		cout << " " << setw(widths.at(i)) << row.raw_data(i) << " |";
+	for (size_t i = 0; i < row.size(); ++i) {
+		cout << " " << setw(widths.at(i)) << row[i] << " |";
 	}
 	cout << endl;
 }
@@ -78,10 +79,10 @@ print_row_separator(IntVectorType& widths)
 
 
 static void
-print_result(Result& res, int index)
+print_result(StoreQueryResult& res, int index)
 {
 	// Show how many rows are in result, if any
-	int num_results = res.size();
+	StoreQueryResult::size_type num_results = res.size();
 	if (res && (num_results > 0)) {
 		cout << "Result set " << index << " has " << num_results <<
 				" row" << (num_results == 1 ? "" : "s") << ':' << endl;
@@ -93,11 +94,11 @@ print_result(Result& res, int index)
 
 	// Figure out the widths of the result set's columns
 	IntVectorType widths;
-	int size = res.columns();
+	int size = res.num_fields();
 	for (int i = 0; i < size; i++) {
-		mysql_type_info mti(res.fields(i));
-		widths.push_back((res.names(i).size() > mti.max_length()) ?
-				res.names(i).size() : mti.max_length());
+		widths.push_back(max(
+				res.field(i).max_length(),
+				res.field_name(i).size()));
 	}
 
 	// Print result set header
@@ -106,9 +107,8 @@ print_result(Result& res, int index)
 	print_row_separator(widths);
 
 	// Display the result set contents
-	for (int i = 0; i < num_results; ++i) {
-		Row row = res.fetch_row();
-		print_row(widths, row);
+	for (StoreQueryResult::size_type i = 0; i < num_results; ++i) {
+		print_row(widths, res[i]);
 	}
 
 	// Print result set footer
@@ -119,19 +119,12 @@ print_result(Result& res, int index)
 static void
 print_multiple_results(Query& query)
 {
-	try {
-		// Execute query and print all result sets
-		Result res = query.store();
-		print_result(res, 0);
-		for (int i = 1; query.more_results(); ++i) {
-			res = query.store_next();
-			print_result(res, i);
-		}
-	}
-	catch (Exception& err) {
-		// Something bad happened....
-		cerr << "Multi-query failure: " << err.what() << endl;
-		exit(1);
+	// Execute query and print all result sets
+	StoreQueryResult res = query.store();
+	print_result(res, 0);
+	for (int i = 1; query.more_results(); ++i) {
+		res = query.store_next();
+		print_result(res, i);
 	}
 }
 
@@ -139,31 +132,66 @@ print_multiple_results(Query& query)
 int
 main(int argc, char *argv[])
 {
-	Connection con;
-	try {
-		// Enable multi-queries.  Notice that we can set connection
-		// options before the connection is established, which the
-		// underlying MySQL C API does not allow.  In this particular
-		// case, this is not a mere nicety: the multi-query option has
-		// a side effect of setting one of the flags used when 
-		// establishing the database server connection.  We could set it
-		// directly, but then we couldn't use connect_to_db().
-		con.set_option(Connection::opt_multi_statements, true);
+	// Get connection parameters from command line
+    const char* db = 0, *server = 0, *user = 0, *pass = "";
+	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
+		return 1;
+	}
 
-		// Connect to database
-		if (!connect_to_db(argc, argv, con)) {
+	try {
+		// Enable multi-queries.  Notice that you almost always set
+		// MySQL++ connection options before establishing the server
+		// connection, and options are always set using this one
+		// interface.  If you're familiar with the underlying C API,
+		// you know that there is poor consistency on these matters;
+		// MySQL++ abstracts these differences away.
+		Connection con;
+		con.set_option(new MultiStatementsOption(true));
+
+		// Connect to the database
+		if (!con.connect(db, server, user, pass)) {
 			return 1;
 		}
+
+		// Set up query with multiple queries.
+		Query query = con.query();
+		query << "DROP TABLE IF EXISTS test_table; " <<
+				"CREATE TABLE test_table(id INT); " <<
+				"INSERT INTO test_table VALUES(10); " <<
+				"UPDATE test_table SET id=20 WHERE id=10; " <<
+				"SELECT * FROM test_table; " <<
+				"DROP TABLE test_table";
+		cout << "Multi-query: " << endl << query << endl;
+
+		// Execute statement and display all result sets.
+		print_multiple_results(query);
+
+#if MYSQL_VERSION_ID >= 50000
+		// If it's MySQL v5.0 or higher, also test stored procedures, which
+		// return their results the same way multi-queries do.
+		query << "DROP PROCEDURE IF EXISTS get_stock; " <<
+				"CREATE PROCEDURE get_stock" <<
+				"( i_item varchar(20) ) " <<
+				"BEGIN " <<
+				"SET i_item = concat('%', i_item, '%'); " <<
+				"SELECT * FROM stock WHERE lower(item) like lower(i_item); " <<
+				"END;";
+		cout << "Stored procedure query: " << endl << query << endl;
+
+		// Create the stored procedure.
+		print_multiple_results(query);
+
+		// Call the stored procedure and display its results.
+		query << "CALL get_stock('relish')";
+		cout << "Query: " << query << endl;
+		print_multiple_results(query);
+#endif
+
+		return 0;
 	}
 	catch (const BadOption& err) {
-		if (err.what_option() == Connection::opt_multi_statements) {
-			cerr << "This example only works when MySQL++ is built "
-					"against MySQL C API" << endl;
-			cerr << "version 4.1.01 or later." << endl;
-		}
-		else {
-			cerr << "Unexpected option failure: " << err.what() << endl;
-		}
+		cerr << err.what() << endl;
+		cerr << "This example requires MySQL 4.1.1 or later." << endl;
 		return 1;
 	}
 	catch (const ConnectionFailed& err) {
@@ -176,43 +204,4 @@ main(int argc, char *argv[])
 		cerr << "Error: " << er.what() << endl;
 		return 1;
 	}
-
-	// Set up query with multiple queries.
-	Query query = con.query();
-	query << "DROP TABLE IF EXISTS test_table;" << endl <<
-			"CREATE TABLE test_table(id INT);" << endl <<
-			"INSERT INTO test_table VALUES(10);" << endl <<
-			"UPDATE test_table SET id=20 WHERE id=10;" << endl <<
-			"SELECT * FROM test_table;" << endl <<
-			"DROP TABLE test_table" << endl;
-	cout << "Multi-query: " << endl << query.preview() << endl;
-
-	// Execute statement and display all result sets.
-	print_multiple_results(query);
-
-#if MYSQL_VERSION_ID >= 50000
-	// If it's MySQL v5.0 or higher, also test stored procedures, which
-	// return their results the same way multi-queries do.
-	query.reset();
-	query << "DROP PROCEDURE IF EXISTS get_stock;" << endl <<
-			"CREATE PROCEDURE get_stock" << endl <<
-			"( i_item varchar(20) )" << endl <<
-			"BEGIN" << endl <<
-			"SET i_item = concat('%', i_item, '%');" << endl <<
-			"SELECT * FROM stock WHERE lower(item) like lower(i_item);" << endl <<
-			"END" << endl <<
-			";";
-	cout << "Stored procedure query: " << endl << query.preview() << endl;
-
-	// Create the stored procedure.
-	print_multiple_results(query);
-
-	// Call the stored procedure and display its results.
-	query.reset();
-	query << "CALL get_stock('relish')";
-	cout << "Query: " << query.preview() << endl;
-	print_multiple_results(query);
-#endif
-
-	return 0;
 }

@@ -4,7 +4,7 @@
 	to be useful, only to show how you can do result set filtering that
 	outstrips the power of SQL.
 
- Copyright (c) 2005-2007 by Educational Technology Resources, Inc.
+ Copyright (c) 2005-2008 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -26,7 +26,8 @@
  USA
 ***********************************************************************/
 
-#include "util.h"
+#include "cmdline.h"
+#include "printdata.h"
 #include "stock.h"
 
 #include <mysql++.h>
@@ -49,7 +50,7 @@ struct is_prime
 		}
 		else {
 			// The only possibility left is that it's divisible by an
-			// odd number that's less or equal to its square root.
+			// odd number that's less than or equal to its square root.
 			for (int i = 3; i <= sqrt(double(s.num)); i += 2) {
 				if ((s.num % i) == 0) {
 					return false;
@@ -64,12 +65,15 @@ struct is_prime
 int
 main(int argc, char *argv[])
 {
+	// Get database access parameters from command line
+    const char* db = 0, *server = 0, *user = 0, *pass = "";
+	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
+		return 1;
+	}
+
 	try {
-		// Connect to the sample database
-		mysqlpp::Connection con;
-		if (!connect_to_db(argc, argv, con)) {
-			return 1;
-		}
+		// Establish the connection to the database server.
+		mysqlpp::Connection con(db, server, user, pass);
 
 		// Collect the stock items with prime quantities
 		std::vector<stock> results;

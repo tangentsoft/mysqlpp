@@ -1,0 +1,228 @@
+If you are going to make any changes to MySQL++, this file has some
+hints and commentary you may find helpful.
+
+
+Subversion Access
+~~~~~~~~~~~~~~~~~
+    To check out the current development version from the Gna!
+    Subversion repository, say:
+
+        $ svn co svn://svn.gna.org/svn/mysqlpp/trunk mysqlpp
+
+    If you're a MySQL++ committer, use svn over ssh instead:
+    
+        $ svn co svn+ssh://LOGIN@svn.gna.org/svn/mysqlpp/trunk mysqlpp
+
+    where LOGIN is your Gna! login name.  You will have to have your
+    ssh public key(s) registered with Gna! for this to work.
+
+
+Bootstrapping the Library
+~~~~~~~~~~~~~~~~~~~~~~~~~
+    When you check out MySQL++ from svn, there are a lot of things
+    "missing" as compared to a distributed tarball, because the
+    svn repository contains only source files, no generated files.
+
+    If you're using Windows, there is a simple batch file called
+    bootstrap.bat which wraps up all the steps you need to build
+    these "missing" files.  To run it, just say "bootstrap" from a
+    command shell in the top MySQL++ source directory.  For it to run
+    correctly, you will need Bakefile 0.2.3 (http://bakefile.org/) and
+    a Perl 5 interpreter installed on your system, both in the PATH.
+    The bootstrap script is smart enough to recognize when these
+    tools are missing and stop processing so you can fix the problem.
+
+    For all other platforms, there's a Bourne shell script called
+    bootstrap.  It's quite a bit more complex than the bootstrap.bat
+    file.  It does more, and takes many optional arguments to control
+    its behavior.  All of this is documented in a separate section
+    below.  For many systems, it suffices to just run it without
+    any arguments:
+
+        $ ./bootstrap
+
+    In addition to Bakefile 0.2.3 and Perl 5, you'll also need autoconf
+    1.59 or higher for this to run successfully.
+
+
+Submitting Patches
+~~~~~~~~~~~~~~~~~~
+    If you wish to submit a patch to the library, please send it to
+    the MySQL++ mailing list, or attach it to an entry in our bug
+    tracker on Gna!  We want patches in unified diff format.
+
+    The easiest way to get a unified diff is to check out a copy of
+    the current MySQL++ tree as described in the previous section.
+    Then make your change, cd to the MySQL++ root directory, and ask
+    Subversion to generate the diff for you:
+
+        $ svn diff > mychange.patch
+
+    If your patch adds new files to the distribution, you can say
+    "svn add newfile" before you do the diff, which will include
+    the contents of that file in the patch.  (You can do this even
+    when you've checked out the tree anonymously.)  Then say "svn
+    revert newfile" to make Subversion forget about the new file.
+
+    If you're making a patch against a MySQL++ distribution tarball,
+    then you can generate the diff this way:
+
+        $ diff -ruN mysql++-olddir mysql++-newdir > mychange.patch
+
+    The diff command is part of every Unix and Linux system, and
+    should be installed by default.  If you're on a Windows machine,
+    GNU diff is part of Cygwin (http://cygwin.com/).  Subversion is
+    also available for all of these systems.  There are no excuses
+    for not being able to make unified diffs.  :)
+
+
+Testing Your Proposed Change
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    In v2.3.2, we added a new script called 'dtest'.  You run it
+    like you would most of the examples, except that you don't need
+    to run it via exrun:
+
+        $ ./dtest [password] [user] [server_addr]
+
+    This automatically runs most of the examples, captures the outputs
+    to a file, and then compares that to a known-good run's outputs.
+    The purpose of this is that, before you submit a patch, run dtest
+    and see if it indicates that anything has changed.  If something
+    has and you can't account for it, it represents a problem that
+    you'll have to fix before submitting the patch.
+
+    If your change purposely causes different outputs from the dtest
+    run stored in svn, remove the bmark.txt file, then re-run dtest and
+    include the bmark.txt diffs with your patch.  This communicates
+    to us the fact that you know there are differences and want the
+    patch evaluated anyway.  Otherwise, we are likely to view the
+    change as a bug.
+
+
+Adding Support for a Different Compiler
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    MySQL++ uses the Bakefile system for creating project files
+    and makefiles.  This allows us to make changes to a single set
+    of files, and have the proper changes be made to all generated
+    project files and makefiles.  In the past, we used more ad-hoc
+    systems, and we'd frequently forget to update individual project
+    files and makefiles, so at any given time, at least one target
+    was likely to be broken.
+
+    If MySQL++ doesn't currently ship with project files or makefiles
+    tuned for your compiler of choice, you need to work through the
+    Bakefile mechanism to add support.  We're not willing to do ad-hoc
+    platform support any more, so please don't ask if you can send
+    us project files instead; we don't want them.
+
+    If you want to port MySQL++ to another platform, we need to be
+    confident that the entire library works on your platform before
+    we'll accept patches.  In the past, we've had broken ports that
+    were missing important library features, or that crashed when built
+    in certain ways.  Few people will knowingly use a crippled version
+    of MySQL++, since there are usually acceptable alternatives.
+    Therefore, such ports become maintenance baggage with little
+    compensating value.
+
+
+On Manipulating the Build System Source Files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    If you're using Visual C++, there are two ways to change the Visual
+    Studio project files:
+    
+    - You can just make the changes directly within Visual Studio.  This
+      is a fine way to do it if you're only making small changes for
+      your own purposes.
+
+    - The Visual Studio project files are actually generated from
+      mysql++.bkl by a tool called Bakefile, not maintained directly.
+      (We do it this way because Bakefile can generate many different
+      types of makefiles and project files from this single source file,
+      so all the platforms we support get all the changes at once.)  So,
+      if you want to make changes to the project files and contribute
+      them back to the MySQL++ project, you need to do the changes
+      in mysql++.bkl instead.  Rather than run Bakefile directly to
+      regenerate the project files, we've wrapped up the necessary steps
+      in the rebake.bat batch file.  Any arguments passed to rebake get
+      sent on to Bakefile without change.
+
+    If you're on a Unixy platform, things are a little more complex
+    because the build system uses Autoconf in addition to Bakefile.
+    The source files are mysql++.bkl, configure.ac, and config/*.  If you
+    change any of these, run the bootstrap script to rebuild all their
+    descendant files.
+
+    The bootstrap script also has other functions besides running
+    Bakefile and Autoconf for you:
+
+        $ ./bootstrap [no{doc,ex,lib,opt}] [pedantic] [bat] \
+                      [configure flags]
+
+    Arguments:
+
+    nodoc   The documentation won't be considered a prerequisite for
+            building the distribution tarball.  This is useful on systems
+            where the documentation doesn't build correctly, and you only
+            need to make a binary RPM.  That process requires a tarball,
+            but doesn't need the documentation.  Don't distribute the
+            tarball or SRPM that results, as they are no good for any
+            other purpose.
+
+    noex    The generated Makefiles and project files won't try to build
+            any of the examples.
+
+    nolib   The generated Makefiles and project files won't try to build
+            the MySQL++ library.
+
+    nomaint Turn off "maintainer mode" stuff in the build.  These are
+            features used only by those building MySQL++ from svn.  The
+            'dist' build target uses this when creating the tarball.
+
+    noopt   Compiler optimization will be turned off.  (This currently
+            has no effect on MinGW or Visual C++.)
+
+    pedantic
+            Turns on all of GCC's warnings and portability checks.
+            Good for checking changes before making a public release.
+
+    bat     Asks cmd.exe to run bootstrap.bat for you.  This is useful
+            when using Cygwin just as a command shell in preference
+            to cmd.exe, as opposed to using Cygwin to build MySQL++
+            using its native tools.  Passing 'bat' stops all command
+            line processing in the bootstrap script, so if you
+            also pass some of the other options, make 'bat' last.
+            The only options that affect the built project files and
+            Makefiles work are the no* ones.
+
+    configure options
+            As soon as the bootstrap script sees an option that it
+            doesn't understand, it stops processing the command line.
+            Any subsequent options are passed to the configure script.
+            See README-Unix.txt for more on configure script options.
+
+
+Maintaining a Private CVS Repository
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    You may find it helpful to maintain your own CVS repository.
+    Whenever there is a new MySQL++ release, import it on the vendor
+    branch like this:
+
+        $ cvs import -m "Version 1.7.35" software/mysql++ mysql++ mysql++-1_7_35
+
+    (This assumes that you have your CVSROOT environment variable
+    set properly.)
+
+    Update the HEAD branch like this:
+
+        $ cd mysql++
+        $ cvs update -PdA
+        $ cvs update -j HEAD -j mysql++-1_7_35 -Pd
+        $ cvs ci -m "merged 1.7.35 into HEAD"
+        $ cvs tag mysql++-1_7_35-merged
+
+    Then any changes you make can easily be tracked, and diffs can
+    be produced with rdiff:
+
+        $ cvs rdiff -ru mysql++-1_7_35 -r mysql++-1_7_35_equal_list \
+            $(cat CVS/Repository) > equal_list.patch
+

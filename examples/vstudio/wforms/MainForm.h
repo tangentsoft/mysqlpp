@@ -99,7 +99,7 @@ namespace wforms {
 			// Retrieve a subset of the sample stock table set up by resetdb
 			mysqlpp::Query query = con.query();
 			query << "select item from stock";
-			mysqlpp::Result res = query.store();
+			mysqlpp::StoreQueryResult res = query.store();
 
 			if (res) {
 				// Display the result set
@@ -114,7 +114,7 @@ namespace wforms {
 			else {
 				// Retreive failed
 				AddMessage("Failed to get item list:");
-				AddMessage(ToUCS2(query.error().c_str()));
+				AddMessage(ToUCS2(query.error()));
 			}
 		}
 

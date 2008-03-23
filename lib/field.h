@@ -58,7 +58,9 @@ public:
 	Field(const MYSQL_FIELD* pf) :
 	name_(pf->name),
 	table_(pf->table),
+#if MYSQL_VERSION_ID > 40000	// only in 4.0 +
 	db_(pf->db),
+#endif
 	type_(pf->type, (pf->flags & UNSIGNED_FLAG) != 0,
 			(pf->flags & NOT_NULL_FLAG) == 0),
 	length_(pf->length),

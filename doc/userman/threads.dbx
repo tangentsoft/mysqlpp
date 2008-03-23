@@ -81,45 +81,51 @@
     It&rsquo;s a thornier problem when using threads, though.</para>
 
     <para>The simple fix is to just create a separarate <ulink
-    url="Connection" type="classref"/> object for each thread that needs
-    to make database queries. This works well if you have a small number
-    of threads that need to make queries, and each thread uses its
-    connection often enough that the server doesn&rsquo;t time out
-    waiting for queries. (By default, current MySQL servers have an 8
-    hour idle timeout on connections. It&rsquo;s a configuration option,
-    though, so your server may be set differently.)</para>
+    url="Connection" type="classref"/> object for each thread
+    that needs to make database queries. This works well if you
+    have a small number of threads that need to make queries, and
+    each thread uses its connection often enough that the server
+    doesn&rsquo;t time out waiting for queries.<footnote><para>By
+    default, current MySQL servers have an 8 hour idle timeout on
+    connections. It&rsquo;s a configuration option, though, so your
+    server may be set differently.</para></footnote></para>
 
     <para>If you have lots of threads or the frequency of queries is
     low, the connection management overhead will be excessive. To avoid
     that, we created the <ulink url="ConnectionPool" type="classref"/>
-    class. It manages a pool of <classname>Connection</classname>s like
-    library books: a thread checks one out, uses it, and then returns it
-    to the pool when it&rsquo;s done with it. This keeps the number of
-    active connections as low as possible.</para>
+    class. It manages a pool of <classname>Connection</classname>
+    objects like library books: a thread checks one out, uses it,
+    and then returns it to the pool as soon as it&rsquo;s done
+    with it. This keeps the number of active connections as low as
+    possible.</para>
 
-    <para><classname>ConnectionPool</classname> has three methods that
-    you need to override in a subclass to make it concrete:
-    <methodname>create()</methodname>,
+    <para><classname>ConnectionPool</classname> has three
+    methods that you need to override in a subclass to
+    make it concrete: <methodname>create()</methodname>,
     <methodname>destroy()</methodname>, and
-    <methodname>max_idle_time()</methodname>. These overrides let the
-    base class delegate operations it can&rsquo;t successfully do itself
-    to its subclass. The <classname>ConnectionPool</classname>
-    can&rsquo;t know how to <methodname>create()</methodname> the
-    <classname>Connection</classname> objects, because that depends on
-    how your program gets login parameters, server information, etc.
-    <classname>ConnectionPool</classname> also makes the subclass
-    <methodname>destroy()</methodname> the
-    <classname>Connection</classname> objects it created; it could
-    assume that they&rsquo;re simply allocated on the heap with
-    <methodname>new</methodname>, but it can&rsquo;t be sure, so the
-    base class delegates destruction, too. Finally, the base class
-    can&rsquo;t know what the connection idle timeout policy in the
-    client would make the most sense, so it asks its subclass via the
-    <methodname>max_idle_time()</methodname> method.</para>
+    <methodname>max_idle_time()</methodname>. These overrides let
+    the base class delegate operations it can&rsquo;t successfully do
+    itself to its subclass. The <classname>ConnectionPool</classname>
+    can&rsquo;t know how to <methodname>create()</methodname>
+    the <classname>Connection</classname> objects, because that
+    depends on how your program gets login parameters, server
+    information, etc.  <classname>ConnectionPool</classname>
+    also makes the subclass <methodname>destroy()</methodname>
+    the <classname>Connection</classname> objects it created; it
+    could assume that they&rsquo;re simply allocated on the heap
+    with <methodname>new</methodname>, but it can&rsquo;t be sure,
+    so the base class delegates destruction, too. Finally, the base
+    class can&rsquo;t know what the connection idle timeout policy
+    in the client would make the most sense, so it asks its subclass
+    via the <methodname>max_idle_time()</methodname> method.</para>
+
+    <para><classname>ConnectionPool</classname> also allows you to
+    override <methodname>release()</methodname>, if needed. For simple
+    uses, it&rsquo;s not necessary to override this.</para>
 
     <para>In designing your <classname>ConnectionPool</classname>
-    derivative, you might consider making it a Singleton (see Gamma et
-    al.), since there should only be one pool in a program.</para>
+    derivative, you might consider making it a Singleton (see Gamma
+    et al.), since there should only be one pool in a program.</para>
 
     <para>Here is an example showing how to use connection pools with
     threads:</para>
@@ -127,14 +133,15 @@
     <programlisting><xi:include href="cpool.txt" parse="text"
     xmlns:xi="http://www.w3.org/2001/XInclude"/></programlisting>
 
-    <para>The example works with both Windows native threads and with
-    POSIX threads. (The file <filename>examples/threads.h</filename>
-    contains a few macros and such to abstract away the differences
-    between the two threading models.) Because thread-enabled builds
-    are only the default on Windows, it&rsquo;s quite possible
-    for this program to do nothing on other platforms.  See your
-    platform&rsquo;s <filename>README-*.txt</filename> file for
-    instructions on enabling a thread-aware build.</para>
+    <para>The example works with both Windows native
+    threads and with POSIX threads.<footnote><para>The file
+    <filename>examples/threads.h</filename> contains a few macros and
+    such to abstract away the differences between the two threading
+    models.</para></footnote> Because thread-enabled builds are only
+    the default on Windows, it&rsquo;s quite possible for this program
+    to do nothing on other platforms.  See your platform&rsquo;s
+    <filename>README-*.txt</filename> file for instructions on enabling
+    a thread-aware build.</para>
 
     <para>If you write your code without checks for thread support like
     you see in the code above and link it to a build of MySQL++ that
@@ -179,49 +186,67 @@
     <title>Helper Functions</title>
 
     <para><classname>Connection</classname> has several thread-related
-    methods you might care about when using MySQL++ with threads.</para>
+    static methods you might care about when using MySQL++ with
+    threads.</para>
 
     <para>You can call
-    <methodname>Connection::thread_aware()</methodname> to determine
-    whether MySQL++ and the underlying C API library were both built to
-    be thread-aware. Again, I stress that thread
+    <methodname>Connection::thread_aware()</methodname> to
+    determine whether MySQL++ and the underlying C API library
+    were both built to be thread-aware. Again, I stress that thread
     <emphasis>awareness</emphasis> is not the same thing as thread
-    <emphasis>safety</emphasis>: it&rsquo;s still up to you to make your
-    code thread-safe. If this method returns true, it just means
-    it&rsquo;s <emphasis>possible</emphasis> to achieve
+    <emphasis>safety</emphasis>: it&rsquo;s still up to you to
+    make your code thread-safe. If this method returns true, it
+    just means it&rsquo;s <emphasis>possible</emphasis> to achieve
     thread-safety.</para>
 
     <para>If your program&rsquo;s connection-management strategy allows
     a thread to use a <classname>Connection</classname> object that
-    another thread created, you must call
-    <methodname>Connection::thread_start()</methodname> from these
-    threads before they do anything with MySQL++. It&rsquo;s safe for
-    the thread that created the <classname>Connection</classname> object
-    to call it, too, but unnecessary. This is because the underlying C
-    API library takes care of it for you when you try to establish your
-    first connection from that thread. So, if you use the simple
-    <classname>Connection</classname>-per-thread strategy lined out
-    above, you never need to call this method, but if you use something
-    more complex like <classname>ConnectionPool</classname>, you
-    do.</para>
+    another thread created before it creates a connection of its own,
+    you must call <methodname>Connection::thread_start()</methodname>
+    from that thread before it does anything with MySQL++. If a
+    thread creates a new connection before it uses a connection
+    created by another thread, though, it doesn&rsquo;t need to call
+    <methodname>Connection::thread_start()</methodname> because the
+    per-thread resources this allocates are implicitly created upon
+    creation of a connection if necessary.</para>
+
+    <para>This is why the simple
+    <classname>Connection</classname>-per-thread strategy
+    works: each thread that uses MySQL++ creates a connection
+    in that thread, implicitly allocating the per-thread
+    resources at the same time. You never need to call
+    <methodname>Connection::thread_start()</methodname> in this
+    instance. It&rsquo;s not harmful to call this function, just
+    unnecessary.</para>
+
+    <para>A good counterexample is using
+    <classname>ConnectionPool</classname>: you probably do need
+    to call <methodname>Connection::thread_start()</methodname>
+    at the start of each worker thread because you can&rsquo;t
+    usually tell whether you&rsquo;re getting a new connection
+    from the pool, or reusing one that another thread returned
+    to the pool after allocating it. It&rsquo;s possible to
+    conceive of situations where you can guarantee that each pool
+    user always allocates a fresh connection the first time it
+    calls <methodname>ConnectionPool::grab()</methodname>,
+    but thread programming is complex enough that
+    it&rsquo;s best to take the safe path and always call
+    <methodname>Connection::thread_start()</methodname> early in each
+    worker thread.</para>
 
     <para>Finally, there&rsquo;s the complementary method,
     <methodname>Connection::thread_end()</methodname>. Strictly
     speaking, it&rsquo;s not <emphasis>necessary</emphasis> to call
-    this. However, as alluded above, the underlying C API library
-    allocates some per-thread memory for each thread that calls
-    <methodname>Connection::thread_start()</methodname> or establishes
-    connections. It&rsquo;s not very much memory, it doesn&rsquo;t grow
-    over time, and a typical program is going to need this memory for
-    its entire run time anyway. Memory debuggers aren&rsquo;t smart
-    enough to know all this, though, so they will gripe about a memory
-    leak unless you call this from each thread that uses MySQL++ before
-    that thread exits.</para>
+    this. The per-thread memory allocated by the C API is small,
+    it doesn&rsquo;t grow over time, and a typical thread is going
+    to need this memory for its entire run time. Memory debuggers
+    aren&rsquo;t smart enough to know all this, though, so they will
+    gripe about a memory leak unless you call this from each thread
+    that uses MySQL++ before that thread exits.</para>
 
-    <para>It&rsquo;s not relevant to this chapter&rsquo;s topic, so to
-    be clear I want to point out that
-    <methodname>Connection::thread_id()</methodname> has to do with
-    threads in the database server, not client-side threads.</para>
+    <para>Although its name suggests otherwise,
+    <methodname>Connection::thread_id()</methodname> has nothing to
+    do with anything in this chapter.</para>
   </sect2>
 
 

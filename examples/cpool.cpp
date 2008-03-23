@@ -101,6 +101,16 @@ SimpleConnectionPool* poolptr = 0;
 static thread_return_t CALLBACK_SPECIFIER
 worker_thread(thread_arg_t running_flag)
 {
+	// Ask the underlying C API to allocate any per-thread resources it
+	// needs, in case it hasn't happened already.  In this particular
+	// program, it's almost guaranteed that the grab() call below will
+	// create a new connection the first time through, and thus allocate
+	// these resources implicitly, but there's a nonzero chance that
+	// this won't happen.  Anyway, this is an example program, meant to
+	// show good style, so we take the high road and ensure the
+	// resources are allocated before we do any queries.
+	mysqlpp::Connection::thread_start();
+
 	// Pull data from the sample table a bunch of times, releasing the
 	// connection we use each time.
 	for (size_t i = 0; i < 6; ++i) {
@@ -133,6 +143,9 @@ worker_thread(thread_arg_t running_flag)
 	// Tell main() that this thread is no longer running
 	*reinterpret_cast<bool*>(running_flag) = false;
 	
+	// Release the per-thread resources before we exit
+	mysqlpp::Connection::thread_end();
+
 	return 0;
 }
 #endif

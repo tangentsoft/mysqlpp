@@ -35,6 +35,27 @@ using namespace mysqlpp;
 using namespace std;
 
 
+// Compare the given string against the object inserted into a Query stream.
+template <class T>
+static unsigned int
+test_query_insert(const T& object, const char* expected, 
+		const char* what)
+{
+	Query q = Connection().query();	// don't do this in real code
+	q << object;
+	if (q.str().compare(expected) == 0) {
+		cout << what << " is '" << expected <<
+				"' in Query, as expected." << endl;
+		return 0;
+	}
+	else {
+		cerr << what << " '" << object << "' should be '" <<
+				expected << "' when inserted into Query!" << endl;
+		return 1;
+	}
+}
+
+
 // Compare the given string against the object inserted into an ostream.
 template <class T>
 static unsigned int
@@ -44,6 +65,8 @@ test_ostream_insert(const T& object, const char* expected,
 	ostringstream os;
 	os << object;
 	if (os.str().compare(expected) == 0) {
+		cout << what << " is '" << expected <<
+				"' in ostream, as expected." << endl;
 		return 0;
 	}
 	else {
@@ -61,6 +84,8 @@ static unsigned int
 test_str_method(const T& object, const char* expected, const char* what)
 {
 	if (object.str().compare(expected) == 0) {
+		cout << what << ".str() returns '" << expected <<
+				"', as expected." << endl;
 		return 0;
 	}
 	else {
@@ -78,6 +103,8 @@ test_string_operator(const T& object, const char* expected,
 		const char* what)
 {
 	if (string(object).compare(expected) == 0) {
+		cout << "string(" << what << ") is '" << expected <<
+				"', as expected." << endl;
 		return 0;
 	}
 	else {
@@ -95,7 +122,8 @@ static unsigned int
 test_stringization(const T& object, const char* expected, 
 		const char* what)
 {
-	return	test_ostream_insert(object, expected, what) +
+	return	test_query_insert(object, expected, what) +
+			test_ostream_insert(object, expected, what) +
 			test_string_operator(object, expected, what) +
 			test_str_method(object, expected, what);
 }

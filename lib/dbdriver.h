@@ -61,7 +61,8 @@ public:
 	enum nr_code {
 		nr_more_results,	///< success, with more results to come
 		nr_last_result,		///< success, last result recieved
-		nr_error			///< problem retrieving next result
+		nr_error,			///< problem retrieving next result
+		nr_not_supported	///< this C API doesn't support "next result"
 	};
 
 	/// \brief Create object
@@ -298,11 +299,15 @@ public:
 	/// enum values.
 	nr_code next_result()
 	{
-		switch (mysql_next_result(&mysql_)) {
-			case 0:  return nr_more_results;
-			case -1: return nr_last_result;
-			default: return nr_error;
-		}
+		#if MYSQL_VERSION_ID > 41000		// only in MySQL v4.1 +
+			switch (mysql_next_result(&mysql_)) {
+				case 0:  return nr_more_results;
+				case -1: return nr_last_result;
+				default: return nr_error;
+			}
+		#else
+			return nr_not_supported;
+		#endif
 	}
 
 	/// \brief Returns the number of fields in the given result set
@@ -453,14 +458,19 @@ public:
 	/// automatically make your program "thread-safe".  See the
 	/// <a href="../userman/threads.html">chapter on threads</a> in the
 	/// user manual for more information and guidance.
-	bool thread_aware() const;
+	static bool thread_aware();
 
 	/// \brief Tells the underlying MySQL C API library that this thread
 	/// is done using the library.
 	///
 	/// This exists because the MySQL C API library allocates some per-thread
 	/// memory which it doesn't release until you call this.
-	void thread_end() { mysql_thread_end(); }
+	static void thread_end()
+	{
+		#if MYSQL_VERSION_ID > 40000		// only in MySQL v4.0 +
+			mysql_thread_end();
+		#endif
+	}
 
 	/// \brief Returns the MySQL server thread ID for this connection
 	///
@@ -486,7 +496,14 @@ public:
 	/// any MySQL++ objects.  If you use a DBDriverPool object, this
 	/// applies; DBDriverPool isn't smart enough to call this for you,
 	/// and the MySQL C API won't do it, either.
-	bool thread_start() { return !mysql_thread_init(); }
+	static bool thread_start()
+	{
+		#if MYSQL_VERSION_ID > 40000		// only in MySQL v4.0 +
+			return !mysql_thread_init();
+		#else
+			return false;
+		#endif
+	}
 
 	/// \brief Returns a result set from the last-executed query which
 	/// we can walk through in linear fashion, which doesn't store all

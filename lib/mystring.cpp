@@ -52,9 +52,9 @@ String::compare(const String& other) const
 		return compare(0, length(), other.buffer_->data());
 	}
 	else {
-		// Consider ourselves equal to other if our buffer is also
-		// uninitted, else we are greater because we are initted.
-		return buffer_ ? 1 : 0;	
+		// Other object has no buffer, so we are greater unless empty or
+		// we also have no buffer.
+		return length() > 0 ? 1 : 0;	
 	}
 }
 
@@ -88,10 +88,13 @@ String::compare(size_type pos, size_type num,
 		return strncmp(data() + pos, other, num);
 	}
 	else if (!other) {
-		return 1;				// initted is "greater than" uninitted
+		// Initted and non-empty is "greater than" uninitted
+		return length() > 0 ? 1 : 0;
 	}
 	else {
-		return other ? -1 : 0;	// "less than" unless other also unitted
+		// This object has no buffer, so we are less than other object
+		// unless it is empty.
+		return other[0] == '\0' ? 0 : -1;
 	}
 }
 

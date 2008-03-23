@@ -25,6 +25,9 @@
 
 #include "sql_buffer.h"
 
+#include "datetime.h"
+#include "sql_types.h"
+
 #include <string.h>
 
 namespace mysqlpp {
@@ -47,6 +50,21 @@ SQLBuffer::assign(const std::string& s, mysql_type_info type, bool is_null)
 	type_ = type;
 	is_null_ = is_null;
 	return *this;
+}
+
+bool
+SQLBuffer::quote_q() const
+{
+	if ((type_.base_type().c_type() == typeid(mysqlpp::sql_datetime)) &&
+			data_ && (length_ >= 5) && (memcmp(data_, "NOW()", 5) == 0)) {
+		// The default DATETIME value is special-cased as a call to the
+		// SQL NOW() function, which must not be quoted.
+		return false;
+	}
+	else {
+		// Normal case: we can infer the need to quote from the type.
+		return type_.quote_q();
+	}
 }
 
 void

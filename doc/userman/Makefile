@@ -46,13 +46,13 @@ clean:
 ## ------------------------
 
 $(PDFFILE): *.dbx *.in $(FO_SS) $(COMMON_SS)
-	xsltproc --xinclude $(FO_SS) $(DOCFILE) > $(FOFILE)
+	xsltproc --nonet --xinclude $(FO_SS) $(DOCFILE) > $(FOFILE)
 	./fo2pdf $(FOFILE) $(PDFFILE)
 	mkdir -p ../pdf && cp $(PDFFILE) ../pdf
 
 $(HTML_DIR)/index.html: *.dbx *.in $(EX_TXT) $(HTML_SS) $(COMMON_SS)
-	@xmllint --xinclude --postvalid --noent --noout $(DOCFILE)
-	xsltproc --xinclude -o $(HTML_DIR)/ $(HTML_SS) $(DOCFILE)
+	@xmllint --nonet --xinclude --postvalid --noent --noout $(DOCFILE)
+	xsltproc --nonet --xinclude -o $(HTML_DIR)/ $(HTML_SS) $(DOCFILE)
 
 
 ## ------------------------

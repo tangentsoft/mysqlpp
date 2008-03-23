@@ -353,16 +353,16 @@ Connection::shutdown()
 
 
 bool
-Connection::thread_aware() const
+Connection::thread_aware()
 {
-	return driver_->thread_aware();
+	return DBDriver::thread_aware();
 }
 
 
 void
 Connection::thread_end()
 {
-	driver_->thread_end();
+	DBDriver::thread_end();
 }
 
 
@@ -376,7 +376,7 @@ Connection::thread_id()
 bool
 Connection::thread_start()
 {
-	return driver_->thread_start();
+	return DBDriver::thread_start();
 }
 
 } // end namespace mysqlpp

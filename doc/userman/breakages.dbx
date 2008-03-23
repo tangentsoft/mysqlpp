@@ -1075,9 +1075,9 @@ my_ssqls_type::table("MyTableName");</programlisting>
       <methodname>Query::execute()</methodname>,
       <methodname>store()</methodname>, and
       <methodname>use()</methodname> that take only a <type>const
-      char*</type>.  This is not an API change because there was an
-      equivalent call chain for this already. This change just snaps a
-      layer of indirection.</para>
+      char*</type>. This is not an API change because there was an
+      equivalent call chain for this already. This change just snaps
+      a layer of indirection.</para>
 
       <para><methodname>Query::error()</methodname> is now
       <type>const</type> and returns <type>const char*</type> instead
@@ -1089,6 +1089,20 @@ my_ssqls_type::table("MyTableName");</programlisting>
       <classname>Lockable</classname>. Since it was basically useless in
       prior versions, it can&rsquo;t be construed as an API
       change.</para>
+    </sect3>
+
+
+    <sect3 id="abi-3.0.1">
+      <title>v3.0.1</title>
+
+      <para><methodname>Connection::thread_aware()</methodname>,
+      <methodname>thread_start()</methodname> and
+      <methodname>thread_end()</methodname> are now static methods, so
+      a program can call them before creating a connection. Ditto for
+      <classname>DBDriver</classname> methods of the same name.</para>
+
+      <para><methodname>ConnectionPool::release()</methodname> is now
+      virtual, so a subclass can override it.</para>
     </sect3>
   </sect2>
 </sect1>

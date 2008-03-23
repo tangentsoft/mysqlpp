@@ -264,6 +264,7 @@ private:
 };
 
 
+#if MYSQL_VERSION_ID > 40000		// only in 4.0 +
 /// \brief Set type of protocol to use
 class MYSQLPP_EXPORT ProtocolOption : public IntegerOption
 {
@@ -275,6 +276,7 @@ private:
 	Error set(DBDriver* dbd);
 #endif
 };
+#endif
 
 
 /// \brief Override use of my.cnf

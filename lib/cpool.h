@@ -106,7 +106,7 @@ public:
 	/// if it doesn't know approximately how long a connection has
 	/// really been idle, it can't make good judgements about when to
 	/// remove it from the pool.
-	void release(const Connection* pc);
+	virtual void release(const Connection* pc);
 
 	/// \brief Remove all unused connections from the pool
 	void shrink() { clear(false); }
@@ -152,6 +152,9 @@ protected:
 	/// \retval number of seconds before an idle connection is destroyed
 	/// due to lack of use
 	virtual unsigned int max_idle_time() = 0;
+
+	/// \brief Returns the current size of the internal connection pool.
+	size_t size() const { return pool_.size(); }
 
 private:
 	//// Internal types

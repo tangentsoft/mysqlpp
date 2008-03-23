@@ -299,11 +299,11 @@ public:
 
 	/// \brief Returns true if both MySQL++ and database driver we're
 	/// using were compiled with thread awareness.
-	bool thread_aware() const;
+	static bool thread_aware();
 
 	/// \brief Tells the underlying database driver that this thread
 	/// is done using the library.
-	void thread_end();
+	static void thread_end();
 
 	/// \brief Returns the database server's thread ID for this connection
 	///
@@ -330,7 +330,7 @@ public:
 	/// or with any other similar strategy.
 	///
 	/// \retval True if there was no problem
-	bool thread_start();
+	static bool thread_start();
 
 protected:
 	/// \brief Build an error message in the standard form used whenever

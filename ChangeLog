@@ -1,3 +1,44 @@
+3.0.1, 2008.03.19 (r2255)
+
+    o String objects can now be compared to mysqlpp::null directly.
+
+    o Added a template operator== and operator!= to String, syntactic
+      sugar for the existing String::compare() methods.
+
+    o String::compare() now returns 0 ("equal") when one of the
+      strings is an uninitialized String() (no refcounted buffer)
+      and the other is empty.  It used to consider any initialized
+      string greater than an uninitted one.  An uninitialized String
+      appears empty, though, so this was incorrect.
+
+    o Made Connection::thread_aware(), thread_start() and thread_end()
+      static methods, so they can be called before you create your
+      first connection.  Ditto for DBDriver versions of these methods.
+
+    o Calling Connection::thread_start() and thread_end() in
+      examples/cpool.cpp, as appropriate.  Above changes were necessary
+      to make this work sensibly.
+
+    o Made ConnectionPool::release() virtual, so your pool subclass can
+      override it.
+
+    o Added ConnectionPool::size(), so a subclass can know the current
+      number of extant connections.
+
+    o No longer single-quoting NOW() call generated for default
+      init of DateTime type when building queries from SSQLS objects
+      in Query::insert(), replace() and update().  The template query
+      and stream interfaces of Query treated NOW() correctly already.
+
+    o Fixed a bug that left SSQLS::table_override_ uninitted if
+      you used certain of the generated ctors or set() member
+      functions instead of others used by the examples.  This could
+      cause a crash any time you caused SSQLS.table() to be called,
+      such as when passing the SSQLS to Query::insert().
+
+    o Minor memset bug fixed in test/uds.cpp.  Patch by Dave Jones.
+
+
 3.0.0, 2008.02.29 (r2236) The "Giant Leap Forward" release
 
     THIS IS NOT A DROP-IN REPLACEMENT FOR MySQL++ v2.x!

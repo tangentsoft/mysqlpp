@@ -48,11 +48,11 @@ main(int argc, char *argv[])
 		// Establish the connection to the database server.
 		mysqlpp::Connection con(db, server, user, pass);
 
-		// Retrieve just the item column from the stock table, and store
+		// Retrieve a subset of the stock table's columns, and store
 		// the data in a vector of 'stock' SSQLS structures.  See the
 		// user manual for the consequences arising from this quiet
 		// ability to store a subset of the table in the stock SSQLS.
-		mysqlpp::Query query = con.query("select item from stock");
+		mysqlpp::Query query = con.query("select item,description from stock");
 		vector<stock> res;
 		query.storein(res);
 
@@ -60,7 +60,11 @@ main(int argc, char *argv[])
 		cout << "We have:" << endl;
 		vector<stock>::iterator it;
 		for (it = res.begin(); it != res.end(); ++it) {
-			cout << '\t' << it->item << endl;
+			cout << '\t' << it->item;
+			if (it->description != mysqlpp::null) {
+				cout << " (" << it->description << ")";
+			}
+			cout << endl;
 		}
 	}
 	catch (const mysqlpp::BadQuery& er) {

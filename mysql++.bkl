@@ -54,7 +54,7 @@
         <dll id="mysqlpp">
             <dllname>mysqlpp$(DEBUG_SUFFIX)</dllname>
             <libname>mysqlpp$(DEBUG_SUFFIX)</libname>
-            <so_version>3.0.0</so_version>
+            <so_version>3.0.1</so_version>
 
             <sources>
                 lib/beemutex.cpp
@@ -231,6 +231,12 @@
             <!-- VC++ 2003 can't compile this -->
 			<exe id="test_null_comparison" template="programs">
 				<sources>test/null_comparison.cpp</sources>
+			</exe>
+		</if>
+        <if cond="FORMAT!='msvs2003prj'">
+            <!-- VC++ 2003 can't compile this -->
+			<exe id="test_qssqls" template="programs">
+				<sources>test/qssqls.cpp</sources>
 			</exe>
 		</if>
         <exe id="test_qstream" template="programs">
@@ -432,25 +438,35 @@
             <command>cp config/*.m4 $(PKGNAME)/config</command>
 
             <!-- doc subdir -->
-			<command>
-				cp -RL doc/README* doc/pdf doc/ssqls-pretty $(PKGNAME)/doc
-			</command>
-			<command>
-				for f in LICENSE.txt Makefile mktxt README.txt \*.{dbx,in,xsl} ; \
-				do \
-					cp doc/userman/$(DDF) $(PKGNAME)/doc/userman ; \
-				done
-			</command>
-			<command>
-				for d in refman userman ; do \
-					for f in *.{css,html} ; do \
-						cp doc/html/$(DDD)/$(DDF) $(PKGNAME)/doc/html/$(DDD) ; \
-					done ; \
-				done
-			</command>
-			<command>
-				cp doc/html/refman/*.png $(PKGNAME)/doc/html/refman
-			</command>
+            <if cond="BUILDDOCS=='yes'">
+				<command>
+					cp -RL doc/README* doc/pdf doc/ssqls-pretty $(PKGNAME)/doc
+				</command>
+				<command>
+					for f in LICENSE.txt Makefile mktxt README.txt \*.{dbx,in,xsl} ; \
+					do \
+						cp doc/userman/$(DDF) $(PKGNAME)/doc/userman ; \
+					done
+				</command>
+				<command>
+					for d in refman userman ; do \
+						for f in *.{css,html} ; do \
+							cp doc/html/$(DDD)/$(DDF) $(PKGNAME)/doc/html/$(DDD) ; \
+						done ; \
+					done
+				</command>
+				<command>
+					cp doc/html/refman/*.png $(PKGNAME)/doc/html/refman
+				</command>
+			</if>
+            <if cond="BUILDDOCS!='yes'">
+				<!-- We have to copy this file even though we don't
+				     build the docs to make configure happy, because it
+					 wants to update the version number. -->
+				<command>
+					cp doc/userman/userman.dbx.in $(PKGNAME)/doc/userman
+				</command>
+			</if>
 
             <!-- examples subdir -->
             <command>

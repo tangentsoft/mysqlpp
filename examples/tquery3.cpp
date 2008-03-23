@@ -59,7 +59,7 @@ main(int argc, char *argv[])
 		if (mysqlpp::StoreQueryResult res = query.store(80)) {
             cout << "Stuff we have a lot of in stock:" << endl;
 			for (size_t i = 0; i < res.num_rows(); ++i) {
-				cout << '\t' << res[i][0] << endl;
+				cout << '\t' << res[i]["item"] << endl;
 			}
 		}
 		else {

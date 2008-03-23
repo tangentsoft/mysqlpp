@@ -170,7 +170,12 @@ DBDriver::set_option(unsigned int o, bool arg)
 	
 	if ((n == 1) && 
 			(o >= CLIENT_LONG_PASSWORD) && 
-			(o <= CLIENT_MULTI_RESULTS)) {
+#if MYSQL_VERSION_ID > 40000	// highest flag value varies by version
+			(o <= CLIENT_MULTI_RESULTS)
+#else
+			(o <= CLIENT_TRANSACTIONS)
+#endif
+			) {
 		// Option value seems sane, so go ahead and set/clear the flag
 		if (arg) {
 			mysql_.client_flag |= o;
@@ -227,7 +232,7 @@ DBDriver::shutdown()
 
 
 bool
-DBDriver::thread_aware() const
+DBDriver::thread_aware()
 {
 #if defined(MYSQLPP_PLATFORM_WINDOWS) || defined(HAVE_PTHREAD) || defined(HAVE_SYNCH_H)
 	// Okay, good, MySQL++ itself is thread-aware, but only return true

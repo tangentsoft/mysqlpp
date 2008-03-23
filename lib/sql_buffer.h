@@ -2,7 +2,7 @@
 /// \brief Declares the SQLBuffer class
 
 /***********************************************************************
- Copyright (c) 2007 by Educational Technology Resources, Inc. and
+ Copyright (c) 2007-2008 by Educational Technology Resources, Inc. and
  (c) 2007 by Jonathan Wakely.  Others may also hold copyrights on
  code in this file.  See the CREDITS file in the top directory of
  the distribution for details.
@@ -104,7 +104,7 @@ public:
 
 	/// \brief Returns true if we were initialized with a data type
 	/// that must be quoted when used in a SQL query
-	bool quote_q() const { return type_.quote_q(); }
+	bool quote_q() const;
 
 	/// \brief Sets the internal SQL null flag
 	void set_null() { is_null_ = true; }

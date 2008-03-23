@@ -38,11 +38,6 @@
 using namespace std;
 
 
-// Access the flag that's set when running under the dtest framework, so
-// we modify our output to be testable.
-extern bool dtest_mode;
-
-
 // Insert a bar into the stream with the given query string centered
 static void
 separator(ostream& os, string qstr)
@@ -174,16 +169,10 @@ main(int argc, char* argv[])
 	}
 
 	try {
-		// Establish the connection to the database server.
+		// Connect to server, then dump a bunch of stuff we find on it
 		mysqlpp::Connection con(db, server, user, pass);
-
-		// Show system-specific tests info when run by hand only.
-		if (!dtest_mode) {
-			show_mysql_version(con);
-			show_databases(con);
-		}
-
-		// Show database info that's platform-independent
+		show_mysql_version(con);
+		show_databases(con);
 		show_tables(con);
 	}
 	catch (const mysqlpp::BadQuery& er) {

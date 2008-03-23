@@ -68,7 +68,13 @@ private:
 	mysql_ti_sql_type_info() :
 	sql_name_(0),
 	c_type_(0),
-	base_type_(MYSQL_TYPE_NULL),
+	base_type_(
+#if MYSQL_VERSION_ID > 40000
+		MYSQL_TYPE_NULL
+#else
+		FIELD_TYPE_NULL
+#endif
+	),
 	flags_(0)
 	{
 	}
@@ -261,7 +267,12 @@ public:
 	///
 	/// We expose this because other parts of MySQL++ need to know
 	/// what the string constant is at the moment.
-	static const enum_field_types string_type = MYSQL_TYPE_STRING;
+	static const enum_field_types string_type =
+#if MYSQL_VERSION_ID > 40000
+		MYSQL_TYPE_STRING;
+#else
+		FIELD_TYPE_STRING;
+#endif
 
 private:
 	typedef mysql_ti_sql_type_info sql_type_info;

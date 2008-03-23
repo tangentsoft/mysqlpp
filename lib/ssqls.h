@@ -194,15 +194,17 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 // ---------------------------------------------------
 
 #define sql_compare_define_1(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  NAME(const T1 &p1) : C1 (p1) {} \
-  void set  (const T1 &p1) { \
+  NAME(const T1 &p1) : C1 (p1), table_override_(0) {} \
+  void set(const T1 &p1) { \
+	table_override_ = 0; \
     C1 = p1;\
  \
   } \
   sql_compare_define(NAME)
 
 #define sql_construct_define_1(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  void set  (const T1 &p1) { \
+  void set(const T1 &p1) { \
+	table_override_ = 0; \
     C1 = p1;\
  \
   } \
@@ -234,8 +236,9 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 // ---------------------------------------------------
 
 #define sql_compare_define_2(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  NAME(const T1 &p1, const T2 &p2) : C1 (p1), C2 (p2) {} \
-  void set  (const T1 &p1, const T2 &p2) { \
+  NAME(const T1 &p1, const T2 &p2) : C1 (p1), C2 (p2), table_override_(0) {} \
+  void set(const T1 &p1, const T2 &p2) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
  \
@@ -243,7 +246,8 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   sql_compare_define(NAME)
 
 #define sql_construct_define_2(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  void set  (const T1 &p1, const T2 &p2) { \
+  void set(const T1 &p1, const T2 &p2) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
  \
@@ -282,8 +286,9 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 // ---------------------------------------------------
 
 #define sql_compare_define_3(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  NAME(const T1 &p1, const T2 &p2, const T3 &p3) : C1 (p1), C2 (p2), C3 (p3) {} \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3) { \
+  NAME(const T1 &p1, const T2 &p2, const T3 &p3) : C1 (p1), C2 (p2), C3 (p3), table_override_(0) {} \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -292,7 +297,8 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   sql_compare_define(NAME)
 
 #define sql_construct_define_3(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3) { \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -336,8 +342,9 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 // ---------------------------------------------------
 
 #define sql_compare_define_4(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4) : C1 (p1), C2 (p2), C3 (p3), C4 (p4) {} \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4) { \
+  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), table_override_(0) {} \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -347,7 +354,8 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   sql_compare_define(NAME)
 
 #define sql_construct_define_4(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4) { \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -396,8 +404,9 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 // ---------------------------------------------------
 
 #define sql_compare_define_5(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5) {} \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5) { \
+  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), table_override_(0) {} \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -408,7 +417,8 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   sql_compare_define(NAME)
 
 #define sql_construct_define_5(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5) { \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -462,8 +472,9 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 // ---------------------------------------------------
 
 #define sql_compare_define_6(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6) {} \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6) { \
+  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), table_override_(0) {} \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -475,7 +486,8 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   sql_compare_define(NAME)
 
 #define sql_construct_define_6(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6) { \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -534,8 +546,9 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 // ---------------------------------------------------
 
 #define sql_compare_define_7(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7) {} \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7) { \
+  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), table_override_(0) {} \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -548,7 +561,8 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   sql_compare_define(NAME)
 
 #define sql_construct_define_7(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7) { \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -612,8 +626,9 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 // ---------------------------------------------------
 
 #define sql_compare_define_8(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8) {} \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8) { \
+  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), table_override_(0) {} \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -627,7 +642,8 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   sql_compare_define(NAME)
 
 #define sql_construct_define_8(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8) { \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -696,8 +712,9 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 // ---------------------------------------------------
 
 #define sql_compare_define_9(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9) {} \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9) { \
+  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), table_override_(0) {} \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -712,7 +729,8 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   sql_compare_define(NAME)
 
 #define sql_construct_define_9(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9) { \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -786,8 +804,9 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 // ---------------------------------------------------
 
 #define sql_compare_define_10(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10) {} \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10) { \
+  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), table_override_(0) {} \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -803,7 +822,8 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   sql_compare_define(NAME)
 
 #define sql_construct_define_10(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10) { \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -882,8 +902,9 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 // ---------------------------------------------------
 
 #define sql_compare_define_11(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11) {} \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11) { \
+  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), table_override_(0) {} \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -900,7 +921,8 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   sql_compare_define(NAME)
 
 #define sql_construct_define_11(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11) { \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -984,8 +1006,9 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 // ---------------------------------------------------
 
 #define sql_compare_define_12(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12) {} \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12) { \
+  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), table_override_(0) {} \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -1003,7 +1026,8 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   sql_compare_define(NAME)
 
 #define sql_construct_define_12(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12) { \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -1092,8 +1116,9 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 // ---------------------------------------------------
 
 #define sql_compare_define_13(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13) {} \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13) { \
+  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13), table_override_(0) {} \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -1112,7 +1137,8 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   sql_compare_define(NAME)
 
 #define sql_construct_define_13(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13) { \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -1206,8 +1232,9 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 // ---------------------------------------------------
 
 #define sql_compare_define_14(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13), C14 (p14) {} \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14) { \
+  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13), C14 (p14), table_override_(0) {} \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -1227,7 +1254,8 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   sql_compare_define(NAME)
 
 #define sql_construct_define_14(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14) { \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -1326,8 +1354,9 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 // ---------------------------------------------------
 
 #define sql_compare_define_15(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13), C14 (p14), C15 (p15) {} \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15) { \
+  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13), C14 (p14), C15 (p15), table_override_(0) {} \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -1348,7 +1377,8 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   sql_compare_define(NAME)
 
 #define sql_construct_define_15(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15) { \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -1452,8 +1482,9 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 // ---------------------------------------------------
 
 #define sql_compare_define_16(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13), C14 (p14), C15 (p15), C16 (p16) {} \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16) { \
+  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13), C14 (p14), C15 (p15), C16 (p16), table_override_(0) {} \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -1475,7 +1506,8 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   sql_compare_define(NAME)
 
 #define sql_construct_define_16(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16) { \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -1584,8 +1616,9 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 // ---------------------------------------------------
 
 #define sql_compare_define_17(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13), C14 (p14), C15 (p15), C16 (p16), C17 (p17) {} \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17) { \
+  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13), C14 (p14), C15 (p15), C16 (p16), C17 (p17), table_override_(0) {} \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -1608,7 +1641,8 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   sql_compare_define(NAME)
 
 #define sql_construct_define_17(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17) { \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -1722,8 +1756,9 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 // ---------------------------------------------------
 
 #define sql_compare_define_18(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13), C14 (p14), C15 (p15), C16 (p16), C17 (p17), C18 (p18) {} \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18) { \
+  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13), C14 (p14), C15 (p15), C16 (p16), C17 (p17), C18 (p18), table_override_(0) {} \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -1747,7 +1782,8 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   sql_compare_define(NAME)
 
 #define sql_construct_define_18(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18) { \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -1866,8 +1902,9 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 // ---------------------------------------------------
 
 #define sql_compare_define_19(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13), C14 (p14), C15 (p15), C16 (p16), C17 (p17), C18 (p18), C19 (p19) {} \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19) { \
+  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13), C14 (p14), C15 (p15), C16 (p16), C17 (p17), C18 (p18), C19 (p19), table_override_(0) {} \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -1892,7 +1929,8 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   sql_compare_define(NAME)
 
 #define sql_construct_define_19(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19) { \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -2016,8 +2054,9 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 // ---------------------------------------------------
 
 #define sql_compare_define_20(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13), C14 (p14), C15 (p15), C16 (p16), C17 (p17), C18 (p18), C19 (p19), C20 (p20) {} \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20) { \
+  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13), C14 (p14), C15 (p15), C16 (p16), C17 (p17), C18 (p18), C19 (p19), C20 (p20), table_override_(0) {} \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -2043,7 +2082,8 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   sql_compare_define(NAME)
 
 #define sql_construct_define_20(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20) { \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -2172,8 +2212,9 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 // ---------------------------------------------------
 
 #define sql_compare_define_21(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13), C14 (p14), C15 (p15), C16 (p16), C17 (p17), C18 (p18), C19 (p19), C20 (p20), C21 (p21) {} \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21) { \
+  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13), C14 (p14), C15 (p15), C16 (p16), C17 (p17), C18 (p18), C19 (p19), C20 (p20), C21 (p21), table_override_(0) {} \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -2200,7 +2241,8 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   sql_compare_define(NAME)
 
 #define sql_construct_define_21(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21) { \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -2334,8 +2376,9 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 // ---------------------------------------------------
 
 #define sql_compare_define_22(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21, const T22 &p22) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13), C14 (p14), C15 (p15), C16 (p16), C17 (p17), C18 (p18), C19 (p19), C20 (p20), C21 (p21), C22 (p22) {} \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21, const T22 &p22) { \
+  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21, const T22 &p22) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13), C14 (p14), C15 (p15), C16 (p16), C17 (p17), C18 (p18), C19 (p19), C20 (p20), C21 (p21), C22 (p22), table_override_(0) {} \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21, const T22 &p22) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -2363,7 +2406,8 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   sql_compare_define(NAME)
 
 #define sql_construct_define_22(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21, const T22 &p22) { \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21, const T22 &p22) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -2502,8 +2546,9 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 // ---------------------------------------------------
 
 #define sql_compare_define_23(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21, const T22 &p22, const T23 &p23) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13), C14 (p14), C15 (p15), C16 (p16), C17 (p17), C18 (p18), C19 (p19), C20 (p20), C21 (p21), C22 (p22), C23 (p23) {} \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21, const T22 &p22, const T23 &p23) { \
+  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21, const T22 &p22, const T23 &p23) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13), C14 (p14), C15 (p15), C16 (p16), C17 (p17), C18 (p18), C19 (p19), C20 (p20), C21 (p21), C22 (p22), C23 (p23), table_override_(0) {} \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21, const T22 &p22, const T23 &p23) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -2532,7 +2577,8 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   sql_compare_define(NAME)
 
 #define sql_construct_define_23(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21, const T22 &p22, const T23 &p23) { \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21, const T22 &p22, const T23 &p23) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -2676,8 +2722,9 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 // ---------------------------------------------------
 
 #define sql_compare_define_24(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21, const T22 &p22, const T23 &p23, const T24 &p24) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13), C14 (p14), C15 (p15), C16 (p16), C17 (p17), C18 (p18), C19 (p19), C20 (p20), C21 (p21), C22 (p22), C23 (p23), C24 (p24) {} \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21, const T22 &p22, const T23 &p23, const T24 &p24) { \
+  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21, const T22 &p22, const T23 &p23, const T24 &p24) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13), C14 (p14), C15 (p15), C16 (p16), C17 (p17), C18 (p18), C19 (p19), C20 (p20), C21 (p21), C22 (p22), C23 (p23), C24 (p24), table_override_(0) {} \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21, const T22 &p22, const T23 &p23, const T24 &p24) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -2707,7 +2754,8 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   sql_compare_define(NAME)
 
 #define sql_construct_define_24(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21, const T22 &p22, const T23 &p23, const T24 &p24) { \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21, const T22 &p22, const T23 &p23, const T24 &p24) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -2856,8 +2904,9 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 // ---------------------------------------------------
 
 #define sql_compare_define_25(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21, const T22 &p22, const T23 &p23, const T24 &p24, const T25 &p25) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13), C14 (p14), C15 (p15), C16 (p16), C17 (p17), C18 (p18), C19 (p19), C20 (p20), C21 (p21), C22 (p22), C23 (p23), C24 (p24), C25 (p25) {} \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21, const T22 &p22, const T23 &p23, const T24 &p24, const T25 &p25) { \
+  NAME(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21, const T22 &p22, const T23 &p23, const T24 &p24, const T25 &p25) : C1 (p1), C2 (p2), C3 (p3), C4 (p4), C5 (p5), C6 (p6), C7 (p7), C8 (p8), C9 (p9), C10 (p10), C11 (p11), C12 (p12), C13 (p13), C14 (p14), C15 (p15), C16 (p16), C17 (p17), C18 (p18), C19 (p19), C20 (p20), C21 (p21), C22 (p22), C23 (p23), C24 (p24), C25 (p25), table_override_(0) {} \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21, const T22 &p22, const T23 &p23, const T24 &p24, const T25 &p25) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -2888,7 +2937,8 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   sql_compare_define(NAME)
 
 #define sql_construct_define_25(NAME, T1, C1, T2, C2, T3, C3, T4, C4, T5, C5, T6, C6, T7, C7, T8, C8, T9, C9, T10, C10, T11, C11, T12, C12, T13, C13, T14, C14, T15, C15, T16, C16, T17, C17, T18, C18, T19, C19, T20, C20, T21, C21, T22, C22, T23, C23, T24, C24, T25, C25) \
-  void set  (const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21, const T22 &p22, const T23 &p23, const T24 &p24, const T25 &p25) { \
+  void set(const T1 &p1, const T2 &p2, const T3 &p3, const T4 &p4, const T5 &p5, const T6 &p6, const T7 &p7, const T8 &p8, const T9 &p9, const T10 &p10, const T11 &p11, const T12 &p12, const T13 &p13, const T14 &p14, const T15 &p15, const T16 &p16, const T17 &p17, const T18 &p18, const T19 &p19, const T20 &p20, const T21 &p21, const T22 &p22, const T23 &p23, const T24 &p24, const T25 &p25) { \
+	table_override_ = 0; \
     C1 = p1;\
     C2 = p2;\
     C3 = p3;\
@@ -3484,6 +3534,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   }\
   inline void NAME::set(const mysqlpp::Row& row)\
   {\
+	table_override_ = 0;\
     populate_##NAME<mysqlpp::sql_dummy>(this, row);\
   }\
   sql_COMPARE__##CMP(NAME, I1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
@@ -3977,6 +4028,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   }\
   inline void NAME::set(const mysqlpp::Row& row)\
   {\
+	table_override_ = 0;\
     populate_##NAME<mysqlpp::sql_dummy>(this, row);\
   }\
   sql_COMPARE__##CMP(NAME, I1, I2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
@@ -4501,6 +4553,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   }\
   inline void NAME::set(const mysqlpp::Row& row)\
   {\
+	table_override_ = 0;\
     populate_##NAME<mysqlpp::sql_dummy>(this, row);\
   }\
   sql_COMPARE__##CMP(NAME, I1, I2, I3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
@@ -5056,6 +5109,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   }\
   inline void NAME::set(const mysqlpp::Row& row)\
   {\
+	table_override_ = 0;\
     populate_##NAME<mysqlpp::sql_dummy>(this, row);\
   }\
   sql_COMPARE__##CMP(NAME, I1, I2, I3, I4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
@@ -5642,6 +5696,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   }\
   inline void NAME::set(const mysqlpp::Row& row)\
   {\
+	table_override_ = 0;\
     populate_##NAME<mysqlpp::sql_dummy>(this, row);\
   }\
   sql_COMPARE__##CMP(NAME, I1, I2, I3, I4, I5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
@@ -6259,6 +6314,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   }\
   inline void NAME::set(const mysqlpp::Row& row)\
   {\
+	table_override_ = 0;\
     populate_##NAME<mysqlpp::sql_dummy>(this, row);\
   }\
   sql_COMPARE__##CMP(NAME, I1, I2, I3, I4, I5, I6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
@@ -6907,6 +6963,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   }\
   inline void NAME::set(const mysqlpp::Row& row)\
   {\
+	table_override_ = 0;\
     populate_##NAME<mysqlpp::sql_dummy>(this, row);\
   }\
   sql_COMPARE__##CMP(NAME, I1, I2, I3, I4, I5, I6, I7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
@@ -7586,6 +7643,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   }\
   inline void NAME::set(const mysqlpp::Row& row)\
   {\
+	table_override_ = 0;\
     populate_##NAME<mysqlpp::sql_dummy>(this, row);\
   }\
   sql_COMPARE__##CMP(NAME, I1, I2, I3, I4, I5, I6, I7, I8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
@@ -8296,6 +8354,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   }\
   inline void NAME::set(const mysqlpp::Row& row)\
   {\
+	table_override_ = 0;\
     populate_##NAME<mysqlpp::sql_dummy>(this, row);\
   }\
   sql_COMPARE__##CMP(NAME, I1, I2, I3, I4, I5, I6, I7, I8, I9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
@@ -9037,6 +9096,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   }\
   inline void NAME::set(const mysqlpp::Row& row)\
   {\
+	table_override_ = 0;\
     populate_##NAME<mysqlpp::sql_dummy>(this, row);\
   }\
   sql_COMPARE__##CMP(NAME, I1, I2, I3, I4, I5, I6, I7, I8, I9, I10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
@@ -9809,6 +9869,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   }\
   inline void NAME::set(const mysqlpp::Row& row)\
   {\
+	table_override_ = 0;\
     populate_##NAME<mysqlpp::sql_dummy>(this, row);\
   }\
   sql_COMPARE__##CMP(NAME, I1, I2, I3, I4, I5, I6, I7, I8, I9, I10, I11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
@@ -10612,6 +10673,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   }\
   inline void NAME::set(const mysqlpp::Row& row)\
   {\
+	table_override_ = 0;\
     populate_##NAME<mysqlpp::sql_dummy>(this, row);\
   }\
   sql_COMPARE__##CMP(NAME, I1, I2, I3, I4, I5, I6, I7, I8, I9, I10, I11, I12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
@@ -11446,6 +11508,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   }\
   inline void NAME::set(const mysqlpp::Row& row)\
   {\
+	table_override_ = 0;\
     populate_##NAME<mysqlpp::sql_dummy>(this, row);\
   }\
   sql_COMPARE__##CMP(NAME, I1, I2, I3, I4, I5, I6, I7, I8, I9, I10, I11, I12, I13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
@@ -12311,6 +12374,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   }\
   inline void NAME::set(const mysqlpp::Row& row)\
   {\
+	table_override_ = 0;\
     populate_##NAME<mysqlpp::sql_dummy>(this, row);\
   }\
   sql_COMPARE__##CMP(NAME, I1, I2, I3, I4, I5, I6, I7, I8, I9, I10, I11, I12, I13, I14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
@@ -13207,6 +13271,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   }\
   inline void NAME::set(const mysqlpp::Row& row)\
   {\
+	table_override_ = 0;\
     populate_##NAME<mysqlpp::sql_dummy>(this, row);\
   }\
   sql_COMPARE__##CMP(NAME, I1, I2, I3, I4, I5, I6, I7, I8, I9, I10, I11, I12, I13, I14, I15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
@@ -14134,6 +14199,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   }\
   inline void NAME::set(const mysqlpp::Row& row)\
   {\
+	table_override_ = 0;\
     populate_##NAME<mysqlpp::sql_dummy>(this, row);\
   }\
   sql_COMPARE__##CMP(NAME, I1, I2, I3, I4, I5, I6, I7, I8, I9, I10, I11, I12, I13, I14, I15, I16, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
@@ -15092,6 +15158,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   }\
   inline void NAME::set(const mysqlpp::Row& row)\
   {\
+	table_override_ = 0;\
     populate_##NAME<mysqlpp::sql_dummy>(this, row);\
   }\
   sql_COMPARE__##CMP(NAME, I1, I2, I3, I4, I5, I6, I7, I8, I9, I10, I11, I12, I13, I14, I15, I16, I17, 0, 0, 0, 0, 0, 0, 0, 0 )
@@ -16081,6 +16148,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   }\
   inline void NAME::set(const mysqlpp::Row& row)\
   {\
+	table_override_ = 0;\
     populate_##NAME<mysqlpp::sql_dummy>(this, row);\
   }\
   sql_COMPARE__##CMP(NAME, I1, I2, I3, I4, I5, I6, I7, I8, I9, I10, I11, I12, I13, I14, I15, I16, I17, I18, 0, 0, 0, 0, 0, 0, 0 )
@@ -17101,6 +17169,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   }\
   inline void NAME::set(const mysqlpp::Row& row)\
   {\
+	table_override_ = 0;\
     populate_##NAME<mysqlpp::sql_dummy>(this, row);\
   }\
   sql_COMPARE__##CMP(NAME, I1, I2, I3, I4, I5, I6, I7, I8, I9, I10, I11, I12, I13, I14, I15, I16, I17, I18, I19, 0, 0, 0, 0, 0, 0 )
@@ -18152,6 +18221,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   }\
   inline void NAME::set(const mysqlpp::Row& row)\
   {\
+	table_override_ = 0;\
     populate_##NAME<mysqlpp::sql_dummy>(this, row);\
   }\
   sql_COMPARE__##CMP(NAME, I1, I2, I3, I4, I5, I6, I7, I8, I9, I10, I11, I12, I13, I14, I15, I16, I17, I18, I19, I20, 0, 0, 0, 0, 0 )
@@ -19234,6 +19304,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   }\
   inline void NAME::set(const mysqlpp::Row& row)\
   {\
+	table_override_ = 0;\
     populate_##NAME<mysqlpp::sql_dummy>(this, row);\
   }\
   sql_COMPARE__##CMP(NAME, I1, I2, I3, I4, I5, I6, I7, I8, I9, I10, I11, I12, I13, I14, I15, I16, I17, I18, I19, I20, I21, 0, 0, 0, 0 )
@@ -20347,6 +20418,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   }\
   inline void NAME::set(const mysqlpp::Row& row)\
   {\
+	table_override_ = 0;\
     populate_##NAME<mysqlpp::sql_dummy>(this, row);\
   }\
   sql_COMPARE__##CMP(NAME, I1, I2, I3, I4, I5, I6, I7, I8, I9, I10, I11, I12, I13, I14, I15, I16, I17, I18, I19, I20, I21, I22, 0, 0, 0 )
@@ -21491,6 +21563,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   }\
   inline void NAME::set(const mysqlpp::Row& row)\
   {\
+	table_override_ = 0;\
     populate_##NAME<mysqlpp::sql_dummy>(this, row);\
   }\
   sql_COMPARE__##CMP(NAME, I1, I2, I3, I4, I5, I6, I7, I8, I9, I10, I11, I12, I13, I14, I15, I16, I17, I18, I19, I20, I21, I22, I23, 0, 0 )
@@ -22666,6 +22739,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   }\
   inline void NAME::set(const mysqlpp::Row& row)\
   {\
+	table_override_ = 0;\
     populate_##NAME<mysqlpp::sql_dummy>(this, row);\
   }\
   sql_COMPARE__##CMP(NAME, I1, I2, I3, I4, I5, I6, I7, I8, I9, I10, I11, I12, I13, I14, I15, I16, I17, I18, I19, I20, I21, I22, I23, I24, 0 )
@@ -23872,6 +23946,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
   }\
   inline void NAME::set(const mysqlpp::Row& row)\
   {\
+	table_override_ = 0;\
     populate_##NAME<mysqlpp::sql_dummy>(this, row);\
   }\
   sql_COMPARE__##CMP(NAME, I1, I2, I3, I4, I5, I6, I7, I8, I9, I10, I11, I12, I13, I14, I15, I16, I17, I18, I19, I20, I21, I22, I23, I24, I25 )

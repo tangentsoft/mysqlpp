@@ -178,6 +178,7 @@ NoSchemaOption::set(DBDriver* dbd)
 }
 
 
+#if MYSQL_VERSION_ID > 40000		// only in 4.0 +
 Option::Error
 ProtocolOption::set(DBDriver* dbd)
 {
@@ -185,6 +186,7 @@ ProtocolOption::set(DBDriver* dbd)
 			dbd->set_option(MYSQL_OPT_PROTOCOL, &arg_) ?
 				Option::err_NONE : Option::err_api_reject;
 }
+#endif
 
 
 Option::Error

@@ -34,11 +34,6 @@
 using namespace std;
 
 
-// Access the flag that's set when running under the dtest framework, so
-// we modify our output to be testable.
-extern bool dtest_mode;
-
-
 int
 main(int argc, char *argv[])
 {
@@ -71,7 +66,7 @@ main(int argc, char *argv[])
 		for (size_t i = 0; i < res.field_names()->size(); i++) {
 			// Suppress C++ type name outputs when run under dtest,
 			// as they're system-specific.
-			const char* cname = dtest_mode ? "n/a" : res.field_type(i).name();
+			const char* cname = res.field_type(i).name();
 			mysqlpp::FieldTypes::value_type ft = res.field_type(i);
 			ostringstream os;
 			os << ft.sql_name() << " (" << ft.id() << ')';

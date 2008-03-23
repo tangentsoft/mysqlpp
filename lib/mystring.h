@@ -472,6 +472,42 @@ public:
 		return *this;
 	}
 
+	/// \brief Equality comparison operator
+	///
+	/// For comparing this object to any of the data types we have a
+	/// compare() overload for.
+	template <typename T>
+	bool operator ==(const T& rhs) const
+	{
+		return compare(rhs) == 0;
+	}
+
+	/// \brief Equality comparison operator
+	///
+	/// For checking object against MySQL++'s global \c null constant
+	bool operator ==(const mysqlpp::null_type&) const
+	{
+		return is_null();
+	}
+
+	/// \brief Inequality comparison operator
+	///
+	/// For comparing this object to any of the data types we have a
+	/// compare() overload for.
+	template <typename T>
+	bool operator !=(const T& rhs) const
+	{
+		return compare(rhs) != 0;
+	}
+
+	/// \brief Inequality comparison operator
+	///
+	/// For checking object against MySQL++'s global \c null constant
+	bool operator !=(const mysqlpp::null_type&) const
+	{
+		return !is_null();
+	}
+
 	/// \brief Return a character within the string.
 	///
 	/// Unlike at(), this access method doesn't check the index for

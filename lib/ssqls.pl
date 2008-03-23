@@ -238,14 +238,16 @@ foreach my $i (1..$max_data_members) {
 // ---------------------------------------------------
 
 #define sql_compare_define_$i(NAME, $parm0) \\
-  NAME($parm2) : $define {} \\
-  void set  ($parm2) { \\
+  NAME($parm2) : $define, table_override_(0) {} \\
+  void set($parm2) { \\
+	table_override_ = 0; \\
 $set \\
   } \\
   sql_compare_define(NAME)
 
 #define sql_construct_define_$i(NAME, $parm0) \\
-  void set  ($parm2) { \\
+  void set($parm2) { \\
+	table_override_ = 0; \\
 $set \\
   } \\
   NAME($parm2) : $define, table_override_(0) {}
@@ -882,6 +884,7 @@ $popul
   }
   inline void NAME::set(const mysqlpp::Row& row)
   {
+	table_override_ = 0;
     populate_##NAME<mysqlpp::sql_dummy>(this, row);
   }
 

@@ -36,6 +36,15 @@ it's so large, and it doesn't change with every release.
 %prep
 %setup -q
 
+# Fakery for nodoc case
+if [ ! -e doc/README-devel-RPM.txt ]
+then
+	touch doc/README-devel-RPM.txt
+	touch doc/README-doc-RPM.txt
+	touch doc/README-manuals-RPM.txt
+	%{__mkdir_p} doc/html doc/pdf
+fi
+
 %build
 %configure --disable-dependency-tracking
 %{__make} %{?_smp_mflags}

@@ -60,7 +60,7 @@ make_socket(const char* path, mode_t mode)
 	
 	// Bind the socket to the named file
 	struct sockaddr_un sun;
-	memset(&sun, sizeof(sun), 0);
+	memset(&sun, 0, sizeof(sun));
 	sun.sun_family = AF_LOCAL;
 	strncpy(sun.sun_path, path, sizeof(sun.sun_path));
 	sun.sun_path[sizeof(sun.sun_path) - 1] = '\0';

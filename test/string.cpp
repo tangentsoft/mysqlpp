@@ -132,13 +132,31 @@ test_int_conversion(const mysqlpp::String& s, bool throw_expected)
 }
 
 
-// Ensures that the program's locale doesn't affect our floating-point
-// conversions.  ('.' vs. ',' stuff.)
+// Checks that String's null comparison methods work right
 static bool
-test_locale()
+test_null()
 {
-
-	return true;
+	mysqlpp::String not_null("", mysqlpp::mysql_type_info::string_type, false);
+	mysqlpp::String is_null("", mysqlpp::mysql_type_info::string_type, true);
+	if (not_null.is_null() == true) {
+		std::cerr << "not_null.is_null() == true!" << std::endl;
+		return false;
+	}
+	else if (not_null == mysqlpp::null) {
+		std::cerr << "not_null == mysqlpp:null!" << std::endl;
+		return false;
+	}
+	else if (is_null.is_null() == false) {
+		std::cerr << "is_null.is_null() == false!" << std::endl;
+		return false;
+	}
+	else if (is_null != mysqlpp::null) {
+		std::cerr << "is_null != mysqlpp:null!" << std::endl;
+		return false;
+	}
+	else {
+		return true;
+	}
 }
 
 
@@ -178,6 +196,29 @@ test_quote_q(const mysqlpp::String& s, bool expected)
 }
 
 
+// Similar to test_equality, but only works with std::string
+// comparisons, which uses String::operator ==()
+static bool
+test_string_equality(const mysqlpp::String& s, std::string value)
+{
+	if (s == value) {
+		if (s != value) {
+			std::cerr << "String(\"" << s << "\") != std::string(\"" <<
+					value << "\"), case 2!" << std::endl;
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+	else {
+		std::cerr << "String(\"" << s << "\") != std::string(\"" <<
+				value << "\"), case 1!" << std::endl;
+		return false;
+	}
+}
+
+
 int
 main(int, char* argv[])
 {
@@ -202,7 +243,6 @@ main(int, char* argv[])
 		failures += test_quote_q(empty, true) == false;
 		failures += test_quote_q(mysqlpp::String("1", typeid(int)),
 				false) == false;
-		failures += test_locale() == false;
 		failures += test_float_conversion() == false;
 		failures += test_float_conversion() == false;
 		failures += test_int_conversion(empty, false) == false;
@@ -211,6 +251,9 @@ main(int, char* argv[])
 		failures += test_int_conversion(intable1, false) == false;
 		failures += test_int_conversion(intable2, false) == false;
 		failures += test_int_conversion(nonint, true) == false;
+		failures += test_null() == false;
+		failures += test_string_equality(empty, "") == false;
+		failures += test_string_equality(zero, "0") == false;
 		
 		return failures;
 	}

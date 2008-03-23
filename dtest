@@ -34,7 +34,7 @@ echo 'All unit tests passed' >> $TMP
 echo -n 'Running examples:'
 for t in \
 	resetdb simple[0-9] store_if for_each multiquery tquery1 \
-	resetdb tquery[2-9] dbinfo fieldinf \
+	resetdb tquery[2-9] \
 	resetdb ssqls[0-9]
 do
 	if [ -x $t ]

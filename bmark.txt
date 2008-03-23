@@ -116,56 +116,6 @@ Stuff we have a lot of in stock:
 	Pickle Relish
 ================ END tquery3 OUTPUT ================
 
----------------- BEGIN dbinfo OUTPUT ----------------
-
-
-================================= show tables ==================================
-Tables found: 4
-	deadlock_test1
-	deadlock_test2
-	images
-	stock
-
-=========================== describe deadlock_test1 ============================
-|field                 ||type                ||null||key||default        |
- x                       int(11)               YES        NULL            
-
-
-=========================== describe deadlock_test2 ============================
-|field                 ||type                ||null||key||default        |
- x                       int(11)               YES        NULL            
-
-
-=============================== describe images ================================
-|field                 ||type                ||null||key||default        |
- id                      int(10) unsigned      NO    PRI  NULL            
- data                    blob                  YES        NULL            
-
-
-================================ describe stock ================================
-|field                 ||type                ||null||key||default        |
- item                    char(30)              NO                         
- num                     bigint(20)            NO                         
- weight                  double                NO                         
- price                   decimal(6,2)          NO                         
- sdate                   date                  NO                         
- description             mediumtext            YES        NULL            
-================ END dbinfo OUTPUT ================
-
----------------- BEGIN fieldinf OUTPUT ----------------
-Field       SQL Type              Equivalent C++ Type                           
-=========== ===================== ============================================= 
-item        CHAR NOT NULL (25)    n/a                                           
-num         BIGINT NOT NULL (11)  n/a                                           
-weight      DOUBLE NOT NULL (8)   n/a                                           
-price       DECIMAL NOT NULL (0)  n/a                                           
-sdate       DATE NOT NULL (15)    n/a                                           
-description BLOB NULL (49)        n/a                                           
-
-SQL type of 'item' field most closely resembles the C++ string type.
-SQL type of 'description' field resembles a nullable variant of the C++ string type.
-================ END fieldinf OUTPUT ================
-
 ---------------- BEGIN resetdb OUTPUT ----------------
 Connecting to database server...
 Dropping existing sample data tables...
@@ -180,7 +130,7 @@ Reinitialized sample database successfully.
 We have:
 	Nürnberger Brats
 	Pickle Relish
-	Hot Mustard
+	Hot Mustard (good American yellow mustard, not that European stuff)
 	Hotdog Buns
 ================ END ssqls1 OUTPUT ================
 

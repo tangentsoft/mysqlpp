@@ -60,6 +60,10 @@ TEST_NULL_COMPARISON_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 TEST_NULL_COMPARISON_OBJECTS =  \
 	test_null_comparison_null_comparison.o
+TEST_QSSQLS_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
+	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+TEST_QSSQLS_OBJECTS =  \
+	test_qssqls_qssqls.o
 TEST_QSTREAM_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 TEST_QSTREAM_OBJECTS =  \
@@ -186,7 +190,7 @@ endif
 
 ### Targets: ###
 
-all: test_cpool test_datetime test_inttypes test_manip test_null_comparison test_qstream test_string test_tcp test_uds test_wnp libmysqlpp_excommon.a cgi_jpeg cpool dbinfo deadlock fieldinf for_each load_jpeg multiquery resetdb simple1 simple2 simple3 ssqls1 ssqls2 ssqls3 ssqls4 ssqls5 store_if tquery1 tquery2 tquery3 transaction
+all: test_cpool test_datetime test_inttypes test_manip test_null_comparison test_qssqls test_qstream test_string test_tcp test_uds test_wnp libmysqlpp_excommon.a cgi_jpeg cpool dbinfo deadlock fieldinf for_each load_jpeg multiquery resetdb simple1 simple2 simple3 ssqls1 ssqls2 ssqls3 ssqls4 ssqls5 store_if tquery1 tquery2 tquery3 transaction
 
 install: all
 
@@ -200,6 +204,7 @@ clean:
 	rm -f test_inttypes
 	rm -f test_manip
 	rm -f test_null_comparison
+	rm -f test_qssqls
 	rm -f test_qstream
 	rm -f test_string
 	rm -f test_tcp
@@ -230,34 +235,37 @@ clean:
 	rm -f transaction
 
 test_cpool: $(TEST_CPOOL_OBJECTS)
-	$(CXX) -o $@ $(TEST_CPOOL_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TEST_CPOOL_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp -lmysqlclient
 
 test_datetime: $(TEST_DATETIME_OBJECTS)
-	$(CXX) -o $@ $(TEST_DATETIME_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TEST_DATETIME_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp -lmysqlclient
 
 test_inttypes: $(TEST_INTTYPES_OBJECTS)
-	$(CXX) -o $@ $(TEST_INTTYPES_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TEST_INTTYPES_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp -lmysqlclient
 
 test_manip: $(TEST_MANIP_OBJECTS)
-	$(CXX) -o $@ $(TEST_MANIP_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TEST_MANIP_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp -lmysqlclient
 
 test_null_comparison: $(TEST_NULL_COMPARISON_OBJECTS)
-	$(CXX) -o $@ $(TEST_NULL_COMPARISON_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TEST_NULL_COMPARISON_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp -lmysqlclient
+
+test_qssqls: $(TEST_QSSQLS_OBJECTS)
+	$(CXX) -o $@ $(TEST_QSSQLS_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp -lmysqlclient
 
 test_qstream: $(TEST_QSTREAM_OBJECTS)
-	$(CXX) -o $@ $(TEST_QSTREAM_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TEST_QSTREAM_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp -lmysqlclient
 
 test_string: $(TEST_STRING_OBJECTS)
-	$(CXX) -o $@ $(TEST_STRING_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TEST_STRING_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp -lmysqlclient
 
 test_tcp: $(TEST_TCP_OBJECTS)
-	$(CXX) -o $@ $(TEST_TCP_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TEST_TCP_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp -lmysqlclient
 
 test_uds: $(TEST_UDS_OBJECTS)
-	$(CXX) -o $@ $(TEST_UDS_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TEST_UDS_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp -lmysqlclient
 
 test_wnp: $(TEST_WNP_OBJECTS)
-	$(CXX) -o $@ $(TEST_WNP_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TEST_WNP_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp -lmysqlclient
 
 libmysqlpp_excommon.a: $(EXCOMMON_OBJECTS)
 	rm -f $@
@@ -265,70 +273,70 @@ libmysqlpp_excommon.a: $(EXCOMMON_OBJECTS)
 	$(RANLIB) $@
 
 cgi_jpeg: $(CGI_JPEG_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(CGI_JPEG_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(CGI_JPEG_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 cpool: $(CPOOL_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(CPOOL_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(CPOOL_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 dbinfo: $(DBINFO_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(DBINFO_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(DBINFO_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 deadlock: $(DEADLOCK_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(DEADLOCK_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(DEADLOCK_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 fieldinf: $(FIELDINF_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(FIELDINF_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(FIELDINF_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 for_each: $(FOR_EACH_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(FOR_EACH_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(FOR_EACH_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 load_jpeg: $(LOAD_JPEG_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(LOAD_JPEG_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(LOAD_JPEG_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 multiquery: $(MULTIQUERY_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(MULTIQUERY_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(MULTIQUERY_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 resetdb: $(RESETDB_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(RESETDB_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(RESETDB_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 simple1: $(SIMPLE1_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(SIMPLE1_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(SIMPLE1_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 simple2: $(SIMPLE2_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(SIMPLE2_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(SIMPLE2_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 simple3: $(SIMPLE3_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(SIMPLE3_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(SIMPLE3_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 ssqls1: $(SSQLS1_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(SSQLS1_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(SSQLS1_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 ssqls2: $(SSQLS2_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(SSQLS2_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(SSQLS2_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 ssqls3: $(SSQLS3_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(SSQLS3_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(SSQLS3_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 ssqls4: $(SSQLS4_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(SSQLS4_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(SSQLS4_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 ssqls5: $(SSQLS5_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(SSQLS5_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(SSQLS5_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 store_if: $(STORE_IF_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(STORE_IF_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(STORE_IF_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 tquery1: $(TQUERY1_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(TQUERY1_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TQUERY1_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 tquery2: $(TQUERY2_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(TQUERY2_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TQUERY2_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 tquery3: $(TQUERY3_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(TQUERY3_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TQUERY3_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 transaction: $(TRANSACTION_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(TRANSACTION_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TRANSACTION_OBJECTS) $(LDFLAGS)  $(__DEBUGINFO) -L.  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 test_cpool_cpool.o: ./test/cpool.cpp
 	$(CXX) -c -o $@ $(TEST_CPOOL_CXXFLAGS) $(CPPDEPS) $<
@@ -344,6 +352,9 @@ test_manip_manip.o: ./test/manip.cpp
 
 test_null_comparison_null_comparison.o: ./test/null_comparison.cpp
 	$(CXX) -c -o $@ $(TEST_NULL_COMPARISON_CXXFLAGS) $(CPPDEPS) $<
+
+test_qssqls_qssqls.o: ./test/qssqls.cpp
+	$(CXX) -c -o $@ $(TEST_QSSQLS_CXXFLAGS) $(CPPDEPS) $<
 
 test_qstream_qstream.o: ./test/qstream.cpp
 	$(CXX) -c -o $@ $(TEST_QSTREAM_CXXFLAGS) $(CPPDEPS) $<

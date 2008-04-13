@@ -15,17 +15,17 @@ fi
 
 TOOL=
 PROG=$1
-if [ "$PROG" == 'valgrind' ]
+if [ "$PROG" = 'valgrind' ]
 then
 	TOOL='valgrind'
 	shift
 	PROG=$1
-elif [ "$PROG" == 'gdb' ]
+elif [ "$PROG" = 'gdb' ]
 then
 	TOOL='gdb --args'
 	shift
 	PROG=$1
-elif [ "$PROG" == 'ldd' ]
+elif [ "$PROG" = 'ldd' ]
 then
 	TOOL='ldd'
 	shift
@@ -35,10 +35,10 @@ fi
 shift
 if [ -e "$PROG" ]
 then
-	if [ `uname -s` == 'Darwin' ]
+	if [ `uname -s` = 'Darwin' ]
 	then
 		DYLD_LIBRARY_PATH=. $TOOL ./$PROG $*
-	elif [ `uname -o` == 'Cygwin' ]
+	elif [ `uname -o` = 'Cygwin' ]
 	then
 		# Cygwin build case; see below for bash-as-DOS-shell case
 		PATH=. $TOOL ./$PROG $*
@@ -48,7 +48,7 @@ then
 	else
 		echo "ERROR: I don't grok this system's dynamic linkage system."
 	fi
-elif [ `uname -o` == 'Cygwin' ]
+elif [ `uname -o` = 'Cygwin' ]
 then
 	# VC++ build, but using Cygwin's bash as shell to run programs
 	cmd.exe /c exrun.bat $PROG $*

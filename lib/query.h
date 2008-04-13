@@ -118,13 +118,6 @@ class MYSQLPP_EXPORT Query :
         public std::ostream,
 		public OptionalExceptions
 {
-private:
-	/// \brief Pointer to bool data member, for use by safe bool
-	/// conversion operator.
-	///
-	/// \see http://www.artima.com/cppsource/safebool.html
-    typedef bool Query::*private_bool_type;
-
 public:
 	/// \brief Create a new query object attached to a connection.
 	///
@@ -254,7 +247,7 @@ public:
 	/// This method returns false if either the Query object or its
 	/// associated Connection object has seen an error condition since
 	/// the last operation.
-	operator private_bool_type() const;
+	operator void*() const;
 
 	/// \brief Treat the contents of the query string as a template
 	/// query.

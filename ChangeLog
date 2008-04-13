@@ -1,4 +1,25 @@
-3.0.1, 2008.03.19 (r2255)
+3.0.2, 2008.04.13 (r2275)
+
+    o Increased float to string conversion precision from 7 to 9 and
+      double from 16 to 17 digits.  Previous values weren't enough
+      near the maximum values that each can hold.
+
+    o Replaced Query's safe bool mechanism with an override of
+      basic_ios::operator void*() to avoid a conflict between the
+      two mechanisms.  As the base class version isn't virtual,
+      this is arguably evil, but it should be harmess in typical use.
+      Besides, testing Query in bool context usually isn't the right
+      thing anyway: test the result set instead.
+
+    o Made ConnectionPool::grab() virtual.
+
+    o Overriding ConnectionPool::grab() and release() in
+      examples/cpool.cpp to show how to do connection-in-use count
+      limiting.  Also, added a few more output indicator states to
+      allow one to better understand program flow.
+
+
+3.0.1, 2008.03.23 (r2263)
 
     o String objects can now be compared to mysqlpp::null directly.
 

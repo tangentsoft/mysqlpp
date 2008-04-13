@@ -8,23 +8,6 @@ Any Version
       consider whether it could be generalized to a widely-useful
       API feature.
 
-v3.0
-----
-    o Make ConnectionPool::release() virtual.  grab(), too?
-
-    o Add protected ConnectionPool::size(), returning the current
-      size of the connection list.
-
-    o Use new facilities to limit the number of active connections
-      in examples/cpool.cpp.
-
-    o Call Connection::thread_start() on worker_thread() entry in
-      examples/cpool.cpp?  Probably just pedantry, but the lack has
-      confused at least one person.
-
-    o Why are Connection::thread_start() and thread_end() not static?
-      Ditto DBDriver.
-
 
 v3.1 Tentative Plan
 -------------------
@@ -158,3 +141,7 @@ v4.0 or Later
     o Make Query::insert(), replace() and update() execute their
       queries immediately.  Requires an ABI break, because they'll
       have to return SimpleResult.
+
+	o Switch Query's safe bool to overload basic_ios<>::operator
+	  void*() instead.  We create an ambiguous conversion in bool
+	  context with some C++ standard libraries otherwise.

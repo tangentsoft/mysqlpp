@@ -43,12 +43,12 @@ namespace mysqlpp {
 ///
 /// This class does as little as possible to adapt between its public
 /// interface and the interface required by the underlying C API.  That
-/// is in fact its only mission.  The high-level interfaces indended for
-/// use by MySQL++ users are in DBDriver, Query, Result, and ResUse,
-/// all of which delegate the actual database communication to an object
-/// of this type, created by DBDriver.  If you really need access to
-/// the low-level database driver, get it via DBDriver::driver();
-/// don't create DBDriver objects directly.
+/// is, in fact, its only mission.  The high-level interfaces indended
+/// for use by MySQL++ users are in Connection, Query, Result, and
+/// ResUse, all of which delegate the actual database communication to
+/// an object of this type, created by Connection.  If you really need
+/// access to the low-level database driver, get it via
+/// Connection::driver(); don't create DBDriver objects directly.
 ///
 /// Currently this is a concrete class for wrapping the MySQL C API.
 /// In the future, it may be turned into an abstract base class, with
@@ -60,7 +60,7 @@ public:
 	/// \brief Result code returned by next_result()
 	enum nr_code {
 		nr_more_results,	///< success, with more results to come
-		nr_last_result,		///< success, last result recieved
+		nr_last_result,		///< success, last result received
 		nr_error,			///< problem retrieving next result
 		nr_not_supported	///< this C API doesn't support "next result"
 	};

@@ -92,7 +92,7 @@ public:
 	/// lifetime of connection objects it creates.
 	///
 	/// \retval a pointer to the connection
-	Connection* grab();
+	virtual Connection* grab();
 
 	/// \brief Return a connection to the pool
 	///

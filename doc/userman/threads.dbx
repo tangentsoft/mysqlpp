@@ -5,12 +5,34 @@
 <sect1 id="threads">
   <title>Using MySQL++ in a Multithreaded Program</title>
 
-  <para>MySQL++ doesn&rsquo;t fall out of the box ready to be used with
-  threads. Furthermore, once you build a thread-aware program with
-  MySQL++, it isn&rsquo;t &ldquo;thread safe&rdquo; in an absolute
-  sense: there exist incorrect usage patterns which will cause errors.
-  This section will discuss these issues, and give advice on how to
-  avoid problems.</para>
+  <para>MySQL++ is not &ldquo;thread safe&rdquo; in any
+  meaningful sense. MySQL++ contains very little code that
+  actively prevents trouble with threads, and all of it is
+  optional. We have done some work in MySQL++ to make thread
+  safety <emphasis>achievable</emphasis>, but it doesn&rsquo;t come
+  for free.</para>
+
+  <para>The main reason for this is that MySQL++ is
+  generally I/O-bound, not processor-bound. That is, if
+  your program&rsquo;s bottleneck is MySQL++, the ultimate
+  cause is usually the I/O overhead of using a client-server
+  database. Doubling the number of threads will just let your
+  program get back to waiting for I/O twice as fast. Since <ulink
+  url="http://www.eecs.berkeley.edu/Pubs/TechRpts/2006/EECS-2006-1.pdf">threads
+  are evil</ulink> and generally can&rsquo;t help MySQL++, the only
+  optional thread awareness features we turn on in the shipping
+  version of MySQL++ are those few that have no practical negative
+  consequences. Everything else is up to you, the programmer, to
+  evaluate and enable as and when you need it.</para>
+
+  <para>We&rsquo;re going to assume that you either agree with these
+  views but find yourself needing to use threads for some other
+  reason, or are foolishly disregarding these facts and are going to
+  use threads anyway. Our purpose here is limited to setting down
+  the rules for avoiding problems with MySQL++ in a multi-threaded
+  program. We won&rsquo;t go into the broader issues of thread safety
+  outside the scope of MySQL++. You will need a grounding in threads
+  in general to get the full value of this advice.</para>
 
   <sect2 id="thread-build">
     <title>Build Issues</title>
@@ -23,36 +45,50 @@
         <para><emphasis>Build MySQL++ itself with thread awareness
         turned on.</emphasis></para>
 
-        <para>On platforms that use the <filename>configure</filename>
-        script (Linux, Mac OS X, *BSD, Solaris, Cygwin...) you need to
-        explicitly ask for thread support. And beware, this is only a
-        request to the <filename>configure</filename> script to look for
-        thread support on your system, not a requirement to do or die:
-        if the script doesn&rsquo;t find what it needs to do threading,
-        MySQL++ will just get built without thread support. See
-        <filename>README-Unix.txt</filename> for more details.</para>
+        <para>On Linux, Cygwin and Unix (OS X, *BSD, Solaris...),
+        pass the <computeroutput>--enable-thread-check</computeroutput>
+        flag to the <filename>configure</filename> script. Beware, this
+        is only a request to the <filename>configure</filename> script
+        to look for thread support on your system, not a requirement
+        to do or die: if the script doesn&rsquo;t find what it needs
+        to do threading, MySQL++ will just get built without thread
+        support. See <filename>README-Unix.txt</filename> for more
+        details.</para>
 
-        <para>When building MySQL++ with the Visual C++ project files or
+        <para>On Windows, if you use the Visual C++ project files or
         the MinGW Makefile that comes with the MySQL++ distribution,
         threading is always turned on, due to the nature of
         Windows.</para>
 
-        <para>If you build MySQL++ in some unsupported way, such as with
+        <para>If you build MySQL++ in some other way, such as with
         Dev-Cpp (based on MinGW) you&rsquo;re on your own to enable
-        this.</para>
+        thread awareness.</para>
       </listitem>
 
       <listitem>
         <para><emphasis>Link your program to a thread-aware build of the
         MySQL C API library.</emphasis></para>
 
-        <para>Depending on your platform, you might have to build
-        this yourself (e.g. Cygwin), or you might get only one
-        library which is always thread-aware (e.g. Visual C++), or
-        there might be two different MySQL C API libraries, one of
-        which is thread-aware and the other not (e.g. Linux). See the
-        <filename>README-*.txt</filename> file for your particular
-        platform, and also the MySQL developer documentation.</para>
+        <para>If you use a binary distribution of MySQL on Unixy
+        systems, you usually get two different versions of the MySQL
+        C API library, one with thread support and one without. These
+        are typically called <filename>libmysqlclient</filename> and
+        <filename>libmysqlclient_r</filename>, the latter being the
+        thread-safe one. (The &ldquo;<filename>_r</filename>&rdquo;
+        means reentrant.)</para>
+
+        <para>If you&rsquo;re using the Windows binary distribution of
+        MySQL, there are two versions of the client library, but both
+        are thread aware. One just has debugging symbols, and the other
+        doesn&rsquo;t. See <filename>README-Visual-C++.txt</filename>
+        or <filename>README-MinGW.txt</filename> for details.</para>
+
+        <para>If you build MySQL from source, you might only get
+        one version of the MySQL C API library, and it can have
+        thread awareness or not, depending on your configuration
+        choices. This is the case with Cygwin, where you currently
+        have no choice but to build the C API library from source. (See
+        <filename>README-Cygwin.txt</filename>.)</para>
       </listitem>
 
       <listitem>
@@ -60,12 +96,11 @@
         options.</emphasis></para>
 
         <para>This is different for every platform, but it&rsquo;s
-        usually the case that you don&rsquo;t get thread-aware builds by
-        default. You might have to turn on a compiler option, or link
-        your program to a different library, or some combination of
-        both. See your development environment&rsquo;s documentation, or
-        study how MySQL++ itself turns on thread-aware build options
-        when requested.</para>
+        usually the case that you don&rsquo;t get thread-aware builds
+        by default. Depending on the platform, you might need to change
+        compiler options, linker options, or both. See your development
+        environment&rsquo;s documentation, or study how MySQL++ itself
+        turns on thread-aware build options when requested.</para>
       </listitem>
     </orderedlist>
   </sect2>
@@ -95,9 +130,8 @@
     that, we created the <ulink url="ConnectionPool" type="classref"/>
     class. It manages a pool of <classname>Connection</classname>
     objects like library books: a thread checks one out, uses it,
-    and then returns it to the pool as soon as it&rsquo;s done
-    with it. This keeps the number of active connections as low as
-    possible.</para>
+    and then returns it to the pool as soon as it&rsquo;s done with
+    it. This keeps the number of active connections low.</para>
 
     <para><classname>ConnectionPool</classname> has three
     methods that you need to override in a subclass to
@@ -139,27 +173,26 @@
     such to abstract away the differences between the two threading
     models.</para></footnote> Because thread-enabled builds are only
     the default on Windows, it&rsquo;s quite possible for this program
-    to do nothing on other platforms.  See your platform&rsquo;s
-    <filename>README-*.txt</filename> file for instructions on enabling
-    a thread-aware build.</para>
+    to do nothing on other platforms. See above for instructions on
+    enabling a thread-aware build.</para>
 
-    <para>If you write your code without checks for thread support like
-    you see in the code above and link it to a build of MySQL++ that
-    isn&rsquo;t thread-aware, it won&rsquo;t immediately fail. The
-    threading mechanisms just fall back to a single-threaded mode. A
-    particular danger is that the mutex lock mechanism used to keep the
-    pool&rsquo;s internal data consistent while multiple threads access
-    it will just quietly become a no-op if MySQL++ is built without
-    thread support. We do it this way because we don&rsquo;t want to
-    make thread support a MySQL++ prerequisite. And, although it would
-    be of limited value, this lets you use
-    <classname>ConnectionPool</classname> in single-threaded
-    programs.</para>
+    <para>If you write your code without checks for thread support
+    like you see in the code above and link it to a build of MySQL++
+    that isn&rsquo;t thread-aware, it will still try to run. The
+    threading mechanisms fall back to a single-threaded mode when
+    threads aren&rsquo;t available. A particular danger is that the
+    mutex lock mechanism used to keep the pool&rsquo;s internal data
+    consistent while multiple threads access it will just quietly
+    become a no-op if MySQL++ is built without thread support. We do
+    it this way because we don&rsquo;t want to make thread support
+    a MySQL++ prerequisite. And, although it would be of limited
+    value, this lets you use <classname>ConnectionPool</classname>
+    in single-threaded programs.</para>
 
-    <para>You might wonder why we don&rsquo;t just work around this
-    weakness in the C API transparently in MySQL++ instead of mandating
-    design guidelines to avoid it. We&rsquo;d like to do just that, but
-    how?</para>
+    <para>You might wonder why we don&rsquo;t just work around
+    this weakness in the C API transparently in MySQL++ instead of
+    suggesting design guidelines to avoid it. We&rsquo;d like to do
+    just that, but how?</para>
 
     <para>If you consider just the threaded case, you could argue for
     the use of mutexes to protect a connection from trying to execute

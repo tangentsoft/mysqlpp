@@ -149,7 +149,7 @@ Hot Dogs                       100       1.5       1.75      1998-09-25
 ================ END ssqls2 OUTPUT ================
 
 ---------------- BEGIN ssqls3 OUTPUT ----------------
-Query: UPDATE stock SET item = 'Nuerenberger Bratwurst',num = 97,weight = 1.5,price = 8.789999999999999,sdate = '2005-03-10',description = NULL WHERE item = 'Nürnberger Brats'
+Query: UPDATE stock SET item = 'Nuerenberger Bratwurst',num = 97,weight = 1.5,price = 8.7899999999999991,sdate = '2005-03-10',description = NULL WHERE item = 'Nürnberger Brats'
 Query: select * from stock
 Records found: 5
 
@@ -178,6 +178,6 @@ Currently 65 hotdog buns in stock.
 
 ---------------- BEGIN ssqls5 OUTPUT ----------------
 Custom query:
-select * from stock where weight = 1.5 and price = 8.789999999999999
+select * from stock where weight = 1.5 and price = 8.7899999999999991
 ================ END ssqls5 OUTPUT ================
 

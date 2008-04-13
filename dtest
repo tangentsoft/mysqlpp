@@ -11,7 +11,7 @@ do
 	then
 		errmsg=`./exrun "$t" 2>&1`
 		errno=$?
-		if [ "$errno" == 0 ]
+		if [ "$errno" = 0 ]
 		then
 			count=count+1
 		else

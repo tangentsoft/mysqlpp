@@ -1104,5 +1104,19 @@ my_ssqls_type::table("MyTableName");</programlisting>
       <para><methodname>ConnectionPool::release()</methodname> is now
       virtual, so a subclass can override it.</para>
     </sect3>
+
+
+    <sect3 id="abi-3.0.2">
+      <title>v3.0.2</title>
+
+      <para><methodname>ConnectionPool::grab()</methodname> is now
+      virtual; same reason as above.</para>
+
+      <para><classname>Query</classname> can now be tested in
+      <type>bool</type> context, as was intended for v3.0.0. Had to
+      change the &ldquo;safe bool&rdquo; method signature to make it
+      happen, so technically it&rsquo;s an API change, but it&rsquo;s
+      still used the same way.</para>
+    </sect3>
   </sect2>
 </sect1>

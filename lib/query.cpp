@@ -489,13 +489,13 @@ Query::store(const char* str, size_t len)
 		return StoreQueryResult(res, conn_->driver(), throw_exceptions());
 	}
 	else {
-		// Either result set is empty (which is copacetic), or there
-		// was a problem returning the result set (which is not).  If
-		// caller knows the result set will be empty (e.g. query is
-		// INSERT, DELETE...) it should call exec{ute}() instead, but
-		// there are good reasons for it to be unable to predict this.
-		copacetic_ = conn_->driver()->result_empty();
-		if (copacetic_) {
+		// Either result set is empty, or there was a problem executing
+		// the query or storing its results.  Since it's not an error to
+		// use store() with queries that never return results (INSERT,
+		// DELETE, CREATE, ALTER...) we need to figure out which case
+		// this is.  (You might use store() instead of execute() for
+		// such queries when the query strings come from "outside".)
+		if (copacetic_ = (conn_->errnum() == 0)) {
 			if (parse_elems_.size() == 0) {
 				// Not a template query, so auto-reset
 				reset();
@@ -610,13 +610,9 @@ Query::use(const char* str, size_t len)
 		return UseQueryResult(res, conn_->driver(), throw_exceptions());
 	}
 	else {
-		// Either result set is empty (which is copacetic), or there
-		// was a problem returning the result set (which is not).  If
-		// caller knows the result set will be empty (e.g. query is
-		// INSERT, DELETE...) it should call exec{ute}() instead, but
-		// there are good reasons for it to be unable to predict this.
-		copacetic_ = conn_->driver()->result_empty();
-		if (copacetic_) {
+		// See comments in store() above for why we distinguish between
+		// empty result sets and actual error returns here.
+		if (copacetic_ = (conn_->errnum() == 0)) {
 			if (parse_elems_.size() == 0) {
 				// Not a template query, so auto-reset
 				reset();

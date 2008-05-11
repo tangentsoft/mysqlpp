@@ -36,6 +36,10 @@
 
 #include <string>
 
+#if !defined(MYSQLPP_NO_STDINT_H)
+#	include <stdint.h>
+#endif
+
 namespace mysqlpp {
 
 #if !defined(DOXYGEN_IGNORE)
@@ -59,7 +63,6 @@ namespace mysqlpp {
 #else
 	// Assume a system where C99 is supported in C++ in advance of
 	// actual standardization, so we can do this portably.
-#	include <stdint.h>
 	typedef tiny_int<int8_t>		sql_tinyint;
 	typedef tiny_int<uint8_t>		sql_tinyint_unsigned;
 	typedef int16_t					sql_smallint;

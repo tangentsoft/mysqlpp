@@ -1,3 +1,19 @@
+3.0.3, 2008.05.11 (r2284)
+
+    o Fixed query well-formedness handling in Query::store() and use().
+      It was quietly eating these errors, confusing them with the
+      no-results case.
+
+    o Fixed examples/cpool.cpp to build without thread support.
+
+    o No longer hiding all stdint.h typedefs inside namespace mysqlpp.
+
+    o Fixed mysqlpp::String comparisons of empty strings against
+      nonempty strings; if the empty string was on the left hand side,
+      it would succeed because it was only comparing against characters
+      in the empty side, which matches everything.  (Fixes bug 11588.)
+
+
 3.0.2, 2008.04.13 (r2275)
 
     o Increased float to string conversion precision from 7 to 9 and
@@ -7,7 +23,7 @@
     o Replaced Query's safe bool mechanism with an override of
       basic_ios::operator void*() to avoid a conflict between the
       two mechanisms.  As the base class version isn't virtual,
-      this is arguably evil, but it should be harmess in typical use.
+      this is arguably evil, but it should be harmless in typical use.
       Besides, testing Query in bool context usually isn't the right
       thing anyway: test the result set instead.
 

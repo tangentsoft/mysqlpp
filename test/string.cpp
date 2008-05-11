@@ -219,41 +219,79 @@ test_string_equality(const mysqlpp::String& s, std::string value)
 }
 
 
+// Same as above, but for two String objects
+static bool
+test_string_equality(const mysqlpp::String& s1,
+		const mysqlpp::String s2)
+{
+	if (s1 == s2) {
+		return true;
+	}
+	else {
+		std::cerr << "String(\"" << s1 << "\") != String(\"" <<
+				s2 << "\"), but should be equal!" << std::endl;
+		return false;
+	}
+}
+
+
+// Inverse of above.
+static bool
+test_string_inequality(const mysqlpp::String& s1,
+		const mysqlpp::String& s2)
+{
+	if (s1 != s2) {
+		return true;
+	}
+	else {
+		std::cerr << "String(\"" << s1 << "\") == String(\"" <<
+				s2 << "\") but shouldn't be!" << std::endl;
+		return false;
+	}
+}
+
+
 int
 main(int, char* argv[])
 {
 	try {
 		int failures = 0;
-		mysqlpp::String empty;
+		mysqlpp::String definit;
+		mysqlpp::String empty("");
 		mysqlpp::String zero("0");
 		mysqlpp::String nonzero("42");
 		mysqlpp::String intable1("42.");
 		mysqlpp::String intable2("42.0");
 		mysqlpp::String nonint("42.1");
 
-		failures += test_equality(empty, mysqlpp::Date()) == false;
-		failures += test_equality(empty, 
+		failures += test_equality(definit, mysqlpp::Date()) == false;
+		failures += test_equality(definit, 
 				mysqlpp::DateTime(0, 0, 0, 0, 0, 0)) == false;
-		failures += test_equality(empty, mysqlpp::Time()) == false;
-		failures += test_equality(empty, false) == false;
+		failures += test_equality(definit, mysqlpp::Time()) == false;
+		failures += test_equality(definit, false) == false;
 		failures += test_equality(nonzero, true) == false;
-		failures += test_numeric(empty, 0) == false;
+		failures += test_numeric(definit, 0) == false;
 		failures += test_numeric(zero, 0) == false;
 		failures += test_numeric(nonzero, 42) == false;
-		failures += test_quote_q(empty, true) == false;
+		failures += test_quote_q(definit, true) == false;
 		failures += test_quote_q(mysqlpp::String("1", typeid(int)),
 				false) == false;
 		failures += test_float_conversion() == false;
 		failures += test_float_conversion() == false;
-		failures += test_int_conversion(empty, false) == false;
+		failures += test_int_conversion(definit, false) == false;
 		failures += test_int_conversion(zero, false) == false;
 		failures += test_int_conversion(nonzero, false) == false;
 		failures += test_int_conversion(intable1, false) == false;
 		failures += test_int_conversion(intable2, false) == false;
 		failures += test_int_conversion(nonint, true) == false;
 		failures += test_null() == false;
-		failures += test_string_equality(empty, "") == false;
+		failures += test_string_equality(definit, empty) == false;
+		failures += test_string_equality(empty, definit) == false;
+		failures += test_string_equality(definit, "") == false;
 		failures += test_string_equality(zero, "0") == false;
+		failures += test_string_inequality(definit, zero) == false;
+		failures += test_string_inequality(zero, definit) == false;
+		failures += test_string_inequality(empty, nonzero) == false;
 		
 		return failures;
 	}

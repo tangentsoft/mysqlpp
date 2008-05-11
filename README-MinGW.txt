@@ -4,27 +4,22 @@ Prerequisite: GCC Version
     to be updated.  Older versions are known to not work with MySQL++.
 
 
-Prerequisite: MySQL C API DLL Import Library
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Before you can build MySQL++ with MinGW, you will need to create
-    a MinGW-compatible import library for MySQL's C API library.
-    Using the current default install path for MySQL and assuming
-    MySQL++ is in c:\mysql++, the commands to do this are:
-
-        cd C:\Program Files\MySQL\MySQL Server 5.0\lib\opt
-        dlltool -k -d c:\mysql++\libmysqlclient.def -l libmysqlclient.a
-
-
 Prerequisite: MySQL C Development Files
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    You'll also need to have MySQL installed, including all the
-    MySQL C development files; MySQL++ is built atop this library.
-    The MySQL server installer has, in the past, sometimes installed
-    these by default, and sometimes not.  You may need to do a custom
-    install to get them.
+    MySQL++ is built atop MySQL's C API library, so you need to have
+    MySQL installed on your development system to get the current C API
+    development files.
 
-    The MySQL++ Makefile assumes that you installed the MySQL
-    development files in C:\Program Files\MySQL\MySQL Server 5.0\
+    If you do a default installation of MySQL, the development files
+    probably won't be installed. As of this writing you have to do
+    either a Complete or Custom install to get these files.  (They keep
+    changing the way the Windows installer works, so this may not be
+    true any more by the time you read this.)
+
+    The MySQL++ Makefile assumes that you installed MySQL in
+    
+        C:\Program Files\MySQL\MySQL Server 5.0\
+    
     If not, you have two options.
 
     The simplest is to edit Makefile.mingw.  This is a generated
@@ -40,6 +35,17 @@ Prerequisite: MySQL C Development Files
         bakefile_gen -f mingw
 
 
+Prerequisite: MySQL C API DLL Import Library
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Before you can build MySQL++ with MinGW, you will need to create
+    a MinGW-compatible import library for MySQL's C API library.
+    Using the current default install path for MySQL and assuming
+    MySQL++ is in c:\mysql++, the commands to do this are:
+
+        cd C:\Program Files\MySQL\MySQL Server 5.0\lib\opt
+        dlltool -k -d c:\mysql++\libmysqlclient.def -l libmysqlclient.a
+
+
 Building the Library and Example Programs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     With the prerequisites above taken care of, you can build MySQL++
@@ -47,29 +53,35 @@ Building the Library and Example Programs
 
         mingw32-make -f Makefile.mingw
 
-    Notice that we're using the MinGW-specific version of GNU make,
-    not the Cygwin or MSYS versions.  Many things will break otherwise:
-    path separator handling, shell commands used by the Makefile, etc.
+    Notice that we're using the MinGW-specific version of GNU make, not
+    the Cygwin or MSYS versions.  Many things will break otherwise: path
+    separator handling, shell commands used by the Makefile, etc.
 
-    Once the library is built, you should run the examples.
-    At minimum, run resetdb and simple1.
+    Speaking of Cygwin and MSYS, if you have either these or any other
+    Unix emulation environment installed, be sure their executables
+    aren't in the PATH when building MySQL++.  MinGW's version of GNU
+    make does some funny things if it thinks it's running in the
+    presence of Unixy tools, which will break the MySQL++ build.
 
-    Once you're satisfied that the library is working correctly, you
-    can run the install.bat file at the project root to automatically
+    Once the library is built, you should run the examples.  At minimum,
+    run resetdb and simple1.
+
+    Once you're satisfied that the library is working correctly, you can
+    run the install.bat file at the project root to automatically
     install the library files and headers in subdirectories under
     c:\mysql++.
 
 
 Cygwin and MinGW Coexistence
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    It's possible to have both Cygwin and MinGW installed and build
-    with the MinGW tools without interference from the Cygwin bits.
-    The main thing you have to take care of is that MinGW's bin
-    directory must precede the Cygwin bin directory in the PATH,
-    so that its tools are found first.  If you use Cygwin's bash
-    as a command shell in preference to the DOS-like cmd.exe, you
-    can use this shell script to temporarily set the environment to
-    "MinGW mode" and make it easy to get back to "Cygwin mode":
+    It's possible to have both Cygwin and MinGW installed and build with
+    the MinGW tools without interference from the Cygwin bits.  The main
+    thing you have to take care of is that MinGW's bin directory must
+    precede the Cygwin bin directory in the PATH, so that its tools are
+    found first.  If you use Cygwin's bash as a command shell in
+    preference to the DOS-like cmd.exe, you can use this shell script to
+    temporarily set the environment to "MinGW mode" and make it easy to
+    get back to "Cygwin mode":
 
         #!/bin/sh
         PATH=/c/mingw/bin:/c/windows:/c/windows/system32:/c/cygwin/bin
@@ -81,11 +93,11 @@ Cygwin and MinGW Coexistence
         alias make=mingw32-make
         PS1='MinGW: \W \$ '
 
-    The prompt change reminds you that you are in a sub-shell set up
-    for MinGW.  The alias for 'make' ensures you don't accidentally
-    run Cygwin's make, which won't work with Makefile.mingw.  We could
-    just leave /c/cygwin/bin out of the environment, but there are
-    Cygwin tools we want access to, like vim.  As long as all the
-    MinGW ones override those Cygwin also provides, we don't need to
-    worry about having both in the PATH.  Besides, having the alias
-    is nice for those who have 'make' committed to muscle memory.
+    The prompt change reminds you that you are in a sub-shell set up for
+    MinGW.  The alias for 'make' ensures you don't accidentally run
+    Cygwin's make, which won't work with Makefile.mingw.  We could just
+    leave /c/cygwin/bin out of the environment, but there are Cygwin
+    tools we want access to, like vim.  As long as all the MinGW ones
+    override those Cygwin also provides, we don't need to worry about
+    having both in the PATH.  Besides, having the alias is nice for
+    those who have 'make' committed to muscle memory.

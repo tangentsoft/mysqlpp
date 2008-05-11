@@ -2,7 +2,7 @@
  mystring.cpp - Implements the String class.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
+ (c) 2004-2008 by Educational Technology Resources, Inc.  Others may
  also hold copyrights on code in this file.  See the CREDITS file in
  the top directory of the distribution for details.
 
@@ -27,6 +27,7 @@
 #include "mystring.h"
 #include "query.h"
 
+#include <algorithm>
 #include <stdexcept>
 #include <string>
 
@@ -49,7 +50,8 @@ int
 String::compare(const String& other) const
 {
 	if (other.buffer_) {
-		return compare(0, length(), other.buffer_->data());
+		return compare(0, std::max(length(), other.length()), 
+				other.buffer_->data());
 	}
 	else {
 		// Other object has no buffer, so we are greater unless empty or
@@ -62,7 +64,7 @@ String::compare(const String& other) const
 int
 String::compare(const std::string& other) const
 {
-	return compare(0, length(), other.data());
+	return compare(0, std::max(length(), other.length()), other.data());
 }
 
 
@@ -76,7 +78,7 @@ String::compare(size_type pos, size_type num, std::string& other) const
 int
 String::compare(const char* other) const
 {
-	return compare(0, length(), other);
+	return compare(0, std::max(length(), strlen(other)), other);
 }
 
 

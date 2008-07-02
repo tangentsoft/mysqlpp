@@ -75,9 +75,9 @@
     locations of your program.</para>
 
     <para>A third method for building queries is to use
-    <classname>Query</classname> with <xref linkend="ssqlsintro"/>
-    (SSQLS). This feature lets you create C++ structures that mirror
-    your database schemas. These in turn give
+    <classname>Query</classname> with <link
+    linkend="ssqls">SSQLS</link>. This feature lets you create C++
+    structures that mirror your database schemas. These in turn give
     <classname>Query</classname> the information it needs to build many
     common SQL queries for you. It can <command>INSERT</command>,
     <command>REPLACE</command> and <command>UPDATE</command> rows in a
@@ -153,8 +153,8 @@
       <para>Accessing results through MySQL++&rsquo;s data structures is
       a pretty low level of abstraction. It&rsquo;s better than using
       the MySQL C API, but not by much. You can elevate things a little
-      closer to the level of the problem space by using the <xref
-      linkend="ssqlsintro"/> (SSQLS) feature. This lets you define C++
+      closer to the level of the problem space by using the <link
+      linkend="ssqls">SSQLS feature</link>. This lets you define C++
       structures that match the table structures in your database
       schema. In addition, it&rsquo;s easy to use SSQLSes with regular
       STL containers (and thus, algorithms) so you don&rsquo;t have to

@@ -53,7 +53,7 @@ sql_create_17(test,
 	sql_bool,				bool_v,
 	sql_date,				date_v,
 	sql_time,				time_v,
-	sql_datetime,			datetime_v);
+	sql_datetime,			datetime_v)
 
 int
 main()

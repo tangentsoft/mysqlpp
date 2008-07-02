@@ -84,6 +84,18 @@ v3.1 Tentative Plan
     o Optional checked conversions in String for numerics: throw
       BadConversion on range overflow?
 
+    o Try to add Query::storein(container, ssqls), which generates
+      SELECT * from {ssqls.table()} and stores the result.  May not be
+      possible due to existing overloads, but try.  If it works, use
+      this form in the userman Overview section, saving one LOC.
+
+    o Add Query::storein_if(), mirroring store_if()
+
+    o Add a method to mysqlpp::String to return a widened version of the
+      string.  Probably make return type templatized so we can return
+      wstring, C++/CLI native strings, etc.  Then convert examples that
+      do this conversion to use this new mechanism.
+
 
 v4.0 or Later
 -------------
@@ -142,6 +154,11 @@ v4.0 or Later
       queries immediately.  Requires an ABI break, because they'll
       have to return SimpleResult.
 
-	o Switch Query's safe bool to overload basic_ios<>::operator
-	  void*() instead.  We create an ambiguous conversion in bool
-	  context with some C++ standard libraries otherwise.
+    o Switch Query's safe bool to overload basic_ios<>::operator
+      void*() instead.  We create an ambiguous conversion in bool
+      context with some C++ standard libraries otherwise.
+
+    o Templatize mysqlpp::String on value_type so it can be used to
+      hold wide characters.  Then the method that converts UTF-8 to the
+      platform's best wide character type can just return a different
+      variant of mysqlpp::String.

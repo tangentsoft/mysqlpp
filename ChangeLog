@@ -1,3 +1,17 @@
+3.0.4, 2008.07.02 (r2303)
+
+    o Fixed a few bugs in SslOption that prevented it from actually
+      working.  If you've been having SSL problems since upgrading
+      to MySQL++ v3, this is why!  Thanks for these patches go to
+      Petteri Kiiskinen.
+
+    o Changed type of String's internal "size" typedefs so it'll
+      build without errors on 64-bit systems where these ints are
+      different sizes.
+
+    o Many user manual improvements.
+
+
 3.0.3, 2008.05.11 (r2284)
 
     o Fixed query well-formedness handling in Query::store() and use().

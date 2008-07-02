@@ -48,7 +48,7 @@ test_size(const char* desc, IntType value, size_t expected_size)
 
 
 int
-main(int, char* argv[])
+main()
 {
 	int failures = 0;
 

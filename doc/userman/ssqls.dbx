@@ -6,25 +6,34 @@
   <title>Specialized SQL Structures</title>
 
   <para>The Specialized SQL Structure (SSQLS) feature lets you easily
-  define C++ structures that match the form of your SQL tables. Because
-  of the extra functionality that this feature builds into these
-  structures, MySQL++ can populate them automatically when retrieving
-  data from the database; with queries returning many records, you can
-  ask MySQL++ to populate an STL container of your SSQLS records with
-  the results. When updating the database, MySQL++ can use SSQLS
-  structures to match existing data, and it can insert SSQLS structures
-  directly into the database.</para>
+  define C++ structures that match the form of your SQL tables. At the
+  most superficial level, an SSQLS has a member variable corresponding
+  to each field in the SQL table. But, an SSQLS also has several
+  methods, operators, and data members used by MySQL++&rsquo;s internals to
+  provide neat functionality, which we cover in this chapter.</para>
 
-  <para>You define an SSQLS using one of several macros defined in
-  <filename>ssqls.h</filename>. The following sections will discuss each
-  macro type separately, beginning with the easiest and most generally
-  useful.</para>
+  <para>You define SSQLSes using the macros defined in
+  <filename>ssqls.h</filename>. This is the only MySQL++ header not
+  automatically included for you by <filename>mysql++.h</filename>. You
+  have to include it in code modules that use the SSQLS feature.</para>
 
 
   <sect2 id="sql_create">
     <title>sql_create</title>
 
-    <para>This is the most basic sort of SSQLS declaration:</para>
+    <para>Let&rsquo;s say you have the following SQL table:</para>
+
+    <programlisting>
+CREATE TABLE stock (
+    item CHAR(30) NOT NULL,
+    num BIGINT NOT NULL,
+    weight DOUBLE NOT NULL,
+    price DECIMAL(6,2) NOT NULL,
+    sdate DATE NOT NULL,
+    description MEDIUMTEXT NULL)</programlisting>
+
+    <para>You can create a C++ structure corresponding to this table
+    like so:</para>
 
     <programlisting>
 sql_create_6(stock, 1, 6,
@@ -35,54 +44,33 @@ sql_create_6(stock, 1, 6,
     mysqlpp::sql_date, sdate,
     mysqlpp::Null&lt;mysqlpp::sql_mediumtext&gt;, description)</programlisting>
 
-    <para>This creates a C++ structure called
-    <classname>stock</classname> containing six member
-    variables (<varname>item</varname>, <varname>num</varname>,
-    <varname>weight</varname>, <varname>price</varname>,
-    <varname>sdate</varname>, and <varname>description</varname>),
-    along with some constructors and other useful member
-    functions.</para>
+    <para>This declares the <classname>stock</classname> structure,
+    which has a data member for each SQL column, using the same names.
+    The structure also has a number of member functions, operators and
+    hidden data members, but we won&rsquo;t go into that just
+    now.</para>
 
-    <para>The parameter before each field name is the C++ data type
-    that will be used to hold that value in the SSQLS. MySQL++ has
-    a <type>sql_*</type> typedef for almost every data type MySQL
-    understands.<footnote><para>MySQL++ doesn&rsquo;t have typedefs
-    for some of the more exotic data types, like those for the
-    geospatial types. Patches to correct this will be thoughtfully
-    considered.</para></footnote> While it&rsquo;s possible to use
-    some regular C and C++ data types here, it&rsquo;s safer to use
-    the ones MySQL++ defines, as they&rsquo;re likely to be a better
-    match to the types used by the database server. Plus, if you use
-    the predefined types, you are assured that MySQL++ knows how to
-    do the data conversions between the C++ and SQL type systems. If
-    you use other data types and the C++ compiler can&rsquo;t convert
-    it to one MySQL++ already understands, MySQL++ will throw a
-    <ulink type="classref" url="TypeLookupFailed"/> exception. The
-    <type>sql_*</type> types are defined in MySQL++&rsquo;s
-    <filename>sql_types.h</filename> header. The naming scheme is
-    easy to learn when you know the SQL data type names.</para>
+    <para>The parameter before each field name in the
+    <function>sql_create_#</function> call is the C++ data type that
+    will be used to hold that value in the SSQLS. MySQL++ defines C++
+    types for almost every data type MySQL understands, of the form
+    <type>sql_*</type>. We&rsquo;re using them for all of the columns
+    above for reasons given in <xref linkend="sql-types"/>. While you
+    could use plain old C++ data types for most of these columns
+    (<type>long int</type> instead of <type>mysqlpp::sql_bigint</type>,
+    for example) the MySQL++ equivalents have <link
+    linkend="sql-types">several advantages</link>.</para>
 
-    <para>Another thing you&rsquo;ll notice above is the type of the
-    last column. We&rsquo;ve wrapped it in MySQL++&rsquo;s <ulink
-    type="classref" url="Null"/> template, which enables it to take a
-    SQL null value in addition to the values the base data type allows.
-    For more on this topic, see <xref linkend="sql-null"/>.</para>
-
-    <para>One of the generated constructors takes a reference to
-    a <ulink type="classref" url="Row"/>, allowing you to easily
-    populate a vector of stocks like so:</para>
-
-    <programlisting>
-vector&lt;stock&gt; result; 
-query.storein(result);</programlisting>
-
-    <para>MySQL++ takes care of mapping result set data to SSQLS
-    fields. The SSQLS doesn&rsquo;t have to have the same number
-    of fields as the result set, and the order of fields in the
-    result set doesn&rsquo;t have to match the order of fields in
-    the SSQLS. Fields in the result set that don&rsquo;t exist in the
-    SSQLS are just quietly dropped, and fields in the SSQLS for which
-    there is no data in the result get set to a default value.</para>
+    <para>Consider the <varname>description</varname> field definition
+    above. It uses two MySQL++ features in combination to express a data
+    type that has no exact C++ type equivalent. The difference between
+    SQL&rsquo;s <type>MEDIUMTEXT</type> and C++&rsquo;s
+    <type>std::string</type> type is small, so MySQL++&rsquo;s typedef
+    just aliases the two. However, there&rsquo;s no equivalent of
+    SQL&rsquo;s &ldquo;null&rdquo; in the C++ type system.  MySQL++
+    offers the <ulink type="classref" url="Null"/> template, which
+    bridges this difference between the two type systems.  For more on
+    this topic, see <xref linkend="sql-null"/>.</para>
 
     <para>The general format of this set of macros is:</para>
 
@@ -96,20 +84,20 @@ sql_create_#(NAME, COMPCOUNT, SETCOUNT, TYPE1, ITEM1, ... TYPE#, ITEM#)</program
     name.</para>
 
     <para>The <parameter>COMPCOUNT</parameter> and
-    <parameter>SETCOUNT</parameter> arguments are described in the
-    next section.</para>
+    <parameter>SETCOUNT</parameter> arguments are described in the next
+    section.</para>
   </sect2>
 
 
   <sect2 id="ssqls-compare-init">
     <title>SSQLS Comparison and Initialization</title>
 
-    <para><varname>sql_create_</varname><emphasis>x</emphasis> adds
-    member functions and operators to each SSQLS that allow you to
-    compare one SSQLS instance to another. These functions compare the
-    first <parameter>COMPCOUNT</parameter> fields in the structure. In
-    the example above, <parameter>COMPCOUNT</parameter> is 1, so only
-    the <varname>item</varname> field will be checked when comparing two
+    <para>The <varname>sql_create_#</varname> macro adds member
+    functions and operators to each SSQLS that allow you to compare one
+    SSQLS instance to another. These functions compare the first
+    <parameter>COMPCOUNT</parameter> fields in the structure. In the
+    example above, <parameter>COMPCOUNT</parameter> is 1, so only the
+    <varname>item</varname> field will be checked when comparing two
     <classname>stock</classname> structures.</para>
 
     <para>This feature works best when your table&rsquo;s
@@ -119,10 +107,9 @@ sql_create_#(NAME, COMPCOUNT, SETCOUNT, TYPE1, ITEM1, ... TYPE#, ITEM#)</program
     structures in your C++ code will give the same results as a check
     for equality in SQL.</para>
 
-    <para><parameter>COMPCOUNT</parameter> must
-    be at least 1. The current implementation of
-    <varname>sql_create_</varname><emphasis>x</emphasis> cannot create
-    an SSQLS without comparison member functions.</para>
+    <para><parameter>COMPCOUNT</parameter> must be at least 1. The
+    current implementation of <varname>sql_create_#</varname> cannot
+    create an SSQLS without comparison member functions.</para>
 
     <para>Because our <classname>stock</classname> structure
     is less-than-comparable, you can use it in STL algorithms
@@ -137,21 +124,21 @@ cout &lt;&lt; result.lower_bound(stock("Hamburger"))-&gt;item &lt;&lt; endl;</pr
     <para>This will print the first item in the result set that begins
     with &ldquo;Hamburger.&rdquo;</para>
 
-    <para>The third parameter to
-    <varname>sql_create_</varname><emphasis>x</emphasis> is
-    <parameter>SETCOUNT</parameter>. If this is nonzero, it adds
-    an initialization constructor and a <function>set()</function>
-    member function taking the given number of arguments, for setting
-    the first <emphasis>N</emphasis> fields of the structure. For
-    example, you could change the above example like so:</para>
+    <para>The third parameter to <varname>sql_create_#</varname> is
+    <parameter>SETCOUNT</parameter>. If this is nonzero, it adds an
+    initialization constructor and a <function>set()</function> member
+    function taking the given number of arguments, for setting the first
+    <emphasis>N</emphasis> fields of the structure. For example, you
+    could change the above example like so:</para>
 
     <programlisting>
-sql_create_5(stock, 1, 2,
+sql_create_6(stock, 1, 2,
     mysqlpp::sql_char, item,
     mysqlpp::sql_bigint, num,         
     mysqlpp::sql_double, weight,  
     mysqlpp::sql_decimal, price,  
-    mysqlpp::sql_date, sdate)
+    mysqlpp::sql_date, sdate,
+    mysqlpp::Null&lt;mysqlpp::sql_mediumtext&gt;, description)
     
 stock foo("Hotdog", 52);</programlisting>
 
@@ -182,6 +169,150 @@ stock foo("Hotdog", 52);</programlisting>
 
     <programlisting>
 sql_create_1(stock_item, 1, 0, mysqlpp::sql_char, item)</programlisting>
+  </sect2>
+
+
+  <sect2 id="ssqls-retrieving">
+    <title>Retrieving data</title>
+
+    <para>Let&rsquo;s put SSQLS to use. This is
+    <filename>examples/ssqls1.cpp</filename>:</para>
+
+    <programlisting><xi:include href="ssqls1.txt" parse="text" 
+    xmlns:xi="http://www.w3.org/2001/XInclude"/></programlisting>
+
+    <para>Here is the stock.h header used by that example, and by
+    several others below:</para>
+
+    <programlisting><xi:include href="stock.txt" parse="text"
+    xmlns:xi="http://www.w3.org/2001/XInclude"/></programlisting>
+
+    <para>This example produces the same output as
+    <filename>simple1.cpp</filename> (see <xref linkend="simple"/>),
+    but it uses higher-level data structures paralleling the
+    database schema instead of MySQL++&rsquo;s lower-level
+    generic data structures. It also uses MySQL++&rsquo;s <xref
+    linkend="exceptions"/> for error handling instead of doing
+    everything inline. For small example programs like these, the
+    overhead of SSQLS and exceptions doesn&rsquo;t pay off very
+    well, but in a real program, they end up working much better
+    than hand-rolled code.</para>
+
+    <para>Notice that we are only pulling a single column from the
+    <varname>stock</varname> table, but we are storing the rows in a
+    <type>std::vector&lt;stock&gt;</type>. It may strike you as
+    inefficient to have five unused fields per record. It&rsquo;s
+    easily remedied by defining a subset SSQLS:</para>
+
+    <programlisting>
+sql_create_1(stock_subset,
+  1, 0,
+  string, item)
+  
+vector&lt;stock_subset&gt; res;
+query.storein(res);
+// ...etc...</programlisting>
+
+    <para>MySQL++ is flexible about populating
+    SSQLSes.<footnote><para>Programs built against versions of MySQL++
+    prior to 3.0 would crash at almost any mismatch between the database
+    schema and the SSQLS definition. It&rsquo;s no longer necessary to
+    keep the data design in lock-step between the client and database
+    server. A mismatch can result in data loss, but not a
+    crash.</para></footnote> It works much like the Web, a design
+    that&rsquo;s enabled the development of the largest distributed
+    system in the world. Just as a browser ignores tags and attributes
+    it doesn&rsquo;t understand, you can populate an SSQLS from a query
+    result set containing columns that don&rsquo;t exist in the SSQLS.
+    And as a browser uses sensible defaults when the page doesn&rsquo;t
+    give explicit values, you can have an SSQLS with more fields defined
+    than are in the query result set, and these SSQLS fields will get
+    default values. (Zero for numeric types, <type>false</type> for
+    <type>bool</type>, and a type-specific default for anything more
+    complex, like <type>mysqlpp::DateTime</type>.)</para>
+
+    <para>In more concrete terms, the example above is able to
+    populate the <classname>stock</classname> objects using as
+    much information as it has, and leave the remaining fields at
+    their defaults. Conversely, you could also stuff the results
+    of <computeroutput>SELECT * FROM stock</computeroutput> into
+    the <classname>stock_subset</classname> SSQLS declared above;
+    the extra fields would just be ignored.</para>
+    
+    <para>We&rsquo;re trading run-time efficiency for flexibility
+    here, usually the right thing in a distributed system. Since MySQL
+    is a networked database server, many uses of it will qualify as
+    distributed systems. You can&rsquo;t count on being able to update
+    both the server(s) and all the clients at the same time, so you
+    have to make them flexible enough to cope with differences while
+    the changes propagate. As long as the new database schema
+    isn&rsquo;t too grossly different from the old, your programs
+    should continue to run until you get around to updating them to
+    use the new schema.</para>
+
+    <para>There&rsquo;s a danger that this quiet coping behavior
+    may mask problems, but considering that the previous behavior
+    was for the program to crash when the database schema got out
+    of synch with the SSQLS definition, it&rsquo;s likely to be
+    taken as an improvement.</para>
+  </sect2>
+
+
+  <sect2 id="ssqls-adding">
+    <title>Adding data</title>
+
+    <para>SSQLS can also be used to add data to a table. This is
+    <filename>examples/ssqls2.cpp</filename>:</para>
+
+    <programlisting><xi:include href="ssqls2.txt" parse="text" 
+    xmlns:xi="http://www.w3.org/2001/XInclude"/></programlisting>
+
+    <para>That&rsquo;s all there is to it!</para>
+
+    <para>There is one subtlety: MySQL++ automatically <link
+    linkend="qescape">quotes and escapes</link> the data when building
+    SQL queries using SSQLS structures.  It&rsquo;s efficient, too:
+    MySQL++ is smart enough to quote and escape data only for those data
+    types that actually require it.</para>
+
+    <para>Because this example modifies the sample database, you may
+    want to run <filename>resetdb</filename> after running this
+    program.</para>
+  </sect2>
+
+
+  <sect2 id="ssqls-modifying">
+    <title>Modifying data</title>
+
+    <para>It almost as easy to modify data with SSQLS as to add it. This
+    is <filename>examples/ssqls3.cpp</filename>:</para>
+
+    <programlisting><xi:include href="ssqls3.txt" parse="text"
+    xmlns:xi="http://www.w3.org/2001/XInclude"/></programlisting>
+
+    <para>Don&rsquo;t forget to run <filename>resetdb</filename> after
+    running the example.</para>
+  </sect2>
+
+
+  <sect2 id="ssqls-comparing">
+    <title>Less-than-comparable</title>
+
+    <para>SSQLS structures can be sorted and stored in STL associative
+    containers as demonstrated in the next example. This is
+    <filename>examples/ssqls4.cpp</filename>:</para>
+
+    <programlisting><xi:include href="ssqls4.txt" parse="text"
+    xmlns:xi="http://www.w3.org/2001/XInclude"/></programlisting>
+
+    <para>The <methodname>find()</methodname> call works because
+    of the way the SSQLS was declared. It&rsquo;s properly covered
+    elsewhere, but suffice it to say, the "1" in the declaration
+    of <classname>stock</classname> above tells it that only the
+    first field needs to be checked in comparing two SSQLSes. In
+    database terms, this makes it the primary key. Therefore, when
+    searching for a match, our exemplar only had to have its first
+    field populated.</para>
   </sect2>
 
 
@@ -390,9 +521,8 @@ Equal list: item = 'Dinner Rolls',num = 75,weight = 0.95, price = 0.97,sdate = '
     <methodname>equal_list()</methodname>. The arguments
     <varname>stock_weight</varname> and <varname>stock_price</varname>
     are enum values equal to the position of these columns within the
-    <structname>stock</structname> table.
-    <symbol>sql_create_</symbol><emphasis>x</emphasis> generates this
-    enum for you automatically.</para>
+    <structname>stock</structname> table.  <symbol>sql_create_#</symbol>
+    generates this enum for you automatically.</para>
 
     <para>The boolean argument form of that
     <methodname>equal_list()</methodname> call would look like
@@ -480,68 +610,185 @@ doc/ssqls-pretty &lt; myprog.cpp |less</programlisting>
   <sect2 id="ssqls-customization">
     <title>Customizing the SSQLS Mechanism</title>
 
-    <para>The SSQLS header <filename>ssqls.h</filename> is automatically
-    generated by the Perl script <filename>ssqls.pl</filename>. Although
-    it is possible to change this script to get additional
-    functionality, most of the time it&rsquo;s better to just derive a
-    custom class from the stock SSQLS and add your additional
-    functionality that way.</para>
+    <para>The SSQLS header <filename>ssqls.h</filename>
+    is automatically generated by the Perl script
+    <filename>ssqls.pl</filename>. Although it is possible to
+    change this script to get additional functionality, most of
+    the time it&rsquo;s better to just derive a custom class from
+    the generated SSQLS to add functionality to it. (See the <link
+    linkend="ssqls-derivation">next section</link> to see how to do
+    this correctly.)</para>
 
     <para>That said, <filename>ssqls.pl</filename> does have a few
     configurables you might want to tweak.</para>
 
-    <para>The first configurable value sets the maximum number of data
-    members allowed in an SSQLS. It&rsquo;s 25 out of the box, set by
-    the <varname>$max_data_members</varname> variable at the top of
-    <filename>ssqls.pl</filename>. Beware, making this value larger
-    increases the size of <filename>ssqls.h</filename> exponentially;
-    this will increase compile time, and can even expose limits in your
-    compiler. Before you increase this value, take a good, hard look at
-    your database schema and ask if it&rsquo;s really the best design.
-    Almost always, having so many columns is a sign that you need to
-    refactor the table.</para>
+    <para>The first configurable value sets the maximum number of
+    data members allowed in an SSQLS. It&rsquo;s 25 out of the box,
+    set by the <varname>$max_data_members</varname> variable at
+    the top of <filename>ssqls.pl</filename>. Beware, making this
+    value larger increases the size of <filename>ssqls.h</filename>
+    exponentially; this will increase compile time, and can even make
+    the file uncompilable due to compiler limits. Before you increase
+    this value, take a good, hard look at your database schema and ask
+    if it&rsquo;s really the best design.  Almost always, having so
+    many columns is a sign that you need to refactor the table.</para>
 
     <para>The second configurable is the default floating point
     precision used for comparison. As described above (<xref
     linkend="ssqls-compare-init"/>) SSQLSes can be compared for
     equality. The only place this is tricky is with floating-point
     numbers, since rounding errors can make two &ldquo;equal&rdquo;
-    values compare as distinct. Since exact comparison makes no sense
-    with floating-point values, MySQL++ lets you specify the precision
-    you want it to use. If the difference between two values is under a
-    given threshold, MySQL++ considers the values equal. The default
-    threshold is 0.00001. This threshold works well for
-    &ldquo;human&rdquo; scale values, but because of the way
-    floating-point numbers work, it can be wildly inappropriate for very
-    large or very small quantities like those used in scientific
+    values compare as distinct. This property of floating-point numbers
+    means we almost never want to do exact comparison. MySQL++ lets
+    you specify the precision you want it to use. If the difference
+    between two values is under a given threshold, MySQL++ considers
+    the values equal. The default threshold is 0.00001. This threshold
+    works well for &ldquo;human&rdquo; scale values, but because of the
+    way floating-point numbers work, it can be wildly inappropriate for
+    very large or very small quantities like those used in scientific
     applications.</para>
 
-    <para>There are actually two ways to change this threshold. If you
-    need a different system-wide default, edit
-    <filename>ssqls.pl</filename> and change the
+    <para>There are actually two ways to change this
+    threshold. If you need a different system-wide default,
+    edit <filename>ssqls.pl</filename> and change the
     <varname>$fp_min_delta</varname> variable at the top of the file,
-    then rebuild <filename>ssqls.h</filename> as described below. If you
-    need different thresholds per file or per project, it&rsquo;s better
-    to set the C macro <varname>MYSQLPP_FP_MIN_DELTA</varname> instead.
-    The Perl variable sets this macro&rsquo;s default; if you give a
-    different value before #including <filename>ssqls.h</filename>, it
-    will use that instead.</para>
+    then rebuild <filename>ssqls.h</filename> as described below. If
+    you need different thresholds per file or per project, it&rsquo;s
+    better to set the C macro <varname>MYSQLPP_FP_MIN_DELTA</varname>
+    instead. The Perl variable sets this macro&rsquo;s
+    default; if you give a different value before #including
+    <filename>ssqls.h</filename>, it will use that instead.</para>
 
     <para>To rebuild <filename>ssqls.h</filename> after changing
-    <filename>ssqls.pl</filename>, you&rsquo;ll need a Perl interpreter.
-    The only modern Unixy system I&rsquo;m aware of where Perl
-    isn&rsquo;t installed by default is Cygwin, and it&rsquo;s just a
-    <filename>setup.exe</filename> choice away there. You&rsquo;ll
-    probably only have to download and install a Perl interpreter if
-    you&rsquo;re on Windows and don&rsquo;t want to use Cygwin.</para>
+    <filename>ssqls.pl</filename>, you&rsquo;ll need a Perl
+    interpreter.  The only modern Unixy system I&rsquo;m aware
+    of where Perl isn&rsquo;t installed by default is Cygwin, and
+    it&rsquo;s just a <filename>setup.exe</filename> choice away
+    there. You&rsquo;ll probably only have to download and install a
+    Perl interpreter if you&rsquo;re on Windows and don&rsquo;t want
+    to use Cygwin.</para>
 
     <para>If you&rsquo;re on a system that uses autoconf, building
-    MySQL++ automatically updates <filename>ssqls.h</filename> any time
-    <filename>ssqls.pl</filename> changes. Otherwise, you&rsquo;ll need
-    to run the Perl interpreter by hand:</para>
+    MySQL++ automatically updates <filename>ssqls.h</filename>
+    any time <filename>ssqls.pl</filename> changes. Otherwise,
+    you&rsquo;ll need to run the Perl interpreter by hand:</para>
 
     <screen>c:\mysql++> cd lib
 c:\lib> perl ssqls.pl</screen>
+  </sect2>
+
+
+  <sect2 id="ssqls-derivation">
+    <title>Deriving from an SSQLS</title>
+
+    <para>Specialized SQL Structures make good base
+    classes. They&rsquo;re simple, and have few requirements on any
+    class that derives from them. There are some gotchas to look out
+    for, however.</para>
+
+    <para>Consider this:</para>
+
+<programlisting>
+sql_create_2(
+  Base, 1, 2,
+  mysqlpp::sql_varchar, a,
+  mysqlpp::sql_int, b
+);
+
+class Derived : public Base
+{
+public:
+  // constructor
+  Derived(mysqlpp::sql_varchar _a, mysqlpp::sql_int _b) :
+  Base(_a, _b)
+  {
+  }
+
+  // functionality added to the SSQLS through inheritance
+  bool do_something_interesting(int data);
+};</programlisting>
+
+    <para>We&rsquo;ve derived a class from an SSQLS in order to add
+    a method to it. Easy, right?</para>
+
+    <para>Sadly, too easy. The code has a rather large flaw which makes
+    our derived class unusable as an SSQLS. In C++, if a derived class
+    has a function of the same name as one in the base class, the
+    base class versions of that function are all hidden by those in
+    the derived class. This applies to constructors, too: an SSQLS
+    defines several constructors, but our derived class defines
+    only one, causing that one to hide all of the ones in the base
+    class. Many of the MySQL++ mechanisms that use SSQLSes rely on
+    having these contructors, so our <classname>Derived</classname>
+    above is-not-a <classname>Base</classname>, and so it isn&rsquo;t
+    an SSQLS. If you try to use <classname>Derived</classname>
+    as an SSQLS, you&rsquo;ll get compiler errors wherever MySQL++
+    tries to access one of these other constructors.</para>
+
+    <para>There&rsquo;s another minor flaw, as well. Our lone constructor
+    above takes its parameters by value, but the corresponding
+    constructor in the SSQLS takes them by const reference. Our derived
+    class has technically hidden a fourth base class constructor this
+    way, but this particular case is more a matter of efficiency than
+    correctness. Code that needs the full-creation constructor will
+    still work with our code above, but passing stringish types like
+    <classname>sql_varchar</classname> by value instead of by const
+    reference is inefficient.</para>
+
+    <para>This is the corrected version of the above code:</para>
+
+<programlisting>
+sql_create_2(
+  Base, 1, 2,
+  mysqlpp::sql_varchar, a,
+  mysqlpp::sql_int, b
+);
+
+class Derived : public Base
+{
+public:
+  // default constructor<footnote><para>needed by mechanisms like <methodname>Query::storein()</methodname>; anything using an STL container, which usually require default ctors for contained data structures</para></footnote>
+  Derived() :
+  Base()
+  {
+  }
+
+  // for-comparison constructor<footnote><para>takes the <parameter>COMPCOUNT</parameter> subset of the SSQLS&rsquo;s data members, used for making comparison exemplars, used with <methodname>Query::update()</methodname> and similar mechanisms; see <xref linkend="sql_create"/> for more on <parameter>COMPCOUNT</parameter></para></footnote>
+  Derived(const mysqlpp::sql_varchar&amp; _a) :
+  Base(_a)
+  {
+  }
+
+  // full creation constructor
+  Derived(const mysqlpp::sql_varchar&amp; _a, const mysqlpp::sql_int&amp; _b) :
+  Base(_a, _b)
+  {
+  }
+
+  // population constructor<footnote><para>used in taking raw row data from a SQL result set and converting it to SSQLS form</para></footnote>
+  Derived(const mysqlpp::Row&amp; row) :
+  Base(row)
+  {
+  }
+
+  // functionality added to the SSQLS through inheritance
+  bool do_something_interesting(int data);
+};</programlisting>
+
+    <para>Now <classname>Derived</classname> is-an SSQLS.</para>
+
+    <para>You might wonder if you can use protected inheritance
+    above to redefine the SSQLS&rsquo;s public interface. For
+    instance, OO purists might object to the public data members
+    in an SSQLS. You could encapsulate these public data members
+    in the derived class by using protected inheritance, exposing
+    access to the base class&rsquo;s data members with public
+    accessor methods. The problem with this is that each SSQLS has
+    <emphasis>dozens</emphasis> of public member functions. These are
+    needed by MySQL++ internals, so unless you re-exposed all of them
+    as we did with the constructors above, you&rsquo;d again have an
+    SSQLS derivative that is-not-an SSQLS. Simply put, only public
+    inheritance is practical with SSQLSes.</para>
   </sect2>
 
 
@@ -562,6 +809,8 @@ c:\lib> perl ssqls.pl</screen>
     think you can use <classname>std::string</classname> instead of
     <classname>sql_blob</classname>, but the current design of
     <classname>String</classname> converts to
+
+
     <classname>std::string</classname> via a C string. As a result, the
     BLOB data is truncated at the first embedded null character during
     population of the SSQLS. There&rsquo;s no way to fix that without

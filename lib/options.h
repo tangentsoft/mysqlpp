@@ -431,10 +431,10 @@ public:
 			const char* cipher = 0)
 	{
 		if (key)	key_.assign(key);
-		if (cert)	cert_.assign(key);
-		if (ca)		ca_.assign(key);
-		if (capath)	capath_.assign(key);
-		if (cipher)	cipher_.assign(key);
+		if (cert)	cert_.assign(cert);
+		if (ca)		ca_.assign(ca);
+		if (capath)	capath_.assign(capath);
+		if (cipher)	cipher_.assign(cipher);
 	}
 
 private:

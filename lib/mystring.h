@@ -144,7 +144,7 @@ public:
 	typedef const char value_type;
 
 	/// \brief Type of "size" integers
-	typedef unsigned int size_type;
+	typedef size_t size_type;
 
 	/// \brief Type of iterators
 	typedef const char* const_iterator;
@@ -386,7 +386,14 @@ public:
 	/// \brief Set a flag indicating that this object is a SQL null.
 	void it_is_null();
 
-	/// \brief Return number of characters in the string
+	/// \brief Return number of bytes in the string
+    ///
+    /// Note that this doesn't count the number of \b characters in the
+    /// string.  If your database is configured to use an 8-bit character
+    /// set, this is a distinction without a difference.  But, if you're
+    /// using UTF-8 in the database, you will need to "widen" the UTF-8
+    /// data to use a fixed-size character set like UCS-2 and count the
+    /// characters that way.  You might use std::wstring, for example.
 	size_type length() const;
 	
 	/// \brief Return the maximum number of characters in the string.
@@ -400,7 +407,10 @@ public:
 	/// otherwise.
 	bool quote_q() const;
 
-	/// \brief Return number of characters in string
+	/// \brief Return number of bytes in string
+    ///
+    /// See commentary for length() about the difference between bytes
+    /// and characters.
 	size_type size() const { return length(); }
 	
     /// \brief Returns a copy of our internal string without leading

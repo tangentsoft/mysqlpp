@@ -35,13 +35,14 @@
     per character, so most Unicode-aware programs deal in 2-byte
     characters, for efficiency.</para>
 
-    <para>Unfortunately, Unicode was invented about two decades too late
-    for Unix and C. Those decades of legacy created an immense inertia
-    preventing a widespread move away from 8-bit characters. MySQL and
-    C++ come out of these older traditions, and so they share the same
-    practical limitations. MySQL++ doesn&rsquo;t have a reason to do
-    anything more than just pass data along unchanged, so you still need
-    to be aware of these underlying issues.</para>
+    <para>Unfortunately, Unicode was invented about two decades
+    too late for Unix and C. Those decades of legacy created an
+    immense inertia preventing a widespread move away from 8-bit
+    characters. MySQL and C++ come out of these older traditions, and
+    so they share the same practical limitations. MySQL++ currently
+    doesn't have any code in it for Unicode conversions; it just
+    passes data along unchanged from the underlying MySQL C API,
+    so you still need to be aware of these underlying issues.</para>
 
     <para>During the development of the <ulink
     url="http://en.wikipedia.org/wiki/Plan_9_from_Bell_Labs">Plan

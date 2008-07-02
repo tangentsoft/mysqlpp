@@ -50,16 +50,16 @@
   <sect2 id="max-columns">
     <title>The Maximum Number of Columns Allowed</title>
 
-    <para>MySQL++ offers two ways to automatically build SQL
-    queries at run time: <xref linkend="tquery"/> and <xref
-    linkend="ssqlsintro"/>. There&rsquo;s a limit on the number
-    of template query parameters and the number of SSQLS fields,
-    due to the way these mechanisms work. Both are set to 25,
-    by default. We arrived at these limits empirically, partly by
-    looking at good database designs, and by testing compilers to
-    find their limits. We wanted a limit that doesn&rsquo;t often
-    need to be raised without unduly narrowing the list of supported
-    platforms by exceeding compiler limits.</para>
+    <para>MySQL++ offers two ways to automatically build SQL queries at
+    run time: <xref linkend="tquery"/> and <link
+    linkend="ssqls">SSQLS</link>. There&rsquo;s a limit on the number
+    of template query parameters and the number of SSQLS fields, due to
+    the way these mechanisms work. Both are set to 25, by default. We
+    arrived at these limits empirically, partly by looking at good
+    database designs, and by testing compilers to find their limits. We
+    wanted a limit that doesn&rsquo;t often need to be raised without
+    unduly narrowing the list of supported platforms by exceeding
+    compiler limits.</para>
 
     <para>If it happens that your database design does need more than
     25 columns or template query parameters, first look to see if

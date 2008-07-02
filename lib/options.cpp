@@ -308,8 +308,12 @@ SslOption::set(DBDriver* dbd)
 {
 #if defined(HAVE_MYSQL_SSL_SET)
 	return dbd->connected() ? Option::err_connected :
-			dbd->enable_ssl(key_.c_str(), cert_.c_str(), ca_.c_str(),
-				capath_.c_str(), cipher_.c_str()) ?
+			dbd->enable_ssl(
+				key_.size() ? key_.c_str() : 0,
+				cert_.size() ? cert_.c_str() : 0,
+				ca_.size() ? ca_.c_str() : 0,
+				capath_.size() ? capath_.c_str() : 0,
+				cipher_.size() ? cipher_.c_str() : 0) ?
 				Option::err_NONE : Option::err_api_reject;
 #else
 	return Option::err_api_limit;

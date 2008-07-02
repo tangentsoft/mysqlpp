@@ -29,8 +29,7 @@
 
 #include <iostream>
 
-sql_create_1(ssqls, 1, 0,
-		mysqlpp::Null<int>, a_column);
+sql_create_1(ssqls, 1, 0, mysqlpp::Null<int>, a_column)
 
 int
 main()

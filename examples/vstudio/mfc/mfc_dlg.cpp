@@ -156,9 +156,8 @@ CExampleDlg::OnBnClickedConnectButton()
 
 	if (res) {
 		// Display the result set
-		mysqlpp::Row row;
-		for (mysqlpp::Row::size_type i = 0; row = res.at(i); ++i) {
-			if (ToUCS2(awcTempBuf, kTempBufSize, row.at(0))) {
+		for (size_t i = 0; i < res.num_rows(); ++i) {
+			if (ToUCS2(awcTempBuf, kTempBufSize, res[i][0])) {
 				AddMessage(awcTempBuf);
 			}
 		}

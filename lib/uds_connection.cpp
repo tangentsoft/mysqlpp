@@ -39,7 +39,7 @@ using namespace std;
 namespace mysqlpp {
 
 static const char* common_complaint =
-		"WindowsNamedPipeConnection only works on Windows";
+		"UnixDomainSocketConnection only works on POSIX systems";
 
 bool
 UnixDomainSocketConnection::connect(const char* path,

@@ -4,9 +4,23 @@ file for instructions on sending patches.
 
 Any Version
 -----------
+    o In web site Makefile, extract vc2008/*.sln to stdout, piping
+      through grep to check that it is converted from vc2005.  Fail
+      site build if not.
+
+    o If pkg-config is available, register ourselves with it using
+      information discovered by configure.  Also, write out a
+      mysql++-config script, which either wraps pkg-config or
+      reinvents it, poorly, for systems that don't have it.
+
     o Any time you must hand-roll some SQL code in your program,
       consider whether it could be generalized to a widely-useful
       API feature.
+
+    o Configure script should try to get MySQL C API directories
+      from mysql_config.
+
+    o Add /usr/mysql to default C API search path for OpenSolaris.
 
 
 v3.1 Tentative Plan

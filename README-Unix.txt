@@ -1,3 +1,19 @@
+Platform Variations
+~~~~~~~~~~~~~~~~~~~
+    This file has instructions that are the same for all Unix variants
+    supported by MySQL++.  For platform-specific details, see the
+    file appropriate to your OS:
+
+        README-Cygwin.txt
+        README-Linux.txt
+        README-Mac-OS-X.txt
+        README-Solaris.txt
+
+    Notable other Unixes supported by MySQL++ are the BSDs and Solaris.
+    As of yet, there are no special instructions for these Unix
+    flavors.
+
+
 Building the Library and Example Programs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     MySQL++ uses GNU autoconf, so you can build it with the standard
@@ -7,11 +23,6 @@ Building the Library and Example Programs
     $ make
     $ su
     # make install
-
-    On Linux, you also need to run 'ldconfig' as root after installing
-    the library.  You may need to add the library's installation
-    directory to /etc/ld.so.conf before you do this, particularly if
-    you installed to /usr/local.
 
 
 Configure Options

@@ -72,8 +72,17 @@ Building the Library and Example Programs
     examples\vstudio.  See README-examples.txt for further details.
 
     Once you're sure the library is working correctly, you can run
-    the install.bat file at the project root to automatically install
-    the library files and headers in subdirectories under c:\mysql++.
+    the install.hta file at the project root to install the library
+    files and headers in a directory of your choosing.
+    
+    (Aside: You may not have come across the .hta extension before.
+    It's for a rarely-used feature of Microsoft's Internet Explorer,
+    called HTML Applications.  Know what Adobe AIR is?  Kinda like
+    that, only without the compilation into a single binary blob,
+    the cross-platform compatibility, and the power of Flash and
+    ActionScript 3.  These limitations don't cause a problem here.
+    In fact, AIR would be vast overkill here.  Just open install.hta
+    in a text editor to see how it works.)
 
 
 Using MySQL++ in an MFC Project
@@ -137,8 +146,8 @@ Using MySQL++ in a Windows Forms C++/CLI Project
         o Under Configuration Properties > General, change "Common
           Language Runtime support" to the /clr setting.
 
-        o Under C/C++ > Command Line, remove the /EHsc from the
-          Additional Options section.
+        o Under C/C++ > Code Generation, change "Enable C++ Exceptions"
+          from "Yes (/EHsc)" to "Yes With SEH Exceptions (/EHa)"
 
     If you have already built MySQL++, be sure to perform a complete
     rebuild after changing these options.  The compiler will emit

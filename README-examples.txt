@@ -132,42 +132,43 @@ Running the Other Command Line Examples
 
 Dedicated Windows Examples
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-    If you're a Visual C++ user, there are two examples specially
-    created for you:
+    If you're a Visual C++ user, there are two GUI examples, too:
 
-        examples\vstudio\mfc.vcproj: A GUI replacement for the simple2
-            example, it simply logs in and displays the stock table's
-            contents.  Uses good old C++ and MFC.
+        examples\vstudio\mfc.vcproj: MFC-based replacement for
+            the simple2 example.
 
         examples\vstudio\wforms.vcproj: The same thing, only written in
-            C++/CLI and using Windows Forms.  We needed a second
-            example for two reasons.  First, string handling is quite
-            different under .NET than in unmanaged C++.  Second, many
-            developers are now using Visual Studio Express, which
-            doesn't include MFC.  Please read README-Visual-C++.txt
-            before trying to run this example.  The MySQL++ build
-            settings must be modified before it will run correctly.
+            C++/CLI and using Windows Forms.  Please follow the
+            instructions in README-Visual-C++.txt before trying to
+            build and run this example.  The MySQL++ library build
+            settings must be modified and the library rebuilt first.
 
-    Before trying to run these examples, run the updexdll.bat file
-    in the top MySQL++ directory.  This copies the built mysqlpp.dll
-    files into the Windows examples' EXE output directories so you
-    can run them before you're ready to formally install the DLL on
-    your system.
+    Although these examples show use of MySQL++ in a GUI rather than
+    command line program, that's not the main point of these examples.
+    What we're really showing here is how to deal with Unicode.
+    The MySQL server prefers the UTF-8 encoding for Unicode, which
+    works naturally with most non-Windows systems.  Windows, on the
+    other hand, uses a different Unicode character encoding, UCS-2.
+    These examples show how to do the necessary conversions.  (See the
+    Unicode chapter in the user manual for more on this topic.)
 
-    Open examples\vstudio\mysqlpp_gui_examples.sln to begin working
-    with these examples.  They only work correctly in Visual Studio
-    2005 right now.  If you want to backport them to VS 2003, it's
-    probably not hard, and we will accept patches for this.  The main
-    difficulty is that VS 2003 supports Managed C++, which isn't the
-    same thing as C++/CLI.
+    We need two different examples because Unicode conversions and
+    string handling are so wildly different under .NET than with the
+    native Win32 API.  .NET makes these tasks much easier.
 
-    The main justification for these examples is that Unicode is
-    handled differently in Windows GUI programs than on the POSIX
-    systems where MySQL++ was born and raised.  In earlier versions
-    of MySQL++, the command line examples had very limited Unicode
-    support on Windows, but it was unrealistic and confusing.  Now the
-    command line examples don't even try to handle Unicode on Windows,
-    leaving that up to these new GUI examples.
+    These examples build and run as-is under Visual C++ 2005.  To make
+    them work with VC++ 2008, you will have to change several paths
+    in both project's settings to reference the "vc2008" subdirectory
+    instead of "vc2005":
+
+        o Configuration Properties > Debugging > Working Directory
+
+        o Configuration Properties > Linker > General >
+          Additional Library Directories
+
+    If you want to backport these examples to VC++ 2003, it's probably
+    not hard.  The main difficulty is that VS 2003 supports Managed
+    C++, which isn't the same thing as C++/CLI.
 
 
 Special exrun Capabilities

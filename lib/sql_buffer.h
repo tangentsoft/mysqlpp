@@ -42,7 +42,7 @@ class SQLBuffer
 {
 public:
 	/// \brief Type of length values
-	typedef unsigned int size_type;
+	typedef size_t size_type;
 
 	/// \brief Initialize object as a copy of a raw data buffer
 	///

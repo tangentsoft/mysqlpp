@@ -1,3 +1,38 @@
+3.0.5, 2008.08.06 (r2332)
+
+    o Replaced install.bat with new install.hta, which has a GUI and a
+      lot of embeded logic for doing The Right Thing, which we couldn't
+      do in a dumb batch file.
+
+    o Several fixes to allow it to build on Solaris 10.
+
+    o Fixed a bug in comparison of Null<T> to T: wouldn't always give
+      the right result for one particular combination of argument
+      values and order of parameters to operator <().  It wouldn't
+      fail all the time, either; it depended on the way the system's
+      memory allocator dealt with newly allocated RAM.  The bug was
+      discovered during the Solaris 10 porting effort, but it is not
+      a Solaris-specific bug.
+
+    o Split Linux-specific material out of README-Unix.txt into
+      README-Linux.txt, and created README-Solaris.txt.
+
+    o Shipping a vc2008 directory.  Populated by bootstrap script with
+      copies of vc2005 files when those are newer, with the idea being
+      to update them by hand by running them through VC++2008 before
+      release.
+
+    o Several fixes to VS-only examples. They hadn't been updated to
+      track several of the changes in MySQL++ v3, so they wouldn't
+      build OOTB at all, crashed when you did get them building, and
+      emitted a lot of warnings during the build.  Cleaned it all up.
+
+    o Autoconf now explicitly checks whether we need to link to zlib
+      to link to MySQL C API library.  It used to be required, but
+      lately, MySQL has been shipping the library with zlib stuff
+      embedded, causing multiply defined symbol errors on some systems.
+
+
 3.0.4, 2008.07.02 (r2303)
 
     o Fixed a few bugs in SslOption that prevented it from actually

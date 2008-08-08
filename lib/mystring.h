@@ -607,7 +607,7 @@ private:
 	{
 		if (buffer_) {
 			std::stringstream buf;
-			buf.write(data(), length());
+			buf.write(data(), static_cast<std::streamsize>(length()));
 			buf.imbue(std::locale::classic()); // "C" locale
 			Type num = Type();
 			

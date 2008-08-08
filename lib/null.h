@@ -289,14 +289,14 @@ public:
 	/// for the base data type.
 	bool operator <(const Null<Type>& rhs) const
 	{
-		if (is_null && rhs.is_null) {
-			return false;
+		if (is_null) {
+			return !rhs.is_null;	// less than only if RHS not null
 		}
-		else if (is_null && !rhs.is_null) {
-			return true;
+		else if (rhs.is_null) {
+			return false;			// non-null always greater than null
 		}
 		else {
-			return data < rhs.data;
+			return data < rhs.data;	// neither is null, so compare data
 		}
 	}
 

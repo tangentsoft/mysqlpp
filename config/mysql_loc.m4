@@ -11,7 +11,7 @@ dnl		--with-mysql-lib: Similar to --with-mysql, but for library only.
 dnl		--with-mysql-include: Similar to --with-mysql, but for headers
 dnl			only.
 dnl
-dnl @version 1.2, 2007/02/20
+dnl @version 1.3, 2008/08/06
 dnl @author Warren Young <mysqlpp@etr-usa.com>
 AC_DEFUN([MYSQL_API_LOCATION],
 [
@@ -22,8 +22,8 @@ AC_DEFUN([MYSQL_API_LOCATION],
 		[  --with-mysql=<path>     root directory path of MySQL installation],
 		[MYSQL_lib_check="$with_mysql/lib/mysql $with_mysql/lib"
 		MYSQL_inc_check="$with_mysql/include $with_mysql/include/mysql"],
-		[MYSQL_lib_check="/usr/lib64 /usr/lib /usr/lib64/mysql /usr/lib/mysql /usr/local/lib64 /usr/local/lib /usr/local/lib/mysql /usr/local/mysql/lib /usr/local/mysql/lib/mysql /opt/mysql/lib /opt/mysql/lib/mysql"
-		MYSQL_inc_check="/usr/include/mysql /usr/local/include/mysql /usr/local/mysql/include /usr/local/mysql/include/mysql /opt/mysql/include/mysql"])
+		[MYSQL_lib_check="/usr/lib64 /usr/lib /usr/lib64/mysql /usr/lib/mysql /usr/local/lib64 /usr/local/lib /usr/local/lib/mysql /usr/local/mysql/lib /usr/local/mysql/lib/mysql /usr/mysql/lib/mysql /opt/mysql/lib /opt/mysql/lib/mysql /sw/lib"
+		MYSQL_inc_check="/usr/include/mysql /usr/local/include/mysql /usr/local/mysql/include /usr/local/mysql/include/mysql /usr/mysql/include/mysql /opt/mysql/include/mysql /sw/include/mysql"])
 	AC_ARG_WITH(mysql-lib,
 		[  --with-mysql-lib=<path> directory path of MySQL library installation],
 		[MYSQL_lib_check="$with_mysql_lib $with_mysql_lib/lib64 $with_mysql_lib/lib $with_mysql_lib/lib64/mysql $with_mysql_lib/lib/mysql"])
@@ -102,10 +102,29 @@ AC_DEFUN([MYSQL_API_LOCATION],
 
 	CPPFLAGS="$CPPFLAGS -I${MYSQL_incdir}"
 
+    AC_MSG_CHECKING([if we can link to MySQL C API library directly])
 	save_LIBS=$LIBS
-	LIBS="$LIBS $MYSQLPP_EXTRA_LIBS"
-	AC_CHECK_LIB($MYSQL_C_LIB, mysql_store_result, [], [
-			AC_MSG_ERROR([Could not find working MySQL client library!]) ])
+	LIBS="$LIBS -l$MYSQL_C_LIB $MYSQLPP_EXTRA_LIBS"
+	AC_TRY_LINK(
+        [ #include <mysql.h> ],
+        [ mysql_store_result(0); ],
+        AC_MSG_RESULT([yes]),
+        [ AC_MSG_RESULT([no])	
+          LIBS="$save_LIBS"
+          AC_CHECK_HEADERS(zlib.h, AC_CHECK_LIB(z, gzread, [],
+              [ AC_MSG_ERROR([zlib not found]) ]))
+          AC_MSG_CHECKING([whether adding -lz will let MySQL C API link succeed])
+          MYSQLPP_EXTRA_LIBS="-lz $MYSQLPP_EXTRA_LIBS"
+          LIBS="$save_LIBS -l$MYSQL_C_LIB $MYSQLPP_EXTRA_LIBS"
+          AC_TRY_LINK(
+              [ #include <mysql.h> ],
+              [ mysql_store_result(0); ],
+              AC_MSG_RESULT([yes]),
+              [ AC_MSG_RESULT([no])
+                AC_MSG_ERROR([Unable to link to MySQL client library!])
+              ]
+          )
+        ])
 	AC_SUBST(MYSQL_C_LIB)
 	LIBS=$save_LIBS
 ]) dnl MYSQL_API_LOCATION

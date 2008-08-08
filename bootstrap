@@ -51,12 +51,13 @@ rm -f config.cache
 
 # Do Bakefile stuff first
 set -x &&
-	mkdir -p vc2003 vc2005 &&
+	for d in 3 5 8 ; do mkdir -p vc200$d ; done &&
 	bakefilize &&
 	bakefile_gen $BF_OPTIONS &&
 	bakefile -f gnu -o Makefile.simple -DBUILDLIBRARY=no mysql++.bkl &&
 	set +x &&
 	success=shonuff
+cp -u vc2005/* vc2008 > /dev/null 2>&1
 
 # Get rid of INSTALL symlink added by bakefilize.  We already have
 # INSTALL.txt.

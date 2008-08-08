@@ -1,10 +1,14 @@
 @echo off
 if not exist vc2003 mkdir vc2003
 if not exist vc2005 mkdir vc2005
+if not exist vc2008 mkdir vc2008
 
 bakefile_gen %*
 if errorlevel 1 exit
-if not exist mysql++.sln goto no_bakefile
+if not exist vc2003\mysql++.sln goto no_bakefile
+if not exist vc2005\mysql++.sln goto no_bakefile
+copy vc2005\*.sln vc2008 > NUL
+copy vc2005\*.vcproj vc2008 > NUL
 
 cd lib
 perl querydef.pl

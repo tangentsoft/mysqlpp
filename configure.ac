@@ -14,7 +14,7 @@
 # USA
 
 # Standard autotools stuff
-AC_INIT(mysql++, 3.0.4, plusplus@lists.mysql.com, mysql++)
+AC_INIT(mysql++, 3.0.5, plusplus@lists.mysql.com, mysql++)
 AC_CONFIG_HEADER(config.h)
 AC_DISABLE_STATIC
 AC_CANONICAL_SYSTEM
@@ -48,13 +48,11 @@ then
 	LIBS="$PTHREAD_LIBS $LIBS"
 	CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
 	CC="$PTHREAD_CC"
+	AC_CHECK_HEADERS(synch.h)
 fi
 
 
 # Checks for libraries and local system features
-AC_CHECK_HEADERS(zlib.h, AC_CHECK_LIB(z, gzread, [],
-		[ AC_MSG_ERROR([zlib is required]) ]))
-AC_CHECK_HEADERS(synch.h)
 LIB_MATH
 LIB_SOCKET_NSL
 MYSQL_API_LOCATION

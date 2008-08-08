@@ -7,7 +7,7 @@
 
 DEPSMODE=gcc
 DEPSDIR=.deps
-DEPSFLAG="-MMD"
+DEPSFLAG="-no-cpp-precomp -MMD"
 
 mkdir -p $DEPSDIR
 

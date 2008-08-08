@@ -39,10 +39,11 @@
 namespace mysqlpp {
 
 #define ACTUALLY_DOES_SOMETHING
-#if defined(HAVE_SYNCH_H)
-    typedef mutex_t bc_mutex_t;
-#elif defined(HAVE_PTHREAD)
+#if defined(HAVE_PTHREAD)
     typedef pthread_mutex_t bc_mutex_t;
+#elif defined(HAVE_SYNCH_H)
+#	include <synch.h>
+    typedef mutex_t bc_mutex_t;
 #elif defined(MYSQLPP_PLATFORM_WINDOWS)
     typedef HANDLE bc_mutex_t;
 #else

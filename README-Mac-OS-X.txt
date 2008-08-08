@@ -19,19 +19,17 @@ Prerequisite: Install the MySQL Development Files
 
       $ fink install mysql15-dev
       
-      Then, in configuring MySQL++, give the --with-mysql=/sw flag
-      to the configure script.
-    
-    - From MySQL.com.  I've not tried the official binaries,
-      but they're known to work with MySQL++.  As I understand it,
-      they install from a typical Mac GUI installer.  I don't know
-      if it lets you install the development files separately from
-      the server itself, so be sure to check.  The official Windows
-      installers, for instance, have in the past installed the server
-      by default but not the development files.
+      If you also want a local MySQL server, say this instead:
 
-      Once it's installed, the configure script shipped with MySQL++
-      v3.0 and up should find the library without any help.
+      $ fink install mysql mysql15-dev
+    
+    - From MySQL.com.  I've not tried the official binaries, but
+      they're known to work with MySQL++.  As I understand it, they
+      install from a typical Mac GUI installer.  I don't know if it
+      lets you install the development files separately from the server
+      itself, so be sure to check.  The official Windows installers,
+      for instance, have in the past installed the server by default
+      but not the development files.
 
     - From MacPorts, http://macports.org.  I have zero information on
       this other than that it's theoretically possible for it to work.

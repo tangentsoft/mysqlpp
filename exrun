@@ -44,7 +44,12 @@ then
 		PATH=. $TOOL ./$PROG $*
 	elif [ -e /usr/bin/ldd ]
 	then
-		LD_LIBRARY_PATH=. $TOOL ./$PROG $*
+		if [ `uname -s` = 'SunOS' ]
+		then
+			LD_LIBRARY_PATH=.:/usr/mysql/lib/mysql $TOOL ./$PROG $*
+		else
+			LD_LIBRARY_PATH=. $TOOL ./$PROG $*
+		fi
 	else
 		echo "ERROR: I don't grok this system's dynamic linkage system."
 	fi

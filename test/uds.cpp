@@ -37,6 +37,9 @@
 #include <sys/stat.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#if !defined(AF_LOCAL)
+#	define AF_LOCAL AF_UNIX
+#endif
 
 #include <errno.h>
 
@@ -59,12 +62,12 @@ make_socket(const char* path, mode_t mode)
 	}
 	
 	// Bind the socket to the named file
-	struct sockaddr_un sun;
-	memset(&sun, 0, sizeof(sun));
-	sun.sun_family = AF_LOCAL;
-	strncpy(sun.sun_path, path, sizeof(sun.sun_path));
-	sun.sun_path[sizeof(sun.sun_path) - 1] = '\0';
-	if (bind(fd, reinterpret_cast<sockaddr*>(&sun), sizeof(sun)) < 0) {
+	struct sockaddr_un saun;
+	memset(&saun, 0, sizeof(saun));
+	saun.sun_family = AF_LOCAL;
+	strncpy(saun.sun_path, path, sizeof(saun.sun_path));
+	saun.sun_path[sizeof(saun.sun_path) - 1] = '\0';
+	if (bind(fd, reinterpret_cast<sockaddr*>(&saun), sizeof(saun)) < 0) {
 		return -1;
 	}
 

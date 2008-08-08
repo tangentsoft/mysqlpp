@@ -103,9 +103,8 @@ namespace wforms {
 
 			if (res) {
 				// Display the result set
-				mysqlpp::Row row;
-				for (mysqlpp::Row::size_type i = 0; row = res.at(i); ++i) {
-					AddMessage(ToUCS2(row.at(0)));
+				for (size_t i = 0; i < res.num_rows(); ++i) {
+					AddMessage(ToUCS2(res[i][0]));
 				}
 
 				// Retreive was successful, so save user inputs now

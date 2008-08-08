@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook V4.3//EN"
     "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd">
 
@@ -22,36 +22,79 @@
   <sect2 id="history">
     <title>A Brief History of MySQL++</title>
 
-    <para>MySQL++ was created in 1998 by Kevin Atkinson. It started out
-    MySQL-specific, but there were early efforts to try and make it
-    database-independent, and call it SQL++. This is where the old
-    library name &ldquo;sqlplus&rdquo; came from. This is also why the
-    old versions prefixed some class names with &ldquo;Mysql&rdquo; but
-    not others: the others were supposed to be the database-independent
-    parts.</para>
+    <para>MySQL++ was created in 1998 by Kevin Atkinson. It started
+    out MySQL-specific, but there were early efforts to try and
+    make it database-independent, and call it SQL++. This is where
+    the old library name &ldquo;sqlplus&rdquo; came from. This
+    is also why the old versions prefixed some class names with
+    &ldquo;Mysql&rdquo; but not others: the others were supposed to
+    be the database-independent parts. All of Kevin&rsquo;s releases
+    had pre-1.0 version numbers.</para>
 
-    <para>Then in 1999, Sinisa Milivojevic unofficially took over
-    maintenance of the library, releasing versions 1.0 and 1.1. (All of
-    Kevin&rsquo;s releases were pre-1.0 point releases.) Kevin gave over
-    maintenance to Sinisa officially with 1.2, and ceased to have any
-    involvement with the library&rsquo;s maintenance. Sinisa went on to
-    maintain the library through 1.7.9, released in mid-2001. Since
-    Sinisa is an employee of <ulink url="http://www.mysql.com/">MySQL
-    AB</ulink>, it seems to be during this time that the dream of
-    multiple-database compatibility died.</para>
+    <para>Then in 1999, <ulink url="http://www.mysql.com/">MySQL
+    AB</ulink> took over development of the library. In the beginning,
+    <ulink url="http://en.wikipedia.org/wiki/Monty_Widenius">Monty
+    Widenius</ulink> himself did some of the work, but later gave it
+    over to another MySQL employee, Sinisa Milivojevic. MySQL released
+    versions 1.0 and 1.1, and then Kevin gave over maintenance to
+    Sinisa officially with 1.2, and ceased to have any involvement
+    with the library&rsquo;s maintenance. Sinisa went on to maintain
+    the library through 1.7.9, released in mid-2001. It seems to be
+    during this time that the dream of multiple-database compatibility
+    died, for obvious reasons.</para>
 
-    <para>With version 1.7.9, MySQL++ went into a period of stasis,
-    lasting over three years. During this time, Sinisa ran the
-    MySQL++ mailing list and supported its users, but made no new
-    releases. There were many patches submitted during this period,
-    some of which were ignored, others which were just put on the
-    MySQL++ web site for people to try. A lot of these patches were
-    mutually-incompatible, and not all of them gave a fully-functional
-    copy of MySQL++.</para>
+    <para>With version 1.7.9, MySQL++ went into a period of
+    stasis, lasting over three years. (Perhaps it was the
+    ennui and retrenchment following the collapse of <ulink
+    url="http://en.wikipedia.org/wiki/Dot-com_bubble">the
+    bubble</ulink> that caused them to lose interest.) During this
+    time, Sinisa ran the MySQL++ mailing list and supported its users,
+    but made no new releases. Contributed patches were either ignored
+    or put up on the MySQL++ web site for users to try, without any
+    official blessing.</para>
 
-    <para>In early August of 2004, the current maintainer (Warren
-    Young) got fed up with this situation and took over. He released
-    1.7.10 later that month.</para>
+    <para>The biggest barrier to using MySQL++ during this period
+    is that the popular C++ compilers of 2001 weren&rsquo;t all
+    that compatible with the C++ Standard. As a result, MySQL++
+    used many nonstandard constructs, to allow for compatibility
+    with older compilers. Each new compiler released in the
+    following years increased compliance, either warning
+    about or rejecting code using pre-Standard constructs.
+    In particular, <ulink url="http://gcc.gnu.org/">GCC</ulink>
+    was emerging from the mess following the <ulink
+    url="http://en.wikipedia.org/wiki/GNU_Compiler_Collection#EGCS">EGCS
+    fork</ulink> during this time. The fork was healed officially
+    in 1999, but there&rsquo;s always a delay of a few years between
+    the release of a new GCC and widespread adoption. The post-EGCS
+    versions of GCC were only beginning to become popular by 2001,
+    when development on MySQL++ halted. As a result, it became
+    increasingly difficult to get MySQL++ to build cleanly as newer
+    compilers came out. Since MySQL++ uses templates heavily, this
+    affected end user programs as well: MySQL++ code got included
+    directly in your program, so any warnings or errors it caused
+    became your program&rsquo;s problem.</para>
+
+    <para>As a result, most of the patches contributed to the MySQL++
+    project during this period were to fix up standards compliance
+    issues. Because no one was bothering to officially test and bless
+    these patches, you ended up with the worst aspects of a <ulink
+    url="http://en.wikipedia.org/wiki/The_Cathedral_and_the_Bazaar">bazaar</ulink>
+    development model: complete freedom of development, but no guiding
+    hand to select from the good stuff and reject the rest. Many of the
+    patches were mutually incompatible. Some would build upon other
+    patches, so you had to apply them in the proper sequence. Others
+    did useful things, but didn&rsquo;t give a fully functional copy of
+    MySQL++. Figuring out which patch(es) to use was an increasingly
+    frustrating exercise as the years wore on, and newer GCCs became
+    popular.</para>
+
+    <para>In early August of 2004, Warren Young got fed up with this
+    situation and took over. He released 1.7.10 later that month,
+    which did little more than make the code build with GCC 3.3 without
+    warnings. Since then, with a little help from his friends on the
+    Net, MySQL++ has lost a lot of bugs, gained a lot of features,
+    gained a few more bugs, lost them again... MySQL++ is alive and
+    healthy now.</para>
   </sect2>
 
 

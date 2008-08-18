@@ -1,3 +1,12 @@
+3.0.6, 2008.08.16 (r2350)
+
+    o Several fixes to allow thread-aware build on Solaris
+
+    o More improvements to search for Fink version of C API library.
+
+    o Various improvements to Windows installer (install.hta)
+
+
 3.0.5, 2008.08.06 (r2332)
 
     o Replaced install.bat with new install.hta, which has a GUI and a
@@ -31,6 +40,9 @@
       to link to MySQL C API library.  It used to be required, but
       lately, MySQL has been shipping the library with zlib stuff
       embedded, causing multiply defined symbol errors on some systems.
+
+    o configure script now looks in more locations for the MySQL C API
+      library, adding default locations for Fink and Solaris.
 
 
 3.0.4, 2008.07.02 (r2303)

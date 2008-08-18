@@ -53,7 +53,7 @@
         <dll id="mysqlpp">
             <dllname>mysqlpp$(DEBUG_SUFFIX)</dllname>
             <libname>mysqlpp$(DEBUG_SUFFIX)</libname>
-            <so_version>3.0.5</so_version>
+            <so_version>3.0.6</so_version>
 
             <sources>
                 lib/beemutex.cpp
@@ -412,9 +412,9 @@
             <!-- Copy files into package directory -->
             <!-- top directory -->
             <command>
-                cp -RL *.bat *.hta *.txt Bakefiles.bkgen bootstrap ChangeLog \
+                cp -RL *.bat *.txt Bakefiles.bkgen bootstrap ChangeLog \
 					cleanmf config.guess config.h.in config.sub configure* \
-                    dtest exrun install-sh libmysqlclient.def Makefile.* \
+                    dtest exrun install* libmysqlclient.def Makefile.* \
 					mysql++.* osver Wishlist $(PKGNAME)
             </command>
 

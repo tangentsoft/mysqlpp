@@ -22,7 +22,7 @@ AC_DEFUN([MYSQL_API_LOCATION],
 		[  --with-mysql=<path>     root directory path of MySQL installation],
 		[MYSQL_lib_check="$with_mysql/lib/mysql $with_mysql/lib"
 		MYSQL_inc_check="$with_mysql/include $with_mysql/include/mysql"],
-		[MYSQL_lib_check="/usr/lib64 /usr/lib /usr/lib64/mysql /usr/lib/mysql /usr/local/lib64 /usr/local/lib /usr/local/lib/mysql /usr/local/mysql/lib /usr/local/mysql/lib/mysql /usr/mysql/lib/mysql /opt/mysql/lib /opt/mysql/lib/mysql /sw/lib"
+		[MYSQL_lib_check="/usr/lib64 /usr/lib /usr/lib64/mysql /usr/lib/mysql /usr/local/lib64 /usr/local/lib /usr/local/lib/mysql /usr/local/mysql/lib /usr/local/mysql/lib/mysql /usr/mysql/lib/mysql /opt/mysql/lib /opt/mysql/lib/mysql /sw/lib /sw/lib/mysql"
 		MYSQL_inc_check="/usr/include/mysql /usr/local/include/mysql /usr/local/mysql/include /usr/local/mysql/include/mysql /usr/mysql/include/mysql /opt/mysql/include/mysql /sw/include/mysql"])
 	AC_ARG_WITH(mysql-lib,
 		[  --with-mysql-lib=<path> directory path of MySQL library installation],

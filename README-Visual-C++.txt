@@ -152,11 +152,18 @@ Using MySQL++ in a Windows Forms C++/CLI Project
     If you have already built MySQL++, be sure to perform a complete
     rebuild after changing these options.  The compiler will emit
     several C4835 warnings after making those changes, which are
-    harmless when using the DLL with a C++/CLI program, but which warn
-    of real problems when using it with unmanaged C++.  As a result,
-    it's probably best if you don't install the resulting DLL in a
-    system level directory.  I'd recommend copying it only into the
-    same directory as the EXE.
+    harmless when using the DLL with a C++/CLI program, but which
+    warn of real problems when using it with unmanaged C++.  This is
+    why MySQL++'s Windows installer (install.hta) offers the option
+    to install the CLR version into a separate directory; use it if
+    you need both managed and unmanaged versions installed!
+
+    For the same reason, you might give some thought about where you
+    install mysqlpp.dll on your end user's machines when distributing
+    your program.  My recommendation is to install it in the same
+    directory as the .exe file that uses it, rather than installing
+    into a system directory where it could conflict with a mysqlpp.dll
+    built with different settings.
 
     Once you have MySQL++ built with CLR support, open your program's
     project.  If you don't already have a project set up, open Visual

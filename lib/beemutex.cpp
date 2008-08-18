@@ -75,11 +75,11 @@ BeecryptMutex::BeecryptMutex() throw (MutexFailed)
 #	if HAVE_SYNCH_H || HAVE_PTHREAD
 	register int rc;
 #	endif
-#	if HAVE_SYNCH_H
-		if ((rc = mutex_init(impl_ptr(pmutex_), USYNC_THREAD, 0)))
-			throw MutexFailed(strerror(rc));
-#	elif HAVE_PTHREAD
+#	if HAVE_PTHREAD
 		if ((rc = pthread_mutex_init(impl_ptr(pmutex_), 0)))
+			throw MutexFailed(strerror(rc));
+#	elif HAVE_SYNCH_H
+		if ((rc = mutex_init(impl_ptr(pmutex_), USYNC_THREAD, 0)))
 			throw MutexFailed(strerror(rc));
 #	endif
 #endif
@@ -91,10 +91,10 @@ BeecryptMutex::~BeecryptMutex()
 #if defined(ACTUALLY_DOES_SOMETHING)
 #	if defined(MYSQLPP_PLATFORM_WINDOWS)
 		CloseHandle(impl_val(pmutex_));
-#	elif HAVE_SYNCH_H
-		mutex_destroy(impl_ptr(pmutex_));
 #	elif HAVE_PTHREAD
 		pthread_mutex_destroy(impl_ptr(pmutex_));
+#	elif HAVE_SYNCH_H
+		mutex_destroy(impl_ptr(pmutex_));
 #	endif
 
 	delete impl_ptr(pmutex_);
@@ -113,11 +113,11 @@ BeecryptMutex::lock() throw (MutexFailed)
 #	if HAVE_SYNCH_H || HAVE_PTHREAD
 	register int rc;
 #	endif
-#	if HAVE_SYNCH_H
-		if ((rc = mutex_lock(impl_ptr(pmutex_))))
-			throw MutexFailed(strerror(rc));
-#	elif HAVE_PTHREAD
+#	if HAVE_PTHREAD
 		if ((rc = pthread_mutex_lock(impl_ptr(pmutex_))))
+			throw MutexFailed(strerror(rc));
+#	elif HAVE_SYNCH_H
+		if ((rc = mutex_lock(impl_ptr(pmutex_))))
 			throw MutexFailed(strerror(rc));
 #	endif
 #endif
@@ -139,14 +139,14 @@ BeecryptMutex::trylock() throw (MutexFailed)
 		}
 #	else
 		register int rc;
-#		if HAVE_SYNCH_H
-			if ((rc = mutex_trylock(impl_ptr(pmutex_))) == 0)
+#		if HAVE_PTHREAD
+			if ((rc = pthread_mutex_trylock(impl_ptr(pmutex_))) == 0)
 				return true;
 			if (rc == EBUSY)
 				return false;
 			throw MutexFailed(strerror(rc));
-#		elif HAVE_PTHREAD
-			if ((rc = pthread_mutex_trylock(impl_ptr(pmutex_))) == 0)
+#		elif HAVE_SYNCH_H
+			if ((rc = mutex_trylock(impl_ptr(pmutex_))) == 0)
 				return true;
 			if (rc == EBUSY)
 				return false;
@@ -169,11 +169,11 @@ BeecryptMutex::unlock() throw (MutexFailed)
 #	if HAVE_SYNCH_H || HAVE_PTHREAD
 		register int rc;
 #	endif
-#	if HAVE_SYNCH_H
-		if ((rc = mutex_unlock(impl_ptr(pmutex_))))
-			throw MutexFailed(strerror(rc));
-#	elif HAVE_PTHREAD
+#	if HAVE_PTHREAD
 		if ((rc = pthread_mutex_unlock(impl_ptr(pmutex_))))
+			throw MutexFailed(strerror(rc));
+#	elif HAVE_SYNCH_H
+		if ((rc = mutex_unlock(impl_ptr(pmutex_))))
 			throw MutexFailed(strerror(rc));
 #	endif
 #endif

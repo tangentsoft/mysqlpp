@@ -102,7 +102,7 @@ UnixDomainSocketConnection::is_socket(const char* path, std::string* error)
 			return true;
 		}
 	}
-	else 
+	else
 #endif
 	if (error) {
 #if !defined(MYSQLPP_PLATFORM_WINDOWS)

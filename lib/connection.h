@@ -63,7 +63,7 @@ private:
 	/// conversion operator.
 	///
 	/// \see http://www.artima.com/cppsource/safebool.html
-    typedef bool Connection::*private_bool_type;
+	typedef bool Connection::*private_bool_type;
 
 public:
 	/// \brief Create object without connecting to the database server.
@@ -194,8 +194,8 @@ public:
 	/// \brief Kill a database server thread
 	///
 	/// \param tid ID of thread to kill
-    ///
-    /// \see thread_id()
+	///
+	/// \see thread_id()
 	bool kill(unsigned long tid) const;
 
 	/// \brief Test whether any error has occurred within the object.

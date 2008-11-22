@@ -26,6 +26,9 @@ done
 echo " $count tests succeeded"
 echo 'All unit tests passed' >> $TMP
 
+# Assume AUTO_INCREMENT id column in images table will get 1 in
+# load_jpeg call below, since we reset the DB before doing it.
+export QUERY_STRING=id=1
 
 # Now run examples to test high-level behavior.  The repeated use of
 # resetdb is intentional!  It's run after each example that changes
@@ -35,7 +38,8 @@ echo -n 'Running examples:'
 for t in \
 	resetdb simple[0-9] store_if for_each multiquery tquery1 \
 	resetdb tquery[2-9] \
-	resetdb ssqls[0-9]
+	resetdb ssqls[0-9] \
+	load_jpeg cgi_jpeg
 do
 	if [ -x $t ]
 	then

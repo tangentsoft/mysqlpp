@@ -35,6 +35,7 @@
 
 #include <exception>
 #include <string>
+#include <sstream>
 
 namespace mysqlpp {
 
@@ -172,6 +173,31 @@ public:
 };
 
 
+/// \brief Exception thrown when an object with operator [] or an
+/// at() method gets called with a bad index.
+
+class MYSQLPP_EXPORT BadIndex : public Exception
+{
+public:
+	/// \brief Create exception object
+	///
+	/// \param bad_index type of object bad index tried on
+	/// \param bad_index index value the container didn't like
+	/// \param max_index largest legal index value for container
+	explicit BadIndex(const char* what, int bad_index, int max_index) :
+	Exception()
+	{
+		std::ostringstream outs;
+		outs << "Index " << bad_index << " on " << what <<
+				" out of range, max legal index is " << max_index;
+		what_ = outs.str();
+	}
+
+	/// \brief Destroy exception
+	~BadIndex() throw() { }
+};
+
+
 /// \brief Exception thrown when you pass an unrecognized option to
 /// Connection::set_option().
 
@@ -263,7 +289,7 @@ public:
 	/// \param w explanation for why the exception was thrown
 	/// \param e the error number from the underlying database API
 	explicit BadQuery(const char* w = "", int e = 0) :
-	Exception(w), 
+	Exception(w),
 	errnum_(e)
 	{
 	}
@@ -273,7 +299,7 @@ public:
 	/// \param w explanation for why the exception was thrown
 	/// \param e the error number from the underlying database API
 	explicit BadQuery(const std::string& w, int e = 0) :
-	Exception(w), 
+	Exception(w),
 	errnum_(e)
 	{
 	}

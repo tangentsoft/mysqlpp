@@ -34,7 +34,7 @@
 
 namespace mysqlpp {
 
-void 
+void
 FieldNames::init(const ResultBase* res)
 {
 	int num = res->num_fields();

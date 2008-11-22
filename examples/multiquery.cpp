@@ -1,6 +1,6 @@
 /***********************************************************************
  multiquery.cpp - Example showing how to iterate over result sets upon
-    execution of a query that returns more than one result set.  You can
+	execution of a query that returns more than one result set.  You can
 	get multiple result sets when executing multiple separate SQL
 	statments in a single query, or when dealing with the results of
 	calling a stored procedure.
@@ -133,7 +133,7 @@ int
 main(int argc, char *argv[])
 {
 	// Get connection parameters from command line
-    const char* db = 0, *server = 0, *user = 0, *pass = "";
+	const char* db = 0, *server = 0, *user = 0, *pass = "";
 	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
 		return 1;
 	}

@@ -248,7 +248,7 @@ struct value_list_b
 	/// \param d what delimiter to use between each value in the list
 	///		when inserting the list into a C++ stream
 	/// \param m manipulator to use when inserting the list into a
-	/// 	C++ stream
+	///		C++ stream
 	value_list_b(const Seq& s, const std::vector<bool>& f,
 			const char* d, Manip m) :
 	list(&s),
@@ -361,10 +361,10 @@ std::ostream& operator <<(std::ostream& o,
 			o << cl.manip << *i;
 		}
 		if (++i == cl.list->end()) {
-			break; 
+			break;
 		}
 		if (cl.fields[k]) {
-			o << cl.delim; 
+			o << cl.delim;
 		}
 	}
 
@@ -437,7 +437,7 @@ value_list(const Seq& s, const char* d = ",")
 
 template <class Seq, class Manip>
 value_list_ba<Seq, Manip>
-value_list(const Seq& s, const char* d, Manip m) 
+value_list(const Seq& s, const char* d, Manip m)
 {
 	return value_list_ba<Seq, Manip>(s, d, m);
 }
@@ -455,7 +455,7 @@ value_list(const Seq& s, const char* d, Manip m)
 template <class Seq, class Manip>
 inline value_list_b<Seq, Manip>
 value_list(const Seq& s, const char* d, Manip m,
-		const std::vector<bool>& vb) 
+		const std::vector<bool>& vb)
 {
 	return value_list_b<Seq, Manip>(s, vb, d, m);
 }

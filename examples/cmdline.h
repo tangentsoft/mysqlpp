@@ -1,9 +1,9 @@
 /***********************************************************************
  cmdline.h - Declares the interface to the command line parsing logic.
-    It is not important for a new MySQL++ user to understand any of what
-    goes on inside this module.  The examples just pass in the command 
-    line arguments and magically get out the proper database server
-    login parameters and the name of the database itself.
+	It is not important for a new MySQL++ user to understand any of what
+	goes on inside this module.  The examples just pass in the command 
+	line arguments and magically get out the proper database server
+	login parameters and the name of the database itself.
 
  Copyright (c) 2007 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the
@@ -31,8 +31,8 @@
 #define MYSQLPP_CMDLINE_H
 
 extern bool parse_command_line(int argc, char *argv[],
-        const char** ppdb, const char** ppserver, const char** ppuser,
-        const char** pppass, const char* extra_parms = "");
+		const char** ppdb, const char** ppserver, const char** ppuser,
+		const char** pppass, const char* extra_parms = "");
 extern void print_usage(const char* program_name,
 		const char* extra_parms = "");
 

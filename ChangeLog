@@ -1,3 +1,38 @@
+3.0.7, 2008.11.21 (r2423)
+
+    o Fixed bug where initting a Query with a query string and then
+      appending more to it with operator <<() would start overwriting
+      the beginning of the buffer.  Thanks for the fix go to Chris
+      Frey.
+
+    o Added String::empty(), to parallel std::string better.
+
+    o Added SQLTypeAdapter ctor for Null<String>, to allow SSQLS with
+      NULL BLOB columns.  Thanks for this patch go to Russell Robinson.
+
+    o Passing on "throw exceptions" flag in Query::storein() to the
+      temporary Row objects it creates.  (Should have done this
+      all along.)
+
+    o All MySQL++ classes with operator[]() and at() methods now
+      throw the new BadIndex exception on out of range indices now,
+      unconditionally.  Before, it was a mishmash of MySQL++-specific
+      mechanisms, std::range_error, and unchecked access.
+
+    o Fixed some bugs in load_jpeg and cgi_jpeg examples that prevented
+      them from working correctly on Windows.
+
+    o Squished some warnings and incompatibilities that caused
+      difficulty with Solaris CC.
+
+    o Several minor fixes to allow building on Cygwin again.
+
+    o Dedicated VC++ 2008 support.  (Not just a clone of VC++ 2005
+      project files in a different directory.)
+
+    o Lots of documentation improvements.
+
+
 3.0.6, 2008.08.16 (r2350)
 
     o Several fixes to allow thread-aware build on Solaris

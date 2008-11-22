@@ -1,9 +1,9 @@
-MySQL++ was created by Kevin Atkinson during 1998. From version 1.0
-(released in June 1999) through 1.7.9 (May 2001), the primary maintainer
-was Sinisa Milivojevic <sinisa@mysql.com>. Neither Kevin nor Sinisa
-are currently involved in MySQL++ development. The current maintainer
-is Warren Young <mysqlpp@etr-usa.com>, starting with version 1.7.10 in
-August of 2004.
+MySQL++ was created by Kevin Atkinson during 1998.  From version
+1.0 (released in June 1999) through 1.7.9 (May 2001), the primary
+maintainer was Sinisa Milivojevic <sinisa@mysql.com>.  Neither Kevin
+nor Sinisa are currently involved in MySQL++ development.  The current
+maintainer is Warren Young <mysqlpp@etr-usa.com>, starting with
+version 1.7.10 in August of 2004.
 
 For a fuller account of the library's history, see the first chapter
 of the user manual.  For the nitty-gritty details, see the ChangeLog
@@ -13,8 +13,9 @@ aren't attributed to anyone else were done by Warren Young.
 
 Other contributors of note since 1.7.10:
 
-    Chris Frey <cdfrey@netdirect.ca>: Lots of GCC warning fixes for the
-    bleeding-edge compiler versions, and Gentoo ebuild support.
+    Chris Frey <cdfrey@foursquare.net>: Lots of GCC warning fixes
+    for the bleeding-edge compiler versions, Gentoo ebuild support,
+    and misc other fixes.
 
     Mark Meredino <Mark_Merendino@cnt.com>: Several fixes and
     additions, including a lot of work on Microsoft Visual C++
@@ -46,8 +47,8 @@ Other contributors of note since 1.7.10:
     supposed to.
 
     Jonathan Wakely <mysql@kayari.org> rebuilt my original versions
-	of ConnectionPool, RefCountedPointer, and RefCountedBuffer.
-	They're now simpler and safer.  He also created the numeric
+    of ConnectionPool, RefCountedPointer, and RefCountedBuffer.
+    They're now simpler and safer.  He also created the numeric
     conversion logic in lib/mystring.h introduced in v3.0.
 
 

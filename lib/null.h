@@ -166,7 +166,8 @@ struct NullIsBlank
 /// for a null \c int is different than for a null \c string, to pick
 /// two random examples.  See type_info.cpp for the table SQL types that
 /// can be null.
-template <class Type, class Behavior = NullIsNull> class Null
+template <class Type, class Behavior = NullIsNull>
+class Null
 {
 public:
 	/// \brief The object's value, when it is not SQL null

@@ -5,10 +5,10 @@ Visual C++ Version Compatibility
     MySQL++ also works with VC++ 2003 (a.k.a. VC++ 7.1), with the
     exception of the SSQLS feature.  There was partial support for
     SSQLS with VC++ 2003 in MySQL++ v2, but a feature we added in
-    MySQL++ v3.0 crashes this version of the compiler, so we had to
-    remove support for it entirely.  MySQL++ automatically disables
-    SSQLS when you build it with VC++ 2003.  As long as you avoid
-    using that feature of the library, you should be fine.
+    MySQL++ v3.0 crashes the VC++ 2003 compiler when you try to use
+    even simple SSQLS, so we had to remove support for this entirely
+    for that platform.  (See the v3.0 section in the Breakages chapter
+    of the user manual for details.)
 
     Older versions of Visual C++ are basically hopeless when it
     comes to building current versions of MySQL++.  They have too
@@ -17,13 +17,17 @@ Visual C++ Version Compatibility
     my advice is that you're best off programming straight to the
     MySQL C API rather than try to make MySQL++ build.
 
-    There are two sets of .sln and .vcproj files shipped with MySQL++:
-    one for Visual C++ 2003 in the vc2003 subdirectory, and another
-    set for VC++ 2005 and newer in vc2005.  The only difference
-    between them is that the VC++ 2003 versions omit SSQLS related
-    files from the build.  If you're using VC++ 2008, use the vc2005
-    project files; Visual Studio will walk you through the conversion
-    process, which will do the right thing.
+
+Where Are the Project Files, and Why So Many Versions?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    There are three sets of .sln and .vcproj files shipped with
+    MySQL++, in the vc2003, vc2005 and vc2008 subdirectories.
+    Other than the SSQLS issue brought up above, there no functional
+    difference between these versions.  We ship separate project
+    files for each version of Visual Studio partly to save you from
+    having to walk through the project conversion wizard, and partly
+    so you can build the library with multiple versions of Visual C++
+    without conflicts among the object files.
 
 
 Prerequisites
@@ -85,143 +89,28 @@ Building the Library and Example Programs
     in a text editor to see how it works.)
 
 
-Using MySQL++ in an MFC Project
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    If you don't already have a project set up, open Visual Studio,
-    say File > New > Project, then choose Visual C++ > MFC > MFC
-    Application.  Go through the wizard setting up the project as
-    you see fit.
-
-    Once you have your project open, right click on your top-level
-    executable in the Solution Explorer, choose Properties, and make
-    the following changes.  (Where it doesn't specify Debug or Release,
-    make the same change to both configurations.)
-
-        o Append the following to C/C++ > General > Additional Include
-          Directories:
-
-            C:\Program Files\MySQL\MySQL Server 5.0\include,
-            C:\mysql++\include
-
-        o Under C/C++ > Code Generation change "Runtime Library" to
-          "Multi-threaded Debug DLL (/MDd)" for the Debug
-          configuration.  For the Release configuration, make it
-          "Multi-threaded DLL (/MD)".
-
-        o Append the following to Linker > General > Additional Library
-          Directories for the Debug configuration:
-
-            C:\Program Files\MySQL\MySQL Server 5.0\lib\debug,
-            C:\mysql++\vc\debug
-
-          For the Release configuration, make it the same, but
-          change the 'debug' directory names to 'opt'.
-
-        o Under Linker > Input add the following to "Additional
-          Dependencies" for the Debug configuration:
-
-            libmysql.lib wsock32.lib mysqlpp_d.lib
-
-          ...and then for the Release configuration:
-          
-            libmysql.lib wsock32.lib mysqlpp.lib
-
-          This difference is because MySQL++'s Debug DLL and import
-          library have a _d suffix so you can have both in the same
-          directory without conflicts.
-
-    You may want to study examples\vstudio\mfc\mfc.vcproj to see
-    this in action.  Note that some of the paths will be different,
-    because it can use relative paths for mysqlpp.dll.
-
-
-Using MySQL++ in a Windows Forms C++/CLI Project
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Before you start work on getting MySQL++ working with your own
-    program, you need to make some changes to the MySQL++ build
-    settings.  Open mysqlpp.sln, then right-click on the mysqlpp
-    target and select Properties.  Make the following changes for
-    both the Debug and Release configurations:
-
-        o Under Configuration Properties > General, change "Common
-          Language Runtime support" to the /clr setting.
-
-        o Under C/C++ > Code Generation, change "Enable C++ Exceptions"
-          from "Yes (/EHsc)" to "Yes With SEH Exceptions (/EHa)"
-
-    If you have already built MySQL++, be sure to perform a complete
-    rebuild after changing these options.  The compiler will emit
-    several C4835 warnings after making those changes, which are
-    harmless when using the DLL with a C++/CLI program, but which
-    warn of real problems when using it with unmanaged C++.  This is
-    why MySQL++'s Windows installer (install.hta) offers the option
-    to install the CLR version into a separate directory; use it if
-    you need both managed and unmanaged versions installed!
-
-    For the same reason, you might give some thought about where you
-    install mysqlpp.dll on your end user's machines when distributing
-    your program.  My recommendation is to install it in the same
-    directory as the .exe file that uses it, rather than installing
-    into a system directory where it could conflict with a mysqlpp.dll
-    built with different settings.
-
-    Once you have MySQL++ built with CLR support, open your program's
-    project.  If you don't already have a project set up, open Visual
-    Studio, say File > New > Project, then choose Visual C++ > CLR >
-    Windows Forms Application.  Go through the wizard setting up the
-    project as you see fit.
-
-    The configuration process isn't much different from that for an
-    MFC project, so go through the list above first.  Then, make the
-    following changes particular to .NET and C++/CLI:
-
-        o Under Configuration Properties > General change the setting
-          from /clr:pure to /clr.  (You need mixed assembly support
-          to allow a C++/CLI program to use a plain C++ library
-          like MySQL++.)
-
-        o For the Linker > Input settings, you don't need wsock32.lib.
-          The mere fact that you're using .NET takes care of that
-          dependency for you.
-
-    In the MFC instructions above, it said that you need to build it
-    using the Multi-threaded DLL version of the C++ Runtime Library.
-    That's not strictly true for MFC, but it's an absolute requirement
-    for C++/CLI.  See the Remarks in this MSDN article for details:
-
-        http://msdn2.microsoft.com/en-us/library/k8d11d4s.aspx
-
-    You may want to study examples\vstudio\wforms\wforms.vcproj to
-    see all this in action.  Note that some of the paths will be
-    different, because it can use relative paths for mysqlpp_d.dll
-    and mysqlpp.dll.
+Using MySQL++ in Your Own Projects
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    This is covered in the user manual, chapter 9.
 
 
 Working With Bakefile
 ~~~~~~~~~~~~~~~~~~~~~
     MySQL++'s top-level Visual Studio project files aren't
     maintained directly.  Instead, we use a tool called Bakefile
-    (http://bakefile.org/) to generate many different project file
-    and Makefile types from a single set of source files.  There is
-    a native Windows version of Bakefile up on that web site.
-    Download that and put the directory containing bakefile_gen.exe
-    in your Windows PATH.
+    (http://bakefile.org/) to generate them from mysql++.bkl. Since
+    there are so many project files in MySQL++, it's often simpler to
+    edit this source file and "re-bake" the project files from it than
+    to make your changes in Visual Studio.
 
-    Bakefile generates the various project files and Makefiles from
-    a single source file, mysql++.bkl.  This is usually the file you
-    need to change when you want to make some change to the MySQL++
-    build system.
+    To do this, download the native Windows version of Bakefile from the
+    web site given above.  Install it, and then put the installation
+    directory in your Windows PATH.  Then, open up a command window, cd
+    into the MySQL++ directory, and type "rebake".  This will run
+    rebake.bat, which rebuilds the Visual Studio project files from
+    mysql++.bkl.
 
-    While Bakefile's documentation isn't as comprehensive as it
-    ought to be, you can at least count on it to list all of the
-    available features.  So, if you can't see a way to make Bakefile
-    do something, it's likely it just can't do it.  Bakefile is a
-    high-level abstraction of build systems in general, so it'll never
-    support all the particulars of every odd build system out there.
-
-    Once you've made your changes, you can generate the Visual C++
-    project files by running rebake.bat, which you can find in the
-    same directory as this file.
+    There's more information about using Bakefile in HACKERS.txt.
 
 
 If You Run Into Problems...

@@ -265,7 +265,7 @@ main(int, char* argv[])
 		mysqlpp::String nonint("42.1");
 
 		failures += test_equality(definit, mysqlpp::Date()) == false;
-		failures += test_equality(definit, 
+		failures += test_equality(definit,
 				mysqlpp::DateTime(0, 0, 0, 0, 0, 0)) == false;
 		failures += test_equality(definit, mysqlpp::Time()) == false;
 		failures += test_equality(definit, false) == false;

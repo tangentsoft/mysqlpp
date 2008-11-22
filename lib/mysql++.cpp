@@ -28,7 +28,7 @@
 
 namespace mysqlpp {
 
-unsigned int 
+unsigned int
 get_library_version()
 {
 	return MYSQLPP_HEADER_VERSION;

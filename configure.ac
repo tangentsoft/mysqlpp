@@ -14,7 +14,7 @@
 # USA
 
 # Standard autotools stuff
-AC_INIT(mysql++, 3.0.6, plusplus@lists.mysql.com, mysql++)
+AC_INIT(mysql++, 3.0.7, plusplus@lists.mysql.com, mysql++)
 AC_CONFIG_HEADER(config.h)
 AC_DISABLE_STATIC
 AC_CANONICAL_SYSTEM
@@ -49,6 +49,7 @@ then
 	CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
 	CC="$PTHREAD_CC"
 	AC_CHECK_HEADERS(synch.h)
+	AC_CHECK_HEADERS(unistd.h)
 fi
 
 

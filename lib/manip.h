@@ -136,7 +136,7 @@ MYSQLPP_EXPORT std::ostream& operator <<(std::ostream& o,
 
 
 template <class ST>
-inline std::ostream& 
+inline std::ostream&
 operator <<(quote_type1 o, const Set<ST>& in)
 {
 	return *o.ostr << '\'' << in << '\'';
@@ -189,7 +189,7 @@ struct quote_only_type2
 };
 
 
-inline quote_only_type2 
+inline quote_only_type2
 operator <<(SQLQueryParms& p, quote_only_type0 /* esc */)
 {
 	return quote_only_type2(&p);
@@ -211,7 +211,7 @@ std::ostream& operator <<(quote_only_type1 o, const SQLTypeAdapter& in);
 
 
 template <class ST>
-inline std::ostream& 
+inline std::ostream&
 operator <<(quote_only_type1 o, const Set<ST>& in)
 {
 	return *o.ostr << '\'' << in << '\'';

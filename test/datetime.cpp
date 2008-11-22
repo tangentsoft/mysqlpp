@@ -38,7 +38,7 @@ using namespace std;
 // Compare the given string against the object inserted into a Query stream.
 template <class T>
 static unsigned int
-test_query_insert(const T& object, const char* expected, 
+test_query_insert(const T& object, const char* expected,
 		const char* what)
 {
 	Query q = Connection().query();	// don't do this in real code
@@ -59,7 +59,7 @@ test_query_insert(const T& object, const char* expected,
 // Compare the given string against the object inserted into an ostream.
 template <class T>
 static unsigned int
-test_ostream_insert(const T& object, const char* expected, 
+test_ostream_insert(const T& object, const char* expected,
 		const char* what)
 {
 	ostringstream os;
@@ -99,7 +99,7 @@ test_str_method(const T& object, const char* expected, const char* what)
 // Compare the given string against the object when cast to std::string
 template <class T>
 static unsigned int
-test_string_operator(const T& object, const char* expected, 
+test_string_operator(const T& object, const char* expected,
 		const char* what)
 {
 	if (string(object).compare(expected) == 0) {
@@ -119,7 +119,7 @@ test_string_operator(const T& object, const char* expected,
 // different ways to a string.
 template <class T>
 static unsigned int
-test_stringization(const T& object, const char* expected, 
+test_stringization(const T& object, const char* expected,
 		const char* what)
 {
 	return	test_query_insert(object, expected, what) +
@@ -134,8 +134,8 @@ test_stringization(const T& object, const char* expected,
 static unsigned int
 test_date(const Date& d, int year, int month, int day)
 {
-	if (	d.year() == year && 
-			d.month() == month && 
+	if (	d.year() == year &&
+			d.month() == month &&
 			d.day() == day) {
 		char ac[20];
 		snprintf(ac, sizeof(ac), "%04d-%02d-%02d",
@@ -155,8 +155,8 @@ test_date(const Date& d, int year, int month, int day)
 static unsigned int
 test_time(const Time& t, int hour, int minute, int second)
 {
-	if (	t.hour() == hour && 
-			t.minute() == minute && 
+	if (	t.hour() == hour &&
+			t.minute() == minute &&
 			t.second() == second) {
 		char ac[20];
 		snprintf(ac, sizeof(ac), "%02d:%02d:%02d",
@@ -203,12 +203,16 @@ int
 main()
 {
 	unsigned int failures = 0;
+#if !defined(__SUNPRO_CC)
+	// Sun CC can't compile these tests for some reason.  So, skip them.
+	// See http://lists.mysql.com/plusplus/8164
 	failures += test(0, 0, 0, 0, 0, 0);
 	failures += test(1, 2, 3, 4, 5, 6);
 	failures += test_stringization(DateTime(), "NOW()", "DateTime");
 	DateTime dt;
 	dt.year(2007);
 	failures += test_stringization(dt, "2007-00-00 00:00:00", "DateTime");
+#endif
 	return failures;
 }
 

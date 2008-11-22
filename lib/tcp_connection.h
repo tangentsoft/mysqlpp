@@ -118,6 +118,20 @@ public:
 	/// \return false if address fails to pass sanity checks
 	static bool parse_address(std::string& addr, unsigned int& port,
 			std::string& error);
+
+private:
+	/// \brief Provide uncallable versions of the parent class ctors we
+	/// don't want to provide so we don't get warnings about hidden
+	/// overloads with some compilers
+	TCPConnection(bool);
+	TCPConnection(const char*, const char*, const char*, const char*,
+			unsigned int);
+
+	/// \brief Explicitly override parent class version so we don't get
+	/// complaints about hidden overloads with some compilers
+	bool connect(const char* db, const char* server,
+			const char* user, const char* password,
+			unsigned int port);
 };
 
 

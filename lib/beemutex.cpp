@@ -1,6 +1,6 @@
 /***********************************************************************
  beemutex.cpp - Implements the BeecryptMutex class.  The name comes
- 	from the fact that we lifted this essentially intact from the
+	from the fact that we lifted this essentially intact from the
 	Beecrypt library, which is also LGPL.  See beecrypt.h for the list
 	of changes we made on integrating it into MySQL++.
 
@@ -40,12 +40,12 @@ namespace mysqlpp {
 
 #define ACTUALLY_DOES_SOMETHING
 #if defined(HAVE_PTHREAD)
-    typedef pthread_mutex_t bc_mutex_t;
+	typedef pthread_mutex_t bc_mutex_t;
 #elif defined(HAVE_SYNCH_H)
 #	include <synch.h>
-    typedef mutex_t bc_mutex_t;
+	typedef mutex_t bc_mutex_t;
 #elif defined(MYSQLPP_PLATFORM_WINDOWS)
-    typedef HANDLE bc_mutex_t;
+	typedef HANDLE bc_mutex_t;
 #else
 // No supported mutex type found, so class becomes a no-op.
 #	undef ACTUALLY_DOES_SOMETHING

@@ -31,6 +31,7 @@
 
 #if !defined(MYSQLPP_PLATFORM_WINDOWS)
 #	include <netdb.h>
+#	include <arpa/inet.h>
 #endif
 
 #include <ctype.h>

@@ -1,10 +1,10 @@
 /***********************************************************************
  tquery3.cpp - Similar to tquery1.cpp but uses unquoted parameters.
-    It's here more for code test coverage than because it shows
-    something interesting.  We've historically had a problem with
-    tqueries with just one parameter; we cover the quoted case in
-    resetdb and the other tquery examples, so we get the unquoted
-    one here.
+	It's here more for code test coverage than because it shows
+	something interesting.  We've historically had a problem with
+	tqueries with just one parameter; we cover the quoted case in
+	resetdb and the other tquery examples, so we get the unquoted
+	one here.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
  (c) 2004-2008 by Educational Technology Resources, Inc.  Others may
@@ -40,7 +40,7 @@ int
 main(int argc, char *argv[])
 {
 	// Get database access parameters from command line
-    const char* db = 0, *server = 0, *user = 0, *pass = "";
+	const char* db = 0, *server = 0, *user = 0, *pass = "";
 	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
 		return 1;
 	}
@@ -50,14 +50,14 @@ main(int argc, char *argv[])
 		mysqlpp::Connection con(db, server, user, pass);
 
 		// Build a template query to retrieve item names for stock
-        // entries with a quantity over some threshold.
+		// entries with a quantity over some threshold.
 		mysqlpp::Query query = con.query(
 				"select item from stock where num > %0");
 		query.parse();
 
 		// Get a list of things we have lots of in stock
 		if (mysqlpp::StoreQueryResult res = query.store(80)) {
-            cout << "Stuff we have a lot of in stock:" << endl;
+			cout << "Stuff we have a lot of in stock:" << endl;
 			for (size_t i = 0; i < res.num_rows(); ++i) {
 				cout << '\t' << res[i]["item"] << endl;
 			}

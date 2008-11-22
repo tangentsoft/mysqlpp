@@ -61,26 +61,26 @@ public:
 	///
 	/// Throws a MutexFailed exception if we can't acquire the lock for
 	/// some reason.  The exception contains a message saying why.
-    BeecryptMutex() throw (MutexFailed);
+	BeecryptMutex() throw (MutexFailed);
 
 	/// \brief Destroy the mutex
 	///
 	/// Failures are quietly ignored.
-    ~BeecryptMutex();
+	~BeecryptMutex();
 
 	/// \brief Acquire the mutex, blocking if it can't be acquired
 	/// immediately.
-    void lock() throw (MutexFailed);
+	void lock() throw (MutexFailed);
 
 	/// \brief Acquire the mutex immediately and return true, or return
 	/// false if it would have to block to acquire the mutex.
-    bool trylock() throw (MutexFailed);
+	bool trylock() throw (MutexFailed);
 
 	/// \brief Release the mutex
-    void unlock() throw (MutexFailed);
+	void unlock() throw (MutexFailed);
 
 private:
-    void* pmutex_;
+	void* pmutex_;
 };
 
 
@@ -103,13 +103,13 @@ public:
 	}
 
 	/// \brief Unlock the mutex.
-    ~ScopedLock() { mutex_.unlock(); }
+	~ScopedLock() { mutex_.unlock(); }
 
 private:
-    ScopedLock(const ScopedLock&);				// can't copy
-    ScopedLock& operator =(const ScopedLock&);	// can't assign
+	ScopedLock(const ScopedLock&);				// can't copy
+	ScopedLock& operator =(const ScopedLock&);	// can't assign
 
-    BeecryptMutex& mutex_;	///< the mutex object we manage
+	BeecryptMutex& mutex_;	///< the mutex object we manage
 };
 
 } // end namespace mysqlpp

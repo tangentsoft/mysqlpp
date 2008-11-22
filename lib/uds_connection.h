@@ -96,6 +96,20 @@ public:
 	///
 	/// \return false if address fails to pass sanity checks
 	static bool is_socket(const char* path, std::string* error = 0);
+
+private:
+	/// \brief Provide uncallable versions of the parent class ctors we
+	/// don't want to provide so we don't get warnings about hidden
+	/// overloads with some compilers
+	UnixDomainSocketConnection(bool);
+	UnixDomainSocketConnection(const char*, const char*, const char*,
+			const char*, unsigned int);
+
+	/// \brief Explicitly override parent class version so we don't get
+	/// complaints about hidden overloads with some compilers
+	bool connect(const char* db, const char* server,
+			const char* user, const char* password,
+			unsigned int port);
 };
 
 

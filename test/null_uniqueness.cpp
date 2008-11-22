@@ -1,6 +1,6 @@
 /***********************************************************************
  test/null_uniqueness.cpp - Code for checking that null_type cannot be
-    converted to anything else.  Because it triggers a compile-time
+	converted to anything else.  Because it triggers a compile-time
 	check, it can't be included in the test suite.  You have to just
 	try building it.  Comment out the assignment to int to check that
 	the return statement also triggers the compile-time check.

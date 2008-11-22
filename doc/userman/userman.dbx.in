@@ -1,7 +1,9 @@
-<?xml version="1.0" encoding='UTF-8'?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V4.3//EN"
-    "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+                         "http://www.docbook.org/xml/4.3/docbookx.dtd"
+[ <!ENTITY % xinclude SYSTEM "xinclude.mod">
+%xinclude;
+]>
 <article>
 	<articleinfo>
 		<title>MySQL++ v@MYSQLPP_VERSION_MAJOR@.@MYSQLPP_VERSION_MINOR@.@MYSQLPP_VERSION_BUGFIX@ User Manual</title>
@@ -47,6 +49,7 @@
 	<xi:include href="unicode.dbx" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 	<xi:include href="threads.dbx" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 	<xi:include href="configuration.dbx" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+	<xi:include href="incorporating.dbx" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 	<xi:include href="breakages.dbx" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 	<xi:include href="licenses.dbx" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 </article>

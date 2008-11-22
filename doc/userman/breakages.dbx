@@ -795,9 +795,19 @@ for (i = 0; row = res[i]; ++i) {
 
         <programlisting>
 mysqlpp::Row row;
-mysqlpp::Result::size_type i;
+mysqlpp::StoreQueryResult::size_type i;
 for (i = 0; i &lt; res.num_rows(); ++i) {
   row = res[i];
+  // Do something with row here
+}</programlisting>
+
+				<para>...or, in a more C++ish idiom:</para>
+
+        <programlisting>
+mysqlpp::Row row;
+mysqlpp::StoreQueryResult::const_iterator it;
+for (it = res.begin(); it != res.end(); ++it) {
+  row = *it;
   // Do something with row here
 }</programlisting>
       </sect4>
@@ -841,17 +851,61 @@ std::string(s.data(), s.length()); // raw_string() equivalent</programlisting>
         <filename>ssqls.h</filename> for you, but it will go away in a
         future version of MySQL++.</para>
 
-        <para>The only supported macros for creating
-        SSQLSes now are <function>sql_create_*</function>
-        and <function>sql_create_complete_*</function>. The
-        &ldquo;basic&rdquo; variants were removed because they&rsquo;re
-        less functional than <function>sql_create_*</function>, and
-        haven&rsquo;t been used in the examples or documentation for
-        a long time now. The other two methods were removed because
-        parameter ordering no longer matters so there&rsquo;s
-        no need for macros that let you have custom parameter
-        ordering. (It&rsquo;s more complicated than that, actually. See
-        the ChangeLog for the detailed whys and wherefores.)</para>
+        <para>SSQLSes get populated by field name now, not by
+        field order. In v2, it was absolutely required that your
+        SSQLS had its fields declared in exactly the same order
+        as the fields in the database server, and there could be
+        no gaps. An <command>ALTER TABLE</command> command would
+        almost always necessitate redefining the corresponding SSQLS
+        and rebuilding your program. Some alterations actually made
+        using SSQLS impossible. For the most part, this change just
+        gives your program additional flexibility in the face of
+        future changes. However, code that was taking advantage of
+        this low-level fact will break when moving to v3. Before I
+        explain how, let&rsquo;s go over the high-level functional
+        changes you&rsquo;ll find in v3&rsquo;s SSQLS mechanism.</para>
+
+        <para>Because MySQL++ no longer needs the
+        SSQLS field order to match the SQL field order,
+        the <function>sql_create_c_order_*</function>
+        SSQLS creation macro was dropped in v3. We were
+        also able to drop the ordering parameters from
+        <function>sql_create_complete_*</function>. That in turn
+        means there is no longer a difference between the way it and
+        <function>sql_create_c_names_*</function> work, so the latter
+        was also dropped. Thus, there are now only two groups of SSQLS
+        creation macros left: <function>sql_create_*</function>,
+        which works pretty much as it always has, and
+        <function>sql_create_complete_*</function>, which is the same
+        except for the lack of ordering parameters.</para>
+
+        <para>In general, you should be using
+        <function>sql_create_*</function> for all SSQLSes unless
+        you need to use different names for data members in C++ than
+        you use for the corresponding columns in SQL. In that case,
+        use <function>sql_create_complete_*</function> instead.</para>
+
+        <para>In v2, it was possible to have different SQL column
+        names than SSQLS data member names while still using
+        <function>sql_create_*</function> if you only used SSQLS
+        for data retrieval.<footnote><para>In MySQL++ v2, data
+        retreival (<methodname>Query::storein()</methodname>,
+        <methodname>SSQLS(const Row&amp; other)</methodname>,
+        etc.) worked fine regardless of whether your SSQLS field names
+        matched those in the corresponding SQL table, because the
+        SSQLS was populated by position, not by field name. Thus,
+        if all you used SSQLS for was data retrieval, you could
+        define your structures with <function>sql_create_*</function>
+        in v2. This was never recommended, because such an SSQLS
+        wouldn&rsquo;t work with other features of MySQL++ like
+        <methodname>Query::insert()</methodname> because they depend
+        on being able to map names from C++ to SQL and back. You
+        needed to use <function>sql_create_c_names_*</function>
+        to make these features work in v2 in the face of a naming
+        scheme difference between C++ and SQL.</para></footnote> In
+        v3, you must use <function>sql_create_complete_*</function>
+        for absolutely all uses of SSQLS when you want the C++ field
+        names to differ from the SQL column names.</para>
 
         <para>The new <classname>Null&lt;T&gt;</classname> support in
         SSQLSes causes an internal compiler error in Visual C++ 2003.
@@ -946,6 +1000,22 @@ my_ssqls_type::table("MyTableName");</programlisting>
         <varname>MYSQLPP_NO_LONG_LONGS</varname> to avoid a risk of
         collision in the global macro namespace.</para>
       </sect4>
+    </sect3>
+
+
+    <sect3 id="api-3.0.7">
+      <title>v3.0.7</title>
+
+      <para>Most MySQL++ classes with <methodname>at()</methodname>
+      or <methodname>operator []()</methodname> methods now
+      throw the new <ulink type="structref" url="BadIndex"/>
+      exception when you pass an out-of-range index. These
+      methods variously either did not check their indices,
+      or threw <classname>std::out_of_range</classname> when
+      passed a bad index. The one exception that comes to mind is
+      <classname>Fields</classname>, which is just a typedef for a
+      specialization of <classname>std::vector</classname>, and the
+      Standard has its own rules for index checking.</para>
     </sect3>
   </sect2>
 

@@ -2,10 +2,10 @@
  load_jpeg.cpp - Example showing how to insert BLOB data into the
 	database from a file.
 
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004-2007 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the CREDITS
- file in the top directory of the distribution for details.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2008 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS file in
+ the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -26,9 +26,8 @@
 ***********************************************************************/
 
 #include "cmdline.h"
+#include "images.h"
 #include "printdata.h"
-
-#include <mysql++.h>
 
 #include <fstream>
 
@@ -43,11 +42,13 @@ extern int ag_optind;
 
 
 static bool
-is_jpeg(const unsigned char* img_data)
+is_jpeg(const char* img_data)
 {
-	return (img_data[0] == 0xFF) && (img_data[1] == 0xD8) &&
-			((memcmp(img_data + 6, "JFIF", 4) == 0) ||
-			 (memcmp(img_data + 6, "Exif", 4) == 0));
+	const unsigned char* idp =
+			reinterpret_cast<const unsigned char*>(img_data);
+	return (idp[0] == 0xFF) && (idp[1] == 0xD8) &&
+			((memcmp(idp + 6, "JFIF", 4) == 0) ||
+			 (memcmp(idp + 6, "Exif", 4) == 0));
 }
 
 
@@ -55,7 +56,7 @@ int
 main(int argc, char *argv[])
 {
 	// Get database access parameters from command line
-    const char* db = 0, *server = 0, *user = 0, *pass = "";
+	const char* db = 0, *server = 0, *user = 0, *pass = "";
 	if (!parse_command_line(argc, argv, &db, &server, &user, &pass,
 			"[jpeg_file]")) {
 		return 1;
@@ -65,24 +66,23 @@ main(int argc, char *argv[])
 		// Establish the connection to the database server.
 		mysqlpp::Connection con(db, server, user, pass);
 
-		// Assume that the last command line argument is a file.  Try
-		// to read that file's data into img_data, and check it to see
-		// if it appears to be a JPEG file.  Bail otherwise.
-		string img_name, img_data;
+		// Try to create a new item in the images table, based on what
+		// we got on the command line.
+		images img(mysqlpp::null, mysqlpp::null);
+		const char* img_name = "NULL";
 		if (argc - ag_optind >= 1) {
+			// We received at least one non-option argument on the
+			// command line, so treat it as a file name 
 			img_name = argv[ag_optind];
-			ifstream img_file(img_name.c_str(), ios::ate);
+			ifstream img_file(img_name, ios::ate | ios::binary);
 			if (img_file) {
 				size_t img_size = img_file.tellg();
 				if (img_size > 10) {
 					img_file.seekg(0, ios::beg);
-					unsigned char* img_buffer = new unsigned char[img_size];
-					img_file.read(reinterpret_cast<char*>(img_buffer),
-							img_size);
+					char* img_buffer = new char[img_size];
+					img_file.read(img_buffer, img_size);
 					if (is_jpeg(img_buffer)) {
-						img_data.assign(
-								reinterpret_cast<char*>(img_buffer),
-								img_size);
+						img.data = mysqlpp::sql_blob(img_buffer, img_size);
 					}
 					else {
 						cerr << '"' << img_file <<
@@ -94,25 +94,29 @@ main(int argc, char *argv[])
 					cerr << "File is too short to be a JPEG!" << endl;
 				}
 			}
-		}
-		if (img_data.empty()) {
-			print_usage(argv[0], "[jpeg_file]");
-			return 1;
-		}
 
-		// Insert image data into the BLOB column in the images table.
-		// We're inserting it as an std::string instead of using the raw
-		// data buffer allocated above because we don't want the data
-		// treated as a C string, which would truncate the data at the
-		// first null character.
+			if (img.data.data.empty()) {
+				// File name was bad, or file contents aren't JPEG.  
+				print_usage(argv[0], "[jpeg_file]");
+				return 1;
+			}
+		}
+		// else, no image given on command line, so insert SQL NULL
+		// instead of image data.  NULL BLOB columns in SSQLS is
+		// legal as of MySQL++ v3.0.7.
+
+		// Insert image data or SQL NULL into the images.data BLOB
+		// column.  By inserting it as an SSQLS with a mysqlpp::sql_blob
+		// member, we avoid truncating it at the first embedded C null
+		// character ('\0'), as would happen if we used the raw
+		// character buffer we allocated above.
 		Query query = con.query();
-		query << "INSERT INTO images (data) VALUES(\"" <<
-				mysqlpp::escape << img_data << "\")";
+		query.insert(img);
 		SimpleResult res = query.execute();
 
-		// If we get here, insertion succeeded
+		// Report successful insertion
 		cout << "Inserted \"" << img_name <<
-				"\" into images table, " << img_data.size() <<
+				"\" into images table, " << img.data.data.size() <<
 				" bytes, ID " << res.insert_id() << endl;
 	}
 	catch (const BadQuery& er) {

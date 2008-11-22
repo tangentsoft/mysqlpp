@@ -68,133 +68,134 @@ const mysql_type_info::sql_type_info mysql_type_info::types[] = {
 	sql_type_info("TINYINT UNSIGNED NOT NULL", typeid(sql_tinyint_unsigned),
 			MYSQL_TYPE_TINY, mysql_ti_sql_type_info::tf_default |
 			mysql_ti_sql_type_info::tf_unsigned),
-	sql_type_info("SMALLINT NOT NULL", typeid(sql_smallint), 
+	sql_type_info("SMALLINT NOT NULL", typeid(sql_smallint),
 			MYSQL_TYPE_SHORT, mysql_ti_sql_type_info::tf_default),
-	sql_type_info("SMALLINT UNSIGNED NOT NULL", typeid(sql_smallint_unsigned), 
+	sql_type_info("SMALLINT UNSIGNED NOT NULL", typeid(sql_smallint_unsigned),
 			MYSQL_TYPE_SHORT, mysql_ti_sql_type_info::tf_default |
 			mysql_ti_sql_type_info::tf_unsigned),
-	sql_type_info("INT NOT NULL", typeid(sql_int), 
+	sql_type_info("INT NOT NULL", typeid(sql_int),
 			MYSQL_TYPE_LONG, mysql_ti_sql_type_info::tf_default),
-	sql_type_info("INT UNSIGNED NOT NULL", typeid(sql_int_unsigned), 
+	sql_type_info("INT UNSIGNED NOT NULL", typeid(sql_int_unsigned),
 			MYSQL_TYPE_LONG, mysql_ti_sql_type_info::tf_default |
 			mysql_ti_sql_type_info::tf_unsigned),
-	sql_type_info("FLOAT NOT NULL", typeid(sql_float), 
+	sql_type_info("FLOAT NOT NULL", typeid(sql_float),
 			MYSQL_TYPE_FLOAT, mysql_ti_sql_type_info::tf_default),
-	sql_type_info("DOUBLE NOT NULL", typeid(sql_double), 
+	sql_type_info("DOUBLE NOT NULL", typeid(sql_double),
 			MYSQL_TYPE_DOUBLE, mysql_ti_sql_type_info::tf_default),
 	sql_type_info("NULL NOT NULL", typeid(void),
 			MYSQL_TYPE_NULL, mysql_ti_sql_type_info::tf_default),
-	sql_type_info("TIMESTAMP NOT NULL", typeid(sql_timestamp), 
+	sql_type_info("TIMESTAMP NOT NULL", typeid(sql_timestamp),
 			MYSQL_TYPE_TIMESTAMP),
-	sql_type_info("BIGINT NOT NULL", typeid(sql_bigint), 
+	sql_type_info("BIGINT NOT NULL", typeid(sql_bigint),
 			MYSQL_TYPE_LONGLONG, mysql_ti_sql_type_info::tf_default),
-	sql_type_info("BIGINT UNSIGNED NOT NULL", typeid(sql_bigint_unsigned), 
+	sql_type_info("BIGINT UNSIGNED NOT NULL", typeid(sql_bigint_unsigned),
 			MYSQL_TYPE_LONGLONG, mysql_ti_sql_type_info::tf_default |
 			mysql_ti_sql_type_info::tf_unsigned),
-	sql_type_info("MEDIUMINT NOT NULL", typeid(sql_mediumint), 
+	sql_type_info("MEDIUMINT NOT NULL", typeid(sql_mediumint),
 			MYSQL_TYPE_INT24, mysql_ti_sql_type_info::tf_unsigned),
-	sql_type_info("MEDIUMINT UNSIGNED NOT NULL", typeid(sql_mediumint_unsigned), 
+	sql_type_info("MEDIUMINT UNSIGNED NOT NULL", typeid(sql_mediumint_unsigned),
 			MYSQL_TYPE_INT24, mysql_ti_sql_type_info::tf_unsigned),
-	sql_type_info("DATE NOT NULL", typeid(sql_date), 
+	sql_type_info("DATE NOT NULL", typeid(sql_date),
 			MYSQL_TYPE_DATE, mysql_ti_sql_type_info::tf_default),
-	sql_type_info("TIME NOT NULL", typeid(sql_time), 
+	sql_type_info("TIME NOT NULL", typeid(sql_time),
 			MYSQL_TYPE_TIME, mysql_ti_sql_type_info::tf_default),
-	sql_type_info("DATETIME NOT NULL", typeid(sql_datetime), 
+	sql_type_info("DATETIME NOT NULL", typeid(sql_datetime),
 			MYSQL_TYPE_DATETIME, mysql_ti_sql_type_info::tf_default),
-	sql_type_info("ENUM NOT NULL", typeid(sql_enum), 
+	sql_type_info("ENUM NOT NULL", typeid(sql_enum),
 			MYSQL_TYPE_ENUM, mysql_ti_sql_type_info::tf_default),
-	sql_type_info("SET NOT NULL", typeid(sql_set), 
+	sql_type_info("SET NOT NULL", typeid(sql_set),
 			MYSQL_TYPE_SET, mysql_ti_sql_type_info::tf_default),
-	sql_type_info("TINYBLOB NOT NULL", typeid(sql_tinyblob), 
+	sql_type_info("TINYBLOB NOT NULL", typeid(sql_tinyblob),
 			MYSQL_TYPE_TINY_BLOB),
-	sql_type_info("MEDIUMBLOB NOT NULL", typeid(sql_mediumblob), 
+	sql_type_info("MEDIUMBLOB NOT NULL", typeid(sql_mediumblob),
 			MYSQL_TYPE_MEDIUM_BLOB),
-	sql_type_info("LONGBLOB NOT NULL", typeid(sql_longblob), 
+	sql_type_info("LONGBLOB NOT NULL", typeid(sql_longblob),
 			MYSQL_TYPE_LONG_BLOB),
-	sql_type_info("BLOB NOT NULL", typeid(sql_blob), 
-			MYSQL_TYPE_BLOB),
-	sql_type_info("VARCHAR NOT NULL", typeid(sql_varchar), 
+	sql_type_info("BLOB NOT NULL", typeid(sql_blob),
+			MYSQL_TYPE_BLOB, mysql_ti_sql_type_info::tf_default),
+	sql_type_info("VARCHAR NOT NULL", typeid(sql_varchar),
 			MYSQL_TYPE_VAR_STRING, mysql_ti_sql_type_info::tf_default),
-	sql_type_info("CHAR NOT NULL", typeid(sql_char), 
+	sql_type_info("CHAR NOT NULL", typeid(sql_char),
 			MYSQL_TYPE_STRING),
 
-	sql_type_info("DECIMAL NULL", typeid(Null<sql_decimal>), 
+	sql_type_info("DECIMAL NULL", typeid(Null<sql_decimal>),
 #if MYSQL_VERSION_ID >= 50001
 			MYSQL_TYPE_NEWDECIMAL
 #else
 			MYSQL_TYPE_DECIMAL
 #endif
 			, mysql_ti_sql_type_info::tf_null),
-	sql_type_info("TINYINT NULL", typeid(Null<sql_tinyint>), 
+	sql_type_info("TINYINT NULL", typeid(Null<sql_tinyint>),
 			MYSQL_TYPE_TINY, mysql_ti_sql_type_info::tf_default |
 			mysql_ti_sql_type_info::tf_null),
-	sql_type_info("TINYINT UNSIGNED NULL", typeid(Null<sql_tinyint_unsigned>), 
+	sql_type_info("TINYINT UNSIGNED NULL", typeid(Null<sql_tinyint_unsigned>),
 			MYSQL_TYPE_TINY, mysql_ti_sql_type_info::tf_default |
 			mysql_ti_sql_type_info::tf_null |
 			mysql_ti_sql_type_info::tf_unsigned),
-	sql_type_info("SMALLINT NULL", typeid(Null<sql_smallint>), 
+	sql_type_info("SMALLINT NULL", typeid(Null<sql_smallint>),
 			MYSQL_TYPE_SHORT, mysql_ti_sql_type_info::tf_default |
 			mysql_ti_sql_type_info::tf_null),
-	sql_type_info("SMALLINT UNSIGNED NULL", typeid(Null<sql_smallint_unsigned>), 
+	sql_type_info("SMALLINT UNSIGNED NULL", typeid(Null<sql_smallint_unsigned>),
 			MYSQL_TYPE_SHORT, mysql_ti_sql_type_info::tf_default |
 			mysql_ti_sql_type_info::tf_null |
 			mysql_ti_sql_type_info::tf_unsigned),
-	sql_type_info("INT NULL", typeid(Null<sql_int>), 
+	sql_type_info("INT NULL", typeid(Null<sql_int>),
 			MYSQL_TYPE_LONG, mysql_ti_sql_type_info::tf_default |
 			mysql_ti_sql_type_info::tf_null),
-	sql_type_info("INT UNSIGNED NULL", typeid(Null<sql_int_unsigned>), 
+	sql_type_info("INT UNSIGNED NULL", typeid(Null<sql_int_unsigned>),
 			MYSQL_TYPE_LONG, mysql_ti_sql_type_info::tf_default |
 			mysql_ti_sql_type_info::tf_null |
 			mysql_ti_sql_type_info::tf_unsigned),
-	sql_type_info("FLOAT NULL", typeid(Null<sql_float>), 
+	sql_type_info("FLOAT NULL", typeid(Null<sql_float>),
 			MYSQL_TYPE_FLOAT, mysql_ti_sql_type_info::tf_default |
 			mysql_ti_sql_type_info::tf_null),
-	sql_type_info("DOUBLE NULL", typeid(Null<sql_double>), 
+	sql_type_info("DOUBLE NULL", typeid(Null<sql_double>),
 			MYSQL_TYPE_DOUBLE, mysql_ti_sql_type_info::tf_default |
 			mysql_ti_sql_type_info::tf_null),
-	sql_type_info("NULL NULL", typeid(Null<void>), 
+	sql_type_info("NULL NULL", typeid(Null<void>),
 			MYSQL_TYPE_NULL, mysql_ti_sql_type_info::tf_null),
-	sql_type_info("TIMESTAMP NULL", typeid(Null<sql_timestamp>), 
+	sql_type_info("TIMESTAMP NULL", typeid(Null<sql_timestamp>),
 			MYSQL_TYPE_TIMESTAMP),
-	sql_type_info("BIGINT NULL", typeid(Null<sql_bigint>), 
+	sql_type_info("BIGINT NULL", typeid(Null<sql_bigint>),
 			MYSQL_TYPE_LONGLONG, mysql_ti_sql_type_info::tf_default |
 			mysql_ti_sql_type_info::tf_null),
-	sql_type_info("BIGINT UNSIGNED NULL", typeid(Null<sql_bigint_unsigned>), 
+	sql_type_info("BIGINT UNSIGNED NULL", typeid(Null<sql_bigint_unsigned>),
 			MYSQL_TYPE_LONGLONG, mysql_ti_sql_type_info::tf_default |
 			mysql_ti_sql_type_info::tf_null |
 			mysql_ti_sql_type_info::tf_unsigned),
-	sql_type_info("MEDIUMINT NULL", typeid(Null<sql_mediumint>), 
+	sql_type_info("MEDIUMINT NULL", typeid(Null<sql_mediumint>),
 			MYSQL_TYPE_INT24, mysql_ti_sql_type_info::tf_null),
 	sql_type_info("MEDIUMINT UNSIGNED NULL", typeid(Null<sql_mediumint_unsigned>), 
 			MYSQL_TYPE_INT24, mysql_ti_sql_type_info::tf_null |
 			mysql_ti_sql_type_info::tf_unsigned),
-	sql_type_info("DATE NULL", typeid(Null<sql_date>), 
+	sql_type_info("DATE NULL", typeid(Null<sql_date>),
 			MYSQL_TYPE_DATE, mysql_ti_sql_type_info::tf_default |
 			mysql_ti_sql_type_info::tf_null),
-	sql_type_info("TIME NULL", typeid(Null<sql_time>), 
+	sql_type_info("TIME NULL", typeid(Null<sql_time>),
 			MYSQL_TYPE_TIME, mysql_ti_sql_type_info::tf_default |
 			mysql_ti_sql_type_info::tf_null),
-	sql_type_info("DATETIME NULL", typeid(Null<sql_datetime>), 
+	sql_type_info("DATETIME NULL", typeid(Null<sql_datetime>),
 			MYSQL_TYPE_DATETIME, mysql_ti_sql_type_info::tf_default |
 			mysql_ti_sql_type_info::tf_null),
-	sql_type_info("ENUM NULL", typeid(Null<sql_enum>), 
+	sql_type_info("ENUM NULL", typeid(Null<sql_enum>),
 			MYSQL_TYPE_ENUM, mysql_ti_sql_type_info::tf_default |
 			mysql_ti_sql_type_info::tf_null),
-	sql_type_info("SET NULL", typeid(Null<sql_set>), 
+	sql_type_info("SET NULL", typeid(Null<sql_set>),
 			MYSQL_TYPE_SET, mysql_ti_sql_type_info::tf_default |
 			mysql_ti_sql_type_info::tf_null),
-	sql_type_info("TINYBLOB NULL", typeid(Null<sql_tinyblob>), 
+	sql_type_info("TINYBLOB NULL", typeid(Null<sql_tinyblob>),
 			MYSQL_TYPE_TINY_BLOB, mysql_ti_sql_type_info::tf_null),
-	sql_type_info("MEDIUMBLOB NULL", typeid(Null<sql_mediumblob>), 
+	sql_type_info("MEDIUMBLOB NULL", typeid(Null<sql_mediumblob>),
 			MYSQL_TYPE_MEDIUM_BLOB, mysql_ti_sql_type_info::tf_null),
-	sql_type_info("LONGBLOB NULL", typeid(Null<sql_longblob>), 
+	sql_type_info("LONGBLOB NULL", typeid(Null<sql_longblob>),
 			MYSQL_TYPE_LONG_BLOB, mysql_ti_sql_type_info::tf_null),
-	sql_type_info("BLOB NULL", typeid(Null<sql_blob>), 
-			MYSQL_TYPE_BLOB, mysql_ti_sql_type_info::tf_null),
-	sql_type_info("VARCHAR NULL", typeid(Null<sql_varchar>), 
+	sql_type_info("BLOB NULL", typeid(Null<sql_blob>),
+			MYSQL_TYPE_BLOB, mysql_ti_sql_type_info::tf_default |
+			mysql_ti_sql_type_info::tf_null),
+	sql_type_info("VARCHAR NULL", typeid(Null<sql_varchar>),
 			MYSQL_TYPE_VAR_STRING, mysql_ti_sql_type_info::tf_default |
 			mysql_ti_sql_type_info::tf_null),
-	sql_type_info("CHAR NULL", typeid(Null<sql_char>), 
+	sql_type_info("CHAR NULL", typeid(Null<sql_char>),
 			MYSQL_TYPE_STRING, mysql_ti_sql_type_info::tf_null)
 };
 
@@ -221,7 +222,7 @@ mysql_ti_sql_type_info_lookup::mysql_ti_sql_type_info_lookup(
 #endif // !defined(DOXYGEN_IGNORE)
 
 unsigned char mysql_type_info::type(enum_field_types t,
-		bool _unsigned, bool _null) 
+		bool _unsigned, bool _null)
 {
 	for (unsigned char i = 0; i < num_types; ++i) {
 		if ((types[i].base_type_ == t) &&
@@ -241,6 +242,11 @@ bool mysql_type_info::quote_q() const
 			ti == typeid(sql_date) ||
 			ti == typeid(sql_time) ||
 			ti == typeid(sql_datetime) ||
+			ti == typeid(sql_blob) ||
+			ti == typeid(sql_tinyblob) ||
+			ti == typeid(sql_mediumblob) ||
+			ti == typeid(sql_longblob) ||
+			ti == typeid(sql_char) ||
 			ti == typeid(sql_set);
 }
 

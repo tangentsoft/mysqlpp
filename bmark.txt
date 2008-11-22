@@ -181,3 +181,13 @@ Custom query:
 select * from stock where weight = 1.5 and price = 8.7899999999999991
 ================ END ssqls5 OUTPUT ================
 
+---------------- BEGIN load_jpeg OUTPUT ----------------
+Inserted "NULL" into images table, 0 bytes, ID 1
+================ END load_jpeg OUTPUT ================
+
+---------------- BEGIN cgi_jpeg OUTPUT ----------------
+Content-type: text/plain
+
+No image content!
+================ END cgi_jpeg OUTPUT ================
+

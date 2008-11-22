@@ -1,6 +1,6 @@
 /***********************************************************************
  tquery2.cpp - Same as tquery1.cpp, except that it passes the template
-    query parameters in a SQLQueryParms object, instead of separately.
+	query parameters in a SQLQueryParms object, instead of separately.
 	This is useful when the calling code doesn't know in advance how
 	many parameters there will be.  This is most likely because the
 	templates are coming from somewhere else, or being generated.
@@ -39,7 +39,7 @@ int
 main(int argc, char *argv[])
 {
 	// Get database access parameters from command line
-    const char* db = 0, *server = 0, *user = 0, *pass = "";
+	const char* db = 0, *server = 0, *user = 0, *pass = "";
 	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
 		return 1;
 	}

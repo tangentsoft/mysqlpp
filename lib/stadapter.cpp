@@ -67,15 +67,24 @@ buffer_(new SQLBuffer(str.is_null ? null_str : str.data,
 is_processed_(processed)
 {
 }
+
+SQLTypeAdapter::SQLTypeAdapter(const Null<String>& str, bool processed) :
+buffer_(new SQLBuffer(
+		str.is_null ? null_str.c_str() : str.data.data(),
+		str.is_null ? null_str.length() : str.data.length(),
+		str.is_null ? typeid(void) : typeid(str.data), str.is_null)),
+is_processed_(processed)
+{
+}
 #endif
 
-SQLTypeAdapter::SQLTypeAdapter(const char* str, bool processed) : 
+SQLTypeAdapter::SQLTypeAdapter(const char* str, bool processed) :
 buffer_(new SQLBuffer(str, strlen(str), mysql_type_info::string_type, false)),
 is_processed_(processed)
 {
 }
 
-SQLTypeAdapter::SQLTypeAdapter(const char* str, int len, bool processed) : 
+SQLTypeAdapter::SQLTypeAdapter(const char* str, int len, bool processed) :
 buffer_(new SQLBuffer(str, len, mysql_type_info::string_type, false)),
 is_processed_(processed)
 {
@@ -233,7 +242,7 @@ is_processed_(false)
 
 SQLTypeAdapter::SQLTypeAdapter(ulonglong i) :
 buffer_(new SQLBuffer(stream2string(i), typeid(i), false)),
-is_processed_(false) 
+is_processed_(false)
 {
 }
 
@@ -241,7 +250,7 @@ is_processed_(false)
 SQLTypeAdapter::SQLTypeAdapter(Null<ulonglong> i) :
 buffer_(new SQLBuffer(i.is_null ? null_str : stream2string(i),
 		i.is_null ? typeid(void) : typeid(i.data), i.is_null)),
-is_processed_(false) 
+is_processed_(false)
 {
 }
 #endif
@@ -298,7 +307,7 @@ is_processed_(false)
 
 SQLTypeAdapter::SQLTypeAdapter(const Date& d) :
 buffer_(new SQLBuffer(stream2string(d), typeid(d), false)),
-is_processed_(false) 
+is_processed_(false)
 {
 }
 
@@ -306,14 +315,14 @@ is_processed_(false)
 SQLTypeAdapter::SQLTypeAdapter(const Null<Date>& d) :
 buffer_(new SQLBuffer(d.is_null ? null_str : stream2string(d),
 		d.is_null ? typeid(void) : typeid(d.data), d.is_null)),
-is_processed_(false) 
+is_processed_(false)
 {
 }
 #endif
 
 SQLTypeAdapter::SQLTypeAdapter(const DateTime& dt) :
 buffer_(new SQLBuffer(stream2string(dt), typeid(dt), false)),
-is_processed_(false) 
+is_processed_(false)
 {
 }
 
@@ -321,14 +330,14 @@ is_processed_(false)
 SQLTypeAdapter::SQLTypeAdapter(const Null<DateTime>& dt) :
 buffer_(new SQLBuffer(dt.is_null ? null_str : stream2string(dt),
 		dt.is_null ? typeid(void) : typeid(dt.data), dt.is_null)),
-is_processed_(false) 
+is_processed_(false)
 {
 }
 #endif
 
 SQLTypeAdapter::SQLTypeAdapter(const Time& t) :
 buffer_(new SQLBuffer(stream2string(t), typeid(t), false)),
-is_processed_(false) 
+is_processed_(false)
 {
 }
 
@@ -336,7 +345,7 @@ is_processed_(false)
 SQLTypeAdapter::SQLTypeAdapter(const Null<Time>& t) :
 buffer_(new SQLBuffer(t.is_null ? null_str : stream2string(t),
 		t.is_null ? typeid(void) : typeid(t.data), t.is_null)),
-is_processed_(false) 
+is_processed_(false)
 {
 }
 #endif
@@ -369,7 +378,7 @@ SQLTypeAdapter::assign(const char* pc, int len)
 
 SQLTypeAdapter&
 SQLTypeAdapter::assign(const null_type&)
-{ 
+{
 	buffer_ = new SQLBuffer(null_str, typeid(void), true);
 	is_processed_ = false;
 	return *this;
@@ -383,11 +392,12 @@ SQLTypeAdapter::at(size_type i) const throw(std::out_of_range)
 			return *(buffer_->data() + i);
 		}
 		else {
-			throw out_of_range("Not enough chars in SQLTypeAdapter");
+			throw BadIndex("Not enough chars in SQLTypeAdapter", i,
+					length());
 		}
 	}
 	else {
-		throw out_of_range("SQLTypeAdapter buffer not initialized");
+		throw BadIndex("SQLTypeAdapter buffer not initialized", i, -1);
 	}
 }
 
@@ -409,7 +419,7 @@ SQLTypeAdapter::compare(const std::string& other) const
 }
 
 int
-SQLTypeAdapter::compare(size_type pos, size_type num, 
+SQLTypeAdapter::compare(size_type pos, size_type num,
 		std::string& other) const
 {
 	return compare(pos, num, other.data());
@@ -462,7 +472,7 @@ SQLTypeAdapter::operator =(const SQLTypeAdapter& rhs)
 
 SQLTypeAdapter&
 SQLTypeAdapter::operator =(const null_type& n)
-{ 
+{
 	return assign(n);
 }
 

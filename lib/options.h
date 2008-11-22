@@ -421,12 +421,12 @@ public:
 	/// \param ca the pathname to the certificate authority file
 	/// \param capath directory that contains trusted SSL CA
 	///        certificates in pem format.
-    /// \param cipher list of allowable ciphers to use
+	/// \param cipher list of allowable ciphers to use
 	///
 	/// This option replaces \c Connection::enable_ssl() from MySQL++
 	/// version 2.  Now you can set this connection option just like any
 	/// other.
- 	SslOption(const char* key = 0, const char* cert = 0,
+	SslOption(const char* key = 0, const char* cert = 0,
 			const char* ca = 0, const char* capath = 0,
 			const char* cipher = 0)
 	{

@@ -37,7 +37,7 @@ int
 main(int argc, char *argv[])
 {
 	// Get database access parameters from command line
-    const char* db = 0, *server = 0, *user = 0, *pass = "";
+	const char* db = 0, *server = 0, *user = 0, *pass = "";
 	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
 		return 1;
 	}
@@ -48,8 +48,8 @@ main(int argc, char *argv[])
 
 		// Build a query to retrieve the stock item that has Unicode
 		// characters encoded in UTF-8 form.
-		mysqlpp::Query query = con.query(
-				"select * from stock where item = \"Nürnberger Brats\"");
+		mysqlpp::Query query = con.query("select * from stock ");
+		query << "where item = " << mysqlpp::quote << "Nürnberger Brats";
 
 		// Retrieve the row, throwing an exception if it fails.
 		mysqlpp::StoreQueryResult res = query.store();
@@ -84,7 +84,7 @@ main(int argc, char *argv[])
 		query.execute();
 
 		// Retrieve and print out the new table contents.
-        print_stock_table(query);
+		print_stock_table(query);
 	}
 	catch (const mysqlpp::BadQuery& er) {
 		// Handle any query errors

@@ -168,8 +168,8 @@ DBDriver::set_option(unsigned int o, bool arg)
 		n >>= 1;
 	}
 	
-	if ((n == 1) && 
-			(o >= CLIENT_LONG_PASSWORD) && 
+	if ((n == 1) &&
+			(o >= CLIENT_LONG_PASSWORD) &&
 #if MYSQL_VERSION_ID > 40000	// highest flag value varies by version
 			(o <= CLIENT_MULTI_RESULTS)
 #else

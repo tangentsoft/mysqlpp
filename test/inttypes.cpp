@@ -1,6 +1,6 @@
 /***********************************************************************
  test/inttypes.cpp - Tests whether the integer typedef equivalents for
-    SQL types in lib/sql_types.h are correct on this system.  If not,
+	SQL types in lib/sql_types.h are correct on this system.  If not,
 	you need to change either that file, lib/common.h, or both.
 
  Copyright (c) 2008 by Educational Technology Resources, Inc.

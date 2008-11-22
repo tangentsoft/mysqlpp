@@ -38,7 +38,7 @@ char
 String::at(size_type pos) const
 {
 	if (pos >= size()) {
-		throw std::out_of_range("String");
+		throw BadIndex("String", pos, size());
 	}
 	else {
 		return buffer_->data()[pos];
@@ -50,7 +50,7 @@ int
 String::compare(const String& other) const
 {
 	if (other.buffer_) {
-		return compare(0, std::max(length(), other.length()), 
+		return compare(0, std::max(length(), other.length()),
 				other.buffer_->data());
 	}
 	else {
@@ -146,7 +146,7 @@ template <>
 Time
 String::conv(Time) const
 {
-	return buffer_ ? Time(c_str()) : Time(); 
+	return buffer_ ? Time(c_str()) : Time();
 }
 
 #endif // !defined(DOXYGEN_IGNORE)
@@ -219,12 +219,6 @@ String::to_string(std::string& s) const
 	}
 }
 
-
-char
-String::operator [](size_type pos) const
-{
-	return buffer_ ? buffer_->data()[pos] : 0;
-}
 
 /// \brief Stream insertion operator for String objects
 ///

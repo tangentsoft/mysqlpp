@@ -43,7 +43,7 @@ SQLBuffer::assign(const char* data, size_type length, mysql_type_info type,
 	return *this;
 }
 
-SQLBuffer& 
+SQLBuffer&
 SQLBuffer::assign(const std::string& s, mysql_type_info type, bool is_null)
 {
 	replace_buffer(s.data(), s.length());

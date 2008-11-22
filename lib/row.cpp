@@ -62,6 +62,18 @@ initialized_(false)
 }
 
 
+Row::const_reference
+Row::at(size_type i) const
+{
+	if (i < size()) {
+		return data_[i];
+	}
+	else {
+		throw BadIndex("Row", i, size());
+	}
+}
+
+
 equal_list_ba<FieldNames, Row, quote_type0>
 Row::equal_list(const char* d, const char* e) const
 {
@@ -72,7 +84,7 @@ Row::equal_list(const char* d, const char* e) const
 
 template <class Manip>
 equal_list_ba<FieldNames, Row, Manip>
-Row::equal_list(const char* d, const char* e, Manip m) const 
+Row::equal_list(const char* d, const char* e, Manip m) const
 {
 	return equal_list_ba<FieldNames, Row, Manip>(
 			*field_names_, *this, d, e, m);
@@ -163,13 +175,11 @@ Row::field_num(const char* name) const
 	if (field_names_) {
 		return (*field_names_)[name];
 	}
+	else if (throw_exceptions()) {
+		throw BadFieldName(name);
+	}
 	else {
-		if (throw_exceptions()) {
-			throw BadFieldName(name);
-		}
-		else {
-			return 0;
-		}
+		return 0;
 	}
 }
 
@@ -181,14 +191,12 @@ Row::operator [](const char* field) const
 	if (si < size()) {
 		return at(si);
 	}
+	else if (throw_exceptions()) {
+		throw BadFieldName(field);
+	}
 	else {
-		if (throw_exceptions()) {
-			throw BadFieldName(field);
-		}
-		else {
-			static value_type empty;
-			return empty;
-		}
+		static value_type empty;
+		return empty;
 	}
 }
 

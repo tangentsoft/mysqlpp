@@ -27,21 +27,26 @@
  USA
 ***********************************************************************/
 
-#include <mysql++.h>
-#include <ssqls.h>
+#include "cmdline.h"
+#include "images.h"
 
-#define IMG_DATABASE	"mysql_cpp_data"
-#define IMG_HOST		"localhost"
-#define IMG_USER		"root"
-#define IMG_PASSWORD 	"nunyabinness"
+#define CRLF			"\r\n"
+#define CRLF2			"\r\n\r\n"
 
-sql_create_2(images,
-	1, 2,
-	mysqlpp::sql_int_unsigned, id,
-	mysqlpp::sql_blob, data)
-
-int main()
+int
+main(int argc, char* argv[])
 {
+	// Get database access parameters from command line if present, else
+	// use hard-coded values for true CGI case.
+    const char* db = "mysql_cpp_data";
+	const char* server = "localhost";
+	const char* user = "root";
+	const char* pass = "nunyabinness";
+	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
+		return 1;
+	}
+
+	// Parse CGI query string environment variable to get image ID
 	unsigned int img_id = 0;
 	char* cgi_query = getenv("QUERY_STRING");
 	if (cgi_query) {
@@ -71,33 +76,41 @@ int main()
 		return 1;
 	}
 
+	// Retrieve image from DB by ID
 	try {
-		mysqlpp::Connection con(IMG_DATABASE, IMG_HOST, IMG_USER,
-				IMG_PASSWORD);
+		mysqlpp::Connection con(db, server, user, pass);
 		mysqlpp::Query query = con.query();
 		query << "SELECT * FROM images WHERE id = " << img_id;
-		mysqlpp::UseQueryResult res = query.use();
-		if (res) {
-			images img = res.fetch_row();
-			std::cout << "Content-type: image/jpeg" << std::endl;
-			std::cout << "Content-length: " << img.data.length() << "\n\n";
-			std::cout << img.data;
+		mysqlpp::StoreQueryResult res = query.store();
+		if (res && res.num_rows()) {
+			images img = res[0];
+			if (img.data.is_null) {
+				std::cout << "Content-type: text/plain" << CRLF2;
+				std::cout << "No image content!" << CRLF;
+			}
+			else {
+				std::cout << "X-Image-Id: " << img_id << CRLF; // for debugging
+				std::cout << "Content-type: image/jpeg" << CRLF;
+				std::cout << "Content-length: " <<
+						img.data.data.length() << CRLF2;
+				std::cout << img.data;
+			}
 		}
 		else {
-			std::cout << "Content-type: text/plain" << std::endl << std::endl;
-			std::cout << "ERROR: No such image with ID " << img_id << std::endl;
+			std::cout << "Content-type: text/plain" << CRLF2;
+			std::cout << "ERROR: No image with ID " << img_id << CRLF;
 		}
 	}
 	catch (const mysqlpp::BadQuery& er) {
 		// Handle any query errors
-		std::cout << "Content-type: text/plain" << std::endl << std::endl;
-		std::cout << "QUERY ERROR: " << er.what() << std::endl;
+		std::cout << "Content-type: text/plain" << CRLF2;
+		std::cout << "QUERY ERROR: " << er.what() << CRLF;
 		return 1;
 	}
 	catch (const mysqlpp::Exception& er) {
 		// Catch-all for any other MySQL++ exceptions
-		std::cout << "Content-type: text/plain" << std::endl << std::endl;
-		std::cout << "GENERAL ERROR: " << er.what() << std::endl;
+		std::cout << "Content-type: text/plain" << CRLF2;
+		std::cout << "GENERAL ERROR: " << er.what() << CRLF;
 		return 1;
 	}
 

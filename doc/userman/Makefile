@@ -38,7 +38,7 @@ pdf: $(PDFFILE)
 all: html pdf
 
 clean:
-	rm -f tags *.fo $(HTML_DIR)/*.html *.log *.out *.pdf *.txt
+	@rm -f tags *.fo $(HTML_DIR)/*.html *.log *.out *.pdf $(EX_TXT)
 
 
 ## ------------------------

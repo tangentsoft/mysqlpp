@@ -1,6 +1,6 @@
 /***********************************************************************
  result.cpp - Implements the ResultBase, StoreQueryResult and
- 	UseQuery Result classes.
+	UseQuery Result classes.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
  (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
@@ -85,11 +85,11 @@ ResultBase::field_num(const std::string& i) const
 	size_t index = (*names_)[i];
 	if ((index >= names_->size()) && throw_exceptions()) {
 		if (throw_exceptions()) {
-            throw BadFieldName(i.c_str());
-        }
-        else {
-            return -1;
-        }
+			throw BadFieldName(i.c_str());
+		}
+		else {
+			return -1;
+		}
 	}
 	
 	return int(index);

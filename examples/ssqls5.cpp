@@ -1,7 +1,7 @@
 /***********************************************************************
  ssqls5.cpp - Example showing how to use the equal_list() member of
- 	some SSQLS types to build SELECT queries with custom WHERE clauses.
- 
+	some SSQLS types to build SELECT queries with custom WHERE clauses.
+
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, (c)
  2004-2008 by Educational Technology Resources, Inc., and (c) 2005 by
  Chris Frey.  Others may also hold copyrights on code in this file.
@@ -39,7 +39,7 @@ int
 main(int argc, char *argv[])
 {
 	// Get database access parameters from command line
-    const char* db = 0, *server = 0, *user = 0, *pass = "";
+	const char* db = 0, *server = 0, *user = 0, *pass = "";
 	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
 		return 1;
 	}

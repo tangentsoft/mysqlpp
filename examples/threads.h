@@ -43,6 +43,9 @@
 	static void sleep(int s) { Sleep(s * 1000); }
 #else
 #	include "../config.h"
+#	if defined(HAVE_UNISTD_H)
+#		include <unistd.h>
+#	endif
 #	if defined(HAVE_PTHREAD)
 #		define HAVE_THREADS
 #		define CALLBACK_SPECIFIER

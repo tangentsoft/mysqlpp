@@ -256,7 +256,7 @@ public:
 			mysql_type_info type = mysql_type_info::string_type,
 			bool is_null = false)
 	{
-		buffer_ = new SQLBuffer(str.data(), 
+		buffer_ = new SQLBuffer(str.data(),
 				static_cast<size_type>(str.length()), type, is_null);
 	}
 
@@ -276,8 +276,8 @@ public:
 
 	/// \brief Return a character within the string.
 	///
-	/// Unlike \c operator[](), this function throws an 
-	/// \c std::out_of_range exception if the index isn't within range.
+	/// \throw mysqlpp::BadIndex if the row is not initialized or there
+	/// are less than \c i fields in the row.
 	char at(size_type pos) const;
 
 	/// \brief Return iterator pointing to the first character of
@@ -371,6 +371,9 @@ public:
 	/// \brief Raw access to the underlying buffer, with no C string
 	/// interpretation.
 	const char* data() const;
+
+	/// \brief Returns true if size() == 0
+	bool empty() const { return size() == 0; }
 	
 	/// \brief Return iterator pointing to one past the last character
 	/// of the string.
@@ -387,13 +390,13 @@ public:
 	void it_is_null();
 
 	/// \brief Return number of bytes in the string
-    ///
-    /// Note that this doesn't count the number of \b characters in the
-    /// string.  If your database is configured to use an 8-bit character
-    /// set, this is a distinction without a difference.  But, if you're
-    /// using UTF-8 in the database, you will need to "widen" the UTF-8
-    /// data to use a fixed-size character set like UCS-2 and count the
-    /// characters that way.  You might use std::wstring, for example.
+	///
+	/// Note that this doesn't count the number of \b characters in the
+	/// string.  If your database is configured to use an 8-bit character
+	/// set, this is a distinction without a difference.  But, if you're
+	/// using UTF-8 in the database, you will need to "widen" the UTF-8
+	/// data to use a fixed-size character set like UCS-2 and count the
+	/// characters that way.  You might use std::wstring, for example.
 	size_type length() const;
 	
 	/// \brief Return the maximum number of characters in the string.
@@ -408,29 +411,29 @@ public:
 	bool quote_q() const;
 
 	/// \brief Return number of bytes in string
-    ///
-    /// See commentary for length() about the difference between bytes
-    /// and characters.
+	///
+	/// See commentary for length() about the difference between bytes
+	/// and characters.
 	size_type size() const { return length(); }
 	
-    /// \brief Returns a copy of our internal string without leading
-    /// blanks.
-    void strip_leading_blanks(std::string& s) const
-    {
-        const char* pc = data();
-        if (pc) {
-            size_type n = length();
-            while (n && (*pc == ' ')) {
-                ++pc;
-                --n;
-            }
+	/// \brief Returns a copy of our internal string without leading
+	/// blanks.
+	void strip_leading_blanks(std::string& s) const
+	{
+		const char* pc = data();
+		if (pc) {
+			size_type n = length();
+			while (n && (*pc == ' ')) {
+				++pc;
+				--n;
+			}
 
-            s.assign(pc, n);
-        }
-        else {
-            s.clear();
-        }
-    }
+			s.assign(pc, n);
+		}
+		else {
+			s.clear();
+		}
+	}
 
 	/// \brief Copies this object's data into a C++ string.
 	///
@@ -450,7 +453,7 @@ public:
 	/// \brief Assignment operator, from C++ string
 	String& operator =(const std::string& rhs)
 	{
-		buffer_ = new SQLBuffer(rhs.data(), 
+		buffer_ = new SQLBuffer(rhs.data(),
 				static_cast<size_type>(rhs.length()),
 				mysql_type_info::string_type, false);
 
@@ -463,7 +466,7 @@ public:
 	/// the pointer.
 	String& operator =(const char* str)
 	{
-		buffer_ = new SQLBuffer(str, 
+		buffer_ = new SQLBuffer(str,
 				static_cast<size_type>(strlen(str)),
 				mysql_type_info::string_type, false);
 
@@ -520,9 +523,11 @@ public:
 
 	/// \brief Return a character within the string.
 	///
-	/// Unlike at(), this access method doesn't check the index for
-	/// sanity.
-	char operator [](size_type pos) const;
+	/// This function is just syntactic sugar, wrapping the at() method.
+	///
+	/// \throw mysqlpp::BadIndex if the string is not initialized or there
+	/// are less than \c i fields in the string.
+	char operator [](size_type pos) const { return at(pos); }
 
 	/// \brief Returns a const char pointer to the object's raw data
 	operator const char*() const { return data(); }
@@ -666,19 +671,19 @@ MYSQLPP_EXPORT std::ostream& operator <<(std::ostream& o,
 			{ return x opr static_cast<conv>(y); }
 
 #define operator_binary(other, conv) \
-  oprsw(+, other, conv) \
-  oprsw(-, other, conv) \
-  oprsw(*, other, conv) \
-  oprsw(/, other, conv)
+	oprsw(+, other, conv) \
+	oprsw(-, other, conv) \
+	oprsw(*, other, conv) \
+	oprsw(/, other, conv)
 
 #define operator_binary_int(other, conv) \
-  operator_binary(other, conv) \
-  oprsw(%, other, conv) \
-  oprsw(&, other, conv) \
-  oprsw(^, other, conv) \
-  oprsw(|, other, conv) \
-  oprsw(<<, other, conv) \
-  oprsw(>>, other, conv)
+	operator_binary(other, conv) \
+	oprsw(%, other, conv) \
+	oprsw(&, other, conv) \
+	oprsw(^, other, conv) \
+	oprsw(|, other, conv) \
+	oprsw(<<, other, conv) \
+	oprsw(>>, other, conv)
 
 // Squish more complaints about possible loss of data
 #if defined(MYSQLPP_PLATFORM_VISUAL_CPP)

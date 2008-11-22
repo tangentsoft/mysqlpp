@@ -1,6 +1,6 @@
 /***********************************************************************
  ssqls2.cpp - Example showing how to insert a row using the Specialized
- 	SQL Structures feature of MySQL++.
+	SQL Structures feature of MySQL++.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
  (c) 2004-2008 by Educational Technology Resources, Inc.  Others may
@@ -37,7 +37,7 @@ int
 main(int argc, char *argv[])
 {
 	// Get database access parameters from command line
-    const char* db = 0, *server = 0, *user = 0, *pass = "";
+	const char* db = 0, *server = 0, *user = 0, *pass = "";
 	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
 		return 1;
 	}
@@ -64,7 +64,7 @@ main(int argc, char *argv[])
 		query.execute();
 
 		// Retrieve and print out the new table contents.
-        print_stock_table(query);
+		print_stock_table(query);
 	}
 	catch (const mysqlpp::BadQuery& er) {
 		// Handle any query errors

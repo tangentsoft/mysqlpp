@@ -1,6 +1,6 @@
 /***********************************************************************
  resetdb.cpp - (Re)initializes the example database, mysql_cpp_data.
- 	You must run this at least once before running most of the other
+	You must run this at least once before running most of the other
 	examples, and it is helpful sometimes to run it again, as some of
 	the examples modify the table in this database.
 
@@ -73,7 +73,7 @@ main(int argc, char *argv[])
 	}
 	
 	// Connect to database server
-    const char *server = 0, *user = 0, *pass = "";
+	const char *server = 0, *user = 0, *pass = "";
 	mysqlpp::Connection con;
 	try {
 		if (parse_command_line(argc, argv, 0, &server, &user, &pass)) {
@@ -147,7 +147,7 @@ main(int argc, char *argv[])
 		// call tells the query object that this is a template and
 		// not a literal query string.
 		query << "insert into %6:table values " <<
-                "(%0q, %1q, %2, %3, %4q, %5q:desc)";
+				"(%0q, %1q, %2, %3, %4q, %5q:desc)";
 		query.parse();
 
 		// Set a default for template query parameters "table" and "desc".
@@ -163,7 +163,7 @@ main(int argc, char *argv[])
 		query.execute("Nürnberger Brats", 97, 1.5, 8.79, "2005-03-10");
 		query.execute("Pickle Relish", 87, 1.5, 1.75, "1998-09-04");
 		query.execute("Hot Mustard", 73, .95, .97, "1998-05-25",
-                "good American yellow mustard, not that European stuff");
+				"good American yellow mustard, not that European stuff");
 		query.execute("Hotdog Buns", 65, 1.1, 1.1, "1998-04-23");
 
 		// Test that above did what we wanted.
@@ -175,7 +175,7 @@ main(int argc, char *argv[])
 		query.reset();		// forget template query info
 		query << 
 				"CREATE TABLE images (" <<
-				"  id INT UNSIGNED NOT NULL AUTO_INCREMENT, " <<
+				"  id INT UNSIGNED AUTO_INCREMENT, " <<
 				"  data BLOB, " <<
 				"  PRIMARY KEY (id)" <<
 				")";

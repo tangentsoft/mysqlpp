@@ -366,8 +366,8 @@ Connection::thread_end()
 }
 
 
-unsigned long 
-Connection::thread_id() 
+unsigned long
+Connection::thread_id()
 {
 	return driver_->thread_id();
 }

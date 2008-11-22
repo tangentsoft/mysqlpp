@@ -1,31 +1,23 @@
 Prerequisite: Build MySQL
 ~~~~~~~~~~~~~~~~~~~~~~~~~
     Before you can build MySQL++, you need to build the MySQL client
-    library from source.  This is necessary because Cygwin programs
-    work best when linked to Cygwin libraries, even though it's
-    possible to link to some native Windows libraries.  You do not
-    need to build a Cygwin version of the MySQL server; it's still
-    best to use the native Windows version of that.
+    library from source.  You're welcome to try linking MySQL++ to the
+	native MySQL client libraries instead, but if you have problems with
+	it, don't expect any support on the mailing list.
+	
+	You do not need to build a Cygwin version of the MySQL server.  It's
+	still best to use the native Windows version of that.
 
-    The MySQL client library does not build correctly out of the box.
-    The best instructions I've found covering the necessary changes
-    are here:
+    Older versions of MySQL do not build cleanly out of the box on
+    Cygwin.  This has been fixed recently.  I tested these instructions
+    on 5.0.67, with a contemporaneous version of Cygwin 1.5.x.
 
-        http://cygwin.com/ml/cygwin/2004-11/msg00159.html
+    You can build it with the standard configure && make && make install
+    sequence, but a better configure command for this purpose is:
 
-    I recommend that you use MySQL v4.1.x at this time.  Skip the
-    step changing the pthread stuff in my_thr_init.c, as this change
-    has already been made in recent versions of MySQL.
-
-    With the changes applied, build and install the client library
-    like so:
-
-    $ autoreconf --install --verbose --force
     $ ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var \
         --infodir=/usr/share/info --mandir=/usr/share/man \
         --disable-shared --without-{debug,readline,libedit,server}
-    $ make
-    $ make install
 
 
 Building the Library and Example Programs

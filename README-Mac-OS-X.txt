@@ -39,23 +39,37 @@ Prerequisite: Install the MySQL Development Files
 
 Making Universal Binaries
 ~~~~~~~~~~~~~~~~~~~~~~~~~
-    The command line build system will generate libraries that
-    only work with the platform you build MySQL++ on.  If you need
-    to generate a libmysqlpp that works on both Intel and PowerPC
-    machines, something like this may work:
+    By default, the command line build system will generate libraries
+    that only work with the platform you build MySQL++ on.  It can be
+    convinced to build "universal" binaries instead by configuring
+    the library like so:
 
-    $ ./configure CXXFLAGS='-arch ppc -arch i386' --disable-dependency-tracking
+    $ ./configure --disable-dependency-tracking \
+            CXXFLAGS='-arch ppc -arch i386'
 
-    This is untested with MySQL++ in particular, but it's said to work
-    with other projects.
+    This builds the library for the two 32-bit OS X architectures, and
+    is what most people have traditionally thought of as "universal".
+    However, you may also want a 64-bit build, meaning there are four
+    different architectures, and thus four -arch flags needed:
 
-    Note that with Tiger -- and to a greater extent, Leopard --
-    there are really *four* architectures, not two: you have 32-bit
-    and 64-bit versions of both PowerPC and Intel.  I'm not sure
-    exactly how you'd modify the command above to make a library that
-    supports all four, but I'll take a wild guess and say you'll need
-    four -arch flags.  Or, you can just avoid the command line build
-    system, and do it in...
+    $ ./configure --disable-dependency-tracking \
+            CXXFLAGS='-arch ppc -arch ppc64 -arch i386 -arch x86_64'
+
+    These are single commands, with the line broken to keep the line
+    lengths in this document reasonable.
+
+    The first command doubles build time relative to the default
+    configuration, and the second quadruples it.  It also makes the
+    resulting binaries larger, which increases the amount of time
+    it takes to start a program.  Build MySQL++ like this only if
+    you must.
+
+    The --disable-dependency-tracking flag is necessary because,
+    when building universal binaries, it has to rebuild each source
+    module multiple times, which confuses the logic that tries to tell
+    when a given module needs rebuiding based on its dependencies on
+    other files.
+
 
 Xcode
 ~~~~~

@@ -68,16 +68,16 @@ show_mysql_version(mysqlpp::Connection& con)
 static void
 show_databases(mysqlpp::Connection& con)
 {
-    mysqlpp::Query query = con.query("show databases");
+	mysqlpp::Query query = con.query("show databases");
 	separator(cout, query.str());
-    mysqlpp::StoreQueryResult res = query.store();
+	mysqlpp::StoreQueryResult res = query.store();
 
-    cout << "Databases found: " << res.size();
-    cout.setf(ios::left);
-    mysqlpp::StoreQueryResult::iterator rit;
-    for (rit = res.begin(); rit != res.end(); ++rit) {
-        cout << "\n\t" << (*rit)[0];
-    }
+	cout << "Databases found: " << res.size();
+	cout.setf(ios::left);
+	mysqlpp::StoreQueryResult::iterator rit;
+	for (rit = res.begin(); rit != res.end(); ++rit) {
+		cout << "\n\t" << (*rit)[0];
+	}
 }
 
 
@@ -140,14 +140,14 @@ show_table_info(mysqlpp::Connection& con, const vector<string>& tables)
 static void
 show_tables(mysqlpp::Connection& con)
 {
-    mysqlpp::Query query = con.query("show tables");
+	mysqlpp::Query query = con.query("show tables");
 	separator(cout, query.str());
 	mysqlpp::StoreQueryResult res = query.store();
 
 	cout << "Tables found: " << res.size();
 	cout.setf(ios::left);
 	vector<string> tables;
-    mysqlpp::StoreQueryResult::iterator rit;
+	mysqlpp::StoreQueryResult::iterator rit;
 	for (rit = res.begin(); rit != res.end(); ++rit) {
 		string tbl((*rit)[0]);
 		cout << "\n\t" << tbl;
@@ -163,7 +163,7 @@ int
 main(int argc, char* argv[])
 {
 	// Get database access parameters from command line
-    const char* db = 0, *server = 0, *user = 0, *pass = "";
+	const char* db = 0, *server = 0, *user = 0, *pass = "";
 	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
 		return 1;
 	}

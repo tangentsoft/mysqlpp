@@ -1,6 +1,6 @@
 /***********************************************************************
  transaction.cpp - Example showing how to use the transaction support in
- 	MySQL++ v2.1 and up.
+	MySQL++ v2.1 and up.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
  (c) 2004-2008 by Educational Technology Resources, Inc.  Others may
@@ -37,7 +37,7 @@ int
 main(int argc, char *argv[])
 {
 	// Get database access parameters from command line
-    const char* db = 0, *server = 0, *user = 0, *pass = "";
+	const char* db = 0, *server = 0, *user = 0, *pass = "";
 	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
 		return 1;
 	}

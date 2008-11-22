@@ -52,13 +52,13 @@ private:
 class TestConnectionPool : public mysqlpp::ConnectionPool
 {
 public:
-    ~TestConnectionPool() { clear(); }
+	~TestConnectionPool() { clear(); }
 
-    unsigned int max_idle_time() { return 1; }
+	unsigned int max_idle_time() { return 1; }
 
 private:
-    TestConnection* create() { return new TestConnection; }
-    void destroy(mysqlpp::Connection* cp) { delete cp; }
+	TestConnection* create() { return new TestConnection; }
+	void destroy(mysqlpp::Connection* cp) { delete cp; }
 };
 
 

@@ -1,6 +1,6 @@
 Platform Variations
 ~~~~~~~~~~~~~~~~~~~
-    This file has instructions that are the same for all Unix variants
+    This file only covers details common to all Unix variants
     supported by MySQL++.  For platform-specific details, see the
     file appropriate to your OS:
 
@@ -9,9 +9,7 @@ Platform Variations
         README-Mac-OS-X.txt
         README-Solaris.txt
 
-    Notable other Unixes supported by MySQL++ are the BSDs and Solaris.
-    As of yet, there are no special instructions for these Unix
-    flavors.
+    There are no special instructions for any other Unix flavors.
 
 
 Building the Library and Example Programs

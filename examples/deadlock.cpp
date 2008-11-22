@@ -1,6 +1,6 @@
 /***********************************************************************
  deadlock.cpp - Demonstrates how MySQL's deadlock detection interacts
- 	with MySQL++'s Transaction class an exception handling mechanism.
+	with MySQL++'s Transaction class an exception handling mechanism.
 	Run one copy of this program with the -m1 command line switch, then
 	while it's waiting for you to press Enter, run another copy with -m2
 	instead.
@@ -45,7 +45,7 @@ int
 main(int argc, char *argv[])
 {
 	// Get database access parameters from command line
-    const char* db = 0, *server = 0, *user = 0, *pass = "";
+	const char* db = 0, *server = 0, *user = 0, *pass = "";
 	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
 		return 1;
 	}
@@ -96,14 +96,14 @@ main(int argc, char *argv[])
 		}
 	}
 	catch (mysqlpp::BadQuery e) {
-        if (e.errnum() == ER_LOCK_DEADLOCK) {
-            cerr << "Transaction deadlock detected!" << endl;
-    		cerr << "Connection::errnum = " << con.errnum() <<
-	    			", BadQuery::errnum = " << e.errnum() << endl;
-        }
-        else {
-    		cerr << "Unexpected query error: " << e.what() << endl;
-        }
+		if (e.errnum() == ER_LOCK_DEADLOCK) {
+			cerr << "Transaction deadlock detected!" << endl;
+			cerr << "Connection::errnum = " << con.errnum() <<
+					", BadQuery::errnum = " << e.errnum() << endl;
+		}
+		else {
+			cerr << "Unexpected query error: " << e.what() << endl;
+		}
 		return 1;
 	}
 	catch (mysqlpp::Exception e) {

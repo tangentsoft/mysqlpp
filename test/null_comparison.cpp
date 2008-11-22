@@ -1,6 +1,6 @@
 /***********************************************************************
  test/null_comparison.cpp - Tests that Null<T> and null_type comparison
- 	operators and SSQLS comparison functions work correctly.
+	operators and SSQLS comparison functions work correctly.
 
  Copyright (c) 2008 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the

@@ -114,7 +114,7 @@ AC_DEFUN([MYSQL_API_LOCATION],
           AC_CHECK_HEADERS(zlib.h, AC_CHECK_LIB(z, gzread, [],
               [ AC_MSG_ERROR([zlib not found]) ]))
           AC_MSG_CHECKING([whether adding -lz will let MySQL C API link succeed])
-          MYSQLPP_EXTRA_LIBS="-lz $MYSQLPP_EXTRA_LIBS"
+          MYSQLPP_EXTRA_LIBS="$MYSQLPP_EXTRA_LIBS -lz"
           LIBS="$save_LIBS -l$MYSQL_C_LIB $MYSQLPP_EXTRA_LIBS"
           AC_TRY_LINK(
               [ #include <mysql.h> ],

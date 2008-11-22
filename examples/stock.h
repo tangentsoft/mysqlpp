@@ -1,6 +1,6 @@
 /***********************************************************************
  stock.h - Declares the stock SSQLS used by several of the examples.
- 
+
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
  (c) 2004-2008 by Educational Technology Resources, Inc.  Others may
  also hold copyrights on code in this file.  See the CREDITS file in

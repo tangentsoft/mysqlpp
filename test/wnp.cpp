@@ -1,6 +1,6 @@
 /***********************************************************************
  test/wnp.cpp - Tests WindowsNamedPipeConnection::is_wnp().  This test
- 	can only fail on Windows!  It succeeds when built for anything else.
+	can only fail on Windows!  It succeeds when built for anything else.
 
  Copyright (c) 2007 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the

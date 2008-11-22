@@ -52,7 +52,7 @@ private:
 	/// conversion operator.
 	///
 	/// \see http://www.artima.com/cppsource/safebool.html
-    typedef bool SimpleResult::*private_bool_type;
+	typedef bool SimpleResult::*private_bool_type;
 
 public:
 	/// \brief Default ctor
@@ -215,7 +215,7 @@ private:
 	/// conversion operator.
 	///
 	/// \see http://www.artima.com/cppsource/safebool.html
-    typedef bool StoreQueryResult::*private_bool_type;
+	typedef bool StoreQueryResult::*private_bool_type;
 
 public:
 	typedef std::vector<Row> list_type;	///< type of vector base class

@@ -1,17 +1,8 @@
 Patches for any of these thoughtfully considered!  See the HACKERS.txt
 file for instructions on sending patches.
 
-
 Any Version
 -----------
-    o Configure script should try to get MySQL C API directories
-      from mysql_config.
-
-    o If pkg-config is available, register ourselves with it using
-      information discovered by configure.  Also, write out a
-      mysql++-config script, which either wraps pkg-config or
-      reinvents it, poorly, for systems that don't have it.
-
     o Any time you must hand-roll some SQL code in your program,
       consider whether it could be generalized to a widely-useful
       API feature.
@@ -39,6 +30,14 @@ v3.1 Tentative Plan
         Do it with an eye toward replacing Query's template methods
         taking SSQLSes with concrete methods taking SsqlsBase&.
 
+      - Instead of equal_list(), value_list(), etc., give SsqlsBase
+        more generic ways to get metadata.  Need to be able to get
+        a list of all column names, a list of just the COMPCOUNT
+        column names, and a list of the names of columns that have
+        been initialized through public setters or a ctor.  Also need
+        similar lists of column values in String or STA form.  Needed
+        to support extensions to Query like select() and delete().
+
       - Add truthiness operator to SSQLS to detect an incompletely-
         populated object?  Or maybe an incomplete() method?
 
@@ -56,6 +55,11 @@ v3.1 Tentative Plan
 
       - Need a way to tag a column as auto-increment so it's left out
         of INSERT queries, but still available for data retrieval.
+
+      - Would be nice if it restored VC++ 2003 compatibility, and
+        allowed removal of 'explicit' from Date, DateTime and Time
+        ctors taking stringish types.  (Can't do the latter for real
+        until v4, but we can lay the ground work here.)
 
     o Chris Frey's packarray class
 
@@ -103,6 +107,20 @@ v3.1 Tentative Plan
       string.  Probably make return type templatized so we can return
       wstring, C++/CLI native strings, etc.  Then convert examples that
       do this conversion to use this new mechanism.
+
+    o Bring back mandatory quoting for manipulators?  If someone says
+      os << mysqlpp::escape << foo; do they not really really mean
+      escape foo?  Automatic quoting and escaping is different.  See
+
+      http://lists.mysql.com/plusplus/7999
+
+    o Configure script should try to get MySQL C API directories
+      from mysql_config.
+
+    o If pkg-config is available, register ourselves with it using
+      information discovered by configure.  Also, write out a
+      mysql++-config script, which either wraps pkg-config or
+      reinvents it, poorly, for systems that don't have it.
 
 
 v4.0 or Later
@@ -170,3 +188,16 @@ v4.0 or Later
       hold wide characters.  Then the method that converts UTF-8 to the
       platform's best wide character type can just return a different
       variant of mysqlpp::String.
+
+    o Add wrapper functions to Null<> like length() that call the
+      corresponding function on data member, if present, to make it
+      more transparent.  At minimum, mirror the std::string API.
+
+    o Transaction class should check an "in transaction" flag on
+      Connection (or DBDriver) before sending BEGIN, defaulting to
+      false.  If set, the Transaction object does nothing.  If not
+      set, set it and send the query.  This prevents it from trying
+      to set up nested queries, which MySQL doesn't support.
+
+    o Remove throw-spec for std::out_of_range from SQLTypeAdapter::at().
+      It no longer throws this, and throw-specs are passee' anyway.

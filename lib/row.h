@@ -3,7 +3,7 @@
 
 /***********************************************************************
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
+ (c) 2004-2008 by Educational Technology Resources, Inc.  Others may
  also hold copyrights on code in this file.  See the CREDITS file in
  the top directory of the distribution for details.
 
@@ -67,7 +67,7 @@ private:
 	/// conversion operator.
 	///
 	/// \see http://www.artima.com/cppsource/safebool.html
-    typedef bool Row::*private_bool_type;
+	typedef bool Row::*private_bool_type;
 
 public:
 	/// \brief type of our internal data list
@@ -142,9 +142,9 @@ public:
 
 	/// \brief Get a const reference to the field given its index
 	///
-	/// If the index value is bad, the underlying std::vector is
-	/// supposed to throw an exception, according to the Standard.
-	const_reference at(size_type i) const { return data_.at(i); }
+	/// \throw mysqlpp::BadIndex if the row is not initialized or there
+	/// are less than \c i fields in the row.
+	const_reference at(size_type i) const;
 
 	/// \brief Get a reference to the last element of the vector
 	const_reference back() const { return data_.back(); }
@@ -307,7 +307,8 @@ public:
 	/// \brief Get the value of a field given its name.
 	///
 	/// If the field does not exist in this row, we throw a BadFieldName
-	/// exception.
+	/// exception if exceptions are enabled, or an empty row if not.
+	/// An empty row tests as false in bool context.
 	///
 	/// This operator is fairly inefficient.  operator[](int) is faster.
 	const_reference operator [](const char* field) const;
@@ -320,6 +321,9 @@ public:
 	/// \c size_type, because it will interfere with the \c const
 	/// \c char* overload otherwise.  row[0] is ambiguous when there
 	/// isn't an int overload.
+	///
+	/// \throw mysqlpp::BadIndex if the row is not initialized or there
+	/// are less than \c i fields in the row.
 	const_reference operator [](int i) const
 			{ return at(static_cast<size_type>(i)); }
 

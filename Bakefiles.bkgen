@@ -6,7 +6,7 @@
 
     <!-- List of output formats to generate: -->
     <add-formats>
-        autoconf,mingw,msvs2003prj,msvs2005prj,xcode2
+        autoconf,mingw,msvs2003prj,msvs2005prj,msvs2008prj,xcode2
     </add-formats>
 
     <add-flags formats="mingw">
@@ -17,5 +17,8 @@
 	</add-flags>
 	<add-flags formats="msvs2005prj">
 		-ovc2005/mysql++.sln
+	</add-flags>
+	<add-flags formats="msvs2008prj">
+		-ovc2008/mysql++.sln
 	</add-flags>
 </bakefile-gen>

@@ -225,21 +225,21 @@ GRANT ALL PRIVILEGES ON mysql_cpp_data.* TO mysqlpp_test@'%';</screen>
     or <classname>std::exception</classname> to act as a
     &ldquo;catch-all&rdquo; for unexpected exceptions.</para>
 
-    <para>It&rsquo;s possible to suppress most MySQL++ exceptions.
-    MySQL++ still signals errors in this state, but it&rsquo;s done by
-    returning an error code or setting an error flag instead of with
-    exceptions. Classes that support this feature derive from the <ulink
-    type="classref" url="OptionalExceptions"/> interface. When an
-    <classname>OptionalExceptions</classname> derivative creates another
-    object that also derives from this interface, it passes on its
-    exception flag. Since everything flows from the <ulink
-    type="classref" url="Connection"/> object, disabling exceptions on
-    it at the start of the program disables all optional exceptions.
-    This is why passing <symbol>false</symbol> for the
+    <para>When exceptions are suppressed, MySQL++ signals errors
+    by returning either an error code or an object that tests
+    as false, or by setting an error flag on the object. Classes
+    that allow you to suppress exceptions derive from the <ulink
+    type="classref" url="OptionalExceptions"/> interface. When
+    an <classname>OptionalExceptions</classname> derivative
+    creates another object that also derives from this interface,
+    it passes on its exception flag. Since everything flows from
+    the <ulink type="classref" url="Connection"/> object, disabling
+    exceptions on it at the start of the program disables all optional
+    exceptions. This is why passing <symbol>false</symbol> for the
     <classname>Connection</classname> constructor&rsquo;s &ldquo;throw
-    exceptions&rdquo; parameter suppresses all optional exceptions in
-    the <filename>simple[1-3]</filename> examples. It keeps them, well,
-    simple.</para>
+    exceptions&rdquo; parameter suppresses all optional exceptions
+    in the <filename>simple[1-3]</filename> examples. It keeps them,
+    well, simple.</para>
 
     <para>This exception suppression mechanism is quite granular.
     It&rsquo;s possible to leave exceptions enabled most of the time,
@@ -279,15 +279,19 @@ GRANT ALL PRIVILEGES ON mysql_cpp_data.* TO mysqlpp_test@'%';</screen>
     <para>MySQL++ throws some exceptions unconditionally:</para>
 
     <itemizedlist>
-      <listitem><para>The largest set of non-optional exceptions are
-      those from the Standard C++ Library. For instance, if your code
-      said &ldquo;<varname>row[21]</varname>&rdquo; on a row containing
-      only 5 fields, the <classname>std::vector</classname> underlying
-      the row object will throw an exception. (It will, that is, if it
-      conforms to the standard.) You might consider wrapping your
-      program&rsquo;s main loop in a try block catching
-      <classname>std::exception</classname>s, just in case you trigger
-      one of these exceptions.</para></listitem>
+      <listitem><para>MySQL++ checks array indices,
+      always.  For instance, if your code said
+      &ldquo;<varname>row[21]</varname>&rdquo; on a
+      row containing only 5 fields, you&rsquo;d get a
+      <classname>BadIndex</classname> exception. If you
+      say &ldquo;<varname>row["fred"]</varname>&rdquo;
+      on a row without a &ldquo;fred&rdquo; field, you get
+      a <classname>BadFieldName</classname> exception. In
+      the past, MySQL++ delegated some of its index checking
+      to the STL containers underpinning it, so you could get
+      <classname>std::range_error</classname> instead. As of MySQL++
+      v3.0.7, this should no longer happen, but there may be instances
+      where it still does.</para></listitem>
 
       <listitem><para><ulink type="classref" url="String"/> will always
       throw <ulink type="classref" url="BadConversion"/> when you ask it

@@ -1,11 +1,9 @@
 /***********************************************************************
- printdata.h - Declares utility routines for printing out data in
-	common forms, used by most of the example programs.
+ images.h - Declares the images table SSQLS.
 
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
- also hold copyrights on code in this file.  See the CREDITS file in
- the top directory of the distribution for details.
+ Copyright (c) 2008 by Educational Technology Resources, Inc.
+ Others may also hold copyrights on code in this file.  See the
+ CREDITS file in the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -25,18 +23,10 @@
  USA
 ***********************************************************************/
 
-#if !defined(MYSQLPP_PRINTDATA_H)
-#define MYSQLPP_PRINTDATA_H
-
 #include <mysql++.h>
+#include <ssqls.h>
 
-void print_stock_header(int rows);
-void print_stock_row(const mysqlpp::Row& r);
-void print_stock_row(const mysqlpp::sql_char& item,
-		mysqlpp::sql_bigint num, mysqlpp::sql_double weight,
-		mysqlpp::sql_decimal price, const mysqlpp::sql_date& date);
-void print_stock_rows(mysqlpp::StoreQueryResult& res);
-void print_stock_table(mysqlpp::Query& query);
-
-#endif // !defined(MYSQLPP_PRINTDATA_H)
-
+sql_create_2(images,
+	1, 2,
+	mysqlpp::Null<mysqlpp::sql_int_unsigned>, id,
+	mysqlpp::Null<mysqlpp::sql_blob>, data)

@@ -1,6 +1,6 @@
 /***********************************************************************
- fieldinf.cpp - Shows how to request information about the fields in a 
-    table, such as their SQL and C++-equivalent types.
+ fieldinf.cpp - Shows how to request information about the fields in a
+	table, such as their SQL and C++-equivalent types.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
  (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
@@ -38,7 +38,7 @@ int
 main(int argc, char *argv[])
 {
 	// Get database access parameters from command line
-    const char* db = 0, *server = 0, *user = 0, *pass = "";
+	const char* db = 0, *server = 0, *user = 0, *pass = "";
 	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
 		return 1;
 	}

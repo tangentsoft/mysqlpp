@@ -1,6 +1,6 @@
 /***********************************************************************
  simple2.cpp - Retrieves the entire contents of the sample stock table
- 	using a "store" query, and prints it out.
+	using a "store" query, and prints it out.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
  (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
@@ -39,7 +39,7 @@ int
 main(int argc, char *argv[])
 {
 	// Get database access parameters from command line
-    const char* db = 0, *server = 0, *user = 0, *pass = "";
+	const char* db = 0, *server = 0, *user = 0, *pass = "";
 	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
 		return 1;
 	}

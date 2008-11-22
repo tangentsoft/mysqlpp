@@ -35,7 +35,7 @@ namespace mysqlpp {
 Query::Query(Connection* c, bool te, const char* qstr) :
 #if defined(MYSQLPP_HAVE_STD__NOINIT)
 // prevents a double-init memory leak in native VC++ RTL (not STLport!)
-std::ostream(std::_Noinit), 
+std::ostream(std::_Noinit),
 #else
 std::ostream(0),
 #endif
@@ -47,6 +47,7 @@ copacetic_(true)
 	init(&sbuffer_);
 	if (qstr) {
 		sbuffer_.str(qstr);
+		seekp(0, std::ios::end);	// allow more insertions at end
 	}
 }
 
@@ -83,7 +84,7 @@ Query::errnum() const
 }
 
 
-const char* 
+const char*
 Query::error() const
 {
 	return conn_->error();
@@ -215,7 +216,7 @@ Query::insert_id()
 }
 
 
-bool 
+bool
 Query::more_results()
 {
 	return conn_->driver()->more_results();
@@ -247,7 +248,7 @@ Query::parse()
 	std::string name;
 
 	char* s = new char[sbuffer_.str().size() + 1];
-	memcpy(s, sbuffer_.str().data(), sbuffer_.str().size()); 
+	memcpy(s, sbuffer_.str().data(), sbuffer_.str().size());
 	s[sbuffer_.str().size()] = '\0';
 	const char* s0 = s;
 
@@ -455,7 +456,7 @@ Query::store(SQLQueryParms& p)
 }
 
 
-StoreQueryResult 
+StoreQueryResult
 Query::store(const SQLTypeAdapter& s)
 {
 	if ((parse_elems_.size() == 2) && !template_defaults.processing_) {
@@ -523,7 +524,7 @@ Query::store_next()
 		if (res) {
 			return StoreQueryResult(res, conn_->driver(),
 					throw_exceptions());
-		} 
+		}
 		else {
 			// Result set is null, but throw an exception only i it is
 			// null because of some error.  If not, it's just an empty
@@ -531,25 +532,25 @@ Query::store_next()
 			// set if exceptions are disabled, as well.
 			if (conn_->errnum() && throw_exceptions()) {
 				throw BadQuery(error(), errnum());
-			} 
+			}
 			else {
 				return StoreQueryResult();
 			}
 		}
 	}
 	else if (throw_exceptions()) {
-        if (rc == DBDriver::nr_error) {
-            throw BadQuery(error(), errnum());
-        }
+		if (rc == DBDriver::nr_error) {
+			throw BadQuery(error(), errnum());
+		}
 		else if (conn_->errnum()) {
 			throw BadQuery(error(), errnum());
-        }
+		}
 		else {
 			return StoreQueryResult();	// normal end-of-result-sets case
 		}
-    }
-    else {
-        return StoreQueryResult();
+	}
+	else {
+		return StoreQueryResult();
 	}
 #else
 	return store();

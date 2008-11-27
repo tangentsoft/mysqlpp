@@ -4,7 +4,7 @@
 
  Copyright (c) 2007-2008 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the
- CREDITS file in the top directory of the distribution for details.
+ CREDITS.txt file in the top directory of the distribution for details.
 
  This file is part of MySQL++.
 

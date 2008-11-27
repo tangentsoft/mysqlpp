@@ -65,8 +65,8 @@ sed -i -e s@../config.h@config.h@ doc/examples/threads.h
 # Fix up simple example Makefile to allow it to build on the install
 # system, as opposed to the system where the Makefile was created.
 %{__sed} -e 's@./examples/@@' \
-  -e 's@^CPPFLAGS :=.*$@CPPFLAGS := $(shell mysql_config --cflags)@' \
-  -e 's@^LDFLAGS :=.*$@LDFLAGS := $(shell mysql_config --libs)@' \
+  -e 's@^CPPFLAGS.*$@CPPFLAGS := $(shell mysql_config --cflags)@' \
+  -e 's@^LDFLAGS.*$@LDFLAGS := $(shell mysql_config --libs)@' \
   -e 's@ -Ilib@@' \
   -e '/^all:/s/test_[a-z,_]* //g' \
   Makefile.simple > doc/examples/Makefile

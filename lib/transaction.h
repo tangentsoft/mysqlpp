@@ -6,9 +6,9 @@
 /// directly in C++ code instead of sending the raw SQL commands.
 
 /***********************************************************************
- Copyright (c) 2006 by Educational Technology Resources, Inc.  Others
- may also hold copyrights on code in this file.  See the CREDITS file
- in the top directory of the distribution for details.
+ Copyright (c) 2006 by Educational Technology Resources, Inc.
+ Others may also hold copyrights on code in this file.  See the
+ CREDITS.txt file in the top directory of the distribution for details.
 
  This file is part of MySQL++.
 

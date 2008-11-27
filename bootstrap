@@ -2,7 +2,7 @@
 
 ARGS=1
 BF_OPTIONS=
-MAINT_FLAGS="--cache-file=config.cache --enable-maintainer-mode"
+MAINT_FLAGS="--cache-file=config.cache"
 while [ $ARGS != 0 ]
 do
 	case "$1" in

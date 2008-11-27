@@ -1,3 +1,18 @@
+3.0.8, 2008.11.27 (r2432) The "Thanksgiving" release
+
+    o Fixed a VC++ build error introduced in 3.0.7 in the Sun CC fix.
+
+    o Fixed the Makefile we generate from Makefile.simple for the
+      devel RPM.  The recent Bakefile upgrade changed the output so
+      our munger stopped munging.
+
+    o Changed all instances of "CREDITS" in header comments to
+      "CREDITS.txt".
+
+    o Brought ebuild file up to date with what Gentoo has been
+      using for 2.3.2.
+
+
 3.0.7, 2008.11.21 (r2423)
 
     o Fixed bug where initting a Query with a query string and then

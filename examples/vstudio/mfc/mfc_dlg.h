@@ -2,8 +2,8 @@
  mfc_dlg.h - Declares the dialog class for the MySQL++ MFC example.
 
  Copyright (c) 2007 by Educational Technology Resources, Inc.  Others 
- may also hold copyrights on code in this file.  See the CREDITS file in
- the top directory of the distribution for details.
+ may also hold copyrights on code in this file.  See the CREDITS.txt
+ file in the top directory of the distribution for details.
 
  This file is part of MySQL++.
 

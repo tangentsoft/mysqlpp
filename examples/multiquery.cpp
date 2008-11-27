@@ -8,7 +8,7 @@
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
  MySQL AB, (c) 2004, 2005 by Educational Technology Resources, Inc.,
  and (c) 2005 by Arnon Jalon.  Others may also hold copyrights on
- code in this file.  See the CREDITS file in the top directory of
+ code in this file.  See the CREDITS.txt file in the top directory of
  the distribution for details.
 
  This file is part of MySQL++.

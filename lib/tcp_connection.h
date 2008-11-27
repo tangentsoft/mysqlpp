@@ -4,7 +4,7 @@
 /***********************************************************************
  Copyright (c) 2007-2008 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the
- CREDITS file in the top directory of the distribution for details.
+ CREDITS.txt file in the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -123,15 +123,14 @@ private:
 	/// \brief Provide uncallable versions of the parent class ctors we
 	/// don't want to provide so we don't get warnings about hidden
 	/// overloads with some compilers
-	TCPConnection(bool);
+	TCPConnection(bool) { }
 	TCPConnection(const char*, const char*, const char*, const char*,
-			unsigned int);
+			unsigned int) { }
 
 	/// \brief Explicitly override parent class version so we don't get
 	/// complaints about hidden overloads with some compilers
-	bool connect(const char* db, const char* server,
-			const char* user, const char* password,
-			unsigned int port);
+	bool connect(const char*, const char*, const char*, const char*,
+			unsigned int) { return false; }
 };
 
 

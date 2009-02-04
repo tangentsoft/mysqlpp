@@ -224,12 +224,14 @@ public:
 	/// this template.  See NullIsNull, NullIsZero and NullIsBlank.
 	///
 	/// Otherwise, just returns the 'data' member.
-	operator Type&()
+	operator Type() const
 	{
-		if (is_null)
-			return data = Behavior::null_is();
-		else
+		if (is_null) {
+			return Behavior::null_is();
+		}
+		else {
 			return data;
+		}
 	}
 
 	/// \brief Assign a value to the object.

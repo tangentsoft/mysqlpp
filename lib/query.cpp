@@ -44,11 +44,19 @@ template_defaults(this),
 conn_(c),
 copacetic_(true)
 {
+	// Set up our internal IOStreams string buffer
 	init(&sbuffer_);
+
+	// Insert passed query string into our string buffer, if given
 	if (qstr) {
 		sbuffer_.str(qstr);
 		seekp(0, std::ios::end);	// allow more insertions at end
-	}
+	} 
+
+	// Override any global locale setting; we want to use the classic C
+	// locale so we don't get weird things like thousands separators in
+	// integers inserted into the query stream.
+	imbue(std::locale::classic());
 }
 
 Query::Query(const Query& q) :
@@ -67,6 +75,9 @@ copacetic_(q.copacetic_)
 	// Query on purpose.  This isn't a copy ctor so much as a way to
 	// ensure that "Query q(conn.query());" works correctly.
 	init(&sbuffer_);
+
+	// See above for reason we override locale for Query streams.
+	imbue(std::locale::classic());
 }
 
 

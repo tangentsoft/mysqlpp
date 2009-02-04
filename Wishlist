@@ -61,6 +61,10 @@ v3.1 Tentative Plan
         ctors taking stringish types.  (Can't do the latter for real
         until v4, but we can lay the ground work here.)
 
+	  - Add Active Record type methods, and support data for same.
+	    E.g., mySsqls.save() should be able to write and execute
+		the UPDATE statement.
+
     o Chris Frey's packarray class
 
     o Create adaptors for std::bitset, for storing binary data in a
@@ -201,3 +205,10 @@ v4.0 or Later
 
     o Remove throw-spec for std::out_of_range from SQLTypeAdapter::at().
       It no longer throws this, and throw-specs are passee' anyway.
+
+	o Store failed query string in BadQuery exception object, to make
+	  logging and debugging easier.  One could have a try block wrapping
+	  many queries, and be able to recover the failed query string from
+	  the exception object, instead of somehow keeping track yourself.
+
+	  Patch: http://lists.mysql.com/plusplus/8374

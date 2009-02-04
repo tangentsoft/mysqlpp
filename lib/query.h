@@ -856,6 +856,18 @@ public:
 		storein(con, str(template_defaults));
 	}
 
+	/// \brief Store template query results into a container
+	///
+	/// This method is not intended to be used directly.  It is part
+	/// of the call chain in processing calls to one of the many
+	/// storein() overloads that take a container and one or more
+	/// SQLTypeAdapter parameters.
+	template <class T>
+	void storein(T& con, SQLQueryParms& p)
+	{
+		storein(con, str(p));
+	}
+
 	/// \brief Specialization of storein_sequence() for \c std::vector
 	template <class T>
 	void storein(std::vector<T>& con, const SQLTypeAdapter& s)

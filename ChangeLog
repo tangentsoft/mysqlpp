@@ -1,3 +1,17 @@
+3.0.9, 2008.02.04 (r2442)
+
+    o It is now possible to use Null<T> objects in const context.
+
+    o Query was emitting thousands separators when used in some
+      locales.  Thanks for the fix go to Tomaž Šolc.
+
+    o Restored support for using Query::storein() with template
+      queries.  Was mistakenly removed in the 3.0.0 development
+      process.
+
+    o GCC 4.4 build fixes.  Thanks for this go to Remi Collet.
+
+
 3.0.8, 2008.11.27 (r2432) The "Thanksgiving" release
 
     o Fixed a VC++ build error introduced in 3.0.7 in the Sun CC fix.

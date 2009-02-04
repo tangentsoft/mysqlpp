@@ -7,8 +7,7 @@ bakefile_gen %*
 if errorlevel 1 exit
 if not exist vc2003\mysql++.sln goto no_bakefile
 if not exist vc2005\mysql++.sln goto no_bakefile
-copy vc2005\*.sln vc2008 > NUL
-copy vc2005\*.vcproj vc2008 > NUL
+if not exist vc2008\mysql++.sln goto no_bakefile
 
 cd lib
 perl querydef.pl

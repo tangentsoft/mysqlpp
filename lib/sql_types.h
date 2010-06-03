@@ -6,7 +6,7 @@
 /// \c Null<T> template.  See null.h for more information.
 
 /***********************************************************************
- Copyright (c) 2006-2008 by Educational Technology Resources, Inc.
+ Copyright (c) 2006-2009 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the
  CREDITS.txt file in the top directory of the distribution for details.
 
@@ -152,3 +152,62 @@ typedef sql_decimal				sql_numeric;
 	} // end namespace mysqlpp
 #endif
 
+#if defined(MYSQLPP_NULL_H) && !defined(MYSQLPP_SQL_TYPES_H_NULL) && !defined(DOXYGEN_IGNORE)
+#	define MYSQLPP_SQL_TYPES_H_NULL
+	// We have null.h, so define nullable versions of all the above
+	namespace mysqlpp {
+		typedef Null<sql_bigint> sql_bigint_null;
+		typedef Null<sql_bigint_unsigned> sql_bigint_unsigned_null;
+		typedef Null<sql_bool> sql_bool_null;
+		typedef Null<sql_boolean> sql_boolean_null;
+		typedef Null<sql_char> sql_char_null;
+		typedef Null<sql_character_varying> sql_character_varying_null;
+		typedef Null<sql_decimal> sql_decimal_null;
+		typedef Null<sql_double> sql_double_null;
+		typedef Null<sql_enum> sql_enum_null;
+		typedef Null<sql_fixed> sql_fixed_null;
+		typedef Null<sql_float> sql_float_null;
+		typedef Null<sql_float4> sql_float4_null;
+		typedef Null<sql_float8> sql_float8_null;
+		typedef Null<sql_int> sql_int_null;
+		typedef Null<sql_int1> sql_int1_null;
+		typedef Null<sql_int2> sql_int2_null;
+		typedef Null<sql_int3> sql_int3_null;
+		typedef Null<sql_int4> sql_int4_null;
+		typedef Null<sql_int8> sql_int8_null;
+		typedef Null<sql_int_unsigned> sql_int_unsigned_null;
+		typedef Null<sql_long> sql_long_null;
+		typedef Null<sql_longtext> sql_longtext_null;
+		typedef Null<sql_long_varchar> sql_long_varchar_null;
+		typedef Null<sql_mediumint> sql_mediumint_null;
+		typedef Null<sql_mediumint_unsigned> sql_mediumint_unsigned_null;
+		typedef Null<sql_mediumtext> sql_mediumtext_null;
+		typedef Null<sql_middleint> sql_middleint_null;
+		typedef Null<sql_numeric> sql_numeric_null;
+		typedef Null<sql_smallint> sql_smallint_null;
+		typedef Null<sql_smallint_unsigned> sql_smallint_unsigned_null;
+		typedef Null<sql_text> sql_text_null;
+		typedef Null<sql_tinyint> sql_tinyint_null;
+		typedef Null<sql_tinyint_unsigned> sql_tinyint_unsigned_null;
+		typedef Null<sql_tinytext> sql_tinytext_null;
+		typedef Null<sql_varchar> sql_varchar_null;
+
+		// Also do nullable versions of optional sql_* types, where possible
+#		if defined(MYSQLPP_SQL_TYPES_H_MYSTRING)
+			typedef Null<sql_blob> sql_blob_null;
+			typedef Null<sql_longblob> sql_longblob_null;
+			typedef Null<sql_mediumblob> sql_mediumblob_null;
+			typedef Null<sql_tinyblob> sql_tinyblob_null;
+			typedef Null<sql_long_varbinary> sql_long_varbinary_null;
+#		endif
+#		if defined(MYSQLPP_SQL_TYPES_H_DATETIME)
+			typedef Null<sql_date> sql_date_null;
+			typedef Null<sql_datetime> sql_datetime_null;
+			typedef Null<sql_time> sql_time_null;
+			typedef Null<sql_timestamp> sql_timestamp_null;
+#		endif
+#		if defined(MYSQLPP_SQL_TYPES_H_SET)
+			typedef Null<sql_set> sql_set_null;
+#		endif
+	} // end namespace mysqlpp
+#endif

@@ -5,7 +5,7 @@
 	Use load_jpeg.cpp to load JPEG files into the database we query.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2008 by Educational Technology Resources, Inc.  Others may
+ (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
  also hold copyrights on code in this file.  See the CREDITS.txt file
  in the top directory of the distribution for details.
 
@@ -38,11 +38,9 @@ main(int argc, char* argv[])
 {
 	// Get database access parameters from command line if present, else
 	// use hard-coded values for true CGI case.
-    const char* db = "mysql_cpp_data";
-	const char* server = "localhost";
-	const char* user = "root";
-	const char* pass = "nunyabinness";
-	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
+	mysqlpp::examples::CommandLine cmdline(argc, argv, "root",
+			"nunyabinness");
+	if (!cmdline) {
 		return 1;
 	}
 
@@ -78,7 +76,8 @@ main(int argc, char* argv[])
 
 	// Retrieve image from DB by ID
 	try {
-		mysqlpp::Connection con(db, server, user, pass);
+		mysqlpp::Connection con(mysqlpp::examples::db_name,
+				cmdline.server(), cmdline.user(), cmdline.pass());
 		mysqlpp::Query query = con.query();
 		query << "SELECT * FROM images WHERE id = " << img_id;
 		mysqlpp::StoreQueryResult res = query.store();

@@ -5,7 +5,7 @@
 	while it's waiting for you to press Enter, run another copy with -m2
 	instead.
 
- Copyright (c) 2007 by Jim Wallace and (c) 2007 by Educational
+ Copyright (c) 2007 by Jim Wallace and (c) 2007-2009 by Educational
  Technology Resources, Inc.  Others may also hold copyrights on code
  in this file.  See the CREDITS.txt file in the top directory of the
  distribution for details.
@@ -45,12 +45,13 @@ int
 main(int argc, char *argv[])
 {
 	// Get database access parameters from command line
-	const char* db = 0, *server = 0, *user = 0, *pass = "";
-	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
+	mysqlpp::examples::CommandLine cmdline(argc, argv);
+	if (!cmdline) {
 		return 1;
 	}
 
 	// Check that the mode parameter was also given and it makes sense
+	const int run_mode = cmdline.run_mode();
 	if ((run_mode != 1) && (run_mode != 2)) {
 		cerr << argv[0] << " must be run with -m1 or -m2 as one of "
 				"its command-line arguments." << endl;
@@ -60,7 +61,8 @@ main(int argc, char *argv[])
 	mysqlpp::Connection con;
 	try {
 		// Establish the connection to the database server
-		con.connect(db, server, user, pass);
+		mysqlpp::Connection con(mysqlpp::examples::db_name,
+				cmdline.server(), cmdline.user(), cmdline.pass());
 
 		// Start a transaction set.  Transactions create mutex locks on
 		// modified rows, so if two programs both touch the same pair of

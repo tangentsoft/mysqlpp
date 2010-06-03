@@ -22,21 +22,30 @@ Bootstrapping the Library
     When you check out MySQL++ from svn, there are a lot of things
     "missing" as compared to a distributed tarball, because the
     svn repository contains only source files, no generated files.
+    The process that turns a fresh MySQL++ repository checkout into
+    something you can build and hack on is called bootstrapping.
 
-    If you're using Windows, there is a simple batch file called
-    bootstrap.bat which wraps up all the steps you need to build
-    these "missing" files.  To run it, just say "bootstrap" from a
-    command shell in the top MySQL++ source directory.  For it to run
-    correctly, you will need Bakefile 0.2.5 (http://bakefile.org/) and
-    a Perl 5 interpreter installed on your system, both in the PATH.
-    The bootstrap script is smart enough to recognize when these
-    tools are missing and stop processing so you can fix the problem.
+    Boostrapping is best done on a modern Unix type platform: Linux, OS
+    X, BSD, Solaris...any version released in the last 4 years or so.
+    It's possible to do it on Windows, but harder; enough so that we
+    cover the options below in a separate section.
 
-    For all other platforms, there's a Bourne shell script called
-    bootstrap.  It's quite a bit more complex than bootstrap.bat.
-    It does more, and takes many optional arguments to control its
-    behavior.  For many systems, it suffices to just run it without
-    any arguments:
+    Two of the tools you need to do this are commonly available on
+    Unixy systems, at least as an option: Perl 5, and autoconf 1.59
+    or higher.  If they're not installed, you can probably run your
+    system's package manager to install suitable versions.
+
+    There's a third tool you'll need to bootstrap MySQL++, called
+    Bakefile, which you can get from http://bakefile.org/  You will
+    need Bakefile 0.2.5 or higher, which in turn requires Python 2.3
+    or higher to run.  To build Bakefile from source, you will also
+    need SWIG, so if you don't have that, you'll want to use one of
+    the binary builds of Bakefile.
+
+    Once you have all the tools in place, you can bootstrap MySQL++
+    with a Bourne shell script called bootstrap, which you get as part
+    of the svn checkout.  It's fairly powerful, with many options.
+    For most cases, it suffices to just run it without any arguments:
 
         $ ./bootstrap
 
@@ -87,8 +96,87 @@ Bootstrapping the Library
             Any subsequent options are passed to the configure script.
             See README-Unix.txt for more on configure script options.
 
-    In addition to Bakefile 0.2.5 and Perl 5, you'll also need autoconf
-    1.59 or higher to run bootstrap successfully.
+
+Bootstrapping the Library Using only Windows
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    The thing that makes bootstrapping on Windows difficult is that
+    one of the required steps uses a Unix-centric tool, autoconf.
+    This section is about working out a way to get that working on
+    Windows, or avoiding the need for it, so you can get on with
+    hacking on MySQL++ on Windows.
+
+    The thing autoconf does that's relevant to Windows builds
+    of MySQL++ is that it substitutes the current MySQL++ version
+    number into several source files.  This allows us to change the
+    version number in just one place -- configure.ac -- and have
+    it applied to all these other places.  Until you do this step,
+    an svn checkout of MySQL++ won't build, because these files with
+    the version numbers in them won't be generated.
+
+    Option 1: Copy the generated files over from a released version
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Only one of these generated files is absolutely critical to
+        allowing MySQL++ to build: lib/mysql++.h.  So, the simplest
+        option you have to bootstrap MySQL++ entirely on Windows is to
+        copy lib/mysql++.h over from a released version of MySQL++.
+        While you're doing that, you might copy over the other such
+        generated files:
+
+            install.hta
+            mysql++.spec
+            doc/userman/userman.dbx
+            lib/Doxyfile
+
+        Having done that, you can complete the bootstrapping process by
+        running bootstrap.bat.  It has the same purpose as the Bourne
+        shell script described above, but much simpler.  It has none
+        of the command line options described above, for one thing.
+
+        The main downside of doing it this way is that your changed
+        version will have the same version number as the release of
+        MySQL++ you copied the files from, unless you go into each
+        file and change the version numbers.
+
+    Option 2: Cygwin
+    ~~~~~~~~~~~~~~~~
+        If you'd like to hack on MySQL++ entirely on Windows and
+        have all the build freedoms enjoyed by those working on Unixy
+        platforms, the simplest solution is probably to install Cygwin.
+
+        Get the Cygwin installer from http://cygwin.com/setup.exe
+
+        When you run it, it will walk you through the steps to
+        install Cygwin.  Autoconf and Perl 5 aren't installed in
+        Cygwin by default, so when you get to the packages list,
+        be sure to select them.  Autoconf is in the Devel category,
+        and Perl 5 in the Interpreters category.
+
+        You will also need to install the native Windows binary
+        version of Bakefile, from http://bakefile.org/  Don't get
+        the source version and try to build Bakefile under Cygwin; it
+        won't work.  The Windows binary version of Bakefile includes
+        an embedded version of Python, so you won't need to install
+        Cygwin's Python.
+        
+        Having done all this, you can follow the Unix bootstrapping
+        instructions in the previous section.
+
+    Option 3: "Here's a nickel, kid, get yourself a better computer."
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        http://tomayko.com/writings/that-dilbert-cartoon
+
+        Finally, you might have access to a Unixy system, or the
+        ability to set one up.  You don't even need a separate physical
+        computer, now that virtual machine techology is free.
+
+        For example, you could download a Linux "appliance" from
+        http://www.vmware.com/appliances/ and a copy of the free
+        VMware Player to run it on your Windows machine.  You'd do the
+        svn checkout of MySQL++ on that machine, bootstrap it there
+        using the instructions in the previous section.
+        
+        That done, just copy the result over to the Windows machine
+        to continue hacking on it.
 
 
 On Manipulating the Build System Source Files

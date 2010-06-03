@@ -9,6 +9,9 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
+/* Define if getopt() is available in libiberty.h */
+#undef HAVE_LIBIBERTY_GETOPT
+
 /* Define to 1 if you have the `intl' library (-lintl). */
 #undef HAVE_LIBINTL
 
@@ -23,6 +26,9 @@
 
 /* Define if your MySQL library has SSL functions */
 #undef HAVE_MYSQL_SSL_SET
+
+/* Define if getopt() is available in unistd.h */
+#undef HAVE_POSIX_GETOPT
 
 /* Define if you have POSIX threads libraries and header files. */
 #undef HAVE_PTHREAD

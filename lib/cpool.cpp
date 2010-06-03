@@ -1,7 +1,7 @@
 /***********************************************************************
  cpool.cpp - Implements the ConnectionPool class.
 
- Copyright (c) 2007 by Educational Technology Resources, Inc. and
+ Copyright (c) 2007-2009 by Educational Technology Resources, Inc. and
  (c) 2007 by Jonathan Wakely.  Others may also hold copyrights on
  code in this file.  See the CREDITS.txt file in the top directory
  of the distribution for details.
@@ -73,17 +73,31 @@ ConnectionPool::clear(bool all)
 {
 	ScopedLock lock(mutex_);	// ensure we're not interfered with
 
-	PoolIt it = pool_.begin(), doomed;
+	PoolIt it = pool_.begin();
 	while (it != pool_.end()) {
 		if (all || !it->in_use) {
-			doomed = it++;
-			destroy(doomed->conn);
-			pool_.erase(doomed);
+			remove(it++);
 		}
 		else {
 			++it;
 		}
 	}
+}
+
+
+//// exchange //////////////////////////////////////////////////////////
+// Passed connection is defective, so remove it from the pool and return
+// a new one.
+
+Connection*
+ConnectionPool::exchange(const Connection* pc)
+{
+	// Don't grab the mutex first.  remove() and grab() both do.
+	// Inefficient, but we'd have to hoist their contents up into this
+	// method or extract a mutex-free version of each mechanism for
+	// each, both of which are also inefficient.
+	remove(pc);
+	return grab();
 }
 
 
@@ -141,6 +155,40 @@ ConnectionPool::release(const Connection* pc)
 }
 
 
+//// remove ////////////////////////////////////////////////////////////
+// 2 versions:
+//
+// First takes a Connection pointer, finds it in the pool, and calls
+// the second.  It's public, because Connection pointers are all
+// outsiders see of the pool.
+//
+// Second takes an iterator into the pool, destroys the referenced
+// connection and removes it from the pool.  This is only a utility
+// function for use by other class internals.
+
+void
+ConnectionPool::remove(const Connection* pc)
+{
+	ScopedLock lock(mutex_);	// ensure we're not interfered with
+
+	for (PoolIt it = pool_.begin(); it != pool_.end(); ++it) {
+		if (it->conn == pc) {
+			remove(it);
+			return;
+		}
+	}
+}
+
+void
+ConnectionPool::remove(const PoolIt& it)
+{
+	// Don't grab the mutex.  Only called from other functions that do
+	// grab it.
+	destroy(it->conn);
+	pool_.erase(it);
+}
+
+
 //// remove_old_connections ////////////////////////////////////////////
 // Remove connections that were last used too long ago.
 
@@ -151,9 +199,22 @@ ConnectionPool::remove_old_connections()
 
 	PoolIt it = pool_.begin();
 	while ((it = std::find_if(it, pool_.end(), too_old)) != pool_.end()) {
-		destroy(it->conn);
-		pool_.erase(it++);
+		remove(it++);
 	}
+}
+
+
+//// safe_grab /////////////////////////////////////////////////////////
+
+Connection*
+ConnectionPool::safe_grab()
+{
+	Connection* pc;
+	while (!(pc = grab())->ping()) {
+		remove(pc);
+		pc = 0;
+	}
+	return pc;
 }
 
 

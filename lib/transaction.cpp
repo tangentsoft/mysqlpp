@@ -35,7 +35,7 @@ using namespace std;
 using namespace mysqlpp;
 
 
-//// ctor //////////////////////////////////////////////////////////////
+//// ctors /////////////////////////////////////////////////////////////
 
 Transaction::Transaction(Connection& conn, bool consistent) :
 conn_(conn),
@@ -43,6 +43,37 @@ finished_(true)		// don't bother rolling it back if ctor fails
 {
 	// Begin the transaction set
 	Query q(conn_.query("START TRANSACTION"));
+	if (consistent) {
+		q << " WITH CONSISTENT SNAPSHOT";
+	}
+	q.execute();
+
+	// Setup succeeded, so mark our transaction as not-finished.
+	finished_ = false;
+}
+
+Transaction::Transaction(Connection& conn, IsolationLevel level,
+		IsolationScope scope, bool consistent) :
+conn_(conn),
+finished_(true)		// don't bother rolling it back if ctor fails
+{
+	// Set the transaction isolation level and scope as the user wishes
+	Query q(conn_.query("SET "));
+	if (scope == session) q << "SESSION ";
+	if (scope == global)  q << "GLOBAL ";
+	q << "TRANSACTION ISOLATION LEVEL ";
+	switch (level) {
+		case read_uncommitted:	q << "READ UNCOMMITTED";
+		case read_committed:	q << "READ COMMITTED";
+		case repeatable_read:	q << "REPEATABLE READ";
+		case serializable:		q << "SERIALIZABLE";
+	}
+	q.execute();
+
+	// Begin the transaction set.  Note that the above isn't part of
+	// the transaction, on purpose, so that scope == transaction affects
+	// *this* transaction, not the next one.
+	q << "START TRANSACTION";
 	if (consistent) {
 		q << " WITH CONSISTENT SNAPSHOT";
 	}

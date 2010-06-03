@@ -55,6 +55,14 @@ Configure Options
         which subdirectory under the given directory contains the
         needed files, so you don't necessarily have to give the full
         path to these files.
+    
+    --with-field-limit:
+
+        This lets you increase the maximum field limit for template
+        queries and SSQLSes.  By default, both are limited to 25
+        fields.  See chapter 8.2 in the user manual for details:
+
+        http://tangentsoft.net/mysql++/doc/html/userman/configuration.html
 
     --enable-thread-check:
 

@@ -3,7 +3,7 @@
 
 /***********************************************************************
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2008 by Educational Technology Resources, Inc.  Others may
+ (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
  also hold copyrights on code in this file.  See the CREDITS.txt file
  in the top directory of the distribution for details.
 
@@ -33,7 +33,7 @@
 #include "datetime.h"
 #include "null.h"
 #include "sql_buffer.h"
-#include "sql_types.h"
+#include "tiny_int.h"
 
 #include <stdexcept>
 #include <string>
@@ -113,11 +113,11 @@ public:
 	SQLTypeAdapter(char c);
 
 	/// \brief Create a string representation of SQL \c TINYINT
-	SQLTypeAdapter(sql_tinyint i);
+	SQLTypeAdapter(tiny_int<signed char> i);
 
 	/// \brief Create a string representation of SQL \c TINYINT
 	/// \c UNSIGNED
-	SQLTypeAdapter(sql_tinyint_unsigned i);
+	SQLTypeAdapter(tiny_int<unsigned char> i);
 
 	/// \brief Create a string representation of a \c short \c int value
 	SQLTypeAdapter(short i);
@@ -257,6 +257,14 @@ public:
 	/// that must be escaped when used in a SQL query
 	bool escape_q() const;
 
+	/// \brief Return true if buffer's contents represent a SQL
+	/// null.
+	///
+	/// The buffer's actual content will probably be "NULL" or
+	/// something like it, but in the SQL data type system, a SQL
+	/// null is distinct from a plain string with value "NULL".
+	bool is_null() const { return buffer_->is_null(); }
+
 	/// \brief Returns true if the internal 'processed' flag is set.
 	///
 	/// This is an implementation detail of template queries, used to
@@ -290,8 +298,8 @@ public:
 	SQLTypeAdapter(const Null<std::string>& str, bool processed = false);
 	SQLTypeAdapter(const Null<String>& str, bool processed = false);
 	SQLTypeAdapter(Null<char> c);
-	SQLTypeAdapter(Null<sql_tinyint> i);
-	SQLTypeAdapter(Null<sql_tinyint_unsigned> i);
+	SQLTypeAdapter(Null< tiny_int<signed char> > i);
+	SQLTypeAdapter(Null< tiny_int<unsigned char> > i);
 	SQLTypeAdapter(Null<short> i);
 	SQLTypeAdapter(Null<unsigned short> i);
 	SQLTypeAdapter(Null<int> i);

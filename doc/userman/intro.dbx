@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook V4.3//EN"
-    "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd">
+<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook V4.2//EN"
+    "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
 
 <sect1 id="intro">
   <title>Introduction</title>
 
-  <para>MySQL++ is a powerful C++ wrapper for MySQL&rsquo;s C API.  Its
+  <para>MySQL++ is a powerful C++ wrapper for MySQL&#x2019;s C API.  Its
   purpose is to make working with queries as easy as working with STL
   containers.</para>
 
@@ -25,10 +25,10 @@
     <para>MySQL++ was created in 1998 by Kevin Atkinson. It started
     out MySQL-specific, but there were early efforts to try and
     make it database-independent, and call it SQL++. This is where
-    the old library name &ldquo;sqlplus&rdquo; came from. This
+    the old library name &#x201C;sqlplus&#x201D; came from. This
     is also why the old versions prefixed some class names with
-    &ldquo;Mysql&rdquo; but not others: the others were supposed to
-    be the database-independent parts. All of Kevin&rsquo;s releases
+    &#x201C;Mysql&#x201D; but not others: the others were supposed to
+    be the database-independent parts. All of Kevin&#x2019;s releases
     had pre-1.0 version numbers.</para>
 
     <para>Then in 1999, <ulink url="http://www.mysql.com/">MySQL
@@ -38,7 +38,7 @@
     over to another MySQL employee, Sinisa Milivojevic. MySQL released
     versions 1.0 and 1.1, and then Kevin gave over maintenance to
     Sinisa officially with 1.2, and ceased to have any involvement
-    with the library&rsquo;s maintenance. Sinisa went on to maintain
+    with the library&#x2019;s maintenance. Sinisa went on to maintain
     the library through 1.7.9, released in mid-2001. It seems to be
     during this time that the dream of multiple-database compatibility
     died, for obvious reasons.</para>
@@ -54,7 +54,7 @@
     official blessing.</para>
 
     <para>The biggest barrier to using MySQL++ during this period
-    is that the popular C++ compilers of 2001 weren&rsquo;t all
+    is that the popular C++ compilers of 2001 weren&#x2019;t all
     that compatible with the C++ Standard. As a result, MySQL++
     used many nonstandard constructs, to allow for compatibility
     with older compilers. Each new compiler released in the
@@ -64,7 +64,7 @@
     was emerging from the mess following the <ulink
     url="http://en.wikipedia.org/wiki/GNU_Compiler_Collection#EGCS">EGCS
     fork</ulink> during this time. The fork was healed officially
-    in 1999, but there&rsquo;s always a delay of a few years between
+    in 1999, but there&#x2019;s always a delay of a few years between
     the release of a new GCC and widespread adoption. The post-EGCS
     versions of GCC were only beginning to become popular by 2001,
     when development on MySQL++ halted. As a result, it became
@@ -72,7 +72,7 @@
     compilers came out. Since MySQL++ uses templates heavily, this
     affected end user programs as well: MySQL++ code got included
     directly in your program, so any warnings or errors it caused
-    became your program&rsquo;s problem.</para>
+    became your program&#x2019;s problem.</para>
 
     <para>As a result, most of the patches contributed to the MySQL++
     project during this period were to fix up standards compliance
@@ -83,7 +83,7 @@
     hand to select from the good stuff and reject the rest. Many of the
     patches were mutually incompatible. Some would build upon other
     patches, so you had to apply them in the proper sequence. Others
-    did useful things, but didn&rsquo;t give a fully functional copy of
+    did useful things, but didn&#x2019;t give a fully functional copy of
     MySQL++. Figuring out which patch(es) to use was an increasingly
     frustrating exercise as the years wore on, and newer GCCs became
     popular.</para>
@@ -108,14 +108,14 @@
     questions, do a search to see if the question has been asked
     before.</para>
 
-    <para>You may find people&rsquo;s individual email addresses in various
+    <para>You may find people&#x2019;s individual email addresses in various
     files within the MySQL++ distribution. Please do not send mail
     to them unless you are sending something that is inherently
     personal. Not all of the principal developers of MySQL++ are still
     active in its development; those who have dropped out have no wish
     to be bugged about MySQL++. Those of us still active in MySQL++
-    development monitor the mailing list, so you aren&rsquo;t getting any
-    extra &ldquo;coverage&rdquo; by sending messages to additional
+    development monitor the mailing list, so you aren&#x2019;t getting any
+    extra &#x201C;coverage&#x201D; by sending messages to additional
     email addresses.</para>
   </sect2>
 </sect1>

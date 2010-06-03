@@ -3,7 +3,7 @@
 	table with MySQL++.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2008 by Educational Technology Resources, Inc.  Others may
+ (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
  also hold copyrights on code in this file.  See the CREDITS.txt file
  in the top directory of the distribution for details.
 
@@ -39,14 +39,15 @@ int
 main(int argc, char *argv[])
 {
 	// Get database access parameters from command line
-	const char* db = 0, *server = 0, *user = 0, *pass = "";
-	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
+	mysqlpp::examples::CommandLine cmdline(argc, argv);
+	if (!cmdline) {
 		return 1;
 	}
 
 	// Connect to the sample database.
 	mysqlpp::Connection conn(false);
-	if (conn.connect(db, server, user, pass)) {
+	if (conn.connect(mysqlpp::examples::db_name, cmdline.server(),
+			cmdline.user(), cmdline.pass())) {
 		// Retrieve a subset of the sample stock table set up by resetdb
 		// and display it.
 		mysqlpp::Query query = conn.query("select item from stock");

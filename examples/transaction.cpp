@@ -1,9 +1,9 @@
 /***********************************************************************
- transaction.cpp - Example showing how to use the transaction support in
-	MySQL++ v2.1 and up.
+ transaction.cpp - Example showing how to use MySQL++'s transaction
+ 	features.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2008 by Educational Technology Resources, Inc.  Others may
+ (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
  also hold copyrights on code in this file.  See the CREDITS.txt file
  in the top directory of the distribution for details.
 
@@ -38,14 +38,15 @@ int
 main(int argc, char *argv[])
 {
 	// Get database access parameters from command line
-	const char* db = 0, *server = 0, *user = 0, *pass = "";
-	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
+	mysqlpp::examples::CommandLine cmdline(argc, argv);
+	if (!cmdline) {
 		return 1;
 	}
 
 	try {
 		// Establish the connection to the database server.
-		mysqlpp::Connection con(db, server, user, pass);
+		mysqlpp::Connection con(mysqlpp::examples::db_name,
+				cmdline.server(), cmdline.user(), cmdline.pass());
 
 		// Show initial state
 		mysqlpp::Query query = con.query();
@@ -54,7 +55,15 @@ main(int argc, char *argv[])
 
 		// Insert a few rows in a single transaction set
 		{
-			mysqlpp::Transaction trans(con);
+			// Use a higher level of transaction isolation than MySQL
+			// offers by default.  This trades some speed for more
+			// predictable behavior.  We've set it to affect all
+			// transactions started through this DB server connection,
+			// so it affects the next block, too, even if we don't
+			// commit this one.
+			mysqlpp::Transaction trans(con,
+					mysqlpp::Transaction::serializable,
+					mysqlpp::Transaction::session);
 
 			stock row("Sauerkraut", 42, 1.2, 0.75,
 					mysqlpp::sql_date("2006-03-06"), mysqlpp::null);
@@ -73,6 +82,8 @@ main(int argc, char *argv[])
 			
 		// Now let's test auto-rollback
 		{
+			// Start a new transaction, keeping the same isolation level
+			// we set above, since it was set to affect the session.
 			mysqlpp::Transaction trans(con);
 			cout << "\nNow adding catsup to the database..." << endl;
 

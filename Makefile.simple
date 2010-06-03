@@ -40,6 +40,15 @@ BUILD ?= debug
 ### Variables: ###
 
 CPPDEPS = -MT$@ -MF`echo $@ | sed -e 's,\.o$$,.d,'` -MD -MP
+SSQLS2PARSE_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
+	-I/usr/include/mysql++ -I. $(CPPFLAGS) $(CXXFLAGS)
+SSQLS2PARSE_OBJECTS =  \
+	ssqls2parse_parsev2.o
+SSQLSXLAT_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
+	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+SSQLSXLAT_OBJECTS =  \
+	ssqlsxlat_genv2.o \
+	ssqlsxlat_main.o
 TEST_ARRAY_INDEX_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 TEST_ARRAY_INDEX_OBJECTS =  \
@@ -56,6 +65,10 @@ TEST_INTTYPES_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 TEST_INTTYPES_OBJECTS =  \
 	test_inttypes_inttypes.o
+TEST_INSERTPOLICY_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
+	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+TEST_INSERTPOLICY_OBJECTS =  \
+	test_insertpolicy_insertpolicy.o
 TEST_MANIP_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 TEST_MANIP_OBJECTS =  \
@@ -64,6 +77,10 @@ TEST_NULL_COMPARISON_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 TEST_NULL_COMPARISON_OBJECTS =  \
 	test_null_comparison_null_comparison.o
+TEST_QUERY_COPY_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
+	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+TEST_QUERY_COPY_OBJECTS =  \
+	test_query_copy_query_copy.o
 TEST_QSSQLS_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 TEST_QSSQLS_OBJECTS =  \
@@ -72,6 +89,14 @@ TEST_QSTREAM_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 TEST_QSTREAM_OBJECTS =  \
 	test_qstream_qstream.o
+TEST_SQLSTREAM_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
+	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+TEST_SQLSTREAM_OBJECTS =  \
+	test_sqlstream_sqlstream.o
+TEST_SSQLS2_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
+	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+TEST_SSQLS2_OBJECTS =  \
+	test_ssqls2_ssqls2.o
 TEST_STRING_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 TEST_STRING_OBJECTS =  \
@@ -91,7 +116,6 @@ TEST_WNP_OBJECTS =  \
 EXCOMMON_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 EXCOMMON_OBJECTS =  \
-	excommon_cmdline.o \
 	excommon_printdata.o
 CGI_JPEG_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
@@ -161,6 +185,10 @@ SSQLS5_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 SSQLS5_OBJECTS =  \
 	ssqls5_ssqls5.o
+SSQLS6_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
+	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+SSQLS6_OBJECTS =  \
+	ssqls6_ssqls6.o
 STORE_IF_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 STORE_IF_OBJECTS =  \
@@ -177,6 +205,10 @@ TQUERY3_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 TQUERY3_OBJECTS =  \
 	tquery3_tquery3.o
+TQUERY4_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
+	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+TQUERY4_OBJECTS =  \
+	tquery4_tquery4.o
 TRANSACTION_CXXFLAGS = $(__DEBUGINFO) -Ilib -I/usr/include/mysql \
 	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 TRANSACTION_OBJECTS =  \
@@ -194,7 +226,7 @@ endif
 
 ### Targets: ###
 
-all: test_array_index test_cpool test_datetime test_inttypes test_manip test_null_comparison test_qssqls test_qstream test_string test_tcp test_uds test_wnp libmysqlpp_excommon.a cgi_jpeg cpool dbinfo deadlock fieldinf for_each load_jpeg multiquery resetdb simple1 simple2 simple3 ssqls1 ssqls2 ssqls3 ssqls4 ssqls5 store_if tquery1 tquery2 tquery3 transaction
+all: libmysqlpp_ssqls2parse.a ssqlsxlat test_array_index test_cpool test_datetime test_inttypes test_insertpolicy test_manip test_null_comparison test_query_copy test_qssqls test_qstream test_sqlstream test_ssqls2 test_string test_tcp test_uds test_wnp libmysqlpp_excommon.a cgi_jpeg cpool dbinfo deadlock fieldinf for_each load_jpeg multiquery resetdb simple1 simple2 simple3 ssqls1 ssqls2 ssqls3 ssqls4 ssqls5 ssqls6 store_if tquery1 tquery2 tquery3 tquery4 transaction
 
 install: 
 
@@ -203,14 +235,20 @@ uninstall:
 clean: 
 	rm -f ./*.o
 	rm -f ./*.d
+	rm -f libmysqlpp_ssqls2parse.a
+	rm -f ssqlsxlat
 	rm -f test_array_index
 	rm -f test_cpool
 	rm -f test_datetime
 	rm -f test_inttypes
+	rm -f test_insertpolicy
 	rm -f test_manip
 	rm -f test_null_comparison
+	rm -f test_query_copy
 	rm -f test_qssqls
 	rm -f test_qstream
+	rm -f test_sqlstream
+	rm -f test_ssqls2
 	rm -f test_string
 	rm -f test_tcp
 	rm -f test_uds
@@ -233,11 +271,21 @@ clean:
 	rm -f ssqls3
 	rm -f ssqls4
 	rm -f ssqls5
+	rm -f ssqls6
 	rm -f store_if
 	rm -f tquery1
 	rm -f tquery2
 	rm -f tquery3
+	rm -f tquery4
 	rm -f transaction
+
+libmysqlpp_ssqls2parse.a: $(SSQLS2PARSE_OBJECTS)
+	rm -f $@
+	$(AR) rcu $@ $(SSQLS2PARSE_OBJECTS)
+	$(RANLIB) $@
+
+ssqlsxlat: $(SSQLSXLAT_OBJECTS) libmysqlpp_ssqls2parse.a
+	$(CXX) -o $@ $(SSQLSXLAT_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient -lmysqlpp_ssqls2parse
 
 test_array_index: $(TEST_ARRAY_INDEX_OBJECTS)
 	$(CXX) -o $@ $(TEST_ARRAY_INDEX_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
@@ -251,17 +299,29 @@ test_datetime: $(TEST_DATETIME_OBJECTS)
 test_inttypes: $(TEST_INTTYPES_OBJECTS)
 	$(CXX) -o $@ $(TEST_INTTYPES_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
 
+test_insertpolicy: $(TEST_INSERTPOLICY_OBJECTS)
+	$(CXX) -o $@ $(TEST_INSERTPOLICY_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+
 test_manip: $(TEST_MANIP_OBJECTS)
 	$(CXX) -o $@ $(TEST_MANIP_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
 
 test_null_comparison: $(TEST_NULL_COMPARISON_OBJECTS)
 	$(CXX) -o $@ $(TEST_NULL_COMPARISON_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
 
+test_query_copy: $(TEST_QUERY_COPY_OBJECTS)
+	$(CXX) -o $@ $(TEST_QUERY_COPY_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+
 test_qssqls: $(TEST_QSSQLS_OBJECTS)
 	$(CXX) -o $@ $(TEST_QSSQLS_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
 
 test_qstream: $(TEST_QSTREAM_OBJECTS)
 	$(CXX) -o $@ $(TEST_QSTREAM_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+
+test_sqlstream: $(TEST_SQLSTREAM_OBJECTS)
+	$(CXX) -o $@ $(TEST_SQLSTREAM_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+
+test_ssqls2: $(TEST_SSQLS2_OBJECTS) libmysqlpp_ssqls2parse.a
+	$(CXX) -o $@ $(TEST_SSQLS2_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient -lmysqlpp_ssqls2parse
 
 test_string: $(TEST_STRING_OBJECTS)
 	$(CXX) -o $@ $(TEST_STRING_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
@@ -331,6 +391,9 @@ ssqls4: $(SSQLS4_OBJECTS) libmysqlpp_excommon.a
 ssqls5: $(SSQLS5_OBJECTS) libmysqlpp_excommon.a
 	$(CXX) -o $@ $(SSQLS5_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
+ssqls6: $(SSQLS6_OBJECTS) libmysqlpp_excommon.a
+	$(CXX) -o $@ $(SSQLS6_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+
 store_if: $(STORE_IF_OBJECTS) libmysqlpp_excommon.a
 	$(CXX) -o $@ $(STORE_IF_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
@@ -343,8 +406,20 @@ tquery2: $(TQUERY2_OBJECTS) libmysqlpp_excommon.a
 tquery3: $(TQUERY3_OBJECTS) libmysqlpp_excommon.a
 	$(CXX) -o $@ $(TQUERY3_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
+tquery4: $(TQUERY4_OBJECTS) libmysqlpp_excommon.a
+	$(CXX) -o $@ $(TQUERY4_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+
 transaction: $(TRANSACTION_OBJECTS) libmysqlpp_excommon.a
 	$(CXX) -o $@ $(TRANSACTION_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+
+ssqls2parse_parsev2.o: ./ssx/parsev2.cpp
+	$(CXX) -c -o $@ $(SSQLS2PARSE_CXXFLAGS) $(CPPDEPS) $<
+
+ssqlsxlat_genv2.o: ./ssx/genv2.cpp
+	$(CXX) -c -o $@ $(SSQLSXLAT_CXXFLAGS) $(CPPDEPS) $<
+
+ssqlsxlat_main.o: ./ssx/main.cpp
+	$(CXX) -c -o $@ $(SSQLSXLAT_CXXFLAGS) $(CPPDEPS) $<
 
 test_array_index_array_index.o: ./test/array_index.cpp
 	$(CXX) -c -o $@ $(TEST_ARRAY_INDEX_CXXFLAGS) $(CPPDEPS) $<
@@ -358,17 +433,29 @@ test_datetime_datetime.o: ./test/datetime.cpp
 test_inttypes_inttypes.o: ./test/inttypes.cpp
 	$(CXX) -c -o $@ $(TEST_INTTYPES_CXXFLAGS) $(CPPDEPS) $<
 
+test_insertpolicy_insertpolicy.o: ./test/insertpolicy.cpp
+	$(CXX) -c -o $@ $(TEST_INSERTPOLICY_CXXFLAGS) $(CPPDEPS) $<
+
 test_manip_manip.o: ./test/manip.cpp
 	$(CXX) -c -o $@ $(TEST_MANIP_CXXFLAGS) $(CPPDEPS) $<
 
 test_null_comparison_null_comparison.o: ./test/null_comparison.cpp
 	$(CXX) -c -o $@ $(TEST_NULL_COMPARISON_CXXFLAGS) $(CPPDEPS) $<
 
+test_query_copy_query_copy.o: ./test/query_copy.cpp
+	$(CXX) -c -o $@ $(TEST_QUERY_COPY_CXXFLAGS) $(CPPDEPS) $<
+
 test_qssqls_qssqls.o: ./test/qssqls.cpp
 	$(CXX) -c -o $@ $(TEST_QSSQLS_CXXFLAGS) $(CPPDEPS) $<
 
 test_qstream_qstream.o: ./test/qstream.cpp
 	$(CXX) -c -o $@ $(TEST_QSTREAM_CXXFLAGS) $(CPPDEPS) $<
+
+test_sqlstream_sqlstream.o: ./test/sqlstream.cpp
+	$(CXX) -c -o $@ $(TEST_SQLSTREAM_CXXFLAGS) $(CPPDEPS) $<
+
+test_ssqls2_ssqls2.o: ./test/ssqls2.cpp
+	$(CXX) -c -o $@ $(TEST_SSQLS2_CXXFLAGS) $(CPPDEPS) $<
 
 test_string_string.o: ./test/string.cpp
 	$(CXX) -c -o $@ $(TEST_STRING_CXXFLAGS) $(CPPDEPS) $<
@@ -381,9 +468,6 @@ test_uds_uds.o: ./test/uds.cpp
 
 test_wnp_wnp.o: ./test/wnp.cpp
 	$(CXX) -c -o $@ $(TEST_WNP_CXXFLAGS) $(CPPDEPS) $<
-
-excommon_cmdline.o: ./examples/cmdline.cpp
-	$(CXX) -c -o $@ $(EXCOMMON_CXXFLAGS) $(CPPDEPS) $<
 
 excommon_printdata.o: ./examples/printdata.cpp
 	$(CXX) -c -o $@ $(EXCOMMON_CXXFLAGS) $(CPPDEPS) $<
@@ -439,6 +523,9 @@ ssqls4_ssqls4.o: ./examples/ssqls4.cpp
 ssqls5_ssqls5.o: ./examples/ssqls5.cpp
 	$(CXX) -c -o $@ $(SSQLS5_CXXFLAGS) $(CPPDEPS) $<
 
+ssqls6_ssqls6.o: ./examples/ssqls6.cpp
+	$(CXX) -c -o $@ $(SSQLS6_CXXFLAGS) $(CPPDEPS) $<
+
 store_if_store_if.o: ./examples/store_if.cpp
 	$(CXX) -c -o $@ $(STORE_IF_CXXFLAGS) $(CPPDEPS) $<
 
@@ -450,6 +537,9 @@ tquery2_tquery2.o: ./examples/tquery2.cpp
 
 tquery3_tquery3.o: ./examples/tquery3.cpp
 	$(CXX) -c -o $@ $(TQUERY3_CXXFLAGS) $(CPPDEPS) $<
+
+tquery4_tquery4.o: ./examples/tquery4.cpp
+	$(CXX) -c -o $@ $(TQUERY4_CXXFLAGS) $(CPPDEPS) $<
 
 transaction_transaction.o: ./examples/transaction.cpp
 	$(CXX) -c -o $@ $(TRANSACTION_CXXFLAGS) $(CPPDEPS) $<

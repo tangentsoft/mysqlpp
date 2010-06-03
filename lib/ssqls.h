@@ -38,6 +38,8 @@ enum sql_dummy_type { sql_dummy };
 #	define MYSQLPP_SSQLS_CONDITIONAL_STATICS(...) __VA_ARGS__
 #endif
 
+#define MYSQLPP_SSQLS_MAX_MEMBERS 25
+
 
 inline int sql_cmp(const Date& a, const Date& b)
 {
@@ -3396,13 +3398,13 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_field_list<Manip>& obj)\
 	{\
-    s << obj.manip << obj.obj->names[0];\
+    s << obj.manip << '`' << obj.obj->names[0] << '`';\
 		return s;\
 	}\
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_equal_list<Manip>& obj)\
 	{\
-    s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+    s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
 		return s;\
 	}\
 	template <class Manip>\
@@ -3419,7 +3421,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.manip << obj.obj->names[0];\
+      s << obj.manip << '`' << obj.obj->names[0] << '`';\
      } \
 		return s;\
 	}\
@@ -3428,7 +3430,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+      s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
      } \
 		return s;\
 	}\
@@ -3838,15 +3840,15 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_field_list<Manip>& obj)\
 	{\
-    s << obj.manip << obj.obj->names[0] << obj.delim;\
-    s << obj.manip << obj.obj->names[1];\
+    s << obj.manip << '`' << obj.obj->names[0] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[1] << '`';\
 		return s;\
 	}\
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_equal_list<Manip>& obj)\
 	{\
-    s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
-    s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2;\
+    s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
+    s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2;\
 		return s;\
 	}\
 	template <class Manip>\
@@ -3868,12 +3870,12 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.manip << obj.obj->names[0];\
+      s << obj.manip << '`' << obj.obj->names[0] << '`';\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[1];\
+      s << obj.manip << '`' << obj.obj->names[1] << '`';\
      } \
 		return s;\
 	}\
@@ -3882,12 +3884,12 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+      s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2;\
+      s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2;\
      } \
 		return s;\
 	}\
@@ -4311,17 +4313,17 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_field_list<Manip>& obj)\
 	{\
-    s << obj.manip << obj.obj->names[0] << obj.delim;\
-    s << obj.manip << obj.obj->names[1] << obj.delim;\
-    s << obj.manip << obj.obj->names[2];\
+    s << obj.manip << '`' << obj.obj->names[0] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[1] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[2] << '`';\
 		return s;\
 	}\
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_equal_list<Manip>& obj)\
 	{\
-    s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
-    s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
-    s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3;\
+    s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
+    s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
+    s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3;\
 		return s;\
 	}\
 	template <class Manip>\
@@ -4348,17 +4350,17 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.manip << obj.obj->names[0];\
+      s << obj.manip << '`' << obj.obj->names[0] << '`';\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[1];\
+      s << obj.manip << '`' << obj.obj->names[1] << '`';\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[2];\
+      s << obj.manip << '`' << obj.obj->names[2] << '`';\
      } \
 		return s;\
 	}\
@@ -4367,17 +4369,17 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+      s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2;\
+      s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2;\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3;\
+      s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3;\
      } \
 		return s;\
 	}\
@@ -4815,19 +4817,19 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_field_list<Manip>& obj)\
 	{\
-    s << obj.manip << obj.obj->names[0] << obj.delim;\
-    s << obj.manip << obj.obj->names[1] << obj.delim;\
-    s << obj.manip << obj.obj->names[2] << obj.delim;\
-    s << obj.manip << obj.obj->names[3];\
+    s << obj.manip << '`' << obj.obj->names[0] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[1] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[2] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[3] << '`';\
 		return s;\
 	}\
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_equal_list<Manip>& obj)\
 	{\
-    s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
-    s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
-    s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
-    s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4;\
+    s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
+    s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
+    s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
+    s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4;\
 		return s;\
 	}\
 	template <class Manip>\
@@ -4859,22 +4861,22 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.manip << obj.obj->names[0];\
+      s << obj.manip << '`' << obj.obj->names[0] << '`';\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[1];\
+      s << obj.manip << '`' << obj.obj->names[1] << '`';\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[2];\
+      s << obj.manip << '`' << obj.obj->names[2] << '`';\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[3];\
+      s << obj.manip << '`' << obj.obj->names[3] << '`';\
      } \
 		return s;\
 	}\
@@ -4883,22 +4885,22 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+      s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2;\
+      s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2;\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3;\
+      s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3;\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4;\
+      s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4;\
      } \
 		return s;\
 	}\
@@ -5350,21 +5352,21 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_field_list<Manip>& obj)\
 	{\
-    s << obj.manip << obj.obj->names[0] << obj.delim;\
-    s << obj.manip << obj.obj->names[1] << obj.delim;\
-    s << obj.manip << obj.obj->names[2] << obj.delim;\
-    s << obj.manip << obj.obj->names[3] << obj.delim;\
-    s << obj.manip << obj.obj->names[4];\
+    s << obj.manip << '`' << obj.obj->names[0] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[1] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[2] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[3] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[4] << '`';\
 		return s;\
 	}\
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_equal_list<Manip>& obj)\
 	{\
-    s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
-    s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
-    s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
-    s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
-    s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5;\
+    s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
+    s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
+    s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
+    s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
+    s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5;\
 		return s;\
 	}\
 	template <class Manip>\
@@ -5401,27 +5403,27 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.manip << obj.obj->names[0];\
+      s << obj.manip << '`' << obj.obj->names[0] << '`';\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[1];\
+      s << obj.manip << '`' << obj.obj->names[1] << '`';\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[2];\
+      s << obj.manip << '`' << obj.obj->names[2] << '`';\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[3];\
+      s << obj.manip << '`' << obj.obj->names[3] << '`';\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[4];\
+      s << obj.manip << '`' << obj.obj->names[4] << '`';\
      } \
 		return s;\
 	}\
@@ -5430,27 +5432,27 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+      s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2;\
+      s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2;\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3;\
+      s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3;\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4;\
+      s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4;\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5;\
+      s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5;\
      } \
 		return s;\
 	}\
@@ -5916,23 +5918,23 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_field_list<Manip>& obj)\
 	{\
-    s << obj.manip << obj.obj->names[0] << obj.delim;\
-    s << obj.manip << obj.obj->names[1] << obj.delim;\
-    s << obj.manip << obj.obj->names[2] << obj.delim;\
-    s << obj.manip << obj.obj->names[3] << obj.delim;\
-    s << obj.manip << obj.obj->names[4] << obj.delim;\
-    s << obj.manip << obj.obj->names[5];\
+    s << obj.manip << '`' << obj.obj->names[0] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[1] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[2] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[3] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[4] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[5] << '`';\
 		return s;\
 	}\
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_equal_list<Manip>& obj)\
 	{\
-    s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
-    s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
-    s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
-    s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
-    s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
-    s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6;\
+    s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
+    s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
+    s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
+    s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
+    s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
+    s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6;\
 		return s;\
 	}\
 	template <class Manip>\
@@ -5974,32 +5976,32 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.manip << obj.obj->names[0];\
+      s << obj.manip << '`' << obj.obj->names[0] << '`';\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[1];\
+      s << obj.manip << '`' << obj.obj->names[1] << '`';\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[2];\
+      s << obj.manip << '`' << obj.obj->names[2] << '`';\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[3];\
+      s << obj.manip << '`' << obj.obj->names[3] << '`';\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[4];\
+      s << obj.manip << '`' << obj.obj->names[4] << '`';\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[5];\
+      s << obj.manip << '`' << obj.obj->names[5] << '`';\
      } \
 		return s;\
 	}\
@@ -6008,32 +6010,32 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+      s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2;\
+      s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2;\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3;\
+      s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3;\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4;\
+      s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4;\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5;\
+      s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5;\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6;\
+      s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6;\
      } \
 		return s;\
 	}\
@@ -6513,25 +6515,25 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_field_list<Manip>& obj)\
 	{\
-    s << obj.manip << obj.obj->names[0] << obj.delim;\
-    s << obj.manip << obj.obj->names[1] << obj.delim;\
-    s << obj.manip << obj.obj->names[2] << obj.delim;\
-    s << obj.manip << obj.obj->names[3] << obj.delim;\
-    s << obj.manip << obj.obj->names[4] << obj.delim;\
-    s << obj.manip << obj.obj->names[5] << obj.delim;\
-    s << obj.manip << obj.obj->names[6];\
+    s << obj.manip << '`' << obj.obj->names[0] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[1] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[2] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[3] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[4] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[5] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[6] << '`';\
 		return s;\
 	}\
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_equal_list<Manip>& obj)\
 	{\
-    s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
-    s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
-    s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
-    s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
-    s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
-    s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
-    s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7;\
+    s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
+    s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
+    s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
+    s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
+    s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
+    s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
+    s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7;\
 		return s;\
 	}\
 	template <class Manip>\
@@ -6578,37 +6580,37 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.manip << obj.obj->names[0];\
+      s << obj.manip << '`' << obj.obj->names[0] << '`';\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[1];\
+      s << obj.manip << '`' << obj.obj->names[1] << '`';\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[2];\
+      s << obj.manip << '`' << obj.obj->names[2] << '`';\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[3];\
+      s << obj.manip << '`' << obj.obj->names[3] << '`';\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[4];\
+      s << obj.manip << '`' << obj.obj->names[4] << '`';\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[5];\
+      s << obj.manip << '`' << obj.obj->names[5] << '`';\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[6];\
+      s << obj.manip << '`' << obj.obj->names[6] << '`';\
      } \
 		return s;\
 	}\
@@ -6617,37 +6619,37 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+      s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2;\
+      s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2;\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3;\
+      s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3;\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4;\
+      s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4;\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5;\
+      s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5;\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6;\
+      s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6;\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7;\
+      s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7;\
      } \
 		return s;\
 	}\
@@ -7141,27 +7143,27 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_field_list<Manip>& obj)\
 	{\
-    s << obj.manip << obj.obj->names[0] << obj.delim;\
-    s << obj.manip << obj.obj->names[1] << obj.delim;\
-    s << obj.manip << obj.obj->names[2] << obj.delim;\
-    s << obj.manip << obj.obj->names[3] << obj.delim;\
-    s << obj.manip << obj.obj->names[4] << obj.delim;\
-    s << obj.manip << obj.obj->names[5] << obj.delim;\
-    s << obj.manip << obj.obj->names[6] << obj.delim;\
-    s << obj.manip << obj.obj->names[7];\
+    s << obj.manip << '`' << obj.obj->names[0] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[1] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[2] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[3] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[4] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[5] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[6] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[7] << '`';\
 		return s;\
 	}\
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_equal_list<Manip>& obj)\
 	{\
-    s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
-    s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
-    s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
-    s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
-    s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
-    s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
-    s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
-    s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8;\
+    s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
+    s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
+    s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
+    s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
+    s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
+    s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
+    s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
+    s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8;\
 		return s;\
 	}\
 	template <class Manip>\
@@ -7213,42 +7215,42 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.manip << obj.obj->names[0];\
+      s << obj.manip << '`' << obj.obj->names[0] << '`';\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[1];\
+      s << obj.manip << '`' << obj.obj->names[1] << '`';\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[2];\
+      s << obj.manip << '`' << obj.obj->names[2] << '`';\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[3];\
+      s << obj.manip << '`' << obj.obj->names[3] << '`';\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[4];\
+      s << obj.manip << '`' << obj.obj->names[4] << '`';\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[5];\
+      s << obj.manip << '`' << obj.obj->names[5] << '`';\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[6];\
+      s << obj.manip << '`' << obj.obj->names[6] << '`';\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[7];\
+      s << obj.manip << '`' << obj.obj->names[7] << '`';\
      } \
 		return s;\
 	}\
@@ -7257,42 +7259,42 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+      s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2;\
+      s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2;\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3;\
+      s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3;\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4;\
+      s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4;\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5;\
+      s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5;\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6;\
+      s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6;\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7;\
+      s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7;\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8;\
+      s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8;\
      } \
 		return s;\
 	}\
@@ -7800,29 +7802,29 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_field_list<Manip>& obj)\
 	{\
-    s << obj.manip << obj.obj->names[0] << obj.delim;\
-    s << obj.manip << obj.obj->names[1] << obj.delim;\
-    s << obj.manip << obj.obj->names[2] << obj.delim;\
-    s << obj.manip << obj.obj->names[3] << obj.delim;\
-    s << obj.manip << obj.obj->names[4] << obj.delim;\
-    s << obj.manip << obj.obj->names[5] << obj.delim;\
-    s << obj.manip << obj.obj->names[6] << obj.delim;\
-    s << obj.manip << obj.obj->names[7] << obj.delim;\
-    s << obj.manip << obj.obj->names[8];\
+    s << obj.manip << '`' << obj.obj->names[0] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[1] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[2] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[3] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[4] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[5] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[6] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[7] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[8] << '`';\
 		return s;\
 	}\
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_equal_list<Manip>& obj)\
 	{\
-    s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
-    s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
-    s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
-    s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
-    s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
-    s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
-    s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
-    s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
-    s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9;\
+    s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
+    s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
+    s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
+    s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
+    s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
+    s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
+    s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
+    s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
+    s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9;\
 		return s;\
 	}\
 	template <class Manip>\
@@ -7879,47 +7881,47 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.manip << obj.obj->names[0];\
+      s << obj.manip << '`' << obj.obj->names[0] << '`';\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[1];\
+      s << obj.manip << '`' << obj.obj->names[1] << '`';\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[2];\
+      s << obj.manip << '`' << obj.obj->names[2] << '`';\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[3];\
+      s << obj.manip << '`' << obj.obj->names[3] << '`';\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[4];\
+      s << obj.manip << '`' << obj.obj->names[4] << '`';\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[5];\
+      s << obj.manip << '`' << obj.obj->names[5] << '`';\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[6];\
+      s << obj.manip << '`' << obj.obj->names[6] << '`';\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[7];\
+      s << obj.manip << '`' << obj.obj->names[7] << '`';\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[8];\
+      s << obj.manip << '`' << obj.obj->names[8] << '`';\
      } \
 		return s;\
 	}\
@@ -7928,47 +7930,47 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+      s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2;\
+      s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2;\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3;\
+      s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3;\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4;\
+      s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4;\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5;\
+      s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5;\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6;\
+      s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6;\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7;\
+      s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7;\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8;\
+      s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8;\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9;\
+      s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9;\
      } \
 		return s;\
 	}\
@@ -8490,31 +8492,31 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_field_list<Manip>& obj)\
 	{\
-    s << obj.manip << obj.obj->names[0] << obj.delim;\
-    s << obj.manip << obj.obj->names[1] << obj.delim;\
-    s << obj.manip << obj.obj->names[2] << obj.delim;\
-    s << obj.manip << obj.obj->names[3] << obj.delim;\
-    s << obj.manip << obj.obj->names[4] << obj.delim;\
-    s << obj.manip << obj.obj->names[5] << obj.delim;\
-    s << obj.manip << obj.obj->names[6] << obj.delim;\
-    s << obj.manip << obj.obj->names[7] << obj.delim;\
-    s << obj.manip << obj.obj->names[8] << obj.delim;\
-    s << obj.manip << obj.obj->names[9];\
+    s << obj.manip << '`' << obj.obj->names[0] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[1] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[2] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[3] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[4] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[5] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[6] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[7] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[8] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[9] << '`';\
 		return s;\
 	}\
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_equal_list<Manip>& obj)\
 	{\
-    s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
-    s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
-    s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
-    s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
-    s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
-    s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
-    s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
-    s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
-    s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
-    s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10;\
+    s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
+    s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
+    s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
+    s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
+    s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
+    s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
+    s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
+    s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
+    s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
+    s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10;\
 		return s;\
 	}\
 	template <class Manip>\
@@ -8576,52 +8578,52 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.manip << obj.obj->names[0];\
+      s << obj.manip << '`' << obj.obj->names[0] << '`';\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[1];\
+      s << obj.manip << '`' << obj.obj->names[1] << '`';\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[2];\
+      s << obj.manip << '`' << obj.obj->names[2] << '`';\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[3];\
+      s << obj.manip << '`' << obj.obj->names[3] << '`';\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[4];\
+      s << obj.manip << '`' << obj.obj->names[4] << '`';\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[5];\
+      s << obj.manip << '`' << obj.obj->names[5] << '`';\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[6];\
+      s << obj.manip << '`' << obj.obj->names[6] << '`';\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[7];\
+      s << obj.manip << '`' << obj.obj->names[7] << '`';\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[8];\
+      s << obj.manip << '`' << obj.obj->names[8] << '`';\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[9];\
+      s << obj.manip << '`' << obj.obj->names[9] << '`';\
      } \
 		return s;\
 	}\
@@ -8630,52 +8632,52 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+      s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2;\
+      s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2;\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3;\
+      s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3;\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4;\
+      s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4;\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5;\
+      s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5;\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6;\
+      s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6;\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7;\
+      s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7;\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8;\
+      s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8;\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9;\
+      s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9;\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10;\
+      s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10;\
      } \
 		return s;\
 	}\
@@ -9211,33 +9213,33 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_field_list<Manip>& obj)\
 	{\
-    s << obj.manip << obj.obj->names[0] << obj.delim;\
-    s << obj.manip << obj.obj->names[1] << obj.delim;\
-    s << obj.manip << obj.obj->names[2] << obj.delim;\
-    s << obj.manip << obj.obj->names[3] << obj.delim;\
-    s << obj.manip << obj.obj->names[4] << obj.delim;\
-    s << obj.manip << obj.obj->names[5] << obj.delim;\
-    s << obj.manip << obj.obj->names[6] << obj.delim;\
-    s << obj.manip << obj.obj->names[7] << obj.delim;\
-    s << obj.manip << obj.obj->names[8] << obj.delim;\
-    s << obj.manip << obj.obj->names[9] << obj.delim;\
-    s << obj.manip << obj.obj->names[10];\
+    s << obj.manip << '`' << obj.obj->names[0] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[1] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[2] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[3] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[4] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[5] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[6] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[7] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[8] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[9] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[10] << '`';\
 		return s;\
 	}\
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_equal_list<Manip>& obj)\
 	{\
-    s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
-    s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
-    s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
-    s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
-    s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
-    s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
-    s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
-    s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
-    s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
-    s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
-    s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11;\
+    s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
+    s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
+    s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
+    s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
+    s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
+    s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
+    s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
+    s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
+    s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
+    s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
+    s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11;\
 		return s;\
 	}\
 	template <class Manip>\
@@ -9304,57 +9306,57 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.manip << obj.obj->names[0];\
+      s << obj.manip << '`' << obj.obj->names[0] << '`';\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[1];\
+      s << obj.manip << '`' << obj.obj->names[1] << '`';\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[2];\
+      s << obj.manip << '`' << obj.obj->names[2] << '`';\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[3];\
+      s << obj.manip << '`' << obj.obj->names[3] << '`';\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[4];\
+      s << obj.manip << '`' << obj.obj->names[4] << '`';\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[5];\
+      s << obj.manip << '`' << obj.obj->names[5] << '`';\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[6];\
+      s << obj.manip << '`' << obj.obj->names[6] << '`';\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[7];\
+      s << obj.manip << '`' << obj.obj->names[7] << '`';\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[8];\
+      s << obj.manip << '`' << obj.obj->names[8] << '`';\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[9];\
+      s << obj.manip << '`' << obj.obj->names[9] << '`';\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[10];\
+      s << obj.manip << '`' << obj.obj->names[10] << '`';\
      } \
 		return s;\
 	}\
@@ -9363,57 +9365,57 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+      s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2;\
+      s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2;\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3;\
+      s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3;\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4;\
+      s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4;\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5;\
+      s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5;\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6;\
+      s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6;\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7;\
+      s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7;\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8;\
+      s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8;\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9;\
+      s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9;\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10;\
+      s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10;\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11;\
+      s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11;\
      } \
 		return s;\
 	}\
@@ -9963,35 +9965,35 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_field_list<Manip>& obj)\
 	{\
-    s << obj.manip << obj.obj->names[0] << obj.delim;\
-    s << obj.manip << obj.obj->names[1] << obj.delim;\
-    s << obj.manip << obj.obj->names[2] << obj.delim;\
-    s << obj.manip << obj.obj->names[3] << obj.delim;\
-    s << obj.manip << obj.obj->names[4] << obj.delim;\
-    s << obj.manip << obj.obj->names[5] << obj.delim;\
-    s << obj.manip << obj.obj->names[6] << obj.delim;\
-    s << obj.manip << obj.obj->names[7] << obj.delim;\
-    s << obj.manip << obj.obj->names[8] << obj.delim;\
-    s << obj.manip << obj.obj->names[9] << obj.delim;\
-    s << obj.manip << obj.obj->names[10] << obj.delim;\
-    s << obj.manip << obj.obj->names[11];\
+    s << obj.manip << '`' << obj.obj->names[0] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[1] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[2] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[3] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[4] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[5] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[6] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[7] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[8] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[9] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[10] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[11] << '`';\
 		return s;\
 	}\
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_equal_list<Manip>& obj)\
 	{\
-    s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
-    s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
-    s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
-    s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
-    s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
-    s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
-    s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
-    s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
-    s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
-    s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
-    s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
-    s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12;\
+    s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
+    s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
+    s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
+    s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
+    s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
+    s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
+    s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
+    s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
+    s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
+    s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
+    s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
+    s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12;\
 		return s;\
 	}\
 	template <class Manip>\
@@ -10063,62 +10065,62 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.manip << obj.obj->names[0];\
+      s << obj.manip << '`' << obj.obj->names[0] << '`';\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[1];\
+      s << obj.manip << '`' << obj.obj->names[1] << '`';\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[2];\
+      s << obj.manip << '`' << obj.obj->names[2] << '`';\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[3];\
+      s << obj.manip << '`' << obj.obj->names[3] << '`';\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[4];\
+      s << obj.manip << '`' << obj.obj->names[4] << '`';\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[5];\
+      s << obj.manip << '`' << obj.obj->names[5] << '`';\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[6];\
+      s << obj.manip << '`' << obj.obj->names[6] << '`';\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[7];\
+      s << obj.manip << '`' << obj.obj->names[7] << '`';\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[8];\
+      s << obj.manip << '`' << obj.obj->names[8] << '`';\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[9];\
+      s << obj.manip << '`' << obj.obj->names[9] << '`';\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[10];\
+      s << obj.manip << '`' << obj.obj->names[10] << '`';\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[11];\
+      s << obj.manip << '`' << obj.obj->names[11] << '`';\
      } \
 		return s;\
 	}\
@@ -10127,62 +10129,62 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+      s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2;\
+      s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2;\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3;\
+      s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3;\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4;\
+      s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4;\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5;\
+      s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5;\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6;\
+      s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6;\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7;\
+      s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7;\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8;\
+      s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8;\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9;\
+      s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9;\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10;\
+      s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10;\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11;\
+      s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11;\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12;\
+      s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12;\
      } \
 		return s;\
 	}\
@@ -10746,37 +10748,37 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_field_list<Manip>& obj)\
 	{\
-    s << obj.manip << obj.obj->names[0] << obj.delim;\
-    s << obj.manip << obj.obj->names[1] << obj.delim;\
-    s << obj.manip << obj.obj->names[2] << obj.delim;\
-    s << obj.manip << obj.obj->names[3] << obj.delim;\
-    s << obj.manip << obj.obj->names[4] << obj.delim;\
-    s << obj.manip << obj.obj->names[5] << obj.delim;\
-    s << obj.manip << obj.obj->names[6] << obj.delim;\
-    s << obj.manip << obj.obj->names[7] << obj.delim;\
-    s << obj.manip << obj.obj->names[8] << obj.delim;\
-    s << obj.manip << obj.obj->names[9] << obj.delim;\
-    s << obj.manip << obj.obj->names[10] << obj.delim;\
-    s << obj.manip << obj.obj->names[11] << obj.delim;\
-    s << obj.manip << obj.obj->names[12];\
+    s << obj.manip << '`' << obj.obj->names[0] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[1] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[2] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[3] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[4] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[5] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[6] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[7] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[8] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[9] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[10] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[11] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[12] << '`';\
 		return s;\
 	}\
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_equal_list<Manip>& obj)\
 	{\
-    s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
-    s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
-    s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
-    s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
-    s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
-    s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
-    s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
-    s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
-    s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
-    s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
-    s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
-    s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
-    s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13;\
+    s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
+    s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
+    s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
+    s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
+    s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
+    s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
+    s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
+    s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
+    s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
+    s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
+    s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
+    s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
+    s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13;\
 		return s;\
 	}\
 	template <class Manip>\
@@ -10853,67 +10855,67 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.manip << obj.obj->names[0];\
+      s << obj.manip << '`' << obj.obj->names[0] << '`';\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[1];\
+      s << obj.manip << '`' << obj.obj->names[1] << '`';\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[2];\
+      s << obj.manip << '`' << obj.obj->names[2] << '`';\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[3];\
+      s << obj.manip << '`' << obj.obj->names[3] << '`';\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[4];\
+      s << obj.manip << '`' << obj.obj->names[4] << '`';\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[5];\
+      s << obj.manip << '`' << obj.obj->names[5] << '`';\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[6];\
+      s << obj.manip << '`' << obj.obj->names[6] << '`';\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[7];\
+      s << obj.manip << '`' << obj.obj->names[7] << '`';\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[8];\
+      s << obj.manip << '`' << obj.obj->names[8] << '`';\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[9];\
+      s << obj.manip << '`' << obj.obj->names[9] << '`';\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[10];\
+      s << obj.manip << '`' << obj.obj->names[10] << '`';\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[11];\
+      s << obj.manip << '`' << obj.obj->names[11] << '`';\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[12];\
+      s << obj.manip << '`' << obj.obj->names[12] << '`';\
      } \
 		return s;\
 	}\
@@ -10922,67 +10924,67 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+      s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2;\
+      s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2;\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3;\
+      s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3;\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4;\
+      s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4;\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5;\
+      s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5;\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6;\
+      s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6;\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7;\
+      s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7;\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8;\
+      s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8;\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9;\
+      s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9;\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10;\
+      s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10;\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11;\
+      s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11;\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12;\
+      s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12;\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13;\
+      s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13;\
      } \
 		return s;\
 	}\
@@ -11560,39 +11562,39 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_field_list<Manip>& obj)\
 	{\
-    s << obj.manip << obj.obj->names[0] << obj.delim;\
-    s << obj.manip << obj.obj->names[1] << obj.delim;\
-    s << obj.manip << obj.obj->names[2] << obj.delim;\
-    s << obj.manip << obj.obj->names[3] << obj.delim;\
-    s << obj.manip << obj.obj->names[4] << obj.delim;\
-    s << obj.manip << obj.obj->names[5] << obj.delim;\
-    s << obj.manip << obj.obj->names[6] << obj.delim;\
-    s << obj.manip << obj.obj->names[7] << obj.delim;\
-    s << obj.manip << obj.obj->names[8] << obj.delim;\
-    s << obj.manip << obj.obj->names[9] << obj.delim;\
-    s << obj.manip << obj.obj->names[10] << obj.delim;\
-    s << obj.manip << obj.obj->names[11] << obj.delim;\
-    s << obj.manip << obj.obj->names[12] << obj.delim;\
-    s << obj.manip << obj.obj->names[13];\
+    s << obj.manip << '`' << obj.obj->names[0] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[1] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[2] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[3] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[4] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[5] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[6] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[7] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[8] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[9] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[10] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[11] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[12] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[13] << '`';\
 		return s;\
 	}\
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_equal_list<Manip>& obj)\
 	{\
-    s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
-    s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
-    s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
-    s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
-    s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
-    s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
-    s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
-    s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
-    s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
-    s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
-    s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
-    s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
-    s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13 << obj.delim;\
-    s << obj.obj->names[13] << obj.comp << obj.manip << obj.obj->I14;\
+    s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
+    s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
+    s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
+    s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
+    s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
+    s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
+    s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
+    s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
+    s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
+    s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
+    s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
+    s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
+    s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13 << obj.delim;\
+    s << '`' << obj.obj->names[13] << '`' << obj.comp << obj.manip << obj.obj->I14;\
 		return s;\
 	}\
 	template <class Manip>\
@@ -11674,72 +11676,72 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.manip << obj.obj->names[0];\
+      s << obj.manip << '`' << obj.obj->names[0] << '`';\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[1];\
+      s << obj.manip << '`' << obj.obj->names[1] << '`';\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[2];\
+      s << obj.manip << '`' << obj.obj->names[2] << '`';\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[3];\
+      s << obj.manip << '`' << obj.obj->names[3] << '`';\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[4];\
+      s << obj.manip << '`' << obj.obj->names[4] << '`';\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[5];\
+      s << obj.manip << '`' << obj.obj->names[5] << '`';\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[6];\
+      s << obj.manip << '`' << obj.obj->names[6] << '`';\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[7];\
+      s << obj.manip << '`' << obj.obj->names[7] << '`';\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[8];\
+      s << obj.manip << '`' << obj.obj->names[8] << '`';\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[9];\
+      s << obj.manip << '`' << obj.obj->names[9] << '`';\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[10];\
+      s << obj.manip << '`' << obj.obj->names[10] << '`';\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[11];\
+      s << obj.manip << '`' << obj.obj->names[11] << '`';\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[12];\
+      s << obj.manip << '`' << obj.obj->names[12] << '`';\
       before = true; \
      } \
     if ((*obj.include)[13]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[13];\
+      s << obj.manip << '`' << obj.obj->names[13] << '`';\
      } \
 		return s;\
 	}\
@@ -11748,72 +11750,72 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+      s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2;\
+      s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2;\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3;\
+      s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3;\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4;\
+      s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4;\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5;\
+      s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5;\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6;\
+      s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6;\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7;\
+      s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7;\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8;\
+      s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8;\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9;\
+      s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9;\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10;\
+      s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10;\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11;\
+      s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11;\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12;\
+      s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12;\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13;\
+      s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13;\
       before = true; \
      } \
     if ((*obj.include)[13]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[13] << obj.comp << obj.manip << obj.obj->I14;\
+      s << '`' << obj.obj->names[13] << '`' << obj.comp << obj.manip << obj.obj->I14;\
      } \
 		return s;\
 	}\
@@ -12405,41 +12407,41 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_field_list<Manip>& obj)\
 	{\
-    s << obj.manip << obj.obj->names[0] << obj.delim;\
-    s << obj.manip << obj.obj->names[1] << obj.delim;\
-    s << obj.manip << obj.obj->names[2] << obj.delim;\
-    s << obj.manip << obj.obj->names[3] << obj.delim;\
-    s << obj.manip << obj.obj->names[4] << obj.delim;\
-    s << obj.manip << obj.obj->names[5] << obj.delim;\
-    s << obj.manip << obj.obj->names[6] << obj.delim;\
-    s << obj.manip << obj.obj->names[7] << obj.delim;\
-    s << obj.manip << obj.obj->names[8] << obj.delim;\
-    s << obj.manip << obj.obj->names[9] << obj.delim;\
-    s << obj.manip << obj.obj->names[10] << obj.delim;\
-    s << obj.manip << obj.obj->names[11] << obj.delim;\
-    s << obj.manip << obj.obj->names[12] << obj.delim;\
-    s << obj.manip << obj.obj->names[13] << obj.delim;\
-    s << obj.manip << obj.obj->names[14];\
+    s << obj.manip << '`' << obj.obj->names[0] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[1] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[2] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[3] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[4] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[5] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[6] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[7] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[8] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[9] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[10] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[11] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[12] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[13] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[14] << '`';\
 		return s;\
 	}\
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_equal_list<Manip>& obj)\
 	{\
-    s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
-    s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
-    s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
-    s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
-    s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
-    s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
-    s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
-    s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
-    s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
-    s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
-    s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
-    s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
-    s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13 << obj.delim;\
-    s << obj.obj->names[13] << obj.comp << obj.manip << obj.obj->I14 << obj.delim;\
-    s << obj.obj->names[14] << obj.comp << obj.manip << obj.obj->I15;\
+    s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
+    s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
+    s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
+    s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
+    s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
+    s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
+    s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
+    s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
+    s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
+    s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
+    s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
+    s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
+    s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13 << obj.delim;\
+    s << '`' << obj.obj->names[13] << '`' << obj.comp << obj.manip << obj.obj->I14 << obj.delim;\
+    s << '`' << obj.obj->names[14] << '`' << obj.comp << obj.manip << obj.obj->I15;\
 		return s;\
 	}\
 	template <class Manip>\
@@ -12526,77 +12528,77 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.manip << obj.obj->names[0];\
+      s << obj.manip << '`' << obj.obj->names[0] << '`';\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[1];\
+      s << obj.manip << '`' << obj.obj->names[1] << '`';\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[2];\
+      s << obj.manip << '`' << obj.obj->names[2] << '`';\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[3];\
+      s << obj.manip << '`' << obj.obj->names[3] << '`';\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[4];\
+      s << obj.manip << '`' << obj.obj->names[4] << '`';\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[5];\
+      s << obj.manip << '`' << obj.obj->names[5] << '`';\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[6];\
+      s << obj.manip << '`' << obj.obj->names[6] << '`';\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[7];\
+      s << obj.manip << '`' << obj.obj->names[7] << '`';\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[8];\
+      s << obj.manip << '`' << obj.obj->names[8] << '`';\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[9];\
+      s << obj.manip << '`' << obj.obj->names[9] << '`';\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[10];\
+      s << obj.manip << '`' << obj.obj->names[10] << '`';\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[11];\
+      s << obj.manip << '`' << obj.obj->names[11] << '`';\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[12];\
+      s << obj.manip << '`' << obj.obj->names[12] << '`';\
       before = true; \
      } \
     if ((*obj.include)[13]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[13];\
+      s << obj.manip << '`' << obj.obj->names[13] << '`';\
       before = true; \
      } \
     if ((*obj.include)[14]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[14];\
+      s << obj.manip << '`' << obj.obj->names[14] << '`';\
      } \
 		return s;\
 	}\
@@ -12605,77 +12607,77 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+      s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2;\
+      s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2;\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3;\
+      s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3;\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4;\
+      s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4;\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5;\
+      s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5;\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6;\
+      s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6;\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7;\
+      s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7;\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8;\
+      s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8;\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9;\
+      s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9;\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10;\
+      s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10;\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11;\
+      s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11;\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12;\
+      s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12;\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13;\
+      s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13;\
       before = true; \
      } \
     if ((*obj.include)[13]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[13] << obj.comp << obj.manip << obj.obj->I14;\
+      s << '`' << obj.obj->names[13] << '`' << obj.comp << obj.manip << obj.obj->I14;\
       before = true; \
      } \
     if ((*obj.include)[14]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[14] << obj.comp << obj.manip << obj.obj->I15;\
+      s << '`' << obj.obj->names[14] << '`' << obj.comp << obj.manip << obj.obj->I15;\
      } \
 		return s;\
 	}\
@@ -13281,43 +13283,43 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_field_list<Manip>& obj)\
 	{\
-    s << obj.manip << obj.obj->names[0] << obj.delim;\
-    s << obj.manip << obj.obj->names[1] << obj.delim;\
-    s << obj.manip << obj.obj->names[2] << obj.delim;\
-    s << obj.manip << obj.obj->names[3] << obj.delim;\
-    s << obj.manip << obj.obj->names[4] << obj.delim;\
-    s << obj.manip << obj.obj->names[5] << obj.delim;\
-    s << obj.manip << obj.obj->names[6] << obj.delim;\
-    s << obj.manip << obj.obj->names[7] << obj.delim;\
-    s << obj.manip << obj.obj->names[8] << obj.delim;\
-    s << obj.manip << obj.obj->names[9] << obj.delim;\
-    s << obj.manip << obj.obj->names[10] << obj.delim;\
-    s << obj.manip << obj.obj->names[11] << obj.delim;\
-    s << obj.manip << obj.obj->names[12] << obj.delim;\
-    s << obj.manip << obj.obj->names[13] << obj.delim;\
-    s << obj.manip << obj.obj->names[14] << obj.delim;\
-    s << obj.manip << obj.obj->names[15];\
+    s << obj.manip << '`' << obj.obj->names[0] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[1] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[2] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[3] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[4] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[5] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[6] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[7] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[8] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[9] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[10] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[11] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[12] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[13] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[14] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[15] << '`';\
 		return s;\
 	}\
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_equal_list<Manip>& obj)\
 	{\
-    s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
-    s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
-    s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
-    s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
-    s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
-    s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
-    s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
-    s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
-    s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
-    s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
-    s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
-    s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
-    s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13 << obj.delim;\
-    s << obj.obj->names[13] << obj.comp << obj.manip << obj.obj->I14 << obj.delim;\
-    s << obj.obj->names[14] << obj.comp << obj.manip << obj.obj->I15 << obj.delim;\
-    s << obj.obj->names[15] << obj.comp << obj.manip << obj.obj->I16;\
+    s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
+    s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
+    s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
+    s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
+    s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
+    s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
+    s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
+    s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
+    s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
+    s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
+    s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
+    s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
+    s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13 << obj.delim;\
+    s << '`' << obj.obj->names[13] << '`' << obj.comp << obj.manip << obj.obj->I14 << obj.delim;\
+    s << '`' << obj.obj->names[14] << '`' << obj.comp << obj.manip << obj.obj->I15 << obj.delim;\
+    s << '`' << obj.obj->names[15] << '`' << obj.comp << obj.manip << obj.obj->I16;\
 		return s;\
 	}\
 	template <class Manip>\
@@ -13409,82 +13411,82 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.manip << obj.obj->names[0];\
+      s << obj.manip << '`' << obj.obj->names[0] << '`';\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[1];\
+      s << obj.manip << '`' << obj.obj->names[1] << '`';\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[2];\
+      s << obj.manip << '`' << obj.obj->names[2] << '`';\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[3];\
+      s << obj.manip << '`' << obj.obj->names[3] << '`';\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[4];\
+      s << obj.manip << '`' << obj.obj->names[4] << '`';\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[5];\
+      s << obj.manip << '`' << obj.obj->names[5] << '`';\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[6];\
+      s << obj.manip << '`' << obj.obj->names[6] << '`';\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[7];\
+      s << obj.manip << '`' << obj.obj->names[7] << '`';\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[8];\
+      s << obj.manip << '`' << obj.obj->names[8] << '`';\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[9];\
+      s << obj.manip << '`' << obj.obj->names[9] << '`';\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[10];\
+      s << obj.manip << '`' << obj.obj->names[10] << '`';\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[11];\
+      s << obj.manip << '`' << obj.obj->names[11] << '`';\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[12];\
+      s << obj.manip << '`' << obj.obj->names[12] << '`';\
       before = true; \
      } \
     if ((*obj.include)[13]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[13];\
+      s << obj.manip << '`' << obj.obj->names[13] << '`';\
       before = true; \
      } \
     if ((*obj.include)[14]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[14];\
+      s << obj.manip << '`' << obj.obj->names[14] << '`';\
       before = true; \
      } \
     if ((*obj.include)[15]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[15];\
+      s << obj.manip << '`' << obj.obj->names[15] << '`';\
      } \
 		return s;\
 	}\
@@ -13493,82 +13495,82 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+      s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2;\
+      s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2;\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3;\
+      s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3;\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4;\
+      s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4;\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5;\
+      s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5;\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6;\
+      s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6;\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7;\
+      s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7;\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8;\
+      s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8;\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9;\
+      s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9;\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10;\
+      s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10;\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11;\
+      s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11;\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12;\
+      s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12;\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13;\
+      s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13;\
       before = true; \
      } \
     if ((*obj.include)[13]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[13] << obj.comp << obj.manip << obj.obj->I14;\
+      s << '`' << obj.obj->names[13] << '`' << obj.comp << obj.manip << obj.obj->I14;\
       before = true; \
      } \
     if ((*obj.include)[14]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[14] << obj.comp << obj.manip << obj.obj->I15;\
+      s << '`' << obj.obj->names[14] << '`' << obj.comp << obj.manip << obj.obj->I15;\
       before = true; \
      } \
     if ((*obj.include)[15]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[15] << obj.comp << obj.manip << obj.obj->I16;\
+      s << '`' << obj.obj->names[15] << '`' << obj.comp << obj.manip << obj.obj->I16;\
      } \
 		return s;\
 	}\
@@ -14188,45 +14190,45 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_field_list<Manip>& obj)\
 	{\
-    s << obj.manip << obj.obj->names[0] << obj.delim;\
-    s << obj.manip << obj.obj->names[1] << obj.delim;\
-    s << obj.manip << obj.obj->names[2] << obj.delim;\
-    s << obj.manip << obj.obj->names[3] << obj.delim;\
-    s << obj.manip << obj.obj->names[4] << obj.delim;\
-    s << obj.manip << obj.obj->names[5] << obj.delim;\
-    s << obj.manip << obj.obj->names[6] << obj.delim;\
-    s << obj.manip << obj.obj->names[7] << obj.delim;\
-    s << obj.manip << obj.obj->names[8] << obj.delim;\
-    s << obj.manip << obj.obj->names[9] << obj.delim;\
-    s << obj.manip << obj.obj->names[10] << obj.delim;\
-    s << obj.manip << obj.obj->names[11] << obj.delim;\
-    s << obj.manip << obj.obj->names[12] << obj.delim;\
-    s << obj.manip << obj.obj->names[13] << obj.delim;\
-    s << obj.manip << obj.obj->names[14] << obj.delim;\
-    s << obj.manip << obj.obj->names[15] << obj.delim;\
-    s << obj.manip << obj.obj->names[16];\
+    s << obj.manip << '`' << obj.obj->names[0] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[1] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[2] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[3] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[4] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[5] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[6] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[7] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[8] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[9] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[10] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[11] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[12] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[13] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[14] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[15] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[16] << '`';\
 		return s;\
 	}\
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_equal_list<Manip>& obj)\
 	{\
-    s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
-    s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
-    s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
-    s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
-    s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
-    s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
-    s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
-    s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
-    s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
-    s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
-    s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
-    s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
-    s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13 << obj.delim;\
-    s << obj.obj->names[13] << obj.comp << obj.manip << obj.obj->I14 << obj.delim;\
-    s << obj.obj->names[14] << obj.comp << obj.manip << obj.obj->I15 << obj.delim;\
-    s << obj.obj->names[15] << obj.comp << obj.manip << obj.obj->I16 << obj.delim;\
-    s << obj.obj->names[16] << obj.comp << obj.manip << obj.obj->I17;\
+    s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
+    s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
+    s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
+    s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
+    s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
+    s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
+    s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
+    s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
+    s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
+    s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
+    s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
+    s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
+    s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13 << obj.delim;\
+    s << '`' << obj.obj->names[13] << '`' << obj.comp << obj.manip << obj.obj->I14 << obj.delim;\
+    s << '`' << obj.obj->names[14] << '`' << obj.comp << obj.manip << obj.obj->I15 << obj.delim;\
+    s << '`' << obj.obj->names[15] << '`' << obj.comp << obj.manip << obj.obj->I16 << obj.delim;\
+    s << '`' << obj.obj->names[16] << '`' << obj.comp << obj.manip << obj.obj->I17;\
 		return s;\
 	}\
 	template <class Manip>\
@@ -14323,87 +14325,87 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.manip << obj.obj->names[0];\
+      s << obj.manip << '`' << obj.obj->names[0] << '`';\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[1];\
+      s << obj.manip << '`' << obj.obj->names[1] << '`';\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[2];\
+      s << obj.manip << '`' << obj.obj->names[2] << '`';\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[3];\
+      s << obj.manip << '`' << obj.obj->names[3] << '`';\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[4];\
+      s << obj.manip << '`' << obj.obj->names[4] << '`';\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[5];\
+      s << obj.manip << '`' << obj.obj->names[5] << '`';\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[6];\
+      s << obj.manip << '`' << obj.obj->names[6] << '`';\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[7];\
+      s << obj.manip << '`' << obj.obj->names[7] << '`';\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[8];\
+      s << obj.manip << '`' << obj.obj->names[8] << '`';\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[9];\
+      s << obj.manip << '`' << obj.obj->names[9] << '`';\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[10];\
+      s << obj.manip << '`' << obj.obj->names[10] << '`';\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[11];\
+      s << obj.manip << '`' << obj.obj->names[11] << '`';\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[12];\
+      s << obj.manip << '`' << obj.obj->names[12] << '`';\
       before = true; \
      } \
     if ((*obj.include)[13]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[13];\
+      s << obj.manip << '`' << obj.obj->names[13] << '`';\
       before = true; \
      } \
     if ((*obj.include)[14]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[14];\
+      s << obj.manip << '`' << obj.obj->names[14] << '`';\
       before = true; \
      } \
     if ((*obj.include)[15]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[15];\
+      s << obj.manip << '`' << obj.obj->names[15] << '`';\
       before = true; \
      } \
     if ((*obj.include)[16]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[16];\
+      s << obj.manip << '`' << obj.obj->names[16] << '`';\
      } \
 		return s;\
 	}\
@@ -14412,87 +14414,87 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+      s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2;\
+      s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2;\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3;\
+      s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3;\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4;\
+      s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4;\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5;\
+      s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5;\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6;\
+      s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6;\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7;\
+      s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7;\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8;\
+      s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8;\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9;\
+      s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9;\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10;\
+      s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10;\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11;\
+      s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11;\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12;\
+      s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12;\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13;\
+      s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13;\
       before = true; \
      } \
     if ((*obj.include)[13]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[13] << obj.comp << obj.manip << obj.obj->I14;\
+      s << '`' << obj.obj->names[13] << '`' << obj.comp << obj.manip << obj.obj->I14;\
       before = true; \
      } \
     if ((*obj.include)[14]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[14] << obj.comp << obj.manip << obj.obj->I15;\
+      s << '`' << obj.obj->names[14] << '`' << obj.comp << obj.manip << obj.obj->I15;\
       before = true; \
      } \
     if ((*obj.include)[15]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[15] << obj.comp << obj.manip << obj.obj->I16;\
+      s << '`' << obj.obj->names[15] << '`' << obj.comp << obj.manip << obj.obj->I16;\
       before = true; \
      } \
     if ((*obj.include)[16]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[16] << obj.comp << obj.manip << obj.obj->I17;\
+      s << '`' << obj.obj->names[16] << '`' << obj.comp << obj.manip << obj.obj->I17;\
      } \
 		return s;\
 	}\
@@ -15126,47 +15128,47 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_field_list<Manip>& obj)\
 	{\
-    s << obj.manip << obj.obj->names[0] << obj.delim;\
-    s << obj.manip << obj.obj->names[1] << obj.delim;\
-    s << obj.manip << obj.obj->names[2] << obj.delim;\
-    s << obj.manip << obj.obj->names[3] << obj.delim;\
-    s << obj.manip << obj.obj->names[4] << obj.delim;\
-    s << obj.manip << obj.obj->names[5] << obj.delim;\
-    s << obj.manip << obj.obj->names[6] << obj.delim;\
-    s << obj.manip << obj.obj->names[7] << obj.delim;\
-    s << obj.manip << obj.obj->names[8] << obj.delim;\
-    s << obj.manip << obj.obj->names[9] << obj.delim;\
-    s << obj.manip << obj.obj->names[10] << obj.delim;\
-    s << obj.manip << obj.obj->names[11] << obj.delim;\
-    s << obj.manip << obj.obj->names[12] << obj.delim;\
-    s << obj.manip << obj.obj->names[13] << obj.delim;\
-    s << obj.manip << obj.obj->names[14] << obj.delim;\
-    s << obj.manip << obj.obj->names[15] << obj.delim;\
-    s << obj.manip << obj.obj->names[16] << obj.delim;\
-    s << obj.manip << obj.obj->names[17];\
+    s << obj.manip << '`' << obj.obj->names[0] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[1] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[2] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[3] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[4] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[5] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[6] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[7] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[8] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[9] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[10] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[11] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[12] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[13] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[14] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[15] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[16] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[17] << '`';\
 		return s;\
 	}\
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_equal_list<Manip>& obj)\
 	{\
-    s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
-    s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
-    s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
-    s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
-    s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
-    s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
-    s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
-    s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
-    s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
-    s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
-    s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
-    s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
-    s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13 << obj.delim;\
-    s << obj.obj->names[13] << obj.comp << obj.manip << obj.obj->I14 << obj.delim;\
-    s << obj.obj->names[14] << obj.comp << obj.manip << obj.obj->I15 << obj.delim;\
-    s << obj.obj->names[15] << obj.comp << obj.manip << obj.obj->I16 << obj.delim;\
-    s << obj.obj->names[16] << obj.comp << obj.manip << obj.obj->I17 << obj.delim;\
-    s << obj.obj->names[17] << obj.comp << obj.manip << obj.obj->I18;\
+    s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
+    s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
+    s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
+    s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
+    s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
+    s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
+    s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
+    s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
+    s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
+    s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
+    s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
+    s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
+    s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13 << obj.delim;\
+    s << '`' << obj.obj->names[13] << '`' << obj.comp << obj.manip << obj.obj->I14 << obj.delim;\
+    s << '`' << obj.obj->names[14] << '`' << obj.comp << obj.manip << obj.obj->I15 << obj.delim;\
+    s << '`' << obj.obj->names[15] << '`' << obj.comp << obj.manip << obj.obj->I16 << obj.delim;\
+    s << '`' << obj.obj->names[16] << '`' << obj.comp << obj.manip << obj.obj->I17 << obj.delim;\
+    s << '`' << obj.obj->names[17] << '`' << obj.comp << obj.manip << obj.obj->I18;\
 		return s;\
 	}\
 	template <class Manip>\
@@ -15268,92 +15270,92 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.manip << obj.obj->names[0];\
+      s << obj.manip << '`' << obj.obj->names[0] << '`';\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[1];\
+      s << obj.manip << '`' << obj.obj->names[1] << '`';\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[2];\
+      s << obj.manip << '`' << obj.obj->names[2] << '`';\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[3];\
+      s << obj.manip << '`' << obj.obj->names[3] << '`';\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[4];\
+      s << obj.manip << '`' << obj.obj->names[4] << '`';\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[5];\
+      s << obj.manip << '`' << obj.obj->names[5] << '`';\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[6];\
+      s << obj.manip << '`' << obj.obj->names[6] << '`';\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[7];\
+      s << obj.manip << '`' << obj.obj->names[7] << '`';\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[8];\
+      s << obj.manip << '`' << obj.obj->names[8] << '`';\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[9];\
+      s << obj.manip << '`' << obj.obj->names[9] << '`';\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[10];\
+      s << obj.manip << '`' << obj.obj->names[10] << '`';\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[11];\
+      s << obj.manip << '`' << obj.obj->names[11] << '`';\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[12];\
+      s << obj.manip << '`' << obj.obj->names[12] << '`';\
       before = true; \
      } \
     if ((*obj.include)[13]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[13];\
+      s << obj.manip << '`' << obj.obj->names[13] << '`';\
       before = true; \
      } \
     if ((*obj.include)[14]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[14];\
+      s << obj.manip << '`' << obj.obj->names[14] << '`';\
       before = true; \
      } \
     if ((*obj.include)[15]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[15];\
+      s << obj.manip << '`' << obj.obj->names[15] << '`';\
       before = true; \
      } \
     if ((*obj.include)[16]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[16];\
+      s << obj.manip << '`' << obj.obj->names[16] << '`';\
       before = true; \
      } \
     if ((*obj.include)[17]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[17];\
+      s << obj.manip << '`' << obj.obj->names[17] << '`';\
      } \
 		return s;\
 	}\
@@ -15362,92 +15364,92 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+      s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2;\
+      s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2;\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3;\
+      s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3;\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4;\
+      s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4;\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5;\
+      s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5;\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6;\
+      s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6;\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7;\
+      s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7;\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8;\
+      s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8;\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9;\
+      s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9;\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10;\
+      s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10;\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11;\
+      s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11;\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12;\
+      s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12;\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13;\
+      s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13;\
       before = true; \
      } \
     if ((*obj.include)[13]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[13] << obj.comp << obj.manip << obj.obj->I14;\
+      s << '`' << obj.obj->names[13] << '`' << obj.comp << obj.manip << obj.obj->I14;\
       before = true; \
      } \
     if ((*obj.include)[14]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[14] << obj.comp << obj.manip << obj.obj->I15;\
+      s << '`' << obj.obj->names[14] << '`' << obj.comp << obj.manip << obj.obj->I15;\
       before = true; \
      } \
     if ((*obj.include)[15]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[15] << obj.comp << obj.manip << obj.obj->I16;\
+      s << '`' << obj.obj->names[15] << '`' << obj.comp << obj.manip << obj.obj->I16;\
       before = true; \
      } \
     if ((*obj.include)[16]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[16] << obj.comp << obj.manip << obj.obj->I17;\
+      s << '`' << obj.obj->names[16] << '`' << obj.comp << obj.manip << obj.obj->I17;\
       before = true; \
      } \
     if ((*obj.include)[17]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[17] << obj.comp << obj.manip << obj.obj->I18;\
+      s << '`' << obj.obj->names[17] << '`' << obj.comp << obj.manip << obj.obj->I18;\
      } \
 		return s;\
 	}\
@@ -16095,49 +16097,49 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_field_list<Manip>& obj)\
 	{\
-    s << obj.manip << obj.obj->names[0] << obj.delim;\
-    s << obj.manip << obj.obj->names[1] << obj.delim;\
-    s << obj.manip << obj.obj->names[2] << obj.delim;\
-    s << obj.manip << obj.obj->names[3] << obj.delim;\
-    s << obj.manip << obj.obj->names[4] << obj.delim;\
-    s << obj.manip << obj.obj->names[5] << obj.delim;\
-    s << obj.manip << obj.obj->names[6] << obj.delim;\
-    s << obj.manip << obj.obj->names[7] << obj.delim;\
-    s << obj.manip << obj.obj->names[8] << obj.delim;\
-    s << obj.manip << obj.obj->names[9] << obj.delim;\
-    s << obj.manip << obj.obj->names[10] << obj.delim;\
-    s << obj.manip << obj.obj->names[11] << obj.delim;\
-    s << obj.manip << obj.obj->names[12] << obj.delim;\
-    s << obj.manip << obj.obj->names[13] << obj.delim;\
-    s << obj.manip << obj.obj->names[14] << obj.delim;\
-    s << obj.manip << obj.obj->names[15] << obj.delim;\
-    s << obj.manip << obj.obj->names[16] << obj.delim;\
-    s << obj.manip << obj.obj->names[17] << obj.delim;\
-    s << obj.manip << obj.obj->names[18];\
+    s << obj.manip << '`' << obj.obj->names[0] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[1] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[2] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[3] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[4] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[5] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[6] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[7] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[8] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[9] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[10] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[11] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[12] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[13] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[14] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[15] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[16] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[17] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[18] << '`';\
 		return s;\
 	}\
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_equal_list<Manip>& obj)\
 	{\
-    s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
-    s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
-    s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
-    s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
-    s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
-    s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
-    s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
-    s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
-    s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
-    s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
-    s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
-    s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
-    s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13 << obj.delim;\
-    s << obj.obj->names[13] << obj.comp << obj.manip << obj.obj->I14 << obj.delim;\
-    s << obj.obj->names[14] << obj.comp << obj.manip << obj.obj->I15 << obj.delim;\
-    s << obj.obj->names[15] << obj.comp << obj.manip << obj.obj->I16 << obj.delim;\
-    s << obj.obj->names[16] << obj.comp << obj.manip << obj.obj->I17 << obj.delim;\
-    s << obj.obj->names[17] << obj.comp << obj.manip << obj.obj->I18 << obj.delim;\
-    s << obj.obj->names[18] << obj.comp << obj.manip << obj.obj->I19;\
+    s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
+    s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
+    s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
+    s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
+    s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
+    s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
+    s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
+    s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
+    s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
+    s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
+    s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
+    s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
+    s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13 << obj.delim;\
+    s << '`' << obj.obj->names[13] << '`' << obj.comp << obj.manip << obj.obj->I14 << obj.delim;\
+    s << '`' << obj.obj->names[14] << '`' << obj.comp << obj.manip << obj.obj->I15 << obj.delim;\
+    s << '`' << obj.obj->names[15] << '`' << obj.comp << obj.manip << obj.obj->I16 << obj.delim;\
+    s << '`' << obj.obj->names[16] << '`' << obj.comp << obj.manip << obj.obj->I17 << obj.delim;\
+    s << '`' << obj.obj->names[17] << '`' << obj.comp << obj.manip << obj.obj->I18 << obj.delim;\
+    s << '`' << obj.obj->names[18] << '`' << obj.comp << obj.manip << obj.obj->I19;\
 		return s;\
 	}\
 	template <class Manip>\
@@ -16244,97 +16246,97 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.manip << obj.obj->names[0];\
+      s << obj.manip << '`' << obj.obj->names[0] << '`';\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[1];\
+      s << obj.manip << '`' << obj.obj->names[1] << '`';\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[2];\
+      s << obj.manip << '`' << obj.obj->names[2] << '`';\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[3];\
+      s << obj.manip << '`' << obj.obj->names[3] << '`';\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[4];\
+      s << obj.manip << '`' << obj.obj->names[4] << '`';\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[5];\
+      s << obj.manip << '`' << obj.obj->names[5] << '`';\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[6];\
+      s << obj.manip << '`' << obj.obj->names[6] << '`';\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[7];\
+      s << obj.manip << '`' << obj.obj->names[7] << '`';\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[8];\
+      s << obj.manip << '`' << obj.obj->names[8] << '`';\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[9];\
+      s << obj.manip << '`' << obj.obj->names[9] << '`';\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[10];\
+      s << obj.manip << '`' << obj.obj->names[10] << '`';\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[11];\
+      s << obj.manip << '`' << obj.obj->names[11] << '`';\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[12];\
+      s << obj.manip << '`' << obj.obj->names[12] << '`';\
       before = true; \
      } \
     if ((*obj.include)[13]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[13];\
+      s << obj.manip << '`' << obj.obj->names[13] << '`';\
       before = true; \
      } \
     if ((*obj.include)[14]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[14];\
+      s << obj.manip << '`' << obj.obj->names[14] << '`';\
       before = true; \
      } \
     if ((*obj.include)[15]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[15];\
+      s << obj.manip << '`' << obj.obj->names[15] << '`';\
       before = true; \
      } \
     if ((*obj.include)[16]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[16];\
+      s << obj.manip << '`' << obj.obj->names[16] << '`';\
       before = true; \
      } \
     if ((*obj.include)[17]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[17];\
+      s << obj.manip << '`' << obj.obj->names[17] << '`';\
       before = true; \
      } \
     if ((*obj.include)[18]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[18];\
+      s << obj.manip << '`' << obj.obj->names[18] << '`';\
      } \
 		return s;\
 	}\
@@ -16343,97 +16345,97 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+      s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2;\
+      s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2;\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3;\
+      s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3;\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4;\
+      s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4;\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5;\
+      s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5;\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6;\
+      s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6;\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7;\
+      s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7;\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8;\
+      s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8;\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9;\
+      s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9;\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10;\
+      s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10;\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11;\
+      s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11;\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12;\
+      s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12;\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13;\
+      s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13;\
       before = true; \
      } \
     if ((*obj.include)[13]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[13] << obj.comp << obj.manip << obj.obj->I14;\
+      s << '`' << obj.obj->names[13] << '`' << obj.comp << obj.manip << obj.obj->I14;\
       before = true; \
      } \
     if ((*obj.include)[14]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[14] << obj.comp << obj.manip << obj.obj->I15;\
+      s << '`' << obj.obj->names[14] << '`' << obj.comp << obj.manip << obj.obj->I15;\
       before = true; \
      } \
     if ((*obj.include)[15]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[15] << obj.comp << obj.manip << obj.obj->I16;\
+      s << '`' << obj.obj->names[15] << '`' << obj.comp << obj.manip << obj.obj->I16;\
       before = true; \
      } \
     if ((*obj.include)[16]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[16] << obj.comp << obj.manip << obj.obj->I17;\
+      s << '`' << obj.obj->names[16] << '`' << obj.comp << obj.manip << obj.obj->I17;\
       before = true; \
      } \
     if ((*obj.include)[17]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[17] << obj.comp << obj.manip << obj.obj->I18;\
+      s << '`' << obj.obj->names[17] << '`' << obj.comp << obj.manip << obj.obj->I18;\
       before = true; \
      } \
     if ((*obj.include)[18]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[18] << obj.comp << obj.manip << obj.obj->I19;\
+      s << '`' << obj.obj->names[18] << '`' << obj.comp << obj.manip << obj.obj->I19;\
      } \
 		return s;\
 	}\
@@ -17095,51 +17097,51 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_field_list<Manip>& obj)\
 	{\
-    s << obj.manip << obj.obj->names[0] << obj.delim;\
-    s << obj.manip << obj.obj->names[1] << obj.delim;\
-    s << obj.manip << obj.obj->names[2] << obj.delim;\
-    s << obj.manip << obj.obj->names[3] << obj.delim;\
-    s << obj.manip << obj.obj->names[4] << obj.delim;\
-    s << obj.manip << obj.obj->names[5] << obj.delim;\
-    s << obj.manip << obj.obj->names[6] << obj.delim;\
-    s << obj.manip << obj.obj->names[7] << obj.delim;\
-    s << obj.manip << obj.obj->names[8] << obj.delim;\
-    s << obj.manip << obj.obj->names[9] << obj.delim;\
-    s << obj.manip << obj.obj->names[10] << obj.delim;\
-    s << obj.manip << obj.obj->names[11] << obj.delim;\
-    s << obj.manip << obj.obj->names[12] << obj.delim;\
-    s << obj.manip << obj.obj->names[13] << obj.delim;\
-    s << obj.manip << obj.obj->names[14] << obj.delim;\
-    s << obj.manip << obj.obj->names[15] << obj.delim;\
-    s << obj.manip << obj.obj->names[16] << obj.delim;\
-    s << obj.manip << obj.obj->names[17] << obj.delim;\
-    s << obj.manip << obj.obj->names[18] << obj.delim;\
-    s << obj.manip << obj.obj->names[19];\
+    s << obj.manip << '`' << obj.obj->names[0] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[1] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[2] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[3] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[4] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[5] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[6] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[7] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[8] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[9] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[10] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[11] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[12] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[13] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[14] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[15] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[16] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[17] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[18] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[19] << '`';\
 		return s;\
 	}\
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_equal_list<Manip>& obj)\
 	{\
-    s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
-    s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
-    s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
-    s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
-    s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
-    s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
-    s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
-    s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
-    s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
-    s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
-    s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
-    s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
-    s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13 << obj.delim;\
-    s << obj.obj->names[13] << obj.comp << obj.manip << obj.obj->I14 << obj.delim;\
-    s << obj.obj->names[14] << obj.comp << obj.manip << obj.obj->I15 << obj.delim;\
-    s << obj.obj->names[15] << obj.comp << obj.manip << obj.obj->I16 << obj.delim;\
-    s << obj.obj->names[16] << obj.comp << obj.manip << obj.obj->I17 << obj.delim;\
-    s << obj.obj->names[17] << obj.comp << obj.manip << obj.obj->I18 << obj.delim;\
-    s << obj.obj->names[18] << obj.comp << obj.manip << obj.obj->I19 << obj.delim;\
-    s << obj.obj->names[19] << obj.comp << obj.manip << obj.obj->I20;\
+    s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
+    s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
+    s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
+    s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
+    s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
+    s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
+    s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
+    s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
+    s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
+    s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
+    s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
+    s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
+    s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13 << obj.delim;\
+    s << '`' << obj.obj->names[13] << '`' << obj.comp << obj.manip << obj.obj->I14 << obj.delim;\
+    s << '`' << obj.obj->names[14] << '`' << obj.comp << obj.manip << obj.obj->I15 << obj.delim;\
+    s << '`' << obj.obj->names[15] << '`' << obj.comp << obj.manip << obj.obj->I16 << obj.delim;\
+    s << '`' << obj.obj->names[16] << '`' << obj.comp << obj.manip << obj.obj->I17 << obj.delim;\
+    s << '`' << obj.obj->names[17] << '`' << obj.comp << obj.manip << obj.obj->I18 << obj.delim;\
+    s << '`' << obj.obj->names[18] << '`' << obj.comp << obj.manip << obj.obj->I19 << obj.delim;\
+    s << '`' << obj.obj->names[19] << '`' << obj.comp << obj.manip << obj.obj->I20;\
 		return s;\
 	}\
 	template <class Manip>\
@@ -17251,102 +17253,102 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.manip << obj.obj->names[0];\
+      s << obj.manip << '`' << obj.obj->names[0] << '`';\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[1];\
+      s << obj.manip << '`' << obj.obj->names[1] << '`';\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[2];\
+      s << obj.manip << '`' << obj.obj->names[2] << '`';\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[3];\
+      s << obj.manip << '`' << obj.obj->names[3] << '`';\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[4];\
+      s << obj.manip << '`' << obj.obj->names[4] << '`';\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[5];\
+      s << obj.manip << '`' << obj.obj->names[5] << '`';\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[6];\
+      s << obj.manip << '`' << obj.obj->names[6] << '`';\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[7];\
+      s << obj.manip << '`' << obj.obj->names[7] << '`';\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[8];\
+      s << obj.manip << '`' << obj.obj->names[8] << '`';\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[9];\
+      s << obj.manip << '`' << obj.obj->names[9] << '`';\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[10];\
+      s << obj.manip << '`' << obj.obj->names[10] << '`';\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[11];\
+      s << obj.manip << '`' << obj.obj->names[11] << '`';\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[12];\
+      s << obj.manip << '`' << obj.obj->names[12] << '`';\
       before = true; \
      } \
     if ((*obj.include)[13]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[13];\
+      s << obj.manip << '`' << obj.obj->names[13] << '`';\
       before = true; \
      } \
     if ((*obj.include)[14]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[14];\
+      s << obj.manip << '`' << obj.obj->names[14] << '`';\
       before = true; \
      } \
     if ((*obj.include)[15]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[15];\
+      s << obj.manip << '`' << obj.obj->names[15] << '`';\
       before = true; \
      } \
     if ((*obj.include)[16]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[16];\
+      s << obj.manip << '`' << obj.obj->names[16] << '`';\
       before = true; \
      } \
     if ((*obj.include)[17]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[17];\
+      s << obj.manip << '`' << obj.obj->names[17] << '`';\
       before = true; \
      } \
     if ((*obj.include)[18]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[18];\
+      s << obj.manip << '`' << obj.obj->names[18] << '`';\
       before = true; \
      } \
     if ((*obj.include)[19]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[19];\
+      s << obj.manip << '`' << obj.obj->names[19] << '`';\
      } \
 		return s;\
 	}\
@@ -17355,102 +17357,102 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+      s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2;\
+      s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2;\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3;\
+      s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3;\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4;\
+      s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4;\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5;\
+      s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5;\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6;\
+      s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6;\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7;\
+      s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7;\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8;\
+      s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8;\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9;\
+      s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9;\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10;\
+      s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10;\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11;\
+      s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11;\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12;\
+      s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12;\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13;\
+      s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13;\
       before = true; \
      } \
     if ((*obj.include)[13]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[13] << obj.comp << obj.manip << obj.obj->I14;\
+      s << '`' << obj.obj->names[13] << '`' << obj.comp << obj.manip << obj.obj->I14;\
       before = true; \
      } \
     if ((*obj.include)[14]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[14] << obj.comp << obj.manip << obj.obj->I15;\
+      s << '`' << obj.obj->names[14] << '`' << obj.comp << obj.manip << obj.obj->I15;\
       before = true; \
      } \
     if ((*obj.include)[15]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[15] << obj.comp << obj.manip << obj.obj->I16;\
+      s << '`' << obj.obj->names[15] << '`' << obj.comp << obj.manip << obj.obj->I16;\
       before = true; \
      } \
     if ((*obj.include)[16]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[16] << obj.comp << obj.manip << obj.obj->I17;\
+      s << '`' << obj.obj->names[16] << '`' << obj.comp << obj.manip << obj.obj->I17;\
       before = true; \
      } \
     if ((*obj.include)[17]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[17] << obj.comp << obj.manip << obj.obj->I18;\
+      s << '`' << obj.obj->names[17] << '`' << obj.comp << obj.manip << obj.obj->I18;\
       before = true; \
      } \
     if ((*obj.include)[18]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[18] << obj.comp << obj.manip << obj.obj->I19;\
+      s << '`' << obj.obj->names[18] << '`' << obj.comp << obj.manip << obj.obj->I19;\
       before = true; \
      } \
     if ((*obj.include)[19]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[19] << obj.comp << obj.manip << obj.obj->I20;\
+      s << '`' << obj.obj->names[19] << '`' << obj.comp << obj.manip << obj.obj->I20;\
      } \
 		return s;\
 	}\
@@ -18126,53 +18128,53 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_field_list<Manip>& obj)\
 	{\
-    s << obj.manip << obj.obj->names[0] << obj.delim;\
-    s << obj.manip << obj.obj->names[1] << obj.delim;\
-    s << obj.manip << obj.obj->names[2] << obj.delim;\
-    s << obj.manip << obj.obj->names[3] << obj.delim;\
-    s << obj.manip << obj.obj->names[4] << obj.delim;\
-    s << obj.manip << obj.obj->names[5] << obj.delim;\
-    s << obj.manip << obj.obj->names[6] << obj.delim;\
-    s << obj.manip << obj.obj->names[7] << obj.delim;\
-    s << obj.manip << obj.obj->names[8] << obj.delim;\
-    s << obj.manip << obj.obj->names[9] << obj.delim;\
-    s << obj.manip << obj.obj->names[10] << obj.delim;\
-    s << obj.manip << obj.obj->names[11] << obj.delim;\
-    s << obj.manip << obj.obj->names[12] << obj.delim;\
-    s << obj.manip << obj.obj->names[13] << obj.delim;\
-    s << obj.manip << obj.obj->names[14] << obj.delim;\
-    s << obj.manip << obj.obj->names[15] << obj.delim;\
-    s << obj.manip << obj.obj->names[16] << obj.delim;\
-    s << obj.manip << obj.obj->names[17] << obj.delim;\
-    s << obj.manip << obj.obj->names[18] << obj.delim;\
-    s << obj.manip << obj.obj->names[19] << obj.delim;\
-    s << obj.manip << obj.obj->names[20];\
+    s << obj.manip << '`' << obj.obj->names[0] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[1] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[2] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[3] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[4] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[5] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[6] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[7] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[8] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[9] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[10] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[11] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[12] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[13] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[14] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[15] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[16] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[17] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[18] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[19] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[20] << '`';\
 		return s;\
 	}\
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_equal_list<Manip>& obj)\
 	{\
-    s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
-    s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
-    s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
-    s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
-    s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
-    s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
-    s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
-    s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
-    s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
-    s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
-    s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
-    s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
-    s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13 << obj.delim;\
-    s << obj.obj->names[13] << obj.comp << obj.manip << obj.obj->I14 << obj.delim;\
-    s << obj.obj->names[14] << obj.comp << obj.manip << obj.obj->I15 << obj.delim;\
-    s << obj.obj->names[15] << obj.comp << obj.manip << obj.obj->I16 << obj.delim;\
-    s << obj.obj->names[16] << obj.comp << obj.manip << obj.obj->I17 << obj.delim;\
-    s << obj.obj->names[17] << obj.comp << obj.manip << obj.obj->I18 << obj.delim;\
-    s << obj.obj->names[18] << obj.comp << obj.manip << obj.obj->I19 << obj.delim;\
-    s << obj.obj->names[19] << obj.comp << obj.manip << obj.obj->I20 << obj.delim;\
-    s << obj.obj->names[20] << obj.comp << obj.manip << obj.obj->I21;\
+    s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
+    s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
+    s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
+    s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
+    s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
+    s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
+    s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
+    s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
+    s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
+    s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
+    s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
+    s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
+    s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13 << obj.delim;\
+    s << '`' << obj.obj->names[13] << '`' << obj.comp << obj.manip << obj.obj->I14 << obj.delim;\
+    s << '`' << obj.obj->names[14] << '`' << obj.comp << obj.manip << obj.obj->I15 << obj.delim;\
+    s << '`' << obj.obj->names[15] << '`' << obj.comp << obj.manip << obj.obj->I16 << obj.delim;\
+    s << '`' << obj.obj->names[16] << '`' << obj.comp << obj.manip << obj.obj->I17 << obj.delim;\
+    s << '`' << obj.obj->names[17] << '`' << obj.comp << obj.manip << obj.obj->I18 << obj.delim;\
+    s << '`' << obj.obj->names[18] << '`' << obj.comp << obj.manip << obj.obj->I19 << obj.delim;\
+    s << '`' << obj.obj->names[19] << '`' << obj.comp << obj.manip << obj.obj->I20 << obj.delim;\
+    s << '`' << obj.obj->names[20] << '`' << obj.comp << obj.manip << obj.obj->I21;\
 		return s;\
 	}\
 	template <class Manip>\
@@ -18289,107 +18291,107 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.manip << obj.obj->names[0];\
+      s << obj.manip << '`' << obj.obj->names[0] << '`';\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[1];\
+      s << obj.manip << '`' << obj.obj->names[1] << '`';\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[2];\
+      s << obj.manip << '`' << obj.obj->names[2] << '`';\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[3];\
+      s << obj.manip << '`' << obj.obj->names[3] << '`';\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[4];\
+      s << obj.manip << '`' << obj.obj->names[4] << '`';\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[5];\
+      s << obj.manip << '`' << obj.obj->names[5] << '`';\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[6];\
+      s << obj.manip << '`' << obj.obj->names[6] << '`';\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[7];\
+      s << obj.manip << '`' << obj.obj->names[7] << '`';\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[8];\
+      s << obj.manip << '`' << obj.obj->names[8] << '`';\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[9];\
+      s << obj.manip << '`' << obj.obj->names[9] << '`';\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[10];\
+      s << obj.manip << '`' << obj.obj->names[10] << '`';\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[11];\
+      s << obj.manip << '`' << obj.obj->names[11] << '`';\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[12];\
+      s << obj.manip << '`' << obj.obj->names[12] << '`';\
       before = true; \
      } \
     if ((*obj.include)[13]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[13];\
+      s << obj.manip << '`' << obj.obj->names[13] << '`';\
       before = true; \
      } \
     if ((*obj.include)[14]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[14];\
+      s << obj.manip << '`' << obj.obj->names[14] << '`';\
       before = true; \
      } \
     if ((*obj.include)[15]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[15];\
+      s << obj.manip << '`' << obj.obj->names[15] << '`';\
       before = true; \
      } \
     if ((*obj.include)[16]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[16];\
+      s << obj.manip << '`' << obj.obj->names[16] << '`';\
       before = true; \
      } \
     if ((*obj.include)[17]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[17];\
+      s << obj.manip << '`' << obj.obj->names[17] << '`';\
       before = true; \
      } \
     if ((*obj.include)[18]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[18];\
+      s << obj.manip << '`' << obj.obj->names[18] << '`';\
       before = true; \
      } \
     if ((*obj.include)[19]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[19];\
+      s << obj.manip << '`' << obj.obj->names[19] << '`';\
       before = true; \
      } \
     if ((*obj.include)[20]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[20];\
+      s << obj.manip << '`' << obj.obj->names[20] << '`';\
      } \
 		return s;\
 	}\
@@ -18398,107 +18400,107 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+      s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2;\
+      s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2;\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3;\
+      s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3;\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4;\
+      s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4;\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5;\
+      s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5;\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6;\
+      s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6;\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7;\
+      s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7;\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8;\
+      s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8;\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9;\
+      s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9;\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10;\
+      s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10;\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11;\
+      s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11;\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12;\
+      s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12;\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13;\
+      s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13;\
       before = true; \
      } \
     if ((*obj.include)[13]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[13] << obj.comp << obj.manip << obj.obj->I14;\
+      s << '`' << obj.obj->names[13] << '`' << obj.comp << obj.manip << obj.obj->I14;\
       before = true; \
      } \
     if ((*obj.include)[14]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[14] << obj.comp << obj.manip << obj.obj->I15;\
+      s << '`' << obj.obj->names[14] << '`' << obj.comp << obj.manip << obj.obj->I15;\
       before = true; \
      } \
     if ((*obj.include)[15]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[15] << obj.comp << obj.manip << obj.obj->I16;\
+      s << '`' << obj.obj->names[15] << '`' << obj.comp << obj.manip << obj.obj->I16;\
       before = true; \
      } \
     if ((*obj.include)[16]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[16] << obj.comp << obj.manip << obj.obj->I17;\
+      s << '`' << obj.obj->names[16] << '`' << obj.comp << obj.manip << obj.obj->I17;\
       before = true; \
      } \
     if ((*obj.include)[17]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[17] << obj.comp << obj.manip << obj.obj->I18;\
+      s << '`' << obj.obj->names[17] << '`' << obj.comp << obj.manip << obj.obj->I18;\
       before = true; \
      } \
     if ((*obj.include)[18]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[18] << obj.comp << obj.manip << obj.obj->I19;\
+      s << '`' << obj.obj->names[18] << '`' << obj.comp << obj.manip << obj.obj->I19;\
       before = true; \
      } \
     if ((*obj.include)[19]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[19] << obj.comp << obj.manip << obj.obj->I20;\
+      s << '`' << obj.obj->names[19] << '`' << obj.comp << obj.manip << obj.obj->I20;\
       before = true; \
      } \
     if ((*obj.include)[20]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[20] << obj.comp << obj.manip << obj.obj->I21;\
+      s << '`' << obj.obj->names[20] << '`' << obj.comp << obj.manip << obj.obj->I21;\
      } \
 		return s;\
 	}\
@@ -19188,55 +19190,55 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_field_list<Manip>& obj)\
 	{\
-    s << obj.manip << obj.obj->names[0] << obj.delim;\
-    s << obj.manip << obj.obj->names[1] << obj.delim;\
-    s << obj.manip << obj.obj->names[2] << obj.delim;\
-    s << obj.manip << obj.obj->names[3] << obj.delim;\
-    s << obj.manip << obj.obj->names[4] << obj.delim;\
-    s << obj.manip << obj.obj->names[5] << obj.delim;\
-    s << obj.manip << obj.obj->names[6] << obj.delim;\
-    s << obj.manip << obj.obj->names[7] << obj.delim;\
-    s << obj.manip << obj.obj->names[8] << obj.delim;\
-    s << obj.manip << obj.obj->names[9] << obj.delim;\
-    s << obj.manip << obj.obj->names[10] << obj.delim;\
-    s << obj.manip << obj.obj->names[11] << obj.delim;\
-    s << obj.manip << obj.obj->names[12] << obj.delim;\
-    s << obj.manip << obj.obj->names[13] << obj.delim;\
-    s << obj.manip << obj.obj->names[14] << obj.delim;\
-    s << obj.manip << obj.obj->names[15] << obj.delim;\
-    s << obj.manip << obj.obj->names[16] << obj.delim;\
-    s << obj.manip << obj.obj->names[17] << obj.delim;\
-    s << obj.manip << obj.obj->names[18] << obj.delim;\
-    s << obj.manip << obj.obj->names[19] << obj.delim;\
-    s << obj.manip << obj.obj->names[20] << obj.delim;\
-    s << obj.manip << obj.obj->names[21];\
+    s << obj.manip << '`' << obj.obj->names[0] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[1] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[2] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[3] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[4] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[5] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[6] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[7] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[8] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[9] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[10] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[11] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[12] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[13] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[14] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[15] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[16] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[17] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[18] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[19] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[20] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[21] << '`';\
 		return s;\
 	}\
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_equal_list<Manip>& obj)\
 	{\
-    s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
-    s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
-    s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
-    s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
-    s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
-    s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
-    s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
-    s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
-    s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
-    s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
-    s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
-    s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
-    s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13 << obj.delim;\
-    s << obj.obj->names[13] << obj.comp << obj.manip << obj.obj->I14 << obj.delim;\
-    s << obj.obj->names[14] << obj.comp << obj.manip << obj.obj->I15 << obj.delim;\
-    s << obj.obj->names[15] << obj.comp << obj.manip << obj.obj->I16 << obj.delim;\
-    s << obj.obj->names[16] << obj.comp << obj.manip << obj.obj->I17 << obj.delim;\
-    s << obj.obj->names[17] << obj.comp << obj.manip << obj.obj->I18 << obj.delim;\
-    s << obj.obj->names[18] << obj.comp << obj.manip << obj.obj->I19 << obj.delim;\
-    s << obj.obj->names[19] << obj.comp << obj.manip << obj.obj->I20 << obj.delim;\
-    s << obj.obj->names[20] << obj.comp << obj.manip << obj.obj->I21 << obj.delim;\
-    s << obj.obj->names[21] << obj.comp << obj.manip << obj.obj->I22;\
+    s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
+    s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
+    s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
+    s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
+    s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
+    s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
+    s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
+    s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
+    s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
+    s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
+    s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
+    s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
+    s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13 << obj.delim;\
+    s << '`' << obj.obj->names[13] << '`' << obj.comp << obj.manip << obj.obj->I14 << obj.delim;\
+    s << '`' << obj.obj->names[14] << '`' << obj.comp << obj.manip << obj.obj->I15 << obj.delim;\
+    s << '`' << obj.obj->names[15] << '`' << obj.comp << obj.manip << obj.obj->I16 << obj.delim;\
+    s << '`' << obj.obj->names[16] << '`' << obj.comp << obj.manip << obj.obj->I17 << obj.delim;\
+    s << '`' << obj.obj->names[17] << '`' << obj.comp << obj.manip << obj.obj->I18 << obj.delim;\
+    s << '`' << obj.obj->names[18] << '`' << obj.comp << obj.manip << obj.obj->I19 << obj.delim;\
+    s << '`' << obj.obj->names[19] << '`' << obj.comp << obj.manip << obj.obj->I20 << obj.delim;\
+    s << '`' << obj.obj->names[20] << '`' << obj.comp << obj.manip << obj.obj->I21 << obj.delim;\
+    s << '`' << obj.obj->names[21] << '`' << obj.comp << obj.manip << obj.obj->I22;\
 		return s;\
 	}\
 	template <class Manip>\
@@ -19358,112 +19360,112 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.manip << obj.obj->names[0];\
+      s << obj.manip << '`' << obj.obj->names[0] << '`';\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[1];\
+      s << obj.manip << '`' << obj.obj->names[1] << '`';\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[2];\
+      s << obj.manip << '`' << obj.obj->names[2] << '`';\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[3];\
+      s << obj.manip << '`' << obj.obj->names[3] << '`';\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[4];\
+      s << obj.manip << '`' << obj.obj->names[4] << '`';\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[5];\
+      s << obj.manip << '`' << obj.obj->names[5] << '`';\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[6];\
+      s << obj.manip << '`' << obj.obj->names[6] << '`';\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[7];\
+      s << obj.manip << '`' << obj.obj->names[7] << '`';\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[8];\
+      s << obj.manip << '`' << obj.obj->names[8] << '`';\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[9];\
+      s << obj.manip << '`' << obj.obj->names[9] << '`';\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[10];\
+      s << obj.manip << '`' << obj.obj->names[10] << '`';\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[11];\
+      s << obj.manip << '`' << obj.obj->names[11] << '`';\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[12];\
+      s << obj.manip << '`' << obj.obj->names[12] << '`';\
       before = true; \
      } \
     if ((*obj.include)[13]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[13];\
+      s << obj.manip << '`' << obj.obj->names[13] << '`';\
       before = true; \
      } \
     if ((*obj.include)[14]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[14];\
+      s << obj.manip << '`' << obj.obj->names[14] << '`';\
       before = true; \
      } \
     if ((*obj.include)[15]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[15];\
+      s << obj.manip << '`' << obj.obj->names[15] << '`';\
       before = true; \
      } \
     if ((*obj.include)[16]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[16];\
+      s << obj.manip << '`' << obj.obj->names[16] << '`';\
       before = true; \
      } \
     if ((*obj.include)[17]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[17];\
+      s << obj.manip << '`' << obj.obj->names[17] << '`';\
       before = true; \
      } \
     if ((*obj.include)[18]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[18];\
+      s << obj.manip << '`' << obj.obj->names[18] << '`';\
       before = true; \
      } \
     if ((*obj.include)[19]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[19];\
+      s << obj.manip << '`' << obj.obj->names[19] << '`';\
       before = true; \
      } \
     if ((*obj.include)[20]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[20];\
+      s << obj.manip << '`' << obj.obj->names[20] << '`';\
       before = true; \
      } \
     if ((*obj.include)[21]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[21];\
+      s << obj.manip << '`' << obj.obj->names[21] << '`';\
      } \
 		return s;\
 	}\
@@ -19472,112 +19474,112 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+      s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2;\
+      s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2;\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3;\
+      s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3;\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4;\
+      s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4;\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5;\
+      s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5;\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6;\
+      s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6;\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7;\
+      s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7;\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8;\
+      s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8;\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9;\
+      s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9;\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10;\
+      s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10;\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11;\
+      s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11;\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12;\
+      s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12;\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13;\
+      s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13;\
       before = true; \
      } \
     if ((*obj.include)[13]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[13] << obj.comp << obj.manip << obj.obj->I14;\
+      s << '`' << obj.obj->names[13] << '`' << obj.comp << obj.manip << obj.obj->I14;\
       before = true; \
      } \
     if ((*obj.include)[14]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[14] << obj.comp << obj.manip << obj.obj->I15;\
+      s << '`' << obj.obj->names[14] << '`' << obj.comp << obj.manip << obj.obj->I15;\
       before = true; \
      } \
     if ((*obj.include)[15]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[15] << obj.comp << obj.manip << obj.obj->I16;\
+      s << '`' << obj.obj->names[15] << '`' << obj.comp << obj.manip << obj.obj->I16;\
       before = true; \
      } \
     if ((*obj.include)[16]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[16] << obj.comp << obj.manip << obj.obj->I17;\
+      s << '`' << obj.obj->names[16] << '`' << obj.comp << obj.manip << obj.obj->I17;\
       before = true; \
      } \
     if ((*obj.include)[17]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[17] << obj.comp << obj.manip << obj.obj->I18;\
+      s << '`' << obj.obj->names[17] << '`' << obj.comp << obj.manip << obj.obj->I18;\
       before = true; \
      } \
     if ((*obj.include)[18]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[18] << obj.comp << obj.manip << obj.obj->I19;\
+      s << '`' << obj.obj->names[18] << '`' << obj.comp << obj.manip << obj.obj->I19;\
       before = true; \
      } \
     if ((*obj.include)[19]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[19] << obj.comp << obj.manip << obj.obj->I20;\
+      s << '`' << obj.obj->names[19] << '`' << obj.comp << obj.manip << obj.obj->I20;\
       before = true; \
      } \
     if ((*obj.include)[20]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[20] << obj.comp << obj.manip << obj.obj->I21;\
+      s << '`' << obj.obj->names[20] << '`' << obj.comp << obj.manip << obj.obj->I21;\
       before = true; \
      } \
     if ((*obj.include)[21]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[21] << obj.comp << obj.manip << obj.obj->I22;\
+      s << '`' << obj.obj->names[21] << '`' << obj.comp << obj.manip << obj.obj->I22;\
      } \
 		return s;\
 	}\
@@ -20281,57 +20283,57 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_field_list<Manip>& obj)\
 	{\
-    s << obj.manip << obj.obj->names[0] << obj.delim;\
-    s << obj.manip << obj.obj->names[1] << obj.delim;\
-    s << obj.manip << obj.obj->names[2] << obj.delim;\
-    s << obj.manip << obj.obj->names[3] << obj.delim;\
-    s << obj.manip << obj.obj->names[4] << obj.delim;\
-    s << obj.manip << obj.obj->names[5] << obj.delim;\
-    s << obj.manip << obj.obj->names[6] << obj.delim;\
-    s << obj.manip << obj.obj->names[7] << obj.delim;\
-    s << obj.manip << obj.obj->names[8] << obj.delim;\
-    s << obj.manip << obj.obj->names[9] << obj.delim;\
-    s << obj.manip << obj.obj->names[10] << obj.delim;\
-    s << obj.manip << obj.obj->names[11] << obj.delim;\
-    s << obj.manip << obj.obj->names[12] << obj.delim;\
-    s << obj.manip << obj.obj->names[13] << obj.delim;\
-    s << obj.manip << obj.obj->names[14] << obj.delim;\
-    s << obj.manip << obj.obj->names[15] << obj.delim;\
-    s << obj.manip << obj.obj->names[16] << obj.delim;\
-    s << obj.manip << obj.obj->names[17] << obj.delim;\
-    s << obj.manip << obj.obj->names[18] << obj.delim;\
-    s << obj.manip << obj.obj->names[19] << obj.delim;\
-    s << obj.manip << obj.obj->names[20] << obj.delim;\
-    s << obj.manip << obj.obj->names[21] << obj.delim;\
-    s << obj.manip << obj.obj->names[22];\
+    s << obj.manip << '`' << obj.obj->names[0] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[1] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[2] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[3] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[4] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[5] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[6] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[7] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[8] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[9] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[10] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[11] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[12] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[13] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[14] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[15] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[16] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[17] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[18] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[19] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[20] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[21] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[22] << '`';\
 		return s;\
 	}\
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_equal_list<Manip>& obj)\
 	{\
-    s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
-    s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
-    s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
-    s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
-    s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
-    s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
-    s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
-    s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
-    s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
-    s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
-    s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
-    s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
-    s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13 << obj.delim;\
-    s << obj.obj->names[13] << obj.comp << obj.manip << obj.obj->I14 << obj.delim;\
-    s << obj.obj->names[14] << obj.comp << obj.manip << obj.obj->I15 << obj.delim;\
-    s << obj.obj->names[15] << obj.comp << obj.manip << obj.obj->I16 << obj.delim;\
-    s << obj.obj->names[16] << obj.comp << obj.manip << obj.obj->I17 << obj.delim;\
-    s << obj.obj->names[17] << obj.comp << obj.manip << obj.obj->I18 << obj.delim;\
-    s << obj.obj->names[18] << obj.comp << obj.manip << obj.obj->I19 << obj.delim;\
-    s << obj.obj->names[19] << obj.comp << obj.manip << obj.obj->I20 << obj.delim;\
-    s << obj.obj->names[20] << obj.comp << obj.manip << obj.obj->I21 << obj.delim;\
-    s << obj.obj->names[21] << obj.comp << obj.manip << obj.obj->I22 << obj.delim;\
-    s << obj.obj->names[22] << obj.comp << obj.manip << obj.obj->I23;\
+    s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
+    s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
+    s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
+    s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
+    s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
+    s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
+    s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
+    s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
+    s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
+    s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
+    s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
+    s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
+    s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13 << obj.delim;\
+    s << '`' << obj.obj->names[13] << '`' << obj.comp << obj.manip << obj.obj->I14 << obj.delim;\
+    s << '`' << obj.obj->names[14] << '`' << obj.comp << obj.manip << obj.obj->I15 << obj.delim;\
+    s << '`' << obj.obj->names[15] << '`' << obj.comp << obj.manip << obj.obj->I16 << obj.delim;\
+    s << '`' << obj.obj->names[16] << '`' << obj.comp << obj.manip << obj.obj->I17 << obj.delim;\
+    s << '`' << obj.obj->names[17] << '`' << obj.comp << obj.manip << obj.obj->I18 << obj.delim;\
+    s << '`' << obj.obj->names[18] << '`' << obj.comp << obj.manip << obj.obj->I19 << obj.delim;\
+    s << '`' << obj.obj->names[19] << '`' << obj.comp << obj.manip << obj.obj->I20 << obj.delim;\
+    s << '`' << obj.obj->names[20] << '`' << obj.comp << obj.manip << obj.obj->I21 << obj.delim;\
+    s << '`' << obj.obj->names[21] << '`' << obj.comp << obj.manip << obj.obj->I22 << obj.delim;\
+    s << '`' << obj.obj->names[22] << '`' << obj.comp << obj.manip << obj.obj->I23;\
 		return s;\
 	}\
 	template <class Manip>\
@@ -20458,117 +20460,117 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.manip << obj.obj->names[0];\
+      s << obj.manip << '`' << obj.obj->names[0] << '`';\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[1];\
+      s << obj.manip << '`' << obj.obj->names[1] << '`';\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[2];\
+      s << obj.manip << '`' << obj.obj->names[2] << '`';\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[3];\
+      s << obj.manip << '`' << obj.obj->names[3] << '`';\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[4];\
+      s << obj.manip << '`' << obj.obj->names[4] << '`';\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[5];\
+      s << obj.manip << '`' << obj.obj->names[5] << '`';\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[6];\
+      s << obj.manip << '`' << obj.obj->names[6] << '`';\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[7];\
+      s << obj.manip << '`' << obj.obj->names[7] << '`';\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[8];\
+      s << obj.manip << '`' << obj.obj->names[8] << '`';\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[9];\
+      s << obj.manip << '`' << obj.obj->names[9] << '`';\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[10];\
+      s << obj.manip << '`' << obj.obj->names[10] << '`';\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[11];\
+      s << obj.manip << '`' << obj.obj->names[11] << '`';\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[12];\
+      s << obj.manip << '`' << obj.obj->names[12] << '`';\
       before = true; \
      } \
     if ((*obj.include)[13]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[13];\
+      s << obj.manip << '`' << obj.obj->names[13] << '`';\
       before = true; \
      } \
     if ((*obj.include)[14]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[14];\
+      s << obj.manip << '`' << obj.obj->names[14] << '`';\
       before = true; \
      } \
     if ((*obj.include)[15]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[15];\
+      s << obj.manip << '`' << obj.obj->names[15] << '`';\
       before = true; \
      } \
     if ((*obj.include)[16]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[16];\
+      s << obj.manip << '`' << obj.obj->names[16] << '`';\
       before = true; \
      } \
     if ((*obj.include)[17]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[17];\
+      s << obj.manip << '`' << obj.obj->names[17] << '`';\
       before = true; \
      } \
     if ((*obj.include)[18]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[18];\
+      s << obj.manip << '`' << obj.obj->names[18] << '`';\
       before = true; \
      } \
     if ((*obj.include)[19]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[19];\
+      s << obj.manip << '`' << obj.obj->names[19] << '`';\
       before = true; \
      } \
     if ((*obj.include)[20]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[20];\
+      s << obj.manip << '`' << obj.obj->names[20] << '`';\
       before = true; \
      } \
     if ((*obj.include)[21]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[21];\
+      s << obj.manip << '`' << obj.obj->names[21] << '`';\
       before = true; \
      } \
     if ((*obj.include)[22]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[22];\
+      s << obj.manip << '`' << obj.obj->names[22] << '`';\
      } \
 		return s;\
 	}\
@@ -20577,117 +20579,117 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+      s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2;\
+      s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2;\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3;\
+      s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3;\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4;\
+      s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4;\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5;\
+      s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5;\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6;\
+      s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6;\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7;\
+      s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7;\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8;\
+      s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8;\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9;\
+      s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9;\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10;\
+      s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10;\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11;\
+      s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11;\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12;\
+      s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12;\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13;\
+      s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13;\
       before = true; \
      } \
     if ((*obj.include)[13]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[13] << obj.comp << obj.manip << obj.obj->I14;\
+      s << '`' << obj.obj->names[13] << '`' << obj.comp << obj.manip << obj.obj->I14;\
       before = true; \
      } \
     if ((*obj.include)[14]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[14] << obj.comp << obj.manip << obj.obj->I15;\
+      s << '`' << obj.obj->names[14] << '`' << obj.comp << obj.manip << obj.obj->I15;\
       before = true; \
      } \
     if ((*obj.include)[15]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[15] << obj.comp << obj.manip << obj.obj->I16;\
+      s << '`' << obj.obj->names[15] << '`' << obj.comp << obj.manip << obj.obj->I16;\
       before = true; \
      } \
     if ((*obj.include)[16]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[16] << obj.comp << obj.manip << obj.obj->I17;\
+      s << '`' << obj.obj->names[16] << '`' << obj.comp << obj.manip << obj.obj->I17;\
       before = true; \
      } \
     if ((*obj.include)[17]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[17] << obj.comp << obj.manip << obj.obj->I18;\
+      s << '`' << obj.obj->names[17] << '`' << obj.comp << obj.manip << obj.obj->I18;\
       before = true; \
      } \
     if ((*obj.include)[18]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[18] << obj.comp << obj.manip << obj.obj->I19;\
+      s << '`' << obj.obj->names[18] << '`' << obj.comp << obj.manip << obj.obj->I19;\
       before = true; \
      } \
     if ((*obj.include)[19]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[19] << obj.comp << obj.manip << obj.obj->I20;\
+      s << '`' << obj.obj->names[19] << '`' << obj.comp << obj.manip << obj.obj->I20;\
       before = true; \
      } \
     if ((*obj.include)[20]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[20] << obj.comp << obj.manip << obj.obj->I21;\
+      s << '`' << obj.obj->names[20] << '`' << obj.comp << obj.manip << obj.obj->I21;\
       before = true; \
      } \
     if ((*obj.include)[21]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[21] << obj.comp << obj.manip << obj.obj->I22;\
+      s << '`' << obj.obj->names[21] << '`' << obj.comp << obj.manip << obj.obj->I22;\
       before = true; \
      } \
     if ((*obj.include)[22]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[22] << obj.comp << obj.manip << obj.obj->I23;\
+      s << '`' << obj.obj->names[22] << '`' << obj.comp << obj.manip << obj.obj->I23;\
      } \
 		return s;\
 	}\
@@ -21405,59 +21407,59 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_field_list<Manip>& obj)\
 	{\
-    s << obj.manip << obj.obj->names[0] << obj.delim;\
-    s << obj.manip << obj.obj->names[1] << obj.delim;\
-    s << obj.manip << obj.obj->names[2] << obj.delim;\
-    s << obj.manip << obj.obj->names[3] << obj.delim;\
-    s << obj.manip << obj.obj->names[4] << obj.delim;\
-    s << obj.manip << obj.obj->names[5] << obj.delim;\
-    s << obj.manip << obj.obj->names[6] << obj.delim;\
-    s << obj.manip << obj.obj->names[7] << obj.delim;\
-    s << obj.manip << obj.obj->names[8] << obj.delim;\
-    s << obj.manip << obj.obj->names[9] << obj.delim;\
-    s << obj.manip << obj.obj->names[10] << obj.delim;\
-    s << obj.manip << obj.obj->names[11] << obj.delim;\
-    s << obj.manip << obj.obj->names[12] << obj.delim;\
-    s << obj.manip << obj.obj->names[13] << obj.delim;\
-    s << obj.manip << obj.obj->names[14] << obj.delim;\
-    s << obj.manip << obj.obj->names[15] << obj.delim;\
-    s << obj.manip << obj.obj->names[16] << obj.delim;\
-    s << obj.manip << obj.obj->names[17] << obj.delim;\
-    s << obj.manip << obj.obj->names[18] << obj.delim;\
-    s << obj.manip << obj.obj->names[19] << obj.delim;\
-    s << obj.manip << obj.obj->names[20] << obj.delim;\
-    s << obj.manip << obj.obj->names[21] << obj.delim;\
-    s << obj.manip << obj.obj->names[22] << obj.delim;\
-    s << obj.manip << obj.obj->names[23];\
+    s << obj.manip << '`' << obj.obj->names[0] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[1] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[2] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[3] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[4] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[5] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[6] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[7] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[8] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[9] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[10] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[11] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[12] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[13] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[14] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[15] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[16] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[17] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[18] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[19] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[20] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[21] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[22] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[23] << '`';\
 		return s;\
 	}\
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_equal_list<Manip>& obj)\
 	{\
-    s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
-    s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
-    s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
-    s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
-    s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
-    s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
-    s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
-    s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
-    s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
-    s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
-    s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
-    s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
-    s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13 << obj.delim;\
-    s << obj.obj->names[13] << obj.comp << obj.manip << obj.obj->I14 << obj.delim;\
-    s << obj.obj->names[14] << obj.comp << obj.manip << obj.obj->I15 << obj.delim;\
-    s << obj.obj->names[15] << obj.comp << obj.manip << obj.obj->I16 << obj.delim;\
-    s << obj.obj->names[16] << obj.comp << obj.manip << obj.obj->I17 << obj.delim;\
-    s << obj.obj->names[17] << obj.comp << obj.manip << obj.obj->I18 << obj.delim;\
-    s << obj.obj->names[18] << obj.comp << obj.manip << obj.obj->I19 << obj.delim;\
-    s << obj.obj->names[19] << obj.comp << obj.manip << obj.obj->I20 << obj.delim;\
-    s << obj.obj->names[20] << obj.comp << obj.manip << obj.obj->I21 << obj.delim;\
-    s << obj.obj->names[21] << obj.comp << obj.manip << obj.obj->I22 << obj.delim;\
-    s << obj.obj->names[22] << obj.comp << obj.manip << obj.obj->I23 << obj.delim;\
-    s << obj.obj->names[23] << obj.comp << obj.manip << obj.obj->I24;\
+    s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
+    s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
+    s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
+    s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
+    s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
+    s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
+    s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
+    s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
+    s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
+    s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
+    s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
+    s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
+    s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13 << obj.delim;\
+    s << '`' << obj.obj->names[13] << '`' << obj.comp << obj.manip << obj.obj->I14 << obj.delim;\
+    s << '`' << obj.obj->names[14] << '`' << obj.comp << obj.manip << obj.obj->I15 << obj.delim;\
+    s << '`' << obj.obj->names[15] << '`' << obj.comp << obj.manip << obj.obj->I16 << obj.delim;\
+    s << '`' << obj.obj->names[16] << '`' << obj.comp << obj.manip << obj.obj->I17 << obj.delim;\
+    s << '`' << obj.obj->names[17] << '`' << obj.comp << obj.manip << obj.obj->I18 << obj.delim;\
+    s << '`' << obj.obj->names[18] << '`' << obj.comp << obj.manip << obj.obj->I19 << obj.delim;\
+    s << '`' << obj.obj->names[19] << '`' << obj.comp << obj.manip << obj.obj->I20 << obj.delim;\
+    s << '`' << obj.obj->names[20] << '`' << obj.comp << obj.manip << obj.obj->I21 << obj.delim;\
+    s << '`' << obj.obj->names[21] << '`' << obj.comp << obj.manip << obj.obj->I22 << obj.delim;\
+    s << '`' << obj.obj->names[22] << '`' << obj.comp << obj.manip << obj.obj->I23 << obj.delim;\
+    s << '`' << obj.obj->names[23] << '`' << obj.comp << obj.manip << obj.obj->I24;\
 		return s;\
 	}\
 	template <class Manip>\
@@ -21589,122 +21591,122 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.manip << obj.obj->names[0];\
+      s << obj.manip << '`' << obj.obj->names[0] << '`';\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[1];\
+      s << obj.manip << '`' << obj.obj->names[1] << '`';\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[2];\
+      s << obj.manip << '`' << obj.obj->names[2] << '`';\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[3];\
+      s << obj.manip << '`' << obj.obj->names[3] << '`';\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[4];\
+      s << obj.manip << '`' << obj.obj->names[4] << '`';\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[5];\
+      s << obj.manip << '`' << obj.obj->names[5] << '`';\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[6];\
+      s << obj.manip << '`' << obj.obj->names[6] << '`';\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[7];\
+      s << obj.manip << '`' << obj.obj->names[7] << '`';\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[8];\
+      s << obj.manip << '`' << obj.obj->names[8] << '`';\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[9];\
+      s << obj.manip << '`' << obj.obj->names[9] << '`';\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[10];\
+      s << obj.manip << '`' << obj.obj->names[10] << '`';\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[11];\
+      s << obj.manip << '`' << obj.obj->names[11] << '`';\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[12];\
+      s << obj.manip << '`' << obj.obj->names[12] << '`';\
       before = true; \
      } \
     if ((*obj.include)[13]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[13];\
+      s << obj.manip << '`' << obj.obj->names[13] << '`';\
       before = true; \
      } \
     if ((*obj.include)[14]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[14];\
+      s << obj.manip << '`' << obj.obj->names[14] << '`';\
       before = true; \
      } \
     if ((*obj.include)[15]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[15];\
+      s << obj.manip << '`' << obj.obj->names[15] << '`';\
       before = true; \
      } \
     if ((*obj.include)[16]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[16];\
+      s << obj.manip << '`' << obj.obj->names[16] << '`';\
       before = true; \
      } \
     if ((*obj.include)[17]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[17];\
+      s << obj.manip << '`' << obj.obj->names[17] << '`';\
       before = true; \
      } \
     if ((*obj.include)[18]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[18];\
+      s << obj.manip << '`' << obj.obj->names[18] << '`';\
       before = true; \
      } \
     if ((*obj.include)[19]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[19];\
+      s << obj.manip << '`' << obj.obj->names[19] << '`';\
       before = true; \
      } \
     if ((*obj.include)[20]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[20];\
+      s << obj.manip << '`' << obj.obj->names[20] << '`';\
       before = true; \
      } \
     if ((*obj.include)[21]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[21];\
+      s << obj.manip << '`' << obj.obj->names[21] << '`';\
       before = true; \
      } \
     if ((*obj.include)[22]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[22];\
+      s << obj.manip << '`' << obj.obj->names[22] << '`';\
       before = true; \
      } \
     if ((*obj.include)[23]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[23];\
+      s << obj.manip << '`' << obj.obj->names[23] << '`';\
      } \
 		return s;\
 	}\
@@ -21713,122 +21715,122 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+      s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2;\
+      s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2;\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3;\
+      s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3;\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4;\
+      s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4;\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5;\
+      s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5;\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6;\
+      s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6;\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7;\
+      s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7;\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8;\
+      s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8;\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9;\
+      s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9;\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10;\
+      s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10;\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11;\
+      s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11;\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12;\
+      s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12;\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13;\
+      s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13;\
       before = true; \
      } \
     if ((*obj.include)[13]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[13] << obj.comp << obj.manip << obj.obj->I14;\
+      s << '`' << obj.obj->names[13] << '`' << obj.comp << obj.manip << obj.obj->I14;\
       before = true; \
      } \
     if ((*obj.include)[14]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[14] << obj.comp << obj.manip << obj.obj->I15;\
+      s << '`' << obj.obj->names[14] << '`' << obj.comp << obj.manip << obj.obj->I15;\
       before = true; \
      } \
     if ((*obj.include)[15]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[15] << obj.comp << obj.manip << obj.obj->I16;\
+      s << '`' << obj.obj->names[15] << '`' << obj.comp << obj.manip << obj.obj->I16;\
       before = true; \
      } \
     if ((*obj.include)[16]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[16] << obj.comp << obj.manip << obj.obj->I17;\
+      s << '`' << obj.obj->names[16] << '`' << obj.comp << obj.manip << obj.obj->I17;\
       before = true; \
      } \
     if ((*obj.include)[17]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[17] << obj.comp << obj.manip << obj.obj->I18;\
+      s << '`' << obj.obj->names[17] << '`' << obj.comp << obj.manip << obj.obj->I18;\
       before = true; \
      } \
     if ((*obj.include)[18]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[18] << obj.comp << obj.manip << obj.obj->I19;\
+      s << '`' << obj.obj->names[18] << '`' << obj.comp << obj.manip << obj.obj->I19;\
       before = true; \
      } \
     if ((*obj.include)[19]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[19] << obj.comp << obj.manip << obj.obj->I20;\
+      s << '`' << obj.obj->names[19] << '`' << obj.comp << obj.manip << obj.obj->I20;\
       before = true; \
      } \
     if ((*obj.include)[20]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[20] << obj.comp << obj.manip << obj.obj->I21;\
+      s << '`' << obj.obj->names[20] << '`' << obj.comp << obj.manip << obj.obj->I21;\
       before = true; \
      } \
     if ((*obj.include)[21]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[21] << obj.comp << obj.manip << obj.obj->I22;\
+      s << '`' << obj.obj->names[21] << '`' << obj.comp << obj.manip << obj.obj->I22;\
       before = true; \
      } \
     if ((*obj.include)[22]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[22] << obj.comp << obj.manip << obj.obj->I23;\
+      s << '`' << obj.obj->names[22] << '`' << obj.comp << obj.manip << obj.obj->I23;\
       before = true; \
      } \
     if ((*obj.include)[23]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[23] << obj.comp << obj.manip << obj.obj->I24;\
+      s << '`' << obj.obj->names[23] << '`' << obj.comp << obj.manip << obj.obj->I24;\
      } \
 		return s;\
 	}\
@@ -22560,61 +22562,61 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_field_list<Manip>& obj)\
 	{\
-    s << obj.manip << obj.obj->names[0] << obj.delim;\
-    s << obj.manip << obj.obj->names[1] << obj.delim;\
-    s << obj.manip << obj.obj->names[2] << obj.delim;\
-    s << obj.manip << obj.obj->names[3] << obj.delim;\
-    s << obj.manip << obj.obj->names[4] << obj.delim;\
-    s << obj.manip << obj.obj->names[5] << obj.delim;\
-    s << obj.manip << obj.obj->names[6] << obj.delim;\
-    s << obj.manip << obj.obj->names[7] << obj.delim;\
-    s << obj.manip << obj.obj->names[8] << obj.delim;\
-    s << obj.manip << obj.obj->names[9] << obj.delim;\
-    s << obj.manip << obj.obj->names[10] << obj.delim;\
-    s << obj.manip << obj.obj->names[11] << obj.delim;\
-    s << obj.manip << obj.obj->names[12] << obj.delim;\
-    s << obj.manip << obj.obj->names[13] << obj.delim;\
-    s << obj.manip << obj.obj->names[14] << obj.delim;\
-    s << obj.manip << obj.obj->names[15] << obj.delim;\
-    s << obj.manip << obj.obj->names[16] << obj.delim;\
-    s << obj.manip << obj.obj->names[17] << obj.delim;\
-    s << obj.manip << obj.obj->names[18] << obj.delim;\
-    s << obj.manip << obj.obj->names[19] << obj.delim;\
-    s << obj.manip << obj.obj->names[20] << obj.delim;\
-    s << obj.manip << obj.obj->names[21] << obj.delim;\
-    s << obj.manip << obj.obj->names[22] << obj.delim;\
-    s << obj.manip << obj.obj->names[23] << obj.delim;\
-    s << obj.manip << obj.obj->names[24];\
+    s << obj.manip << '`' << obj.obj->names[0] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[1] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[2] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[3] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[4] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[5] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[6] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[7] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[8] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[9] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[10] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[11] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[12] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[13] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[14] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[15] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[16] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[17] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[18] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[19] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[20] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[21] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[22] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[23] << '`' << obj.delim;\
+    s << obj.manip << '`' << obj.obj->names[24] << '`';\
 		return s;\
 	}\
 	template <class Manip>\
 	std::ostream& operator <<(std::ostream& s, const NAME##_equal_list<Manip>& obj)\
 	{\
-    s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
-    s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
-    s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
-    s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
-    s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
-    s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
-    s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
-    s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
-    s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
-    s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
-    s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
-    s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
-    s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13 << obj.delim;\
-    s << obj.obj->names[13] << obj.comp << obj.manip << obj.obj->I14 << obj.delim;\
-    s << obj.obj->names[14] << obj.comp << obj.manip << obj.obj->I15 << obj.delim;\
-    s << obj.obj->names[15] << obj.comp << obj.manip << obj.obj->I16 << obj.delim;\
-    s << obj.obj->names[16] << obj.comp << obj.manip << obj.obj->I17 << obj.delim;\
-    s << obj.obj->names[17] << obj.comp << obj.manip << obj.obj->I18 << obj.delim;\
-    s << obj.obj->names[18] << obj.comp << obj.manip << obj.obj->I19 << obj.delim;\
-    s << obj.obj->names[19] << obj.comp << obj.manip << obj.obj->I20 << obj.delim;\
-    s << obj.obj->names[20] << obj.comp << obj.manip << obj.obj->I21 << obj.delim;\
-    s << obj.obj->names[21] << obj.comp << obj.manip << obj.obj->I22 << obj.delim;\
-    s << obj.obj->names[22] << obj.comp << obj.manip << obj.obj->I23 << obj.delim;\
-    s << obj.obj->names[23] << obj.comp << obj.manip << obj.obj->I24 << obj.delim;\
-    s << obj.obj->names[24] << obj.comp << obj.manip << obj.obj->I25;\
+    s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1 << obj.delim;\
+    s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2 << obj.delim;\
+    s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3 << obj.delim;\
+    s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4 << obj.delim;\
+    s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5 << obj.delim;\
+    s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6 << obj.delim;\
+    s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7 << obj.delim;\
+    s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8 << obj.delim;\
+    s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9 << obj.delim;\
+    s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10 << obj.delim;\
+    s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11 << obj.delim;\
+    s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12 << obj.delim;\
+    s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13 << obj.delim;\
+    s << '`' << obj.obj->names[13] << '`' << obj.comp << obj.manip << obj.obj->I14 << obj.delim;\
+    s << '`' << obj.obj->names[14] << '`' << obj.comp << obj.manip << obj.obj->I15 << obj.delim;\
+    s << '`' << obj.obj->names[15] << '`' << obj.comp << obj.manip << obj.obj->I16 << obj.delim;\
+    s << '`' << obj.obj->names[16] << '`' << obj.comp << obj.manip << obj.obj->I17 << obj.delim;\
+    s << '`' << obj.obj->names[17] << '`' << obj.comp << obj.manip << obj.obj->I18 << obj.delim;\
+    s << '`' << obj.obj->names[18] << '`' << obj.comp << obj.manip << obj.obj->I19 << obj.delim;\
+    s << '`' << obj.obj->names[19] << '`' << obj.comp << obj.manip << obj.obj->I20 << obj.delim;\
+    s << '`' << obj.obj->names[20] << '`' << obj.comp << obj.manip << obj.obj->I21 << obj.delim;\
+    s << '`' << obj.obj->names[21] << '`' << obj.comp << obj.manip << obj.obj->I22 << obj.delim;\
+    s << '`' << obj.obj->names[22] << '`' << obj.comp << obj.manip << obj.obj->I23 << obj.delim;\
+    s << '`' << obj.obj->names[23] << '`' << obj.comp << obj.manip << obj.obj->I24 << obj.delim;\
+    s << '`' << obj.obj->names[24] << '`' << obj.comp << obj.manip << obj.obj->I25;\
 		return s;\
 	}\
 	template <class Manip>\
@@ -22751,127 +22753,127 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.manip << obj.obj->names[0];\
+      s << obj.manip << '`' << obj.obj->names[0] << '`';\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[1];\
+      s << obj.manip << '`' << obj.obj->names[1] << '`';\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[2];\
+      s << obj.manip << '`' << obj.obj->names[2] << '`';\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[3];\
+      s << obj.manip << '`' << obj.obj->names[3] << '`';\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[4];\
+      s << obj.manip << '`' << obj.obj->names[4] << '`';\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[5];\
+      s << obj.manip << '`' << obj.obj->names[5] << '`';\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[6];\
+      s << obj.manip << '`' << obj.obj->names[6] << '`';\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[7];\
+      s << obj.manip << '`' << obj.obj->names[7] << '`';\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[8];\
+      s << obj.manip << '`' << obj.obj->names[8] << '`';\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[9];\
+      s << obj.manip << '`' << obj.obj->names[9] << '`';\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[10];\
+      s << obj.manip << '`' << obj.obj->names[10] << '`';\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[11];\
+      s << obj.manip << '`' << obj.obj->names[11] << '`';\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[12];\
+      s << obj.manip << '`' << obj.obj->names[12] << '`';\
       before = true; \
      } \
     if ((*obj.include)[13]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[13];\
+      s << obj.manip << '`' << obj.obj->names[13] << '`';\
       before = true; \
      } \
     if ((*obj.include)[14]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[14];\
+      s << obj.manip << '`' << obj.obj->names[14] << '`';\
       before = true; \
      } \
     if ((*obj.include)[15]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[15];\
+      s << obj.manip << '`' << obj.obj->names[15] << '`';\
       before = true; \
      } \
     if ((*obj.include)[16]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[16];\
+      s << obj.manip << '`' << obj.obj->names[16] << '`';\
       before = true; \
      } \
     if ((*obj.include)[17]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[17];\
+      s << obj.manip << '`' << obj.obj->names[17] << '`';\
       before = true; \
      } \
     if ((*obj.include)[18]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[18];\
+      s << obj.manip << '`' << obj.obj->names[18] << '`';\
       before = true; \
      } \
     if ((*obj.include)[19]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[19];\
+      s << obj.manip << '`' << obj.obj->names[19] << '`';\
       before = true; \
      } \
     if ((*obj.include)[20]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[20];\
+      s << obj.manip << '`' << obj.obj->names[20] << '`';\
       before = true; \
      } \
     if ((*obj.include)[21]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[21];\
+      s << obj.manip << '`' << obj.obj->names[21] << '`';\
       before = true; \
      } \
     if ((*obj.include)[22]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[22];\
+      s << obj.manip << '`' << obj.obj->names[22] << '`';\
       before = true; \
      } \
     if ((*obj.include)[23]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[23];\
+      s << obj.manip << '`' << obj.obj->names[23] << '`';\
       before = true; \
      } \
     if ((*obj.include)[24]) { \
       if (before) s << obj.delim;\
-      s << obj.manip << obj.obj->names[24];\
+      s << obj.manip << '`' << obj.obj->names[24] << '`';\
      } \
 		return s;\
 	}\
@@ -22880,127 +22882,127 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	{\
 		bool before = false;\
     if ((*obj.include)[0]) { \
-      s << obj.obj->names[0] << obj.comp << obj.manip << obj.obj->I1;\
+      s << '`' << obj.obj->names[0] << '`' << obj.comp << obj.manip << obj.obj->I1;\
       before = true; \
      } \
     if ((*obj.include)[1]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[1] << obj.comp << obj.manip << obj.obj->I2;\
+      s << '`' << obj.obj->names[1] << '`' << obj.comp << obj.manip << obj.obj->I2;\
       before = true; \
      } \
     if ((*obj.include)[2]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[2] << obj.comp << obj.manip << obj.obj->I3;\
+      s << '`' << obj.obj->names[2] << '`' << obj.comp << obj.manip << obj.obj->I3;\
       before = true; \
      } \
     if ((*obj.include)[3]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[3] << obj.comp << obj.manip << obj.obj->I4;\
+      s << '`' << obj.obj->names[3] << '`' << obj.comp << obj.manip << obj.obj->I4;\
       before = true; \
      } \
     if ((*obj.include)[4]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[4] << obj.comp << obj.manip << obj.obj->I5;\
+      s << '`' << obj.obj->names[4] << '`' << obj.comp << obj.manip << obj.obj->I5;\
       before = true; \
      } \
     if ((*obj.include)[5]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[5] << obj.comp << obj.manip << obj.obj->I6;\
+      s << '`' << obj.obj->names[5] << '`' << obj.comp << obj.manip << obj.obj->I6;\
       before = true; \
      } \
     if ((*obj.include)[6]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[6] << obj.comp << obj.manip << obj.obj->I7;\
+      s << '`' << obj.obj->names[6] << '`' << obj.comp << obj.manip << obj.obj->I7;\
       before = true; \
      } \
     if ((*obj.include)[7]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[7] << obj.comp << obj.manip << obj.obj->I8;\
+      s << '`' << obj.obj->names[7] << '`' << obj.comp << obj.manip << obj.obj->I8;\
       before = true; \
      } \
     if ((*obj.include)[8]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[8] << obj.comp << obj.manip << obj.obj->I9;\
+      s << '`' << obj.obj->names[8] << '`' << obj.comp << obj.manip << obj.obj->I9;\
       before = true; \
      } \
     if ((*obj.include)[9]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[9] << obj.comp << obj.manip << obj.obj->I10;\
+      s << '`' << obj.obj->names[9] << '`' << obj.comp << obj.manip << obj.obj->I10;\
       before = true; \
      } \
     if ((*obj.include)[10]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[10] << obj.comp << obj.manip << obj.obj->I11;\
+      s << '`' << obj.obj->names[10] << '`' << obj.comp << obj.manip << obj.obj->I11;\
       before = true; \
      } \
     if ((*obj.include)[11]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[11] << obj.comp << obj.manip << obj.obj->I12;\
+      s << '`' << obj.obj->names[11] << '`' << obj.comp << obj.manip << obj.obj->I12;\
       before = true; \
      } \
     if ((*obj.include)[12]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[12] << obj.comp << obj.manip << obj.obj->I13;\
+      s << '`' << obj.obj->names[12] << '`' << obj.comp << obj.manip << obj.obj->I13;\
       before = true; \
      } \
     if ((*obj.include)[13]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[13] << obj.comp << obj.manip << obj.obj->I14;\
+      s << '`' << obj.obj->names[13] << '`' << obj.comp << obj.manip << obj.obj->I14;\
       before = true; \
      } \
     if ((*obj.include)[14]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[14] << obj.comp << obj.manip << obj.obj->I15;\
+      s << '`' << obj.obj->names[14] << '`' << obj.comp << obj.manip << obj.obj->I15;\
       before = true; \
      } \
     if ((*obj.include)[15]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[15] << obj.comp << obj.manip << obj.obj->I16;\
+      s << '`' << obj.obj->names[15] << '`' << obj.comp << obj.manip << obj.obj->I16;\
       before = true; \
      } \
     if ((*obj.include)[16]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[16] << obj.comp << obj.manip << obj.obj->I17;\
+      s << '`' << obj.obj->names[16] << '`' << obj.comp << obj.manip << obj.obj->I17;\
       before = true; \
      } \
     if ((*obj.include)[17]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[17] << obj.comp << obj.manip << obj.obj->I18;\
+      s << '`' << obj.obj->names[17] << '`' << obj.comp << obj.manip << obj.obj->I18;\
       before = true; \
      } \
     if ((*obj.include)[18]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[18] << obj.comp << obj.manip << obj.obj->I19;\
+      s << '`' << obj.obj->names[18] << '`' << obj.comp << obj.manip << obj.obj->I19;\
       before = true; \
      } \
     if ((*obj.include)[19]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[19] << obj.comp << obj.manip << obj.obj->I20;\
+      s << '`' << obj.obj->names[19] << '`' << obj.comp << obj.manip << obj.obj->I20;\
       before = true; \
      } \
     if ((*obj.include)[20]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[20] << obj.comp << obj.manip << obj.obj->I21;\
+      s << '`' << obj.obj->names[20] << '`' << obj.comp << obj.manip << obj.obj->I21;\
       before = true; \
      } \
     if ((*obj.include)[21]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[21] << obj.comp << obj.manip << obj.obj->I22;\
+      s << '`' << obj.obj->names[21] << '`' << obj.comp << obj.manip << obj.obj->I22;\
       before = true; \
      } \
     if ((*obj.include)[22]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[22] << obj.comp << obj.manip << obj.obj->I23;\
+      s << '`' << obj.obj->names[22] << '`' << obj.comp << obj.manip << obj.obj->I23;\
       before = true; \
      } \
     if ((*obj.include)[23]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[23] << obj.comp << obj.manip << obj.obj->I24;\
+      s << '`' << obj.obj->names[23] << '`' << obj.comp << obj.manip << obj.obj->I24;\
       before = true; \
      } \
     if ((*obj.include)[24]) { \
       if (before) s << obj.delim;\
-      s << obj.obj->names[24] << obj.comp << obj.manip << obj.obj->I25;\
+      s << '`' << obj.obj->names[24] << '`' << obj.comp << obj.manip << obj.obj->I25;\
      } \
 		return s;\
 	}\

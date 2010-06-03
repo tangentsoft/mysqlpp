@@ -1,9 +1,9 @@
 /***********************************************************************
  options.cpp - Implements the Option class hierarchy.
 
- Copyright (c) 2007 by Educational Technology Resources, Inc.  Others
- may also hold copyrights on code in this file.  See the CREDITS
- file in the top directory of the distribution for details.
+ Copyright (c) 2007-2009 by Educational Technology Resources, Inc.
+ Others may also hold copyrights on code in this file.  See the
+ CREDITS file in the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -223,10 +223,20 @@ ReadTimeoutOption::set(DBDriver* dbd)
 Option::Error
 ReconnectOption::set(DBDriver* dbd)
 {
-#if MYSQL_VERSION_ID >= 50013
-	return dbd->connected() ? Option::err_connected :
+#if MYSQL_VERSION_ID >= 50106
+	// Option fixed in this version to work correctly whether set before
+	// connection comes up, or after
+	return dbd->set_option(MYSQL_OPT_RECONNECT, &arg_) ?
+			Option::err_NONE : Option::err_api_reject;
+#elif MYSQL_VERSION_ID >= 50013
+	// Between the time the option was created in 5.0.13 and when it was
+	// fixed in 5.1.6, it only worked correctly if set after initial
+	// connection.  So, don't accept it if disconnected, even though API
+	// does accept it; option gets reset when the connection comes up.
+	return dbd->connected() ?
 			dbd->set_option(MYSQL_OPT_RECONNECT, &arg_) ?
-				Option::err_NONE : Option::err_api_reject;
+				Option::err_NONE : Option::err_api_reject :
+				Option::err_disconnected;
 #else
 	return Option::err_api_limit;
 #endif
@@ -316,6 +326,7 @@ SslOption::set(DBDriver* dbd)
 				cipher_.size() ? cipher_.c_str() : 0) ?
 				Option::err_NONE : Option::err_api_reject;
 #else
+	(void)dbd;
 	return Option::err_api_limit;
 #endif
 }

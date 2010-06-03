@@ -31,8 +31,6 @@
 #include <string>
 #include <vector>
 
-#include <ctype.h>
-
 namespace mysqlpp {
 
 #if !defined(DOXYGEN_IGNORE)
@@ -95,18 +93,24 @@ public:
 		return at(i);
 	}
 
+	/// \brief Get the name of a field given its index.
+	std::string& operator [](size_type i)
+	{
+		return at(i);
+	}
+
+	/// \brief Get the name of a field given its index, in const
+	/// context.
+	const std::string& operator [](size_type i) const
+	{
+		return at(i);
+	}
+
 	/// \brief Get the index number of a field given its name
 	unsigned int operator [](const std::string& s) const;
 
 private:
 	void init(const ResultBase* res);
-	void str_to_lwr(std::string& s) const
-	{
-		std::string::iterator it;
-		for (it = s.begin(); it != s.end(); ++it) {
-			*it = tolower(*it);
-		}
-	}
 };
 
 } // end namespace mysqlpp

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding='UTF-8'?>
-<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook V4.3//EN"
-    "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd">
+<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook V4.2//EN"
+    "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
 
 <sect1 id="overview">
   <title>Overview</title>
 
   <para>MySQL++ has a lot of complexity and power to cope with the
-  variety of ways people use databases, but at bottom it doesn&rsquo;t
+  variety of ways people use databases, but at bottom it doesn&#x2019;t
   work all that differently than other database access APIs. The usage
   pattern looks like this:</para>
 
@@ -44,7 +44,7 @@
     <methodname>Connection::connect()</methodname>. But if you know in
     advance that your program only needs one particular connection type,
     there are subclasses with simpler interfaces. For example,
-    there&rsquo;s <ulink type="classref" url="TCPConnection"/> if you
+    there&#x2019;s <ulink type="classref" url="TCPConnection"/> if you
     know your program will always use a networked database
     server.</para>
   </sect2>
@@ -63,11 +63,11 @@
     <classname>std::ostringstream</classname>. This is the most C++ish
     way MySQL++ provides for building up a query string.  The library
     includes <ulink url="../refman/manip_8h.html">stream
-    manipulators</ulink> that are type-aware so it&rsquo;s easy to build
+    manipulators</ulink> that are type-aware so it&#x2019;s easy to build
     up syntactically-correct SQL.</para>
 
     <para><classname>Query</classname> also has a feature called <xref
-    linkend="tquery"/> which work something like C&rsquo;s
+    linkend="tquery"/> which work something like C&#x2019;s
     <function>printf()</function> function: you set up a fixed query
     string with tags inside that indicate where to insert the variable
     parts. If you have multiple queries that are structurally similar,
@@ -139,10 +139,10 @@
       like an STL input iterator rather than a
       <classname>std::vector</classname>: you walk through your result
       set processing one row at a time, always going forward. You
-      can&rsquo;t seek around in the result set, and you can&rsquo;t
+      can&#x2019;t seek around in the result set, and you can&#x2019;t
       know how many results are in the set until you find the end. In
       payment for that inconvenience, you get better memory efficiency,
-      because the entire result set doesn&rsquo;t need to be stored in
+      because the entire result set doesn&#x2019;t need to be stored in
       RAM. This is very useful when you need large result sets.</para>
     </sect3>
 
@@ -150,15 +150,15 @@
       <title>Queries That Return Data: Specialized SQL
       Structures</title>
 
-      <para>Accessing results through MySQL++&rsquo;s data structures is
-      a pretty low level of abstraction. It&rsquo;s better than using
+      <para>Accessing results through MySQL++&#x2019;s data structures is
+      a pretty low level of abstraction. It&#x2019;s better than using
       the MySQL C API, but not by much. You can elevate things a little
       closer to the level of the problem space by using the <link
       linkend="ssqls">SSQLS feature</link>. This lets you define C++
       structures that match the table structures in your database
-      schema. In addition, it&rsquo;s easy to use SSQLSes with regular
-      STL containers (and thus, algorithms) so you don&rsquo;t have to
-      deal with the quirks of MySQL++&rsquo;s data structures.</para>
+      schema. In addition, it&#x2019;s easy to use SSQLSes with regular
+      STL containers (and thus, algorithms) so you don&#x2019;t have to
+      deal with the quirks of MySQL++&#x2019;s data structures.</para>
 
       <para>The advantage of this method is that your program will
       require very little embedded SQL code. You can simply execute a
@@ -166,7 +166,7 @@
       be accessed just as you would any other structure. The results can
       be accessed through the Row object, or you can ask the library to
       dump the results into an STL container &mdash; sequential or
-      set-associative, it doesn&rsquo;t matter &mdash; for you. Consider
+      set-associative, it doesn&#x2019;t matter &mdash; for you. Consider
       this:</para>
 
       <programlisting>
@@ -177,9 +177,9 @@ for (vector&lt;stock&gt;::iterator it = v.begin(); it != v.end(); ++it) {
   cout &lt;&lt; "Price: " &lt;&lt; it-&gt;price &lt;&lt; endl;
 }</programlisting>
 
-      <para>Isn&rsquo;t that slick?</para>
+      <para>Isn&#x2019;t that slick?</para>
 
-      <para>If you don&rsquo;t want to create SSQLSes to match your
+      <para>If you don&#x2019;t want to create SSQLSes to match your
       table structures, as of MySQL++ v3 you can now use
       <classname>Row</classname> here instead:</para>
 

@@ -1,10 +1,9 @@
-/// \file custom.h
-/// \brief Backwards-compatibility header; loads ssqls.h
-
 /***********************************************************************
- Copyright (c) 2008 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the
- CREDITS.txt file in the top directory of the distribution for details.
+ scopedconnection.cpp - Implements the ScopedConnection class.
+
+ Copyright (c) 2010 by Switchplane, Ltd.  Others may also hold
+ copyrights on code in this file.  See the CREDITS.txt file in the
+ top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -24,11 +23,21 @@
  USA
 ***********************************************************************/
 
-#if !defined(MYSQLPP_CUSTOM_H)
-#define MYSQLPP_CUSTOM_H
+#include "scopedconnection.h"
 
-#warning MySQL++ header custom.h is now called ssqls.h.  Please update your code.
-#include "ssqls.h"
+#include "cpool.h"
 
-#endif // !defined(MYSQLPP_CUSTOM_H)
+namespace mysqlpp {
 
+ScopedConnection::ScopedConnection(ConnectionPool& pool, bool safe) :
+pool_(pool),
+connection_(safe ? pool.safe_grab() : pool.grab())
+{
+}
+
+ScopedConnection::~ScopedConnection()
+{
+    pool_.release(connection_);
+}
+
+} // end namespace mysqlpp

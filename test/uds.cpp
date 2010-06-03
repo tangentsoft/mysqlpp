@@ -42,6 +42,7 @@
 #endif
 
 #include <errno.h>
+#include <string.h>
 
 static const char* success_path = "test_uds_success.sock";
 static const char* failure_path = "test_uds_failure.sock";

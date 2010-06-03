@@ -187,6 +187,7 @@ public:
 	/// "data" member is left uninitialized by this ctor, because we
 	/// don't know what to initialize it to.
 	Null() :
+	data(),
 	is_null(false)
 	{
 	}
@@ -213,6 +214,7 @@ public:
 	/// \endcode
 	/// ...to get a null \c int.
 	Null(const null_type&) :
+	data(),
 	is_null(true)
 	{
 	}
@@ -248,7 +250,7 @@ public:
 	///
 	/// This just sets the is_null flag; the data member is not
 	/// affected until you call the Type() operator on it.
-	Null& operator =(const null_type& n)
+	Null& operator =(const null_type&)
 	{
 		is_null = true;
 		return *this;

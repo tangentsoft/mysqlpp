@@ -7,110 +7,219 @@ Any Version
       consider whether it could be generalized to a widely-useful
       API feature.
 
+    o Suppress DOS line-ending related diffs from examples/cgi_jpeg
+      output when running dtest on Windows.  Check for -D?
 
-v3.1 Tentative Plan
--------------------
-    o SSQLS v2:
+    o Need to link statically to connect to MySQL Embedded?
 
-      - Switch from C macros to a DSL that is translated to .cpp and
-        .h files by a tool built along with MySQL++ library.  Design:
+      http://stackoverflow.com/questions/672451/howto-communicate-with-mysql-embedded-server-from-mysql-dll
 
-        http://lists.mysql.com/plusplus/6929
+    o When Bakefile allows, bring examples/vstudio/* into the top-level
+      build system.  This will let us generate separate project
+      files for each VC++ version we support, let us use MYSQL_WIN_DIR
+      variable instead of hard-coded paths, and build against the local
+      version of MySQL++ instead of requiring it to be installed first.
+      Should probably drop the MFC example project, to avoid requiring
+      Visual C++ Professional.
 
-      - Switch per SSQLS that makes it throw an exception when it sees
-        a mismatch between DB schema and SSQLS definition.  Harkens
-        back to pre v3.0 SSQLS behavior, where you'd get a crash as
-        it tried to fill out fields by position, and fail.  For the
-        B&D folk who don't like the new "just cope" behavior.
+    o Query::storein(slist<T>&) is unusable.  As a template method, it
+      must be defined in a header file; we cannot #include config.h from
+      a header, thus the proper HAVE macro that would let us define this
+      template method is never defined.
 
-      - Try to design it so as much code as possible resides in
-        a common base class (SsqlsBase) that all SSQLSes derive from.
-        Can't do it in v1 because virtually everything is specific
-        to the structure's type.  Study equal_list(), for example.
-        Do it with an eye toward replacing Query's template methods
-        taking SSQLSes with concrete methods taking SsqlsBase&.
+      One solution is to create lib/slist.h.in, parameterized by the
+      detected slist type name and the header file defining it.  This
+      will #include the proper header file, define SList<T>::Type (a
+      template typdedef: http://www.gotw.ca/gotw/079.htm), and #define
+      MYSQLPP_HAVE_SLIST.  Then Query::storein() can be wrapped by an
+      ifdef checking for MYSQLPP_HAVE_SLIST, only defined when the
+      configure script found a suitable slist type.
 
-      - Instead of equal_list(), value_list(), etc., give SsqlsBase
-        more generic ways to get metadata.  Need to be able to get
-        a list of all column names, a list of just the COMPCOUNT
-        column names, and a list of the names of columns that have
-        been initialized through public setters or a ctor.  Also need
-        similar lists of column values in String or STA form.  Needed
-        to support extensions to Query like select() and delete().
+      Also create a default lib/slist.h file, checked into svn as
+      lib/slistdef.h and copied to slist.h on tarball creation.  Remove
+      this file early in configure script run, so we're forced to
+      overwrite its contents with detected values.  Default version
+      contains ifdefs for non-autoconf platforms where we know what
+      slist definition is available on that platform.  Xcode, for
+      instance, will let us use <ext/slist>.
 
-      - Add truthiness operator to SSQLS to detect an incompletely-
-        populated object?  Or maybe an incomplete() method?
 
-      - Add features to ssqlsxlat to write SSQLSv2 declaration files
-        from existing schemas extracted from CREATE TABLE statements,
-        from running databases, and from C++ files containing old
-        SSQLS v1 declarations.
+v3.2 Plan: Finish SSQLS v2
+--------------------------
+    See http://lists.mysql.com/plusplus/6929 for high-level plan.
 
-      - Add table creation ability to SSQLS.  It has the schema...
+    o Goal: Restore VC++ 2003 compatibility with SSQLS, lost with v1
 
-      - Support per-instance table name overrides, instead of just
-        per SSQLS?  Needed if you're going to use a single SSQLS for
-        many tables with the same structure in a multithreaded program,
-        so changing it statically isn't safe.
+    o C++ code generator, from walking DSL parse tree:
 
-      - Need a way to tag a column as auto-increment so it's left out
-        of INSERT queries, but still available for data retrieval.
+      examples/stock.ssqls gives ssqls_stock.h containing:
 
-      - Would be nice if it restored VC++ 2003 compatibility, and
-        allowed removal of 'explicit' from Date, DateTime and Time
-        ctors taking stringish types.  (Can't do the latter for real
-        until v4, but we can lay the ground work here.)
+          class SQLStock : public mysqlpp::SsqlsBase
+          {
+          public:
+              SQLStock(Connection* conn = 0); // default ctor
+              SQLStock(const SQLStock& other);
+              SQLStock(const mysqlpp::Row& row,
+                      Connection* conn = 0); // full init from query
+              SQLStock(mysqlpp::sql_bigint key1); // exemplar creation
+              SQLStock(Connection* conn,
+                      mysqlpp::sql_bigint key1) // calls load();
+              SQLStock(
+                  mysqlpp::sql_bigint f1,
+                  mysqlpp::sql_bigint f2,
+                  mysqlpp::sql_double f3,
+                  mysqlpp::sql_double f4,
+                  const mysqlpp::sql_date& f5,
+                  const mysqlpp::sql_mediumtext& f6); // full init
+              SQLStock(Connection* conn,
+                  mysqlpp::sql_bigint f2,
+                  mysqlpp::sql_double f3,
+                  mysqlpp::sql_double f4,
+                  const mysqlpp::sql_date& f5,
+                  const mysqlpp::sql_mediumtext& f6); // calls create()
+              SQLStock(Connection* conn,
+                  mysqlpp::sql_bigint f1,
+                  mysqlpp::sql_bigint f2,
+                  mysqlpp::sql_double f3,
+                  mysqlpp::sql_double f4,
+                  const mysqlpp::sql_date& f5,
+                  const mysqlpp::sql_mediumtext& f6); // calls save()
 
-	  - Add Active Record type methods, and support data for same.
-	    E.g., mySsqls.save() should be able to write and execute
-		the UPDATE statement.
+              bool createTable(Connection* conn = 0) const;
+              const char* getTableName() const
+                      { return class_table_name_ || table(); }
+              void setTableName(const char* name)
+                      { instance_table(name); }
+              static void setTableName(const char* name)
+                      { class_table_name_ = name; }
 
-    o Chris Frey's packarray class
+              std::ostream& equal_list(std::ostream& os) const;
+              std::ostream& json(std::ostream& os) const;
+              std::ostream& name_list(std::ostream& os) const;
+              std::ostream& value_list(std::ostream& os) const;
+              std::ostream& xml(std::ostream& os) const;
 
-    o Create adaptors for std::bitset, for storing binary data in a
-      MySQL table.  Make two options available, one for storing the
-      return from bitset::to_ulong() in an UNSIGNED INTEGER column,
-      and another for storing a larger set of bits in a more flexible
-      way, perhaps as a BLOB.
+              mysqlpp::sql_bigint getId() const;
+              mysqlpp::sql_bigint getNum() const;
+              mysqlpp::sql_double getWeight() const;
+              mysqlpp::sql_double getPrice() const;
+              const mysqlpp::sql_date& getSdate() const;
+              const mysqlpp::sql_mediumtext& getDescription() const;
 
-    o field_list should use backticks to quote its items to handle
-      spaces and other special characters.  Probably also remove all
-      the manipulator stuff associated with these: no reason to make
-      it user-settable, as there's only one right way to do it.  See:
+              void setId(mysqlpp::sql_bigint value);
+              void setNum(mysqlpp::sql_bigint value);
+              void setWeight(mysqlpp::sql_double value);
+              void setPrice(mysqlpp::sql_double value);
+              void setSdate(const mysqlpp::sql_date& value);
+              void setDescripion(const mysqlpp::sql_mediumtext& value);
 
-         http://dev.mysql.com/doc/refman/5.0/en/identifiers.html
+              bool operator<(const SQLStock& rhs) const;
+              SQLStock& operator=(const SQLStock& rhs);
 
-    o Add a general-purpose backtick manipulator as well.
+          protected:
+              mysqlpp::sql_bigint id_;
+              mysqlpp::sql_bigint num_;
+              mysqlpp::sql_double weight_;
+              mysqlpp::sql_double price_;
+              mysqlpp::sql_date sdate_;
+              mysqlpp::sql_mediumtext description_;
 
-    o Define operator<< for Fields, Row, StoreQueryResult, etc.  In other
-      words, there should be a way to get a user-readable version of
-      received data without a lot of code.  CSV format by default, and
-      mysql(1)-like ASCII grid optionally, perhaps with a manipulator?
-      There is grid code in examples/multiquery.cpp which we can use
-      and then make multiquery.cpp a demonstration platform for it.
-      Maybe dbinfo and fieldinf, too?
+              std::bitset<6> set_fields_;
 
-    o Has experience with new thread awareness changed our mind on
-      atomic inc/dec of reference counts in RefCounted*?
+          private:
+              static const char* class_table_name_;
+          };
 
-    o Create a fixed-point data type for use with SQL's DECIMAL and
-      related types.  Right now, sql_decimal is a typedef for double,
-      so you lose accuracy in the fractional part.
+      ...and ssqls_stock.cc, containing implementation for same.
 
-    o Optional checked conversions in String for numerics: throw
-      BadConversion on range overflow?
+    o Ensure we're using case-insensitive SQL column to C++ field name
+      matching.  Column names aren't case-sensitive in SQL.
+
+    o SQL table updater/builder, -T option, taking .ssqls and
+      creating or updating the DB table to match.
+
+    o If using accessors, generate "std::bitset<num_fields> is_set_",
+      and set the appropriate bit when calling each setFoo() so we
+      can intuit which fields were set.  Probably also need an enum:
+
+          enum FieldIndices {
+              id_field_index_,
+              num_field_index_,
+              ...
+          };
+
+      This will allow Query::select(), for instance, to figure out that
+      we want it to select by a non-key field, returning all matches.
+
+    o Define operator<< for SSQLS and a set of manipulators which
+      govern whether the operator calls equal_list(), json(),
+      name_list(), value_list(), or xml() to do the actual insertion.
+
+    o Define operator<< for sequence_container<SsqlsBase> and similar
+      for associative containers.  Give mysql(1)-like ASCII grid or
+      some other table format.
+
+    o Define operator>> for SSQLS, taking XML as input, in the form
+      emitted via xml().  expat uses the new BSD license, so maybe
+      we can just drop it in the tree, with an option to use the
+      platform expat on autoconf systems.
+
+    o MySQL table metadata to SSQLSv2 data structure translator.
+      (-s, -u, -p and -t flag support.)  Add this to dtest, extracting
+      stock.ssqls definition from DB.
+
+    o Replace Query's template methods taking SSQLSes with concrete
+      methods taking const SsqlsBase&.
+
+    o Create Query::remove(const SsqlsBase&)
+
+    o Try to remove of 'explicit' from Date, DateTime and Time
+      ctors taking stringish types.  (Can't do it for real until v4,
+      but we can lay the ground work here.)
+
+    o Auto-create() ctor: if there is an auto_increment field,
+      populate it on query success.
+
+    o Detect ctor conflicts corresponding to sql_create_N(N, N...)
+      in SSQLSv1.  ssqlsxlat can be smart enough to just not emit
+      duplicate ctors.
+
+    o Special case of ctor suppression: if the number of key fields
+      equals the total number of fields, you get an auto-load() ctor,
+      not auto-update().
+
+    o Replace CREATE TABLE SQL in resetdb with create_table() calls.
+
+    o Option to use integer indices into Row when populating?  Only
+      bother if it gives a speed advantage we can actually see,
+      because it removes all the dynamic typing advantages we got
+      with the change to field name indices in v3.0.
 
     o Try to add Query::storein(container, ssqls), which generates
       SELECT * from {ssqls.table()} and stores the result.  May not be
       possible due to existing overloads, but try.  If it works, use
       this form in the userman Overview section, saving one LOC.
 
-    o Add Query::storein_if(), mirroring store_if()
+    o Convert SSQLS v1 examples to v2.  SSQLS v2 isn't done until
+      there's a straightformward conversion path for all examples.
 
-    o Add a method to mysqlpp::String to return a widened version of the
-      string.  Probably make return type templatized so we can return
-      wstring, C++/CLI native strings, etc.  Then convert examples that
-      do this conversion to use this new mechanism.
+    o Add #warning to generated ssqls.h saying that you should now use
+      SSQLS v2.  Wrap it in a check for MYSQLPP_ALLOW_SSQLS_V1,
+      so people can disable the warning.
+
+
+v3.3 Tentative Plan
+-------------------
+    o Add Query::storein<Container, T>(container), getting table
+      name from container::value_type.table() instead.
+
+    o Define operator<< for Fields, Row, StoreQueryResult, etc., giving
+      CSV format.
+
+    o Remove libexcommon.  Between above and SSQLSv2, we should have
+      everything we need to get equivalent output without special
+      purpose code.  There should be no ad hoc data dumping code in
+      the examples.
 
     o Bring back mandatory quoting for manipulators?  If someone says
       os << mysqlpp::escape << foo; do they not really really mean
@@ -126,10 +235,96 @@ v3.1 Tentative Plan
       mysql++-config script, which either wraps pkg-config or
       reinvents it, poorly, for systems that don't have it.
 
+    o Add String::operator==(const mysqlpp::null_type&).  Needed to
+      allow comparison of row[x] returns to SQL null.  Change one of
+      the examples to show it?
+
+    o Memory "leak" and C API library init fixes:
+    
+      - Add DBDriver::library_begin() and library_end(), wrapping
+        similarly named functions in the C API.
+
+      - Create Process class, which you create at the top of main()
+        on the stack, purely to call these automatically.
+
+      - Update userman to recommend creating Process object in
+        ConnectionPool derivatives, instead.
+
+      - Create Thread class to call existing DBDriver::thread_start()
+        and thread_end(), similar to Process, created on the stack
+        of the thread entry function.
+
+      - Move memory leak FAQ into userman, rewriting it to cover
+        all this.
+
+    o mysqlpp::execute manipulator.  Immediately executes built
+      query string.  Works best with exceptions, as that's the only way
+      to detect failures.
+
+    o Chris Frey's packarray class
+
+    o Create adaptors for std::bitset, for storing binary data in a
+      MySQL table.  Make two options available, one for storing the
+      return from bitset::to_ulong() in an UNSIGNED INTEGER column,
+      and another for storing a larger set of bits in a more flexible
+      way, perhaps as a BLOB.
+
+    o Create a backtick manipulator for use by field_list() in row.h
+      and ssqls.h.  These currently use do_nothing0, but that prevents
+      use of SQL reserved words as identifiers.
+
+    o Has experience with new thread awareness changed our mind on
+      atomic inc/dec of reference counts in RefCounted*?
+
+    o Create a fixed-point data type for use with SQL's DECIMAL and
+      related types.  Right now, sql_decimal is a typedef for double,
+      so you lose accuracy in the fractional part.  Don't forget to
+      include an "is_null" flag to cope with conversion from infinite
+      or NaN float values; that's how MySQL stores these.
+
+    o Optional checked conversions in String for numerics: throw
+      BadConversion on range overflow?
+
+    o Add Query::storein_if(), mirroring store_if()
+
+    o Add a method to mysqlpp::String to return a widened version of the
+      string.  Probably make return type templatized so we can return
+      wstring, C++/CLI native strings, etc.  Then convert examples that
+      do this conversion to use this new mechanism.
+
+    o Try to add operator std::string to String.  If it doesn't work,
+      explain why not in the userman, and in Row::operator[] refman.
+      
+    o Wrap LOAD DATA INFILE:
+
+      bool Query::load_file(
+          const char* path,
+          bool local_path,
+          const char* table,
+          const char* field_terminator = 0,   // default \t
+          const char* field_encloser = 0,     // default none
+          const char* field_escape = 0,       // default \
+          const char* line_terminator = 0,    // \n on *ix, \r\n on Windows
+          const char* line_starter = 0,       // default none
+          const char* character_set = 0,      // default UTF-8
+          const char* comment_prefix = 0,     // ignore no lines
+          bool replace_existing = false,
+          bool ignore_duplicates = false,
+          bool low_priority = false,
+          int skip_lines = 0);
+
+    o Wrappers for above: load_local_tab_file(), load_local_csv_file(),
+      load_remote_*()...
+
+    o Query::save_file() interfaces, wrapping SELECT ... INTO FILE,
+      modeled on above.
+
 
 v4.0 or Later
 -------------
     o Database independence:
+
+      - Use libdbi or similar?  http://libdbi.sf.net/
 
       - Make DBDriver class purely abstract; move its entire functional
         contents to new MysqlDriver.
@@ -174,6 +369,11 @@ v4.0 or Later
           as they need them.  Or, maybe make them use Bakefile so they
           can fiddle with the options if they want something atypical.
 
+    o Fork mysqlpp::String into mysqlpp::Blob, which differs only in
+      that it knows that it should be automatically quoted and escaped
+      when inserted into a SQL query.  Could do this in 3.x, but it's a
+      pretty serious API breakage.
+
     o Some sort of support for prepared statements.  Can we hijack
       the template query mechanism?
 
@@ -206,9 +406,46 @@ v4.0 or Later
     o Remove throw-spec for std::out_of_range from SQLTypeAdapter::at().
       It no longer throws this, and throw-specs are passee' anyway.
 
-	o Store failed query string in BadQuery exception object, to make
-	  logging and debugging easier.  One could have a try block wrapping
-	  many queries, and be able to recover the failed query string from
-	  the exception object, instead of somehow keeping track yourself.
+    o Store failed query string in BadQuery exception object, to make
+      logging and debugging easier.  One could have a try block wrapping
+      many queries, and be able to recover the failed query string from
+      the exception object, instead of somehow keeping track yourself.
 
-	  Patch: http://lists.mysql.com/plusplus/8374
+      Patch: http://lists.mysql.com/plusplus/8374
+ 
+    o Query and SQLStream could have a common base class that would
+      allow the stream manipulator functions to catch and modify
+      strings based on only one dynamic_cast instead of requiring
+      two as it does since the addition of the SQLStream class.
+
+    o Make internal call chain steps like Query::execute(SQLQueryParms&)
+      protected?  No good reason for end users to call it, and making
+      it part of the public API causes people to try calling it, and
+      discovering that it's not a very elegant interface, compared to
+      the ones taking SQLStrings.
+
+    o SQL time type allows +/- 839 hours of range.  v3.0 code doesn't
+      cope with negative times, and if we change it to use signed
+      integers, we'll still only get +/-127 hours instead of +255.
+      Need to switch the hour field to a short to get the full range.
+
+    o Create a thread-safe message queue for separating DB access and
+      data use into multiple threads.  Something like ConnectionPool,
+      optional and with no ties to the internals of MySQL++.  There
+      could be an adapter between one end of the queue and a Connection
+      object, which creates Queries to handle standardized messages,
+      delivering the results back to the queue.
+
+    o Get rid of two-step create in DBDriver, requiring a connection to
+      be established in ctor for object to be valid?  RAII.  The
+      DB-specific functions that don't require a connection can be
+      static methods.  Tricky bit: a failed Connection::connect() call
+      will likely be followed by an indirect call to DBDriver::err*().
+      Does Connection cache the error value and message?  If we can pull
+      this off, we can drop the DBDriver::is_connected_ flag and change
+      Connection::connected() to "return driver_ != 0".
+
+    o Add STL-like custom Allocator template parameters to memory-hungry
+      classes like Row?  Useful in apps that process lots of data over
+      long periods, causing heap fragmentation with the default C++
+      allocator.

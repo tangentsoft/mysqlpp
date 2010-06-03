@@ -258,6 +258,42 @@ public:
 		return value_ >> i.value_;
 	}
 
+	/// \brief Check for equality
+	bool operator ==(const this_type& i) const
+	{
+		return value_ == i.value_;
+	}
+
+	/// \brief Check for inequality
+	bool operator !=(const this_type& i) const
+	{
+		return value_ != i.value_;
+	}
+
+	/// \brief Check that this object is less than another
+	bool operator <(const this_type& i) const
+	{
+		return value_ < i.value_;
+	}
+
+	/// \brief Check that this object is greater than another
+	bool operator >(const this_type& i) const
+	{
+		return value_ > i.value_;
+	}
+
+	/// \brief Check this object is less than or equal to another
+	bool operator <=(const this_type& i) const
+	{
+		return value_ <= i.value_;
+	}
+
+	/// \brief Check this object is greater than or equal to another
+	bool operator >=(const this_type& i) const
+	{
+		return value_ >= i.value_;
+	}
+
 private:
 	value_type value_;
 };

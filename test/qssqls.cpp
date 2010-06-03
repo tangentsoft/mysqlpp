@@ -1,7 +1,7 @@
 /***********************************************************************
  test/qssqls.cpp - Tests SQL query creation from SSQLS in Query.
 
- Copyright (c) 2008 by Educational Technology Resources, Inc.
+ Copyright (c) 2008-2009 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the
  CREDITS.txt file in the top directory of the distribution for details.
 
@@ -24,6 +24,7 @@
 ***********************************************************************/
 
 #include <mysql++.h>
+#define MYSQLPP_ALLOW_SSQLS_V1	// suppress deprecation warning
 #include <ssqls.h>
 
 #include <iostream>
@@ -32,11 +33,8 @@ using namespace mysqlpp;
 using namespace std;
 
 
-// Don't use any stringish types here.  That will cause code below to
-// eventually try to call DBDriver::escape_string() through the
-// Connection object, which we don't really have, so it asplodes.
-sql_create_17(test,
-	17, 0,
+sql_create_19(test,
+	19, 0,
 	sql_tinyint,			tinyint_v,
 	sql_tinyint_unsigned,	tinyint_unsigned_v,
 	sql_smallint,			smallint_v,
@@ -53,17 +51,20 @@ sql_create_17(test,
 	sql_bool,				bool_v,
 	sql_date,				date_v,
 	sql_time,				time_v,
-	sql_datetime,			datetime_v)
+	sql_datetime,			datetime_v,
+	sql_char,				char_v,	// only need one stringish type...
+	sql_blob,				blob_v)	// ...and one blob type; they're all
+									// the same under the hood in MySQL++
 
 int
 main()
 {
-	Query q = Connection().query();		// don't do this in real code
+	Query q(0);		// don't pass 0 for conn parameter in real code
 	test empty(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false,
-			Date(), Time(), DateTime());
+			Date(), Time(), DateTime(), "", sql_blob());
 	test filled(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11.0, 12.0, 13.0,
 			bool(14), Date("1515-15-15"), Time("16:16:16"),
-			DateTime("1717-17-17 17:17:17"));
+			DateTime("1717-17-17 17:17:17"), "18", sql_blob("1\09", 3));
 
 	cout << q.insert(empty) << endl << endl;
 	cout << q.insert(filled) << endl << endl;

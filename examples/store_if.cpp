@@ -4,7 +4,7 @@
 	to be useful, only to show how you can do result set filtering that
 	outstrips the power of SQL.
 
- Copyright (c) 2005-2008 by Educational Technology Resources, Inc.
+ Copyright (c) 2005-2010 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -66,14 +66,15 @@ int
 main(int argc, char *argv[])
 {
 	// Get database access parameters from command line
-	const char* db = 0, *server = 0, *user = 0, *pass = "";
-	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
+	mysqlpp::examples::CommandLine cmdline(argc, argv);
+	if (!cmdline) {
 		return 1;
 	}
 
 	try {
 		// Establish the connection to the database server.
-		mysqlpp::Connection con(db, server, user, pass);
+		mysqlpp::Connection con(mysqlpp::examples::db_name,
+				cmdline.server(), cmdline.user(), cmdline.pass());
 
 		// Collect the stock items with prime quantities
 		std::vector<stock> results;
@@ -85,7 +86,7 @@ main(int argc, char *argv[])
 		std::vector<stock>::const_iterator it;
 		for (it = results.begin(); it != results.end(); ++it) {
 			print_stock_row(it->item.c_str(), it->num, it->weight,
-					it->price, it->sdate);
+					it->price, it->sDate);
 		}
 	}
 	catch (const mysqlpp::BadQuery& e) {

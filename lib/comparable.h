@@ -28,6 +28,8 @@
 #if !defined(MYSQLPP_COMPARABLE_H)
 #define MYSQLPP_COMPARABLE_H
 
+namespace mysqlpp {
+
 /// \brief Mix-in that gives its subclass a full set of comparison
 /// operators.
 ///
@@ -90,5 +92,7 @@ protected:
 	/// equal, and > 0 if this object is "after" the other.
 	virtual int compare(const T& other) const = 0;
 };
+
+}
 
 #endif // !defined(MYSQLPP_COMPARABLE_H)

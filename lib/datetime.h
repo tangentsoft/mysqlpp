@@ -63,12 +63,12 @@ public:
 
 	/// \brief Initialize object from discrete y/m/d h:m:s values.
 	///
-	/// \param y year_
-	/// \param mon month_
-	/// \param d day_ of month_
-	/// \param h hour_
-	/// \param min minute_
-	/// \param s second_
+	/// \param y year, 1000-9999
+	/// \param mon month, 1-12
+	/// \param d day of month, 1-31
+	/// \param h hour, 0-23
+	/// \param min minute, 0-59
+	/// \param s second, 0-59
 	DateTime(unsigned short y, unsigned char mon, unsigned char d,
 			unsigned char h, unsigned char min, unsigned char s) :
 	Comparable<DateTime>(),
@@ -179,7 +179,8 @@ public:
 	/// \brief Get the date/time value's year part
 	///
 	/// There's no trickery here like in some date/time implementations
-	/// where you have to add 1900 or something like that.
+	/// where you have to add 1900 or something like that.  It simply
+	/// returns the year in natural form, in the range 1000-9999.
 	unsigned short year() const { return year_; }
 
 	/// \brief Change the date/time value's year part
@@ -192,12 +193,17 @@ private:
 	unsigned short year_;	///< the year, as a simple integer
 	unsigned char month_;	///< the month, 1-12
 	unsigned char day_;		///< the day, 1-31
-	unsigned char hour_;	///< the hour, 0-23
+	unsigned char hour_;	///< the hour, 0-23 (not 0-255 as in Time!)
 	unsigned char minute_;	///< the minute, 0-59
 	unsigned char second_;	///< the second, 0-59
 
 	bool now_;	///< true if object not initialized with explicit value
 };
+
+
+/// \brief Returns a DateTime object that, when inserted into query
+/// will yield a SQL "NOW()" function call.
+inline DateTime NOW() { return DateTime(); }
 
 
 /// \brief Inserts a DateTime object into a C++ stream in a
@@ -223,6 +229,10 @@ public:
 	Date() : year_(0), month_(0), day_(0) { }
 
 	/// \brief Initialize object
+	///
+	/// \param y year, 1000-9999
+	/// \param m month, 1-12
+	/// \param d day of month, 1-31
 	Date(unsigned short y, unsigned char m, unsigned char d) :
 	Comparable<Date>(),
 	year_(y),
@@ -315,7 +325,7 @@ public:
 	void year(unsigned short y) { year_ = y; }
 
 private:
-	unsigned short year_;	///< the year, as a simple integer
+	unsigned short year_;	///< the year, as a simple integer, 1000-9999
 	unsigned char month_;	///< the month, 1-12
 	unsigned char day_;		///< the day, 1-31
 };
@@ -341,6 +351,9 @@ public:
 	Time() : hour_(0), minute_(0), second_(0) { }
 
 	/// \brief Initialize object
+	/// \param h hour, 0-255 (yes, > 1 day is legal in SQL!)
+	/// \param m minute, 0-59
+	/// \param s second, 0-59
 	Time(unsigned char h, unsigned char m, unsigned char s) :
 	hour_(h),
 	minute_(m),
@@ -398,10 +411,10 @@ public:
 	/// \brief Parse a SQL time string into this object.
 	const char* convert(const char*);
 
-	/// \brief Get the time's hour part, 0-23
+	/// \brief Get the time's hour part, 0-255
 	unsigned char hour() const { return hour_; }
 
-	/// \brief Change the time's hour part, 0-23
+	/// \brief Change the time's hour part, 0-255
 	void hour(unsigned char h) { hour_ = h; }
 
 	/// \brief Get the time's minute part, 0-59
@@ -428,7 +441,7 @@ public:
 	std::string str() const { return *this; }
 
 private:
-	unsigned char hour_;	///< the hour, 0-23
+	unsigned char hour_;	///< the hour, 0-255 (yes, > 1 day is legal SQL!)
 	unsigned char minute_;	///< the minute, 0-59
 	unsigned char second_;	///< the second, 0-59
 };

@@ -128,7 +128,7 @@ Connection::count_rows(const std::string& table)
 {
 	error_message_.clear();
 	Query q(this, throw_exceptions());
-	q << "SELECT COUNT(*) FROM " << table;
+	q << "SELECT COUNT(*) FROM `" << table << '`';
 	if (StoreQueryResult res = q.store()) {
 		return res[0][0];
 	}
@@ -143,7 +143,7 @@ Connection::create_db(const std::string& db)
 {
 	error_message_.clear();
 	Query q(this, throw_exceptions());
-	q << "CREATE DATABASE " << db;
+	q << "CREATE DATABASE `" << db << '`';
 	return q.exec();
 }
 
@@ -161,7 +161,7 @@ Connection::drop_db(const std::string& db)
 {
 	error_message_.clear();
 	Query q(this, throw_exceptions());
-	q << "DROP DATABASE " << db;
+	q << "DROP DATABASE `" << db << '`';
 	return q.exec();
 }
 
@@ -314,13 +314,15 @@ Connection::server_version() const
 bool
 Connection::set_option(Option* o)
 {
-	error_message_ = driver_->set_option(o);
-	if (error_message_.empty()) {
+	const std::type_info& oti = typeid(*o);
+	if (driver_->set_option(o)) {
+		error_message_.clear();
 		return true;
 	}
 	else {
+		error_message_ = driver_->error();
 		if (throw_exceptions()) {
-			throw BadOption(error_message_, typeid(*o));
+			throw BadOption(error_message_, oti);
 		}
 		return false;
 	}

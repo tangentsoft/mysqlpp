@@ -6,7 +6,7 @@
 
 /***********************************************************************
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
+ (c) 2004-2010 by Educational Technology Resources, Inc.  Others may
  also hold copyrights on code in this file.  See the CREDITS.txt file
  in the top directory of the distribution for details.
 
@@ -36,6 +36,7 @@
 #include <exception>
 #include <string>
 #include <sstream>
+#include <typeinfo>
 
 namespace mysqlpp {
 
@@ -181,7 +182,7 @@ class MYSQLPP_EXPORT BadIndex : public Exception
 public:
 	/// \brief Create exception object
 	///
-	/// \param bad_index type of object bad index tried on
+	/// \param what type of object bad index tried on
 	/// \param bad_index index value the container didn't like
 	/// \param max_index largest legal index value for container
 	explicit BadIndex(const char* what, int bad_index, int max_index) :
@@ -439,6 +440,24 @@ class MYSQLPP_EXPORT TypeLookupFailed : public Exception
 public:
 	/// \brief Create exception object
 	explicit TypeLookupFailed(const std::string& w) :
+	Exception(w)
+	{
+	}
+};
+
+
+/// \brief Exception thrown when an insert policy is too strict to
+/// create a valid INSERT statement.
+///
+/// Thrown by Query::insertfrom() if it is unable to add VALUES
+/// to an empty query.  This means the size threshold or max packet
+/// size of the policy is set too small.
+
+class MYSQLPP_EXPORT BadInsertPolicy : public Exception
+{
+public:
+	/// \brief Create exception object
+	explicit BadInsertPolicy(const std::string& w) :
 	Exception(w)
 	{
 	}

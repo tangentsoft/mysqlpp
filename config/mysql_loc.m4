@@ -1,19 +1,18 @@
-dnl @synopsis MYSQL_API_LOCATION
+dnl @synopsis MYSQL_C_API_LOCATION
 dnl 
 dnl This macro tries to find MySQL C API header and library locations.
 dnl
 dnl We define the following configure script flags:
 dnl
 dnl		--with-mysql: Give prefix for both library and headers, and try
-dnl			to guess subdirectory names for each.  (e.g. Tack /lib and
-dnl			/include onto given dir name, and other common schemes.)
-dnl		--with-mysql-lib: Similar to --with-mysql, but for library only.
-dnl		--with-mysql-include: Similar to --with-mysql, but for headers
-dnl			only.
+dnl			to guess subdirectory names for each by tacking common
+dnl         suffixes on like /lib and /include.
+dnl		--with-mysql-lib: Same as --with-mysql, but for library only.
+dnl		--with-mysql-include: Same as --with-mysql, but for headers only.
 dnl
-dnl @version 1.3, 2008/08/06
+dnl @version 1.4, 2009/05/28
 dnl @author Warren Young <mysqlpp@etr-usa.com>
-AC_DEFUN([MYSQL_API_LOCATION],
+AC_DEFUN([MYSQL_C_API_LOCATION],
 [
 	#
 	# Set up configure script macros
@@ -36,41 +35,46 @@ AC_DEFUN([MYSQL_API_LOCATION],
 	#
 	if test "x$acx_pthread_ok" = xyes
 	then
-		MYSQL_C_LIB=mysqlclient_r
+		MYSQL_C_LIB_NAME=mysqlclient_r
 	else
-		MYSQL_C_LIB=mysqlclient
+		MYSQL_C_LIB_NAME=mysqlclient
 	fi
 
 	#
 	# Look for MySQL C API library
 	#
 	AC_MSG_CHECKING([for MySQL library directory])
-	MYSQL_libdir=
+	MYSQL_C_LIB_DIR=
 	for m in $MYSQL_lib_check
 	do
 		if test -d "$m" && \
-			(test -f "$m/lib$MYSQL_C_LIB.so" || test -f "$m/lib$MYSQL_C_LIB.a")
+			(test -f "$m/lib$MYSQL_C_LIB_NAME.so" || \
+			 test -f "$m/lib$MYSQL_C_LIB_NAME.a")
 		then
-			MYSQL_libdir=$m
+			MYSQL_C_LIB_DIR=$m
 			break
 		fi
 	done
 
-	if test -z "$MYSQL_libdir"
+	if test -z "$MYSQL_C_LIB_DIR"
 	then
-		AC_MSG_ERROR([Didn't find $MYSQL_C_LIB library in '$MYSQL_lib_check'])
+		AC_MSG_ERROR([Didn't find $MYSQL_C_LIB_NAME library in '$MYSQL_lib_check'])
 	fi
 
-	case "$MYSQL_libdir" in
+	case "$MYSQL_C_LIB_DIR" in
 		/* ) ;;
-		* )  AC_MSG_ERROR([The MySQL library directory ($MYSQL_libdir) must be an absolute path.]) ;;
+		* )  AC_MSG_ERROR([The MySQL library directory ($MYSQL_C_LIB_DIR) must be an absolute path.]) ;;
 	esac
 
-	AC_MSG_RESULT([$MYSQL_libdir])
+	AC_MSG_RESULT([$MYSQL_C_LIB_DIR])
 
-	case "$MYSQL_libdir" in
-	  /usr/lib) ;;
-	  *) LDFLAGS="$LDFLAGS -L${MYSQL_libdir}" ;;
+	case "$MYSQL_C_LIB_DIR" in
+	  /usr/lib)
+		MYSQL_C_LIB_DIR=
+	  	;;
+	  *)
+	  	LDFLAGS="$LDFLAGS -L${MYSQL_C_LIB_DIR}"
+		;;
 	esac
 
 
@@ -78,33 +82,33 @@ AC_DEFUN([MYSQL_API_LOCATION],
 	# Look for MySQL C API headers
 	#
 	AC_MSG_CHECKING([for MySQL include directory])
-	MYSQL_incdir=
+	MYSQL_C_INC_DIR=
 	for m in $MYSQL_inc_check
 	do
 		if test -d "$m" && test -f "$m/mysql.h"
 		then
-			MYSQL_incdir=$m
+			MYSQL_C_INC_DIR=$m
 			break
 		fi
 	done
 
-	if test -z "$MYSQL_incdir"
+	if test -z "$MYSQL_C_INC_DIR"
 	then
 		AC_MSG_ERROR([Didn't find the MySQL include dir in '$MYSQL_inc_check'])
 	fi
 
-	case "$MYSQL_incdir" in
+	case "$MYSQL_C_INC_DIR" in
 		/* ) ;;
-		* )  AC_MSG_ERROR([The MySQL include directory ($MYSQL_incdir) must be an absolute path.]) ;;
+		* )  AC_MSG_ERROR([The MySQL include directory ($MYSQL_C_INC_DIR) must be an absolute path.]) ;;
 	esac
 
-	AC_MSG_RESULT([$MYSQL_incdir])
+	AC_MSG_RESULT([$MYSQL_C_INC_DIR])
 
-	CPPFLAGS="$CPPFLAGS -I${MYSQL_incdir}"
+	CPPFLAGS="$CPPFLAGS -I${MYSQL_C_INC_DIR}"
 
     AC_MSG_CHECKING([if we can link to MySQL C API library directly])
 	save_LIBS=$LIBS
-	LIBS="$LIBS -l$MYSQL_C_LIB $MYSQLPP_EXTRA_LIBS"
+	LIBS="$LIBS -l$MYSQL_C_LIB_NAME $MYSQLPP_EXTRA_LIBS"
 	AC_TRY_LINK(
         [ #include <mysql.h> ],
         [ mysql_store_result(0); ],
@@ -115,7 +119,7 @@ AC_DEFUN([MYSQL_API_LOCATION],
               [ AC_MSG_ERROR([zlib not found]) ]))
           AC_MSG_CHECKING([whether adding -lz will let MySQL C API link succeed])
           MYSQLPP_EXTRA_LIBS="$MYSQLPP_EXTRA_LIBS -lz"
-          LIBS="$save_LIBS -l$MYSQL_C_LIB $MYSQLPP_EXTRA_LIBS"
+          LIBS="$save_LIBS -l$MYSQL_C_LIB_NAME $MYSQLPP_EXTRA_LIBS"
           AC_TRY_LINK(
               [ #include <mysql.h> ],
               [ mysql_store_result(0); ],
@@ -125,7 +129,10 @@ AC_DEFUN([MYSQL_API_LOCATION],
               ]
           )
         ])
-	AC_SUBST(MYSQL_C_LIB)
 	LIBS=$save_LIBS
-]) dnl MYSQL_API_LOCATION
+
+	AC_SUBST(MYSQL_C_INC_DIR)
+	AC_SUBST(MYSQL_C_LIB_DIR)
+	AC_SUBST(MYSQL_C_LIB_NAME)
+]) dnl MYSQL_C_API_LOCATION
 

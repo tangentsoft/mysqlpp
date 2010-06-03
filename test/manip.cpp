@@ -57,7 +57,15 @@ explicit_query_quote(T test, size_t len)
 {
 	mysqlpp::Query q(0);
 	q << mysqlpp::quote << test;
-	if (is_quoted(q.str(), test, len)) {
+	if (!is_quoted(q.str(), test, len)) {
+		std::cerr << "Explicit quote of " << typeid(test).name() <<
+				" in Query failed: " << q.str() << std::endl;
+		return false;
+	}
+
+	mysqlpp::SQLStream s(0);
+	s << mysqlpp::quote << test;
+	if (is_quoted(s.str(), test, len)) {
 		return true;
 	}
 	else {
@@ -105,7 +113,16 @@ no_implicit_quote(T test, size_t len)
 	if (!is_quoted(outs.str(), test, len)) {
 		mysqlpp::Query q(0);
 		q << test;
-		if (!is_quoted(q.str(), test, len)) {
+		if (is_quoted(q.str(), test, len)) {
+			std::cerr << typeid(test).name() << " erroneously implicitly "
+					"quoted in Query: " << outs.str() <<
+					std::endl;
+			return false;
+		}
+
+		mysqlpp::SQLStream s(0);
+		s << test;
+		if (!is_quoted(s.str(), test, len)) {
 			return true;
 		}
 		else {

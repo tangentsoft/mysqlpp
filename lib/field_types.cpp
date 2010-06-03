@@ -35,10 +35,10 @@ namespace mysqlpp {
 
 void FieldTypes::init(const ResultBase* res)
 {
-	int num = res->num_fields();
+	size_t num = res->num_fields();
 	reserve(num);
-	for (int i = 0; i < num; i++) {
-		push_back(res->field(i).type());
+	for (size_t i = 0; i < num; i++) {
+		push_back(res->field(unsigned(i)).type());
 	}
 }
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding='UTF-8'?>
-<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook V4.3//EN"
-    "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd">
+<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook V4.2//EN"
+    "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
 
 <sect1 id="unicode" xreflabel="Using Unicode with MySQL++">
   <title>Using Unicode with MySQL++</title>
@@ -19,14 +19,14 @@
     <para>Since no standards body held sway over things like
     international character encoding in the early days of computing,
     many different character sets were invented. These character sets
-    weren&rsquo;t even standardized between operating systems, so heaven
+    weren&#x2019;t even standardized between operating systems, so heaven
     help you if you needed to move localized Greek text on a DOS box to
     a Russian Macintosh! The only way we got any international
     communication done at all was to build standards on top of the
     common 7-bit ASCII subset.  Either people used approximations like a
-    plain &ldquo;c&rdquo; instead of the French &ldquo;&ccedil;&rdquo;,
+    plain &#x201C;c&#x201D; instead of the French &#x201C;&ccedil;&#x201D;,
     or they invented things like HTML entities
-    (&ldquo;&amp;ccedil;&rdquo; in this case) to encode these additional
+    (&#x201C;&amp;ccedil;&#x201D; in this case) to encode these additional
     characters using only 7-bit ASCII.</para>
 
     <para>Unicode solves this problem. It encodes every character used
@@ -51,7 +51,7 @@
     url="http://www.cl.cam.ac.uk/~mgk25/ucs/utf-8-history.txt">invented</ulink>
     the <ulink url="http://en.wikipedia.org/wiki/UTF-8">UTF-8
     encoding</ulink>. UTF-8 is a superset of 7-bit ASCII and is
-    compatible with C strings, since it doesn&rsquo;t use 0 bytes
+    compatible with C strings, since it doesn&#x2019;t use 0 bytes
     anywhere as multi-byte Unicode encodings do. As a result, many
     programs that deal in text will cope with UTF-8 data even though
     they have no explicit support for UTF-8. (Follow the last link above
@@ -70,23 +70,23 @@
     such support.</para>
 
     <para>On such a system, the terminal I/O code understands UTF-8
-    encoded data, so your program doesn&rsquo;t require any special code
-    to correctly display a UTF-8 string. If you aren&rsquo;t sure
+    encoded data, so your program doesn&#x2019;t require any special code
+    to correctly display a UTF-8 string. If you aren&#x2019;t sure
     whether your system supports UTF-8 natively, just run the
     <filename>simple1</filename> example: if the first item has two
-    high-ASCII characters in place of the &ldquo;&uuml;&rdquo; in
-    &ldquo;N&uuml;rnberger Brats&rdquo;, you know it&rsquo;s not
+    high-ASCII characters in place of the &#x201C;&uuml;&#x201D; in
+    &#x201C;N&uuml;rnberger Brats&#x201D;, you know it&#x2019;s not
     handling UTF-8.</para>
 
-    <para>If your Unix doesn&rsquo;t support UTF-8 natively, it likely
-    doesn&rsquo;t support any form of Unicode at all, for the historical
+    <para>If your Unix doesn&#x2019;t support UTF-8 natively, it likely
+    doesn&#x2019;t support any form of Unicode at all, for the historical
     reasons I gave above. Therefore, you will have to convert the UTF-8
     data to the local 8-bit character set. The standard Unix function
     <function>iconv()</function> can help here. If your system
-    doesn&rsquo;t have the <function>iconv()</function> facility, there
+    doesn&#x2019;t have the <function>iconv()</function> facility, there
     is <ulink url="http://www.gnu.org/software/libiconv/">a free
     implementation</ulink> available from the GNU Project. Another
-    library you might check out is IBM&rsquo;s <ulink
+    library you might check out is IBM&#x2019;s <ulink
     url="http://icu.sourceforge.net/">ICU</ulink>. This is rather
     heavy-weight, so if you just need basic conversions,
     <function>iconv()</function> should suffice.</para>
@@ -97,11 +97,11 @@
     <title>Unicode on Windows</title>
 
     <para>Each Windows API function that takes a string actually comes
-    in two versions. One version supports only 1-byte &ldquo;ANSI&rdquo;
+    in two versions. One version supports only 1-byte &#x201C;ANSI&#x201D;
     characters (a superset of ASCII), so they end in 'A'. Windows also
     supports the 2-byte subset of Unicode called <ulink
     url="http://en.wikipedia.org/wiki/UCS-2">UCS-2</ulink>.  Some call
-    these &ldquo;wide&rdquo; characters, so the other set of functions
+    these &#x201C;wide&#x201D; characters, so the other set of functions
     end in 'W'. The <function><ulink
     url="http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/dialogboxes/dialogboxreference/dialogboxfunctions/messagebox.asp">MessageBox</ulink>()</function>
     API, for instance, is actually a macro, not a real function. If you
@@ -112,15 +112,15 @@
 
     <para>Since MySQL uses the UTF-8 Unicode encoding and Windows uses
     UCS-2, you must convert data when passing text between MySQL++ and
-    the Windows API. Since there&rsquo;s no point in trying for
-    portability &mdash; no other OS I&rsquo;m aware of uses UCS-2
+    the Windows API. Since there&#x2019;s no point in trying for
+    portability &mdash; no other OS I&#x2019;m aware of uses UCS-2
     &mdash; you might as well use platform-specific functions to do this
     translation. Since version 2.2.2, MySQL++ ships with two Visual C++
     specific examples showing how to do this in a GUI program.  (In
     earlier versions of MySQL++, we did Unicode conversion in the
     console mode programs, but this was unrealistic.)</para>
 
-    <para>How you handle Unicode data depends on whether you&rsquo;re
+    <para>How you handle Unicode data depends on whether you&#x2019;re
     using the native Windows API, or the newer .NET API. First, the
     native case:</para>
 
@@ -141,8 +141,8 @@ void ToUTF8(char* pcOut, int nOutLen, LPCWSTR kpcIn)
     see <filename>examples/vstudio/mfc/mfc_dlg.cpp</filename> for the
     complete version.</para>
 
-    <para>If you&rsquo;re building a .NET application (such as, perhaps,
-    because you&rsquo;re using Windows Forms), it&rsquo;s better to use
+    <para>If you&#x2019;re building a .NET application (such as, perhaps,
+    because you&#x2019;re using Windows Forms), it&#x2019;s better to use
     the .NET libraries for this:</para>
 
     <programlisting>
@@ -164,12 +164,12 @@ System::Void ToUTF8(char* pcOut, int nOutLen, String^ sIn)
 
     <para>Unlike the native API versions, these examples are complete,
     since the .NET platform handles a lot of things behind the scenes
-    for us. We don&rsquo;t need any error-checking code for such simple
+    for us. We don&#x2019;t need any error-checking code for such simple
     routines.</para>
 
-    <para>All of this assumes you&rsquo;re using Windows NT or one of
+    <para>All of this assumes you&#x2019;re using Windows NT or one of
     its direct descendants: Windows 2000, Windows XP, Windows Vista, or
-    any &ldquo;Server&rdquo; variant of Windows. Windows 95 and its
+    any &#x201C;Server&#x201D; variant of Windows. Windows 95 and its
     descendants (98, ME, and CE) do not support UCS-2. They still have
     the 'W' APIs for compatibility, but they just smash the data down to
     8-bit and call the 'A' version for you.</para>

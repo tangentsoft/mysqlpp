@@ -3,7 +3,7 @@
 
 /***********************************************************************
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2008 by Educational Technology Resources, Inc.  Others may
+ (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
  also hold copyrights on code in this file.  See the CREDITS.txt file
  in the top directory of the distribution for details.
 
@@ -82,12 +82,20 @@ public:
 	/// \brief Return the number of rows affected by the last query
 	///
 	/// Wraps \c mysql_affected_rows() in the MySQL C API.
-	ulonglong affected_rows() { return mysql_affected_rows(&mysql_); }
+	ulonglong affected_rows()
+	{
+		error_message_.clear();
+		return mysql_affected_rows(&mysql_);
+	}
 
 	/// \brief Get database client library version
 	///
 	/// Wraps \c mysql_get_client_info() in the MySQL C API.
-	std::string client_version() const { return mysql_get_client_info(); }
+	std::string client_version() const
+	{
+		error_message_.clear();
+		return mysql_get_client_info();
+	}
 
 	/// \brief Establish a new connection using the same parameters as
 	/// an existing connection.
@@ -129,13 +137,16 @@ public:
 	///
 	/// Wraps mysql_data_seek() in MySQL C API.
 	void data_seek(MYSQL_RES* res, ulonglong offset) const
-			{ mysql_data_seek(res, offset); }
+	{
+		error_message_.clear();
+		mysql_data_seek(res, offset);
+	}
 
 	/// \brief Drop the connection to the database server
 	///
-	/// This method is protected because it should only be used within
-	/// the library.  Unless you use the default constructor, this
-	/// object should always be connected.
+	/// This method should only be used by MySQL++ library internals.
+	/// Unless you use the default constructor, this object should
+	/// always be connected.
 	void disconnect();
 
 	/// \brief Drop a database
@@ -169,7 +180,10 @@ public:
 	///
 	/// Can return a MySQL++ DBDriver-specific error message if there
 	/// is one.  If not, it simply wraps \c mysql_error() in the MySQL C API.
-	const char* error() { return mysql_error(&mysql_); }
+	const char* error()
+	{
+		return error_message_.length() ? error_message_.c_str() : mysql_error(&mysql_);
+	}
 
 	/// \brief Return last MySQL error number associated with this
 	/// connection
@@ -177,26 +191,102 @@ public:
 	/// Wraps \c mysql_errno() in the MySQL C API.
 	int errnum() { return mysql_errno(&mysql_); }
 
-	/// \brief SQL-escapes the given string, taking into account the
-	/// default character set of the database server we're connected to.
+	/// \brief Return a SQL-escaped version of the given character
+	/// buffer
+	///
+	/// \param to character buffer to hold escaped version; must
+	/// point to at least (length * 2 + 1) bytes
+	/// \param from pointer to the character buffer to escape
+	/// \param length number of characters to escape
+	///
+	/// \retval number of characters placed in escaped
 	///
 	/// Wraps \c mysql_real_escape_string() in the MySQL C API.
+	///
+	/// Proper SQL escaping takes the database's current character set 
+	/// into account, however if a database connection isn't available
+	/// DBDriver also provides a static version of this same method.
+	///
+	/// \sa escape_string_no_conn(char*, const char*, size_t)
 	size_t escape_string(char* to, const char* from, size_t length)
-			{ return mysql_real_escape_string(&mysql_, to, from, length); }
+	{
+		error_message_.clear();
+		return mysql_real_escape_string(&mysql_, to, from, 
+				static_cast<unsigned long>(length));
+	}
+
+	/// \brief Return a SQL-escaped version of a character buffer
+	///
+	/// \param ps pointer to C++ string to hold escaped version; if
+	/// original is 0, also holds the original data to be escaped
+	/// \param original if given, pointer to the character buffer to
+	/// escape instead of contents of *ps
+	/// \param length if both this and original are given, number of
+	/// characters to escape instead of ps->length()
+	///
+	/// \retval number of characters placed in *ps
+	///
+	/// This method has three basic operation modes:
+	///
+	/// - Pass just a pointer to a C++ string containing the original
+	///   data to escape, plus act as receptacle for escaped version
+	/// - Pass a pointer to a C++ string to receive escaped string plus
+	///   a pointer to a C string to be escaped
+	/// - Pass nonzero for all parameters, taking original to be a
+	///   pointer to an array of char with given length; does not treat
+	///   null characters as special
+	///
+	/// There's a degenerate fourth mode, where ps is zero: simply
+	/// returns 0, because there is nowhere to store the result.
+	///
+	/// Note that if original is 0, we always ignore the length
+	/// parameter even if it is nonzero.  Length always comes from
+	/// ps->length() in this case.
+	///
+	/// ps is a pointer because if it were a reference, the other
+	/// overload would be impossible to call: the compiler would
+	/// complain that the two overloads are ambiguous because
+	/// std::string has a char* conversion ctor. A nice bonus is that
+	/// pointer syntax makes it clearer that the first parameter is an
+	/// "out" parameter.
+	///
+	/// \see comments for escape_string(char*, const char*, size_t)
+	/// for further details.
+	/// 
+	/// \sa escape_string_no_conn(std::string*, const char*, size_t)
+	size_t escape_string(std::string* ps, const char* original,
+			size_t length);
 
 	/// \brief SQL-escapes the given string without reference to the 
 	/// character set of a database server.
 	///
 	/// Wraps \c mysql_escape_string() in the MySQL C API.
+	///
+	/// \sa escape_string(char*, const char*, size_t)
 	static size_t escape_string_no_conn(char* to, const char* from,
 			size_t length)
-			{ return mysql_escape_string(to, from, length); }
+	{
+		return mysql_escape_string(to, from,
+				static_cast<unsigned long>(length));
+	}
+
+	/// \brief SQL-escapes the given string without reference to the 
+	/// character set of a database server.
+	///
+	/// \sa escape_string(std::string*, const char*, size_t),
+	/// escape_string_no_conn(char*, const char*, size_t)
+	static size_t escape_string_no_conn(std::string* ps, 
+			const char* original = 0, size_t length = 0);
 
 	/// \brief Executes the given query string
 	///
 	/// Wraps \c mysql_real_query() in the MySQL C API.
 	bool execute(const char* qstr, size_t length)
-			{ return !mysql_real_query(&mysql_, qstr, length); }
+	{
+		error_message_.clear();
+		return !mysql_real_query(&mysql_, qstr,
+				static_cast<unsigned long>(length));
+	}
 
 	/// \brief Returns the next raw C API row structure from the given
 	/// result set.
@@ -206,14 +296,20 @@ public:
 	///
 	/// Wraps \c mysql_fetch_row() in MySQL C API.
 	MYSQL_ROW fetch_row(MYSQL_RES* res) const
-			{ return mysql_fetch_row(res); }
+	{
+		error_message_.clear();
+		return mysql_fetch_row(res);
+	}
 
 	/// \brief Returns the lengths of the fields in the current row
 	/// from a "use" query.
 	///
 	/// Wraps \c mysql_fetch_lengths() in MySQL C API.
 	const unsigned long* fetch_lengths(MYSQL_RES* res) const
-			{ return mysql_fetch_lengths(res); }
+	{
+		error_message_.clear();
+		return mysql_fetch_lengths(res);
+	}
 
 	/// \brief Returns information about a particular field in a result
 	/// set
@@ -230,21 +326,29 @@ public:
 	/// MySQL C API.  (Which one it uses depends on i parameter.)
 	MYSQL_FIELD* fetch_field(MYSQL_RES* res, size_t i = UINT_MAX) const
 	{
+		error_message_.clear();
 		return i == UINT_MAX ? mysql_fetch_field(res) :
-				mysql_fetch_field_direct(res, i);
+				mysql_fetch_field_direct(res,
+				static_cast<unsigned int>(i));
 	}
 
 	/// \brief Jumps to the given field within the result set
 	///
 	/// Wraps \c mysql_field_seek() in MySQL C API.
 	void field_seek(MYSQL_RES* res, size_t field) const
-			{ mysql_field_seek(res, field); }
+	{
+		error_message_.clear();
+		mysql_field_seek(res, MYSQL_FIELD_OFFSET(field));
+	}
 
 	/// \brief Releases memory used by a result set
 	///
 	/// Wraps \c mysql_free_result() in MySQL C API.
 	void free_result(MYSQL_RES* res) const
-			{ mysql_free_result(res); }
+	{
+		error_message_.clear();
+		mysql_free_result(res);
+	}
 
 	/// \brief Return the connection options object
 	st_mysql_options get_options() const { return mysql_.options; }
@@ -256,7 +360,11 @@ public:
 	/// named pipe, Unix socket...) and the server hostname.
 	///
 	/// Wraps \c mysql_get_host_info() in the MySQL C API.
-	std::string ipc_info() { return mysql_get_host_info(&mysql_); }
+	std::string ipc_info()
+	{
+		error_message_.clear();
+		return mysql_get_host_info(&mysql_);
+	}
 
 	/// \brief Get ID generated for an AUTO_INCREMENT column in the
 	/// previous INSERT query.
@@ -268,7 +376,11 @@ public:
 	/// the ID generated by the last query, which was a CALL statement,
 	/// and CALL doesn't generate IDs.  You need to use LAST_INSERT_ID()
 	/// to get the ID in this case.
-	ulonglong insert_id() { return mysql_insert_id(&mysql_); }
+	ulonglong insert_id()
+	{
+		error_message_.clear();
+		return mysql_insert_id(&mysql_);
+	}
 
 	/// \brief Kill a MySQL server thread
 	///
@@ -277,7 +389,11 @@ public:
 	/// Wraps \c mysql_kill() in the MySQL C API.
 	///
 	/// \see thread_id()
-	bool kill(unsigned long tid) { return !mysql_kill(&mysql_, tid); }
+	bool kill(unsigned long tid)
+	{
+		error_message_.clear();
+		return !mysql_kill(&mysql_, tid);
+	}
 
 	/// \brief Returns true if there are unconsumed results from the
 	/// most recent query.
@@ -285,6 +401,7 @@ public:
 	/// Wraps \c mysql_more_results() in the MySQL C API.
 	bool more_results()
 	{
+		error_message_.clear();
 		#if MYSQL_VERSION_ID > 41000		// only in MySQL v4.1 +
 			return mysql_more_results(&mysql_);
 		#else
@@ -303,6 +420,7 @@ public:
 	/// enum values.
 	nr_code next_result()
 	{
+		error_message_.clear();
 		#if MYSQL_VERSION_ID > 41000		// only in MySQL v4.1 +
 			switch (mysql_next_result(&mysql_)) {
 				case 0:  return nr_more_results;
@@ -318,13 +436,19 @@ public:
 	///
 	/// Wraps \c mysql_num_fields() in MySQL C API.
 	int num_fields(MYSQL_RES* res) const
-			{ return mysql_num_fields(res); }
-	
+	{
+		error_message_.clear();
+		return mysql_num_fields(res);
+	}
+
 	/// \brief Returns the number of rows in the given result set
 	///
 	/// Wraps \c mysql_num_rows() in MySQL C API.
 	ulonglong num_rows(MYSQL_RES* res) const
-			{ return mysql_num_rows(res); }
+	{
+		error_message_.clear();
+		return mysql_num_rows(res);
+	}
 
 	/// \brief "Pings" the MySQL database
 	///
@@ -336,13 +460,21 @@ public:
 	/// \retval false if either we already know the connection is down
 	/// and cannot re-establish it, or if the server did not respond to
 	/// the ping and we could not re-establish the connection.
-	bool ping() { return !mysql_ping(&mysql_); }
+	bool ping()
+	{
+		error_message_.clear();
+		return !mysql_ping(&mysql_);
+	}
 
 	/// \brief Returns version number of MySQL protocol this connection
 	/// is using
 	///
 	/// Wraps \c mysql_get_proto_info() in the MySQL C API.
-	int protocol_version() { return mysql_get_proto_info(&mysql_); }
+	int protocol_version()
+	{
+		error_message_.clear();
+		return mysql_get_proto_info(&mysql_);
+	}
 
 	/// \brief Returns information about the last executed query
 	///
@@ -357,21 +489,37 @@ public:
 	/// because it was undocumented until recently, and it's a pretty
 	/// low-level thing.  It's designed for things like MySQL
 	/// Administrator.
-	bool refresh(unsigned options) { return !mysql_refresh(&mysql_, options); }
+	bool refresh(unsigned options)
+	{
+		error_message_.clear();
+		return !mysql_refresh(&mysql_, options);
+	}
 
 	/// \brief Returns true if the most recent result set was empty
 	///
 	/// Wraps \c mysql_field_count() in the MySQL C API, returning true
 	/// if it returns 0.
-	bool result_empty() { return mysql_field_count(&mysql_) == 0; }
+	bool result_empty()
+	{
+		error_message_.clear();
+		return mysql_field_count(&mysql_) == 0;
+	}
 
 	/// \brief Asks the database server to switch to a different database
-	bool select_db(const char* db) { return !mysql_select_db(&mysql_, db); }
+	bool select_db(const char* db)
+	{
+		error_message_.clear();
+		return !mysql_select_db(&mysql_, db);
+	}
 
 	/// \brief Get the database server's version number
 	///
 	/// Wraps \c mysql_get_server_info() in the MySQL C API.
-	std::string server_version() { return mysql_get_server_info(&mysql_); }
+	std::string server_version()
+	{
+		error_message_.clear();
+		return mysql_get_server_info(&mysql_);
+	}
 
 	/// \brief Sets a connection option
 	///
@@ -381,13 +529,14 @@ public:
 	/// setting.
 	///
 	/// \see Connection::set_option(Option*) for commentary
-	std::string set_option(Option* o);
+	bool set_option(Option* o);
 
 	/// \brief Set MySQL C API connection option
 	///
 	/// \internal Wraps \c mysql_options() in C API.
 	bool set_option(mysql_option moption, const void* arg = 0)
 	{
+		error_message_.clear();
 		return !mysql_options(&mysql_, moption,
 				static_cast<const char*>(arg));
 	}
@@ -398,6 +547,7 @@ public:
 	/// \internal Wraps \c mysql_set_server_option() in C API.
 	bool set_option(enum_mysql_set_option msoption)
 	{
+		error_message_.clear();
 		return !mysql_set_server_option(&mysql_, msoption);
 	}
 	#endif
@@ -411,7 +561,7 @@ public:
 
 	/// \brief Same as set_option(), except that it won't override
 	/// a previously-set option.
-	std::string set_option_default(Option* o)
+	bool set_option_default(Option* o)
 	{
 		const std::type_info& ti = typeid(o);
 		for (OptionList::const_iterator it = applied_options_.begin();
@@ -441,7 +591,11 @@ public:
 	/// and open tables.
 	///
 	/// Wraps \c mysql_stat() in the MySQL C API.
-	std::string server_status() { return mysql_stat(&mysql_); }
+	std::string server_status()
+	{
+		error_message_.clear();
+		return mysql_stat(&mysql_);
+	}
 
 	/// \brief Saves the results of the query just execute()d in memory
 	/// and returns a pointer to the MySQL C API data structure the
@@ -450,7 +604,11 @@ public:
 	/// \sa use_result()
 	///
 	/// Wraps \c mysql_store_result() in the MySQL C API.
-	MYSQL_RES* store_result() { return mysql_store_result(&mysql_); }
+	MYSQL_RES* store_result()
+	{
+		error_message_.clear();
+		return mysql_store_result(&mysql_);
+	}
 
 	/// \brief Returns true if MySQL++ and the underlying MySQL C API
 	/// library were both compiled with thread awareness.
@@ -480,7 +638,11 @@ public:
 	///
 	/// This has nothing to do with threading on the client side. It's
 	/// a server-side thread ID, to be used with kill().
-	unsigned long thread_id() { return mysql_thread_id(&mysql_); }
+	unsigned long thread_id()
+	{
+		error_message_.clear();
+		return mysql_thread_id(&mysql_);
+	}
 
 	/// \brief Tells the underlying C API library that the current
 	/// thread will be using the library's services.
@@ -516,11 +678,27 @@ public:
 	/// \sa store_result
 	///
 	/// Wraps \c mysql_use_result() in the MySQL C API.
-	MYSQL_RES* use_result() { return mysql_use_result(&mysql_); }
+	MYSQL_RES* use_result()
+	{
+		error_message_.clear();
+		return mysql_use_result(&mysql_);
+	}
+
+protected:
+	/// \brief Does things common to both connect() overloads, before
+	/// each go and establish the connection in their different ways.
+	bool connect_prepare();
+
+	/// \brief Common implementation of set_option(Option*) and the
+	/// delayed option setting code in connect_prepare()
+	bool set_option_impl(Option* o);
 
 private:
 	/// \brief Data type of the list of applied connection options
 	typedef std::deque<Option*> OptionList;
+
+	/// \brief Iterator into an OptionList
+	typedef OptionList::iterator OptionListIt;
 
 	/// \brief Hidden assignment operator; we don't want to be copied
 	/// that way.  What would it mean?
@@ -529,6 +707,8 @@ private:
 	MYSQL mysql_;
 	bool is_connected_;
 	OptionList applied_options_;
+	OptionList pending_options_;
+	mutable std::string error_message_;
 };
 
 

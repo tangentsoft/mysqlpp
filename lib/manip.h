@@ -203,11 +203,12 @@ operator <<(SQLQueryParms& p, quote_only_type0 /* esc */)
 /// flag.  You can set it yourself, but SQLTypeAdapter's ctors should set
 /// it correctly for you.
 
-MYSQLPP_EXPORT SQLQueryParms& operator <<(quote_only_type2 p,
-		SQLTypeAdapter& in);
+MYSQLPP_EXPORT SQLQueryParms&
+operator <<(quote_only_type2 p, SQLTypeAdapter& in);
 
 
-std::ostream& operator <<(quote_only_type1 o, const SQLTypeAdapter& in);
+MYSQLPP_EXPORT std::ostream&
+operator <<(quote_only_type1 o, const SQLTypeAdapter& in);
 
 
 template <class ST>
@@ -287,7 +288,7 @@ MYSQLPP_EXPORT SQLQueryParms&
 operator <<(quote_double_only_type2 p, SQLTypeAdapter& in);
 
 
-std::ostream&
+MYSQLPP_EXPORT std::ostream&
 operator <<(quote_double_only_type1 o, const SQLTypeAdapter& in);
 
 
@@ -361,15 +362,15 @@ operator <<(SQLQueryParms& p, escape_type0 /* esc */)
 /// in.dont_escape is not.  If that is not the case, we insert the
 /// string data directly.
 
-MYSQLPP_EXPORT SQLQueryParms& operator <<(escape_type2 p,
-		SQLTypeAdapter& in);
+MYSQLPP_EXPORT SQLQueryParms&
+operator <<(escape_type2 p, SQLTypeAdapter& in);
 
 
 /// \brief Inserts anything that can be converted to SQLTypeAdapter into
 /// a stream, escaping special SQL characters as needed.
 
-MYSQLPP_EXPORT std::ostream& operator <<(escape_type1 o,
-		const SQLTypeAdapter& in);
+MYSQLPP_EXPORT std::ostream&
+operator <<(escape_type1 o, const SQLTypeAdapter& in);
 
 
 /// \enum do_nothing_type0
@@ -433,8 +434,8 @@ operator <<(SQLQueryParms& p, do_nothing_type0 /* esc */)
 /// \brief Inserts a SQLTypeAdapter into a stream, with no escaping or
 /// quoting.
 
-MYSQLPP_EXPORT SQLQueryParms& operator <<(do_nothing_type2 p,
-		SQLTypeAdapter& in);
+MYSQLPP_EXPORT SQLQueryParms&
+operator <<(do_nothing_type2 p, SQLTypeAdapter& in);
 
 #endif // !defined(DOXYGEN_IGNORE)
 
@@ -478,8 +479,8 @@ operator <<(SQLQueryParms& p, ignore_type0 /* esc */)
 /// \brief Inserts a SQLTypeAdapter into a stream, with no escaping or
 /// quoting, and without marking the string as having been "processed".
 
-MYSQLPP_EXPORT SQLQueryParms& operator <<(ignore_type2 p,
-		SQLTypeAdapter& in);
+MYSQLPP_EXPORT SQLQueryParms&
+operator <<(ignore_type2 p, SQLTypeAdapter& in);
 
 #endif // !defined(DOXYGEN_IGNORE)
 

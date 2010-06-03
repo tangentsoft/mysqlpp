@@ -2,7 +2,7 @@
  test/null_comparison.cpp - Tests that Null<T> and null_type comparison
 	operators and SSQLS comparison functions work correctly.
 
- Copyright (c) 2008 by Educational Technology Resources, Inc.
+ Copyright (c) 2008-2009 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the
  CREDITS.txt file in the top directory of the distribution for details.
 
@@ -25,6 +25,7 @@
 ***********************************************************************/
 
 #include <mysql++.h>
+#define MYSQLPP_ALLOW_SSQLS_V1	// suppress deprecation warning
 #include <ssqls.h>
 
 #include <iostream>

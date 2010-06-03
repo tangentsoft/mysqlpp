@@ -9,9 +9,9 @@
 /// totally out of proprortion to the importance of options.
 
 /***********************************************************************
- Copyright (c) 2007 by Educational Technology Resources, Inc.  Others
- may also hold copyrights on code in this file.  See the CREDITS
- file in the top directory of the distribution for details.
+ Copyright (c) 2007-2009 by Educational Technology Resources, Inc.
+ Others may also hold copyrights on code in this file.  See the
+ CREDITS file in the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -62,7 +62,8 @@ public:
 		err_NONE,		///< option was set successfully
 		err_api_limit,	///< option not supported by underlying C API
 		err_api_reject,	///< underlying C API returned error when setting option
-		err_connected	///< can't set the given option while connected
+		err_connected,	///< can't set the given option while connected
+		err_disconnected///< can only set the given option while connected
 	};
 	
 	virtual ~Option() { }					///< Destroy object

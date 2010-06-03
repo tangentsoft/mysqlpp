@@ -3,7 +3,7 @@
 	database schema, such as table names, column types, etc.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
+ (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
  also hold copyrights on code in this file.  See the CREDITS.txt file
  in the top directory of the distribution for details.
 
@@ -92,10 +92,10 @@ show_table_info(mysqlpp::Connection& con, const vector<string>& tables)
 		separator(cout, query.str());
 		mysqlpp::StoreQueryResult res = query.store();
 
-		unsigned int columns = res.num_fields();
-		vector<int> widths;
-		for (unsigned int i = 0; i < columns; ++i) {
-			string s = res.field_name(i);
+		size_t columns = res.num_fields();
+		vector<size_t> widths;
+		for (size_t i = 0; i < columns; ++i) {
+			string s = res.field_name(int(i));
 			if (s.compare("field") == 0) {
 				widths.push_back(22);
 			}
@@ -116,7 +116,8 @@ show_table_info(mysqlpp::Connection& con, const vector<string>& tables)
 			}
 
 			if (widths[i]) {
-				cout << '|' << setw(widths[i]) << res.field_name(i) << '|';
+				cout << '|' << setw(widths[i]) << 
+						res.field_name(int(i)) << '|';
 			}
 		}
 		cout << endl;
@@ -163,14 +164,15 @@ int
 main(int argc, char* argv[])
 {
 	// Get database access parameters from command line
-	const char* db = 0, *server = 0, *user = 0, *pass = "";
-	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
+	mysqlpp::examples::CommandLine cmdline(argc, argv);
+	if (!cmdline) {
 		return 1;
 	}
 
 	try {
 		// Connect to server, then dump a bunch of stuff we find on it
-		mysqlpp::Connection con(db, server, user, pass);
+		mysqlpp::Connection con(mysqlpp::examples::db_name,
+				cmdline.server(), cmdline.user(), cmdline.pass());
 		show_mysql_version(con);
 		show_databases(con);
 		show_tables(con);

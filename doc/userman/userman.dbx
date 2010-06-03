@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
-                         "http://www.docbook.org/xml/4.3/docbookx.dtd"
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                         "http://www.docbook.org/xml/4.2/docbookx.dtd"
 [ <!ENTITY % xinclude SYSTEM "xinclude.mod">
 %xinclude;
 ]>
 <article>
 	<articleinfo>
-		<title>MySQL++ v3.0.9 User Manual</title>
+		<title>MySQL++ v3.1.0 User Manual</title>
 
 		<authorgroup>
 			<author>
@@ -31,7 +31,7 @@
 		</authorgroup>
 
 		<copyright>
-			<year>1998-2001, 2005-2008</year>
+			<year>1998-2001, 2005-2010</year>
 			<holder>Kevin Atkinson (original author)</holder>
 			<holder>MySQL AB</holder>
 			<holder>Educational Technology Resources</holder>

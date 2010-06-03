@@ -3,7 +3,7 @@
 	database from a file.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2008 by Educational Technology Resources, Inc.  Others may
+ (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
  also hold copyrights on code in this file.  See the CREDITS.txt file
  in the top directory of the distribution for details.
 
@@ -35,20 +35,73 @@ using namespace std;
 using namespace mysqlpp;
 
 
-// Pull in a state variable used by att_getopt() implementation so we
-// can pick up where standard command line processing leaves off.  Feel
-// free to ignore this implementation detail.
-extern int ag_optind;
-
-
+// This is just an implementation detail for the example.  Skip down to
+// main() for the concept this example is trying to demonstrate.  You
+// can simply assume that, given a BLOB containing a valid JPEG, it
+// returns true.
 static bool
-is_jpeg(const char* img_data)
+is_jpeg(const mysqlpp::sql_blob& img, const char** whynot)
 {
+	// See http://stackoverflow.com/questions/2253404/ for
+	// justification for the various tests.
 	const unsigned char* idp =
-			reinterpret_cast<const unsigned char*>(img_data);
-	return (idp[0] == 0xFF) && (idp[1] == 0xD8) &&
-			((memcmp(idp + 6, "JFIF", 4) == 0) ||
-			 (memcmp(idp + 6, "Exif", 4) == 0));
+			reinterpret_cast<const unsigned char*>(img.data());
+	if (img.size() < 125) {
+		*whynot = "a valid JPEG must be at least 125 bytes";
+	}
+	else if ((idp[0] != 0xFF) || (idp[1] != 0xD8)) {
+		*whynot = "file does not begin with JPEG sigil bytes";
+	}
+	else if ((memcmp(idp + 6, "JFIF", 4) != 0) &&
+			 (memcmp(idp + 6, "Exif", 4) != 0)) {
+		*whynot = "file does not contain JPEG type word";
+	}
+	else {
+		*whynot = 0;
+		return true;
+	}
+
+	return false;
+}
+
+
+// Skip to main() before studying this.  This is a little too
+// low-level to bother with on your first pass thru the code.
+static bool
+load_jpeg_file(const mysqlpp::examples::CommandLine& cmdline,
+		images& img, string& img_name)
+{
+	if (cmdline.extra_args().size() == 0) {
+		// Nothing for us to do here.  Caller will insert NULL BLOB.
+		return true;
+	}
+
+	// Got a file's name on the command line, so open it.
+	img_name = cmdline.extra_args()[0];
+	ifstream img_file(img_name.c_str(), ios::binary);
+	if (img_file) {
+		// Slurp file contents into RAM with minimum copying.  (Idiom
+		// explained here: http://stackoverflow.com/questions/116038/)
+		//
+		// By loading the file into a C++ string (stringstream::str())
+		// and assigning that directly to a mysqlpp::sql_blob, we avoid
+		// truncating the binary data at the first null character.
+		img.data.data = static_cast<const stringstream*>(
+				&(stringstream() << img_file.rdbuf()))->str();
+
+		// Check JPEG data for sanity.
+		const char* error;
+		if (is_jpeg(img.data.data, &error)) {
+			return true;
+		}
+		else {
+			cerr << '"' << img_name << "\" isn't a JPEG: " <<
+					error << '!' << endl;
+		}
+	}
+
+	cmdline.print_usage("[jpeg_file]");
+	return false;
 }
 
 
@@ -56,68 +109,37 @@ int
 main(int argc, char *argv[])
 {
 	// Get database access parameters from command line
-	const char* db = 0, *server = 0, *user = 0, *pass = "";
-	if (!parse_command_line(argc, argv, &db, &server, &user, &pass,
-			"[jpeg_file]")) {
+	mysqlpp::examples::CommandLine cmdline(argc, argv);
+	if (!cmdline) {
 		return 1;
 	}
 
 	try {
 		// Establish the connection to the database server.
-		mysqlpp::Connection con(db, server, user, pass);
+		mysqlpp::Connection con(mysqlpp::examples::db_name,
+				cmdline.server(), cmdline.user(), cmdline.pass());
 
-		// Try to create a new item in the images table, based on what
-		// we got on the command line.
+		// Load the file named on the command line
 		images img(mysqlpp::null, mysqlpp::null);
-		const char* img_name = "NULL";
-		if (argc - ag_optind >= 1) {
-			// We received at least one non-option argument on the
-			// command line, so treat it as a file name 
-			img_name = argv[ag_optind];
-			ifstream img_file(img_name, ios::ate | ios::binary);
-			if (img_file) {
-				size_t img_size = img_file.tellg();
-				if (img_size > 10) {
-					img_file.seekg(0, ios::beg);
-					char* img_buffer = new char[img_size];
-					img_file.read(img_buffer, img_size);
-					if (is_jpeg(img_buffer)) {
-						img.data = mysqlpp::sql_blob(img_buffer, img_size);
-					}
-					else {
-						cerr << '"' << img_file <<
-								"\" isn't a JPEG!" << endl;
-					}
-					delete[] img_buffer;
-				}
-				else {
-					cerr << "File is too short to be a JPEG!" << endl;
-				}
-			}
+		string img_name("NULL");
+		if (load_jpeg_file(cmdline, img, img_name)) {
+			// Insert image data or SQL NULL into the images.data BLOB
+			// column.  The key here is that we're holding the raw
+			// binary data in a mysqlpp::sql_blob, which avoids data
+			// conversion problems that can lead to treating BLOB data
+			// as C strings, thus causing null-truncation.  The fact
+			// that we're using SSQLS here is a side issue, simply
+			// demonstrating that mysqlpp::Null<mysqlpp::sql_blob> is
+			// now legal in SSQLS, as of MySQL++ 3.0.7.
+			Query query = con.query();
+			query.insert(img);
+			SimpleResult res = query.execute();
 
-			if (img.data.data.empty()) {
-				// File name was bad, or file contents aren't JPEG.  
-				print_usage(argv[0], "[jpeg_file]");
-				return 1;
-			}
+			// Report successful insertion
+			cout << "Inserted \"" << img_name <<
+					"\" into images table, " << img.data.data.size() <<
+					" bytes, ID " << res.insert_id() << endl;
 		}
-		// else, no image given on command line, so insert SQL NULL
-		// instead of image data.  NULL BLOB columns in SSQLS is
-		// legal as of MySQL++ v3.0.7.
-
-		// Insert image data or SQL NULL into the images.data BLOB
-		// column.  By inserting it as an SSQLS with a mysqlpp::sql_blob
-		// member, we avoid truncating it at the first embedded C null
-		// character ('\0'), as would happen if we used the raw
-		// character buffer we allocated above.
-		Query query = con.query();
-		query.insert(img);
-		SimpleResult res = query.execute();
-
-		// Report successful insertion
-		cout << "Inserted \"" << img_name <<
-				"\" into images table, " << img.data.data.size() <<
-				" bytes, ID " << res.insert_id() << endl;
 	}
 	catch (const BadQuery& er) {
 		// Handle any query errors

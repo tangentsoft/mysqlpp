@@ -6,6 +6,8 @@
 #ifndef MYSQLPP_QUERYDEF_H
 #define MYSQLPP_QUERYDEF_H
 
+#define MYSQLPP_TQUERY_MAX_PARAMETERS 25
+
 #define mysql_query_define0(RETURN, FUNC) \
 	RETURN FUNC(const SQLTypeAdapter& arg0, const SQLTypeAdapter& arg1) \
 		{ return FUNC(SQLQueryParms() << arg0 << arg1); } \

@@ -40,7 +40,7 @@ test_exception(const ContainerT& container, int index)
 				typeid(container).name() << '!' << std::endl;
 		return false;
 	}
-	catch (const mysqlpp::BadIndex& e) {
+	catch (const mysqlpp::BadIndex&) {
 		return true;
 	}
 	catch (const mysqlpp::Exception& e) {
@@ -107,7 +107,7 @@ test_string_index(const ContainerT& container)
 				typeid(container).name() << '!' << std::endl;
 		return false;
 	}
-	catch (const mysqlpp::BadFieldName& e) {
+	catch (const mysqlpp::BadFieldName&) {
 		// Good; fall through to next test
 	}
 	catch (const mysqlpp::Exception& e) {
@@ -135,7 +135,7 @@ test_string_index(const ContainerT& container)
 		container["fred"];
 		return true;
 	}
-	catch (const mysqlpp::BadFieldName& e) {
+	catch (const mysqlpp::BadFieldName&) {
 		std::cerr << "Exception not suppressed for nonexistent field "
 				"in " << typeid(container).name() << '!' << std::endl;
 		return false;

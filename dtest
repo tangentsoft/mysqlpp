@@ -64,6 +64,27 @@ do
 done
 echo
 
+# Test ssqlsxlat -o.  Note that it suppresses stdout but keeps stderr
+# so warnings about directives and line elements it doesn't understand
+# aren't suppressed.  We run the first pass's output back through
+# ssqlsxlat to deal with comments, whitespace differences, line element
+# ordering, boolean value and type canonicalization, and other niggly
+# differences we really don't care about.  diff -w isn't enough.
+for f in {examples,test}/*.ssqls
+do
+	echo -n "Testing ssqlsxlat -i $f -o..."
+	echo "--- BEGIN ssqlsxlat -i $f -o ERROR OUTPUT ---" >> $TMP
+	pass1=/tmp/dtest-ssxgv2-pass1-$bnf
+	pass2=/tmp/dtest-ssxgv2-pass2-$bnf
+	echo -n "pass 1"
+	./exrun ssqlsxlat -i $f -o $pass1 > /dev/null 2>> $TMP
+	echo -n ", pass 2"
+	./exrun ssqlsxlat -i $pass1 -o $pass2 > /dev/null 2>> $TMP
+	echo -n ", diff"
+	diff $pass1 $pass2 > /dev/null >> $TMP
+	echo "==== END ssqlsxlat -i $f -o ERROR OUTPUT ====" >> $TMP
+	echo
+done
 
 # Check for any changes
 BFILE=bmark.txt

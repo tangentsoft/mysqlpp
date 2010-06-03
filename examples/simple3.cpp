@@ -3,7 +3,7 @@
 	a table, as opposed to the more common 'store' method illustrated
 	by the simple2 example.
 
- Copyright (c) 2005-2007 by Educational Technology Resources, Inc.
+ Copyright (c) 2005-2009 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -39,14 +39,15 @@ int
 main(int argc, char *argv[])
 {
 	// Get database access parameters from command line
-	const char* db = 0, *server = 0, *user = 0, *pass = "";
-	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
+	mysqlpp::examples::CommandLine cmdline(argc, argv);
+	if (!cmdline) {
 		return 1;
 	}
 
 	// Connect to the sample database.
 	mysqlpp::Connection conn(false);
-	if (conn.connect(db, server, user, pass)) {
+	if (conn.connect(mysqlpp::examples::db_name, cmdline.server(),
+			cmdline.user(), cmdline.pass())) {
 		// Ask for all rows from the sample stock table and display
 		// them.  Unlike simple2 example, we retreive each row one at
 		// a time instead of storing the entire result set in memory

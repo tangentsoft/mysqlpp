@@ -38,7 +38,7 @@ char
 String::at(size_type pos) const
 {
 	if (pos >= size()) {
-		throw BadIndex("String", pos, size());
+		throw BadIndex("String", int(pos), int(size()));
 	}
 	else {
 		return buffer_->data()[pos];

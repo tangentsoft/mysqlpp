@@ -3,7 +3,7 @@
 	table, such as their SQL and C++-equivalent types.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
+ (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
  also hold copyrights on code in this file.  See the CREDITS.txt file
  in the top directory of the distribution for details.
 
@@ -38,14 +38,15 @@ int
 main(int argc, char *argv[])
 {
 	// Get database access parameters from command line
-	const char* db = 0, *server = 0, *user = 0, *pass = "";
-	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
+	mysqlpp::examples::CommandLine cmdline(argc, argv);
+	if (!cmdline) {
 		return 1;
 	}
 
 	try {
 		// Establish the connection to the database server.
-		mysqlpp::Connection con(db, server, user, pass);
+		mysqlpp::Connection con(mysqlpp::examples::db_name,
+				cmdline.server(), cmdline.user(), cmdline.pass());
 
 		// Get contents of main example table
 		mysqlpp::Query query = con.query("select * from stock");
@@ -66,11 +67,11 @@ main(int argc, char *argv[])
 		for (size_t i = 0; i < res.field_names()->size(); i++) {
 			// Suppress C++ type name outputs when run under dtest,
 			// as they're system-specific.
-			const char* cname = res.field_type(i).name();
-			mysqlpp::FieldTypes::value_type ft = res.field_type(i);
+			const char* cname = res.field_type(int(i)).name();
+			mysqlpp::FieldTypes::value_type ft = res.field_type(int(i));
 			ostringstream os;
 			os << ft.sql_name() << " (" << ft.id() << ')';
-			cout << setw(widths[0]) << res.field_name(i).c_str() <<
+			cout << setw(widths[0]) << res.field_name(int(i)).c_str() <<
 					setw(widths[1]) << os.str() <<
 					setw(widths[2]) << cname <<
 					endl;
@@ -89,7 +90,7 @@ main(int argc, char *argv[])
 		if (res.field_type(5) == typeid(string)) {
 			cout << "Should not happen! Type check failure." << endl;
 		}
-		else if (res.field_type(5) == typeid(mysqlpp::Null<mysqlpp::String>)) {
+		else if (res.field_type(5) == typeid(mysqlpp::sql_blob_null)) {
 			cout << "SQL type of 'description' field resembles "
 					"a nullable variant of the C++ string type." << endl;
 		}

@@ -45,7 +45,7 @@ initialized_(false)
 				data_.push_back(value_type(
 						is_null ? "NULL" : row[i],
 						is_null ? 4 : lengths[i],
-						res->field_type(i),
+						res->field_type(int(i)),
 						is_null));
 			}
 
@@ -69,7 +69,7 @@ Row::at(size_type i) const
 		return data_[i];
 	}
 	else {
-		throw BadIndex("Row", i, size());
+		throw BadIndex("Row", int(i), int(size()));
 	}
 }
 

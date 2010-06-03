@@ -1,7 +1,7 @@
 /***********************************************************************
  images.h - Declares the images table SSQLS.
 
- Copyright (c) 2008 by Educational Technology Resources, Inc.
+ Copyright (c) 2008-2010 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the
  CREDITS.txt file in the top directory of the distribution for details.
 
@@ -28,5 +28,5 @@
 
 sql_create_2(images,
 	1, 2,
-	mysqlpp::Null<mysqlpp::sql_int_unsigned>, id,
-	mysqlpp::Null<mysqlpp::sql_blob>, data)
+	mysqlpp::sql_int_unsigned_null, id,
+	mysqlpp::sql_blob_null, data)

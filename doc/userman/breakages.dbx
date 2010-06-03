@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding='UTF-8'?>
-<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook V4.3//EN"
-    "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd">
+<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook V4.2//EN"
+    "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
 
 <sect1 id="breakages">
   <title>Incompatible Library Changes</title>
@@ -30,7 +30,7 @@
       <para>Removed <methodname>Row::operator[]()</methodname> overloads
       except the one for <type>size_type</type>, and added
       <methodname>Row::lookup_by_name()</methodname> to provide the
-      &ldquo;subscript by string&rdquo; functionality.  In practical
+      &#x201C;subscript by string&#x201D; functionality.  In practical
       terms, this change means that the <varname>row["field"]</varname>
       syntax no longer works; you must use the new
       <methodname>lookup_by_name</methodname> method instead.</para>
@@ -88,7 +88,7 @@
           to <methodname>connect()</methodname>, made several
           more of its parameters default, and removed the
           old <methodname>connect()</methodname> method, as
-          it&rsquo;s now a strict subset of the new one. The
+          it&#x2019;s now a strict subset of the new one. The
           only practical consequence is that if your program
           was using <methodname>real_connect()</methodname>,
           you will have to change it to
@@ -131,7 +131,7 @@
           instance is in scope. You can instead call
           <methodname>disable_exceptions()</methodname> on any
           of these objects, but if you only want them disabled
-          temporarily, it&rsquo;s easy to forget to re-enable them
+          temporarily, it&#x2019;s easy to forget to re-enable them
           later.</para></listitem>
 
           <listitem><para>In the previous version of MySQL++,
@@ -142,7 +142,7 @@
           object with exceptions enabled, and then asked it to
           create a <classname>Query</classname> object, the
           <classname>Query</classname> object also had exceptions
-          disabled. The problem is, this didn&rsquo;t happen in all
+          disabled. The problem is, this didn&#x2019;t happen in all
           cases where it should have in v1.7. This bug is fixed in
           v2.0. If your program begins crashing due to uncaught
           exceptions after upgrading to v2.0, this is the most likely
@@ -164,7 +164,7 @@
           from the interface. None of the example programs had to be
           changed to work with the new exceptions, so if your program
           handles MySQL++ exceptions the same way they do, your program
-          won&rsquo;t need to change, either.</para></listitem>
+          won&#x2019;t need to change, either.</para></listitem>
 
           <listitem><para>Renamed
           <classname>SQLQueryNEParams</classname> exception to
@@ -181,9 +181,9 @@
           url="ObjectNotInitialized"/> exception types, to fix
           overuse of <classname>BadQuery</classname>. Now the
           latter is used only for errors on query execution. If
-          your program has a &ldquo;catch-all&rdquo; block taking a
+          your program has a &#x201C;catch-all&#x201D; block taking a
           <classname>std::exception</classname> for each try block
-          containing MySQL++ statements, you probably won&rsquo;t
+          containing MySQL++ statements, you probably won&#x2019;t
           need to change your program. Otherwise, the new exceptions
           will likely show up as program crashes due to unhandled
           exceptions.</para></listitem>
@@ -199,15 +199,15 @@
           <listitem><para>In previous versions,
           <classname>Connection</classname> had
           a querying interface similar to class
-          <classname>Query</classname>&rsquo;s. These methods were
-          intended only for <classname>Query</classname>&rsquo;s use; no
+          <classname>Query</classname>&#x2019;s. These methods were
+          intended only for <classname>Query</classname>&#x2019;s use; no
           example ever used this interface directly, so no end-user code
           is likely to be affected by this change.</para></listitem>
 
           <listitem><para>A more likely problem arising from
           the above change is code that tests for query success
           by calling the <classname>Connection</classname>
-          object&rsquo;s <methodname>success()</methodname> method
+          object&#x2019;s <methodname>success()</methodname> method
           or by casting it to <type>bool</type>. This will now give
           misleading results, because queries no longer go through
           the <classname>Connection</classname> object. Class
@@ -229,7 +229,7 @@
 
           <listitem><para>Renamed
           <methodname>ResUse::mysql_result()</methodname> to
-          <methodname>raw_result()</methodname> so it&rsquo;s database
+          <methodname>raw_result()</methodname> so it&#x2019;s database
           server neutral.</para></listitem>
 
           <listitem><para>Removed
@@ -249,7 +249,7 @@
 
         <itemizedlist>
 
-          <listitem><para>Removed &ldquo;field name&rdquo; form
+          <listitem><para>Removed &#x201C;field name&#x201D; form
           of <methodname>Row::field_list()</methodname>. It was
           pointless.</para></listitem>
 
@@ -277,7 +277,7 @@
           <listitem><para>Where possible, all distributed Makefiles only
           build dynamic libraries. (Shared objects on most Unices, DLLs
           on Windows, etc.) Unless your program is licensed under the
-          GPL or LGPL, you shouldn&rsquo;t have been using the static
+          GPL or LGPL, you shouldn&#x2019;t have been using the static
           libraries from previous versions anyway.</para></listitem>
 
           <listitem><para>Removed the backwards-compatibility
@@ -324,10 +324,10 @@ query.execute(some_value);</programlisting>
       default template parameters over multiple queries. In the first
       snippet above, there is only one parameter, so in order to justify
       the use of template queries in the first place, it must be
-      changing with each query. Therefore, it isn&rsquo;t really a
-      &ldquo;default&rdquo; parameter at all. We did not make this
+      changing with each query. Therefore, it isn&#x2019;t really a
+      &#x201C;default&#x201D; parameter at all. We did not make this
       change maliciously, but you can understand why we are not in any
-      hurry to restore this &ldquo;feature&rdquo;.</para>
+      hurry to restore this &#x201C;feature&#x201D;.</para>
 
       <para>(Incidentally, this change was made to allow better support
       for BLOB columns.)</para>
@@ -349,7 +349,7 @@ query.execute(some_value);</programlisting>
       <para><classname>FieldNames</classname> and
       <classname>FieldTypes</classname> are no longer exported from the
       library. If you are using these classes directly from Visual C++
-      or MinGW, your code won&rsquo;t be able to dynamically link to a
+      or MinGW, your code won&#x2019;t be able to dynamically link to a
       DLL version of the library any more. These are internal classes,
       however, so no one should be using them directly.</para>
     </sect3>
@@ -390,9 +390,9 @@ query.execute(some_value);</programlisting>
         <para>When first building existing code against this version,
         you may find it helpful to define the macro
         <varname>MYSQLPP_OLD_CLASS_NAMES</varname> in your
-        program&rsquo;s build options. This will turn on some macros
+        program&#x2019;s build options. This will turn on some macros
         that set up aliases for the new class names matching their
-        corresponding old names. Then, when you&rsquo;ve fixed up any
+        corresponding old names. Then, when you&#x2019;ve fixed up any
         other issues that may prevent your program from building with
         the new MySQL++, you can turn it back off and fix up any class
         name differences.</para>
@@ -404,7 +404,7 @@ query.execute(some_value);</programlisting>
         code from changes like these.</para>
 
         <para>The <classname>SQLString</classname> change
-        shouldn&rsquo;t affect you, as this class was not designed to be
+        shouldn&#x2019;t affect you, as this class was not designed to be
         used by end user code. But, due to the old name and the fact
         that it used to derive from <classname>std::string</classname>,
         some might have been tempted to use it as an enhanced
@@ -431,7 +431,7 @@ query.execute(some_value);</programlisting>
         one of these objects. See
         <filename>examples/multiquery.cpp</filename> for the syntax.
         Since each <classname>Option</classname> subclass takes only the
-        parameter types it actually understands, it&rsquo;s now
+        parameter types it actually understands, it&#x2019;s now
         completely type-safe at compile time.</para>
 
         <para>The new option setting mechanism also has the virtue of
@@ -462,7 +462,7 @@ query.execute(some_value);</programlisting>
           with a similar name.</para></listitem>
         </itemizedlist>
 
-        <para>Collapsed <classname>Connection</classname>&rsquo;s
+        <para>Collapsed <classname>Connection</classname>&#x2019;s
         <varname>host</varname>, <varname>port</varname>, and
         <varname>socket_name</varname> parameters down into a new
         combined <varname>server</varname> parameter which is parsed to
@@ -529,7 +529,7 @@ query.execute(some_value);</programlisting>
         <classname>std::string</classname> and <type>const char*</type>
         for the <classname>Date</classname>,
         <classname>DateTime</classname>, and <classname>Time</classname>
-        classes. It&rsquo;s still possible to do these conversions, but
+        classes. It&#x2019;s still possible to do these conversions, but
         only explicitly. (This had to be done to make
         <classname>Null&lt;T&gt;</classname> work in SSQLSes.)</para>
 
@@ -552,12 +552,12 @@ some_function(mysqlpp::DateTime("2007-12-22"));</programlisting>
         <title>Exception changes</title>
 
         <para>If an error occurs during the processing of a
-        &ldquo;use&rdquo; query (as opposed to the initial execution) we
+        &#x201C;use&#x201D; query (as opposed to the initial execution) we
         throw the new <classname>UseQueryError</classname> exception
         instead of <classname>BadQuery</classname>.</para>
 
         <para>If you pass bad values to the <classname>Row</classname>
-        ctor so that it can&rsquo;t initialize itself properly, it
+        ctor so that it can&#x2019;t initialize itself properly, it
         throws the <classname>ObjectNotInitialized </classname>
         exception instead of <classname>BadQuery</classname>.</para>
 
@@ -583,16 +583,16 @@ some_function(mysqlpp::DateTime("2007-12-22"));</programlisting>
           <listitem><para>The main exception to this is the
           <varname>flags</varname> data member. This is a bitfield in
           the C API data structure and you had to use MySQL-specific
-          constants to break values out of it. MySQL++&rsquo;s new
+          constants to break values out of it. MySQL++&#x2019;s new
           <classname>Field</classname> class provides a public member
           function returning <type>bool</type> for each of these
           flags.</para></listitem>
 
-          <listitem><para>The new class doesn&rsquo;t include all of the
+          <listitem><para>The new class doesn&#x2019;t include all of the
           data members from the C API version. We left out those that
-          aren&rsquo;t used within MySQL++ or its examples, or whose
-          function we couldn&rsquo;t understand. Basically, if we
-          couldn&rsquo;t document a reason to use it, we left it
+          aren&#x2019;t used within MySQL++ or its examples, or whose
+          function we couldn&#x2019;t understand. Basically, if we
+          couldn&#x2019;t document a reason to use it, we left it
           out.</para></listitem>
         </itemizedlist>
 
@@ -609,7 +609,7 @@ some_function(mysqlpp::DateTime("2007-12-22"));</programlisting>
 typedef std::vector&lt;Field&gt; Fields;</programlisting>
 
         <para>If anything, this should give a pure superset of the old
-        functionality, but it&rsquo;s possible it could break end user
+        functionality, but it&#x2019;s possible it could break end user
         code.</para>
       </sect4>
 
@@ -627,7 +627,7 @@ typedef std::vector&lt;Field&gt; Fields;</programlisting>
         use the SQL type aliases <type>sql_tinyint</type> and
         <type>sql_tinyint_unsigned</type> instead.</para>
 
-        <para>The &lsquo;r&rsquo; and &lsquo;R&rsquo; template query
+        <para>The &#x2018;r&#x2019; and &#x2018;R&#x2019; template query
         parameter modifiers were removed. They made the library do
         quoting and both quoting and escaping (respectively) regardless
         of the data type of the parameter. There are no corresponding
@@ -635,7 +635,7 @@ typedef std::vector&lt;Field&gt; Fields;</programlisting>
         symmetery we had to decide whether to add such manipulators or
         remove the tquery modifiers. There should never be a reason to
         force quoting or escaping other than to work around a MySQL++
-        bug, and it&rsquo;s better to just fix the bug than work around
+        bug, and it&#x2019;s better to just fix the bug than work around
         it, so removed the tquery modifiers.</para>
 
         <para><methodname>Query::store_next()</methodname>
@@ -655,9 +655,9 @@ typedef std::vector&lt;Field&gt; Fields;</programlisting>
         the parallel set of <methodname>str()</methodname> methods,
         which were just aliases before. (Chose
         <methodname>str()</methodname> over
-        <methodname>preview()</methodname> because it&rsquo;s standard
-        C++ nomenclature.) But if you&rsquo;re just looking to get a
-        copy of a built query string and you aren&rsquo;t using template
+        <methodname>preview()</methodname> because it&#x2019;s standard
+        C++ nomenclature.) But if you&#x2019;re just looking to get a
+        copy of a built query string and you aren&#x2019;t using template
         queries, you can now insert the <classname>Query</classname>
         into a stream and get the same result.</para>
 
@@ -679,7 +679,7 @@ cout &lt;&lt; query &lt;&lt; endl;</programlisting>
 
         <para>In addition to the class name changes described above,
         <classname>UseQueryResult</classname> is no longer
-        <classname>StoreQueryResult</classname>&rsquo;s base class.
+        <classname>StoreQueryResult</classname>&#x2019;s base class.
         There is a new abstract class called
         <classname>ResultBase</classname> containing much of what used
         to be in <classname>ResUse</classname>, and it is the base of
@@ -708,9 +708,9 @@ cout &lt;&lt; query &lt;&lt; endl;</programlisting>
           <methodname>types()</methodname>.</para></listitem>
         </itemizedlist>
 
-        <para>Renamed several methods for &ldquo;grammar&rdquo; reasons.
+        <para>Renamed several methods for &#x201C;grammar&#x201D; reasons.
         For example, some methods returned a single object but had a
-        &ldquo;plural&rdquo; name, implying that it returned a container
+        &#x201C;plural&#x201D; name, implying that it returned a container
         of objects. In cases like this, we changed the name to agree
         with the return value. Some of these also fall into the
         duplicate method category above:</para>
@@ -735,7 +735,7 @@ cout &lt;&lt; query &lt;&lt; endl;</programlisting>
           <methodname>types(int)</methodname>.</para></listitem>
         </itemizedlist>
 
-        <para>Removed several &ldquo;smelly&rdquo; methods:</para>
+        <para>Removed several &#x201C;smelly&#x201D; methods:</para>
 
         <itemizedlist>
           <listitem><para><methodname>purge()</methodname>: was an
@@ -743,7 +743,7 @@ cout &lt;&lt; query &lt;&lt; endl;</programlisting>
           code to call</para></listitem>
 
           <listitem><para><methodname>raw_result()</methodname>: end
-          user code shouldn&rsquo;t be digging down to the C API data
+          user code shouldn&#x2019;t be digging down to the C API data
           structures, but if you really need something like this, look
           at the implementation of
           <methodname>Query::storein()</methodname>. Its workings will
@@ -767,11 +767,11 @@ cout &lt;&lt; query &lt;&lt; endl;</programlisting>
 
         <para><methodname>ResUse::field_num()</methodname> would
         unconditionally throw a <classname>BadFieldName</classname>
-        exception when you asked for a field that doesn&rsquo;t exist.
+        exception when you asked for a field that doesn&#x2019;t exist.
         Now, if exceptions are disabled on the object, it just returns
         -1.</para>
 
-        <para><classname>SimpleResult</classname>&rsquo;s member
+        <para><classname>SimpleResult</classname>&#x2019;s member
         variables are all now private, and have read-only accessor
         functions of the same name.</para>
 
@@ -784,7 +784,7 @@ for (i = 0; row = res[i]; ++i) {
   // Do something with row here
 }</programlisting>
 
-        <para>That is, indexing past the end of a &ldquo;store&rdquo;
+        <para>That is, indexing past the end of a &#x201C;store&#x201D;
         result set would just return an empty row object, which tests as
         false in <type>bool</type> context, so it ends the loop. Now
         that <classname>StoreQueryResult</classname> is a
@@ -819,7 +819,7 @@ for (it = res.begin(); it != res.end(); ++it) {
         <para>Removed <methodname>Row::raw_data()</methodname>,
         <methodname>raw_size()</methodname> and
         <methodname>raw_string()</methodname>. These were useful with
-        BLOB data back when MySQL++ didn&rsquo;t handle embedded null
+        BLOB data back when MySQL++ didn&#x2019;t handle embedded null
         characters very well, and when copies of
         <classname>ColData</classname> objects were expensive. Neither
         is true now, so they have no value any more. Equivalent calls
@@ -834,7 +834,7 @@ std::string(s.data(), s.length()); // raw_string() equivalent</programlisting>
         <para><methodname>Row::operator[](const char*)</methodname>
         would unconditionally throw a
         <classname>BadFieldName</classname> exception when you asked for
-        a field that doesn&rsquo;t exist. Now, if exceptions are
+        a field that doesn&#x2019;t exist. Now, if exceptions are
         disabled on the <classname>Row</classname> object, it just
         returns a reference to an empty <classname>String</classname>
         object.  You can tell when this happens because such an object
@@ -862,8 +862,8 @@ std::string(s.data(), s.length()); // raw_string() equivalent</programlisting>
         gives your program additional flexibility in the face of
         future changes. However, code that was taking advantage of
         this low-level fact will break when moving to v3. Before I
-        explain how, let&rsquo;s go over the high-level functional
-        changes you&rsquo;ll find in v3&rsquo;s SSQLS mechanism.</para>
+        explain how, let&#x2019;s go over the high-level functional
+        changes you&#x2019;ll find in v3&#x2019;s SSQLS mechanism.</para>
 
         <para>Because MySQL++ no longer needs the
         SSQLS field order to match the SQL field order,
@@ -897,7 +897,7 @@ std::string(s.data(), s.length()); // raw_string() equivalent</programlisting>
         if all you used SSQLS for was data retrieval, you could
         define your structures with <function>sql_create_*</function>
         in v2. This was never recommended, because such an SSQLS
-        wouldn&rsquo;t work with other features of MySQL++ like
+        wouldn&#x2019;t work with other features of MySQL++ like
         <methodname>Query::insert()</methodname> because they depend
         on being able to map names from C++ to SQL and back. You
         needed to use <function>sql_create_c_names_*</function>
@@ -910,13 +910,13 @@ std::string(s.data(), s.length()); // raw_string() equivalent</programlisting>
         <para>The new <classname>Null&lt;T&gt;</classname> support in
         SSQLSes causes an internal compiler error in Visual C++ 2003.
         (VC++ 2005 and newer have no trobule with it.) A poll on the
-        mailing list says there aren&rsquo;t many people still stuck on
-        this version, so we just ifdef&rsquo;d out the SSQLS mechanism
+        mailing list says there aren&#x2019;t many people still stuck on
+        this version, so we just ifdef&#x2019;d out the SSQLS mechanism
         and all the examples that use it when built with VC++ 2003.  If
         this affects you, see <xref linkend="ssqls-vc2003"/> for
         suggestions on ways to cope.</para>
 
-        <para>If you are using types other than MySQL++&rsquo;s
+        <para>If you are using types other than MySQL++&#x2019;s
         <type>sql_*</type> ones <footnote><para>These typedefs
         have been available since MySQL++ v2.1.</para></footnote>
         in your SSQLSes, code that previously worked may now see
@@ -924,12 +924,12 @@ std::string(s.data(), s.length()); // raw_string() equivalent</programlisting>
         can be thrown even if exceptions are otherwise disabled in
         MySQL++.) This version of MySQL++ is stricter about mapping
         SQL to C++ type information, and vice versa. If the library
-        can&rsquo;t find a suitable mapping from one type system
+        can&#x2019;t find a suitable mapping from one type system
         to the other, it throws this exception, because its only
         other option would be to crash or raise an assertion. This
         typically happens when building SQL queries, so you can
         probably handle it the same way as if the subsequent
-        query excecution failed. If you&rsquo;re catching the
+        query excecution failed. If you&#x2019;re catching the
         generic <classname>mysqlpp::Exception</classname>, your
         error handling code might not need to change. If you see
         this exception, it does mean you need to look into your
@@ -937,8 +937,8 @@ std::string(s.data(), s.length()); // raw_string() equivalent</programlisting>
         <varname>mysql_type_info::types</varname>, defined at the top
         of <filename>lib/type_info.cpp</filename>. Every data type in
         <filename>lib/sql_types.h</filename> has a corresponding record
-        in this table, so if you stick to those types, you&rsquo;ll
-        be fine. It&rsquo;s also okay to use types your C++ compiler
+        in this table, so if you stick to those types, you&#x2019;ll
+        be fine. It&#x2019;s also okay to use types your C++ compiler
         can convert directly to these predefined types.</para>
 
         <para>The <varname>_table</varname> static member variable
@@ -951,7 +951,7 @@ std::string(s.data(), s.length()); // raw_string() equivalent</programlisting>
         one which returns an unmodifiable pointer to the table name,
         and the other which takes <type>const char*</type> so you
         can override the default table name. So, the code we used to
-        recommend for changing the SSQLS&rsquo;s table name:</para>
+        recommend for changing the SSQLS&#x2019;s table name:</para>
 
         <programlisting>
 my_ssqls_type::table() = "MyTableName";</programlisting>
@@ -967,9 +967,9 @@ my_ssqls_type::table("MyTableName");</programlisting>
         <title>Miscellaneous changes</title>
 
         <para>MySQL++ does quoting and escaping much more selectively
-        now. Basically, if the library can tell you&rsquo;re not
+        now. Basically, if the library can tell you&#x2019;re not
         building a SQL query using one of the standard methods, it
-        assumes you&rsquo;re outputting values for human consumption, so
+        assumes you&#x2019;re outputting values for human consumption, so
         it disables quoting and SQL escaping. If you need to build your
         own mechanism to replace this, quoting is easy to do, and
         <methodname>Query::escape_string()</methodname> can do SQL
@@ -982,7 +982,7 @@ my_ssqls_type::table("MyTableName");</programlisting>
         testable in <type>bool</type> context to get the same
         information. An additional change in
         <classname>Connection</classname> is that it used to be
-        considered &ldquo;unsuccessful&rdquo; when the connection was
+        considered &#x201C;unsuccessful&#x201D; when the connection was
         down. Since the sense of this test is now whether the object is
         in a good state, it only returns <type>false</type> when the
         connection attempt fails. Call
@@ -993,7 +993,7 @@ my_ssqls_type::table("MyTableName");</programlisting>
         for Visual C++, and Xcode. This lets you have both versions
         installed without conflict. The release build uses the current
         naming scheme. If you have an existing program building against
-        MySQL++ on these platforms, you&rsquo;ll need to change your
+        MySQL++ on these platforms, you&#x2019;ll need to change your
         build options to use the new name in debug mode.</para>
 
         <para>Renamed <varname>NO_LONG_LONGS</varname> to
@@ -1026,7 +1026,7 @@ my_ssqls_type::table("MyTableName");</programlisting>
     <para>This section documents those library changes that require you
     to rebuild your program so that it will link with the new library.
     Most of the items in the previous section are also ABI changes, but
-    this section is only for those items that shouldn&rsquo;t require
+    this section is only for those items that shouldn&#x2019;t require
     any code changes in your program.</para>
 
     <para>If you were going to rebuild your program after
@@ -1054,11 +1054,11 @@ my_ssqls_type::table("MyTableName");</programlisting>
     <sect3 id="abi-1.7.22">
       <title>v1.7.22</title>
 
-      <para>Removed &ldquo;reset query&rdquo; parameters from several
+      <para>Removed &#x201C;reset query&#x201D; parameters from several
       <classname>Query</classname> class members. This is not an API
       change, because the parameters were given default values, and the
       library would ignore any value other than the default. So, any
-      program that tried to make them take another value wouldn&rsquo;t
+      program that tried to make them take another value wouldn&#x2019;t
       have worked anyway.</para>
     </sect3>
 
@@ -1066,10 +1066,10 @@ my_ssqls_type::table("MyTableName");</programlisting>
     <sect3 id="abi-1.7.24">
       <title>v1.7.24</title>
 
-      <para>Some freestanding functions didn&rsquo;t get moved into
+      <para>Some freestanding functions didn&#x2019;t get moved into
       <symbol>namespace mysqlpp</symbol> when that namespace was
-      created. This release fixed that. It doesn&rsquo;t affect the API
-      if your program&rsquo;s C++ source files say <symbol>using
+      created. This release fixed that. It doesn&#x2019;t affect the API
+      if your program&#x2019;s C++ source files say <symbol>using
       namespace mysqlpp</symbol> within them.</para>
     </sect3>
 
@@ -1078,7 +1078,7 @@ my_ssqls_type::table("MyTableName");</programlisting>
       <title>v2.0.0</title>
 
       <para>Removed <methodname>Connection::infoo()</methodname>.
-      (I&rsquo;d call this an API change if I thought there were any
+      (I&#x2019;d call this an API change if I thought there were any
       programs out there actually using this...)</para>
 
       <para>Collapsed the <classname>Connection</classname> constructor
@@ -1094,16 +1094,16 @@ my_ssqls_type::table("MyTableName");</programlisting>
       <para>In several instances, functions that took objects by
       value now take them by const reference, for efficiency.</para>
 
-      <para>Merged <classname>SQLQuery</classname> class&rsquo;s members
+      <para>Merged <classname>SQLQuery</classname> class&#x2019;s members
       into class <classname>Query</classname>.</para>
 
-      <para>Merged <classname>RowTemplate</classname> class&rsquo;s
+      <para>Merged <classname>RowTemplate</classname> class&#x2019;s
       members into class <classname>Row</classname>.</para>
 
       <para>Reordered member variable declarations in some classes. The
       most common instance is when the private section was declared
       before the public section; it is now the opposite way. This
-      can change the object&rsquo;s layout in memory, so a program
+      can change the object&#x2019;s layout in memory, so a program
       linking to the library must be rebuilt.</para>
 
       <para>Simplified the date and time class hierarchy.
@@ -1114,13 +1114,13 @@ my_ssqls_type::table("MyTableName");</programlisting>
       type="structref" url="DateTime"/> used to derive from
       both of those.  All three of these classes used to derive
       from <classname>mysql_dt_base</classname>.  All of the
-      <classname>mysql_*</classname> classes&rsquo; functionality
+      <classname>mysql_*</classname> classes&#x2019; functionality
       and data has been folded into the leaf classes, and now the
       only thing shared between them is their dependence on the
       <ulink type="structref" url="DTbase"/> template. Since the
-      leaf classes&rsquo; interface has not changed and end-user
-      code shouldn&rsquo;t have been using the other classes, this
-      shouldn&rsquo;t affect the API in any practical way.</para>
+      leaf classes&#x2019; interface has not changed and end-user
+      code shouldn&#x2019;t have been using the other classes, this
+      shouldn&#x2019;t affect the API in any practical way.</para>
 
       <para><classname>mysql_type_info</classname> now always
       initializes its private <varname>num</varname> member.
@@ -1138,7 +1138,7 @@ my_ssqls_type::table("MyTableName");</programlisting>
       been honored at least going back to v1.7.9, so this is not an API
       change. As of this version, <classname>Query</classname> now
       automatically detects when it can safely reset itself after
-      executing a query, so it&rsquo;s not necessary to ask for a reset
+      executing a query, so it&#x2019;s not necessary to ask for a reset
       except when using template queries.</para>
 
       <para>Removed overloads of
@@ -1157,7 +1157,7 @@ my_ssqls_type::table("MyTableName");</programlisting>
       conceptually flawed. <classname>Connection</classname> and
       <classname>Query</classname> consequently no longer derive from
       <classname>Lockable</classname>. Since it was basically useless in
-      prior versions, it can&rsquo;t be construed as an API
+      prior versions, it can&#x2019;t be construed as an API
       change.</para>
     </sect3>
 
@@ -1184,8 +1184,8 @@ my_ssqls_type::table("MyTableName");</programlisting>
 
       <para><classname>Query</classname> can now be tested in
       <type>bool</type> context, as was intended for v3.0.0. Had to
-      change the &ldquo;safe bool&rdquo; method signature to make it
-      happen, so technically it&rsquo;s an API change, but it&rsquo;s
+      change the &#x201C;safe bool&#x201D; method signature to make it
+      happen, so technically it&#x2019;s an API change, but it&#x2019;s
       still used the same way.</para>
     </sect3>
   </sect2>

@@ -2,7 +2,7 @@
  field_names.cpp - Implements the FieldNames class.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
+ (c) 2004-2010 by Educational Technology Resources, Inc.  Others may
  also hold copyrights on code in this file.  See the CREDITS.txt file
  in the top directory of the distribution for details.
 
@@ -34,16 +34,16 @@
 
 namespace mysqlpp {
 
+namespace internal { extern void str_to_lwr(std::string& s); }
+
 void
 FieldNames::init(const ResultBase* res)
 {
-	int num = res->num_fields();
+	size_t num = res->num_fields();
 	reserve(num);
 
-	for (int i = 0; i < num; i++) {
-		std::string p(res->fields().at(i).name());
-		str_to_lwr(p);
-		push_back(p);
+	for (size_t i = 0; i < num; i++) {
+		push_back(res->fields().at(i).name());
 	}
 }
 
@@ -51,9 +51,17 @@ FieldNames::init(const ResultBase* res)
 unsigned int
 FieldNames::operator [](const std::string& s) const
 {
-	std::string temp(s);
-	str_to_lwr(temp);
-	return static_cast<unsigned int>(std::find(begin(), end(), temp) - begin());
+	std::string temp1(s);
+	internal::str_to_lwr(temp1);
+	for (const_iterator it = begin(); it != end(); ++it) {
+	std::string temp2(*it);
+		internal::str_to_lwr(temp2);
+		if (temp2.compare(temp1) == 0) {
+			return it - begin();
+		}
+	}
+
+	return end() - begin();
 }
 
 } // end namespace mysqlpp

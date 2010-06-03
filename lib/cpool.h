@@ -80,6 +80,31 @@ public:
 	/// \brief Returns true if pool is empty
 	bool empty() const { return pool_.empty(); }
 
+	/// \brief Return a defective connection to the pool and get a new
+	/// one back.
+	///
+	/// Call this on receiving a BadQuery exception, with errnum()
+	/// equal to CR_SERVER_GONE_ERROR.  It means the server was
+	/// restarted or otherwise dropped your connection to it, so the
+	/// Connection object is no longer usable.  You can avoid the
+	/// need to use this by setting the ReconnectOption in your grab()
+	/// override, but perhaps there are other reasons to need to
+	/// exchange a bad connection for a good one.
+	///
+	/// This function wraps grab(), not safe_grab(), even though that
+	/// could return another dead connection.  The assumption is that if
+	/// your code is smart enough to detect one bad connection, it should
+	/// be smart enough to detect a whole string of them.  Worst case,
+	/// the whole pool is bad -- remote server went away -- and we have
+	/// to empty the pool and start re-filling it.
+	///
+	/// \param pc pointer to a Connection object to be returned to the
+	/// pool and marked as unused.
+	///
+	/// \retval a pointer to a different Connection object; not
+	/// guaranteed to still be connected!
+	virtual Connection* exchange(const Connection* pc);
+
 	/// \brief Grab a free connection from the pool.
 	///
 	/// This method creates a new connection if an unused one doesn't
@@ -106,7 +131,35 @@ public:
 	/// if it doesn't know approximately how long a connection has
 	/// really been idle, it can't make good judgements about when to
 	/// remove it from the pool.
+	///
+	/// \param pc pointer to a Connection object to be returned to the
+	/// pool and marked as unused.
 	virtual void release(const Connection* pc);
+
+	/// \brief Removes the given connection from the pool
+	///
+	/// If you mean to simply return a connection to the pool after
+	/// you're finished using it, call release() instead.  This method
+	/// is primarily for error handling: you somehow have figured out
+	/// that the connection is defective, so want it destroyed and
+	/// removed from the pool.  If you also want a different connection
+	/// to retry your operation on, call exchange() instead.
+	///
+	/// \param pc pointer to a Connection object to be removed from
+	/// the pool and destroyed
+	void remove(const Connection* pc);
+
+	/// \brief Grab a free connection from the pool, testing that it's
+	/// connected before returning it.
+	///
+	/// This is just a wrapper around grab(), Connection::ping() and
+	/// release(), and is thus less efficient than grab().  Use it only
+	/// when it's possible for MySQL server connections to go away
+	/// unexpectedly, such as when the DB server can be restarted out
+	/// from under your application.
+	///
+	/// \retval a pointer to the connection
+	virtual Connection* safe_grab();
 
 	/// \brief Remove all unused connections from the pool
 	void shrink() { clear(false); }
@@ -188,6 +241,7 @@ private:
 
 	//// Internal support functions
 	Connection* find_mru();
+	void remove(const PoolIt& it);
 	void remove_old_connections();
 
 	//// Internal data

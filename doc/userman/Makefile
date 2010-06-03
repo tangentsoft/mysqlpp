@@ -13,8 +13,8 @@ HTML_SS=html.xsl
 EX_TXT=cgi_jpeg.txt cpool.txt deadlock.txt fieldinf.txt for_each.txt \
 		load_jpeg.txt multiquery.txt resetdb.txt simple1.txt \
 		simple2.txt simple3.txt ssqls1.txt ssqls2.txt ssqls3.txt \
-		ssqls4.txt ssqls5.txt stock.txt store_if.txt tquery1.txt \
-		transaction.txt
+		ssqls4.txt ssqls5.txt ssqls6.txt stock.txt store_if.txt \
+		tquery1.txt transaction.txt
 
 
 ## ------------------------
@@ -46,13 +46,13 @@ clean:
 ## ------------------------
 
 $(PDFFILE): *.dbx *.in $(FO_SS) $(COMMON_SS)
-	xsltproc --nonet --xinclude $(FO_SS) $(DOCFILE) > $(FOFILE)
+	xsltproc --xinclude $(FO_SS) $(DOCFILE) > $(FOFILE)
 	./fo2pdf $(FOFILE) $(PDFFILE)
 	mkdir -p ../pdf && cp $(PDFFILE) ../pdf
 
 $(HTML_DIR)/index.html: *.dbx *.in $(EX_TXT) $(HTML_SS) $(COMMON_SS)
-	@xmllint --nonet --xinclude --postvalid --noent --noout $(DOCFILE)
-	xsltproc --nonet --xinclude -o $(HTML_DIR)/ $(HTML_SS) $(DOCFILE)
+	@xmllint --xinclude --nonet --postvalid --noent --noout $(DOCFILE)
+	xsltproc --xinclude --nonet -o $(HTML_DIR)/ $(HTML_SS) $(DOCFILE)
 
 
 ## ------------------------

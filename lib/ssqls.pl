@@ -5,7 +5,7 @@
 #	functions and classes, varying only in trivial ways.
 #
 # Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
-# (c) 2004-2008 by Educational Technology Resources, Inc.  Others may
+# (c) 2004-2010 by Educational Technology Resources, Inc.  Others may
 # also hold copyrights on code in this file.  See the CREDITS.txt file
 # in the top directory of the distribution for details.
 #
@@ -46,6 +46,11 @@ my $fp_min_delta = "0.00001";
 # No user-serviceable parts below.
 
 use strict;
+use Getopt::Std;
+
+our $opt_f;
+getopts('f:') or die "usage: $0 [-f fields]\n\n";
+$max_data_members = int($opt_f) if defined $opt_f;
 
 open (OUT, ">ssqls.h");
 
@@ -89,6 +94,8 @@ enum sql_dummy_type { sql_dummy };
 #else
 #	define MYSQLPP_SSQLS_CONDITIONAL_STATICS(...) __VA_ARGS__
 #endif
+
+#define MYSQLPP_SSQLS_MAX_MEMBERS $max_data_members
 
 ---
 
@@ -325,7 +332,7 @@ foreach my $i (1..$max_data_members) {
 		$enums .= "    NAME##_##I$j";
 		$enums .= ",\n" unless $j == $i;
 
-		$field_list .= "    s << obj.manip << obj.obj->names[".($j-1)."]";
+		$field_list .= "    s << obj.manip << '`' << obj.obj->names[".($j-1)."] << '`'";
 		$field_list .= " << obj.delim;\n" unless $j == $i;
 
 		$value_list .= "    s << obj.manip << obj.obj->I$j";
@@ -344,18 +351,18 @@ foreach my $i (1..$max_data_members) {
 
 		$cus_field_list .= "    if ((*obj.include)[".($j-1)."]) { \n";
 		$cus_field_list .= "      if (before) s << obj.delim;\n" unless $j == 1;
-		$cus_field_list .= "      s << obj.manip << obj.obj->names[".($j-1)."];\n";
+		$cus_field_list .= "      s << obj.manip << '`' << obj.obj->names[".($j-1)."] << '`';\n";
 		$cus_field_list .= "      before = true; \n" unless $j == $i;
 		$cus_field_list .= "     } \n";
 
 		$cus_equal_list .= "    if ((*obj.include)[".($j-1)."]) { \n";
 		$cus_equal_list .= "      if (before) s << obj.delim;\n" unless $j == 1;
-		$cus_equal_list .= "      s << obj.obj->names[".($j-1)."] << obj.comp";
+		$cus_equal_list .= "      s << '`' << obj.obj->names[".($j-1)."] << '`' << obj.comp";
 		$cus_equal_list .=        " << obj.manip << obj.obj->I$j;\n";
 		$cus_equal_list .= "      before = true; \n" unless $j == $i;
 		$cus_equal_list .= "     } \n";
 
-		$equal_list .= "    s << obj.obj->names[".($j-1)."] << obj.comp";
+		$equal_list .= "    s << '`' << obj.obj->names[".($j-1)."] << '`' << obj.comp";
 		$equal_list .= " << obj.manip << obj.obj->I$j";
 		$equal_list .= " << obj.delim;\n" unless $j == $i;
 

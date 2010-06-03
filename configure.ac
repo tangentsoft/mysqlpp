@@ -14,9 +14,8 @@
 # USA
 
 # Standard autotools stuff
-AC_INIT(mysql++, 3.0.9, plusplus@lists.mysql.com, mysql++)
+AC_INIT(mysql++, 3.1.0, plusplus@lists.mysql.com, mysql++)
 AC_CONFIG_HEADER(config.h)
-AC_DISABLE_STATIC
 AC_CANONICAL_SYSTEM
 
 
@@ -53,10 +52,32 @@ then
 fi
 
 
+# Let caller provide -f to lib/*.pl scripts in a uniform way
+AC_ARG_WITH([field-limit],
+		AS_HELP_STRING([--with-field-limit=<n>],
+			[set max template query and SSQLS field count]),
+		[], [])
+if test -n "$with_field_limit"
+then
+	 ( cd lib ;
+	   ./querydef.pl -f $with_field_limit ;
+	   ./ssqls.pl -f $with_field_limit 
+	 )
+fi
+
+
+# Try to find local getopt(); if we fail, we'll use the one in lib/cmdline.*
+AC_CHECK_FUNC(getopt, 
+		[AC_DEFINE(HAVE_POSIX_GETOPT, [], Define if getopt() is available in unistd.h)],
+		[AC_CHECK_LIB(iberty, getopt,
+			[AC_DEFINE(HAVE_LIBIBERTY_GETOPT, [], Define if getopt() is available in libiberty.h)],
+			[])])
+
+
 # Checks for libraries and local system features
 LIB_MATH
 LIB_SOCKET_NSL
-MYSQL_API_LOCATION
+MYSQL_C_API_LOCATION
 MYSQL_WITH_SSL
 AX_C_LOCALTIME_R
 AC_CHECK_LIB(intl, main)
@@ -86,6 +107,7 @@ AC_OUTPUT([\
 	install.hta \
 	lib/Doxyfile \
 	lib/mysql++.h \
+	ssx/Doxyfile \
 	mysql++.spec \
 	Makefile \
 ])

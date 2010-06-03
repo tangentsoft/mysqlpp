@@ -3,7 +3,7 @@
 	threads and POSIX threads.  Shows how to create and use a concrete
 	ConnectionPool derivative.
 
- Copyright (c) 2008 by Educational Technology Resources, Inc.
+ Copyright (c) 2008-2010 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the
  CREDITS.txt file in the top directory of the distribution for details.
 
@@ -44,13 +44,12 @@ class SimpleConnectionPool : public mysqlpp::ConnectionPool
 {
 public:
 	// The object's only constructor
-	SimpleConnectionPool(const char* db, const char* server,
-			const char* user, const char* password) :
+	SimpleConnectionPool(mysqlpp::examples::CommandLine& cl) :
 	conns_in_use_(0),
-	db_(db ? db : ""),
-	server_(server ? server : ""),
-	user_(user ? user : ""),
-	password_(password ? password : "")
+	db_(mysqlpp::examples::db_name),
+	server_(cl.server()),
+	user_(cl.user()),
+	password_(cl.pass())
 	{
 	}
 
@@ -130,11 +129,11 @@ worker_thread(thread_arg_t running_flag)
 {
 	// Ask the underlying C API to allocate any per-thread resources it
 	// needs, in case it hasn't happened already.  In this particular
-	// program, it's almost guaranteed that the grab() call below will
-	// create a new connection the first time through, and thus allocate
-	// these resources implicitly, but there's a nonzero chance that
-	// this won't happen.  Anyway, this is an example program, meant to
-	// show good style, so we take the high road and ensure the
+	// program, it's almost guaranteed that the safe_grab() call below
+	// will create a new connection the first time through, and thus
+	// allocate these resources implicitly, but there's a nonzero chance
+	// that this won't happen.  Anyway, this is an example program,
+	// meant to show good style, so we take the high road and ensure the
 	// resources are allocated before we do any queries.
 	mysqlpp::Connection::thread_start();
 	cout.put('S'); cout.flush(); // indicate thread started
@@ -143,8 +142,10 @@ worker_thread(thread_arg_t running_flag)
 	// connection we use each time.
 	for (size_t i = 0; i < 6; ++i) {
 		// Go get a free connection from the pool, or create a new one
-		// if there are no free conns yet.
-		mysqlpp::Connection* cp = poolptr->grab();
+		// if there are no free conns yet.  Uses safe_grab() to get a
+		// connection from the pool that will be automatically returned
+		// to the pool when this loop iteration finishes.
+		mysqlpp::ScopedConnection cp(*poolptr, true);
 		if (!cp) {
 			cerr << "Failed to get a connection from the pool!" << endl;
 			break;
@@ -157,10 +158,6 @@ worker_thread(thread_arg_t running_flag)
 		for (size_t j = 0; j < res.num_rows(); ++j) {
 			cout.put('.');
 		}
-
-		// Immediately release the connection once we're done using it.
-		// If we don't, the pool can't detect idle connections reliably.
-		poolptr->release(cp);
 
 		// Delay 1-4 seconds before doing it again.  Because this can
 		// delay longer than the idle timeout, we'll occasionally force
@@ -185,8 +182,8 @@ main(int argc, char *argv[])
 {
 #if defined(HAVE_THREADS)
 	// Get database access parameters from command line
-	const char* db = 0, *server = 0, *user = 0, *pass = "";
-	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
+	mysqlpp::examples::CommandLine cmdline(argc, argv);
+	if (!cmdline) {
 		return 1;
 	}
 
@@ -197,15 +194,14 @@ main(int argc, char *argv[])
 	// latter check should never fail on Windows, but will fail on most
 	// other systems unless you take positive steps to build with thread
 	// awareness turned on.  See README-*.txt for your platform.
-	poolptr = new SimpleConnectionPool(db, server, user, pass);
+	poolptr = new SimpleConnectionPool(cmdline);
 	try {
-		mysqlpp::Connection* cp = poolptr->grab();
+		mysqlpp::ScopedConnection cp(*poolptr, true);
 		if (!cp->thread_aware()) {
 			cerr << "MySQL++ wasn't built with thread awareness!  " <<
 					argv[0] << " can't run without it." << endl;
 			return 1;
 		}
-		poolptr->release(cp);
 	}
 	catch (mysqlpp::Exception& e) {
 		cerr << "Failed to set up initial pooled connection: " <<
@@ -216,7 +212,7 @@ main(int argc, char *argv[])
 	// Setup complete.  Now let's spin some threads...
 	cout << endl << "Pool created and working correctly.  Now to do "
 			"some real work..." << endl;
-	srand(time(0));
+	srand((unsigned int)time(0));
 	bool running[] = {
 			true, true, true, true, true, true, true,
 			true, true, true, true, true, true, true };

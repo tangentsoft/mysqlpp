@@ -2,7 +2,7 @@
  query.cpp - Implements the Query class.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2008 by Educational Technology Resources, Inc.  Others may
+ (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
  also hold copyrights on code in this file.  See the CREDITS.txt file
  in the top directory of the distribution for details.
 
@@ -31,6 +31,12 @@
 #include "connection.h"
 
 namespace mysqlpp {
+
+// Force insertfrom() policy template instantiation.  Required to make 
+// VC++ happy.
+Query::RowCountInsertPolicy<Transaction> RowCountInsertPolicyI(0);
+Query::SizeThresholdInsertPolicy<Transaction> SizeThresholdInsertPolicyI(0);
+Query::MaxPacketInsertPolicy<Transaction> MaxPacketInsertPolicyI(0);
 
 Query::Query(Connection* c, bool te, const char* qstr) :
 #if defined(MYSQLPP_HAVE_STD__NOINIT)
@@ -66,18 +72,16 @@ std::ostream(std::_Noinit),
 #else
 std::ostream(0),
 #endif
-OptionalExceptions(q.throw_exceptions()),
-template_defaults(q.template_defaults),
-conn_(q.conn_),
-copacetic_(q.copacetic_)
+OptionalExceptions(q.throw_exceptions())
 {
-	// We don't copy stream buffer or template query stuff from the other
-	// Query on purpose.  This isn't a copy ctor so much as a way to
-	// ensure that "Query q(conn.query());" works correctly.
+	// Set up our internal IOStreams string buffer
 	init(&sbuffer_);
 
 	// See above for reason we override locale for Query streams.
 	imbue(std::locale::classic());
+
+	// Copy the other query as best we can
+	operator =(q);
 }
 
 
@@ -106,29 +110,15 @@ size_t
 Query::escape_string(std::string* ps, const char* original,
 		size_t length) const
 {
-	if (ps == 0) {
-		// Can't do any real work!
-		return 0;
+	if (conn_ && *conn_) {
+		// Normal case
+		return conn_->driver()->escape_string(ps, original, length);
 	}
-	else if (original == 0) {
-		// ps must point to the original data as well as to the
-		// receiving string, so get the pointer and the length from it.
-		original = ps->data();
-		length = ps->length();
+	else {
+		// Should only happen in test/test_manip.cpp, since it doesn't
+		// want to open a DB connection just to test the manipulators.
+		return DBDriver::escape_string_no_conn(ps, original, length);
 	}
-	else if (length == 0) {
-		// We got a pointer to a C++ string just for holding the result
-		// and also a C string pointing to the original, so find the
-		// length of the original.
-		length = strlen(original);
-	}
-
-	char* escaped = new char[length * 2 + 1];
-	length = escape_string(escaped, original, length);
-	ps->assign(escaped, length);
-	delete[] escaped;
-
-	return length;
 }
 
 
@@ -168,6 +158,14 @@ Query::exec(const std::string& str)
 }
 
 
+SimpleResult 
+Query::execute() 
+{ 
+	AutoFlag<> af(template_defaults.processing_);
+	return execute(str(template_defaults)); 
+}
+
+
 SimpleResult
 Query::execute(SQLQueryParms& p)
 {
@@ -179,7 +177,7 @@ Query::execute(SQLQueryParms& p)
 SimpleResult
 Query::execute(const SQLTypeAdapter& s)
 {
-	if ((parse_elems_.size() == 2) && !template_defaults.processing_) {
+	if (!parse_elems_.empty() && !template_defaults.processing_) {
 		// We're a template query and this isn't a recursive call, so
 		// take s to be a lone parameter for the query.  We will come
 		// back in here with a completed query, but the processing_
@@ -197,6 +195,14 @@ Query::execute(const SQLTypeAdapter& s)
 SimpleResult
 Query::execute(const char* str, size_t len)
 {
+	if (!parse_elems_.empty() && !template_defaults.processing_) {
+		// We're a template query and this isn't a recursive call, so
+		// take s to be a lone parameter for the query.  We will come
+		// back in here with a completed query, but the processing_
+		// flag will be set, allowing us to avoid an infinite loop.
+		AutoFlag<> af(template_defaults.processing_);
+		return execute(SQLQueryParms() << str << len );
+	}
 	if ((copacetic_ = conn_->driver()->execute(str, len)) == true) {
 		if (parse_elems_.size() == 0) {
 			// Not a template query, so auto-reset
@@ -241,6 +247,12 @@ Query::operator=(const Query& rhs)
 	template_defaults = rhs.template_defaults;
 	conn_ = rhs.conn_;
 	copacetic_ = rhs.copacetic_;
+
+	*this << rhs.sbuffer_.str();
+
+	parse_elems_  = rhs.parse_elems_;
+	parsed_names_ = rhs.parsed_names_;
+	parsed_nums_  = rhs.parsed_nums_;
 
 	return *this;
 }
@@ -435,12 +447,17 @@ Query::proc(SQLQueryParms& p)
 			}
 
 			SQLTypeAdapter& param = (*c)[num];
-			SQLTypeAdapter* ss = pprepare(i->option, param, c->bound());
-			MYSQLPP_QUERY_THISPTR << *ss;
-			if (ss != &param) {
-				// pprepare() returned a new string object instead of
-				// updating param in place, so we need to delete it.
-				delete ss;
+			if (param.is_null()) {
+				MYSQLPP_QUERY_THISPTR << "NULL";
+			}
+			else {
+				SQLTypeAdapter* ss = pprepare(i->option, param, c->bound());
+				MYSQLPP_QUERY_THISPTR << *ss;
+				if (ss != &param) {
+					// pprepare() returned a new string object instead of
+					// updating param in place, so we need to delete it.
+					delete ss;
+				}
 			}
 		}
 	}
@@ -459,6 +476,14 @@ Query::reset()
 }
 
 
+StoreQueryResult 
+Query::store() 
+{ 
+	AutoFlag<> af(template_defaults.processing_);
+	return store(str(template_defaults)); 
+}
+
+
 StoreQueryResult
 Query::store(SQLQueryParms& p)
 {
@@ -470,7 +495,7 @@ Query::store(SQLQueryParms& p)
 StoreQueryResult
 Query::store(const SQLTypeAdapter& s)
 {
-	if ((parse_elems_.size() == 2) && !template_defaults.processing_) {
+	if (!parse_elems_.empty() && !template_defaults.processing_) {
 		// We're a template query and this isn't a recursive call, so
 		// take s to be a lone parameter for the query.  We will come
 		// back in here with a completed query, but the processing_
@@ -488,6 +513,14 @@ Query::store(const SQLTypeAdapter& s)
 StoreQueryResult
 Query::store(const char* str, size_t len)
 {
+	if (!parse_elems_.empty() && !template_defaults.processing_) {
+		// We're a template query and this isn't a recursive call, so
+		// take s to be a lone parameter for the query.  We will come
+		// back in here with a completed query, but the processing_
+		// flag will be set, allowing us to avoid an infinite loop.
+		AutoFlag<> af(template_defaults.processing_);
+		return store(SQLQueryParms() << str << len );
+	}
 	MYSQL_RES* res = 0;
 	if ((copacetic_ = conn_->driver()->execute(str, len)) == true) {
 		res = conn_->driver()->store_result();
@@ -507,7 +540,8 @@ Query::store(const char* str, size_t len)
 		// DELETE, CREATE, ALTER...) we need to figure out which case
 		// this is.  (You might use store() instead of execute() for
 		// such queries when the query strings come from "outside".)
-		if (copacetic_ = (conn_->errnum() == 0)) {
+		copacetic_ = (conn_->errnum() == 0);
+		if (copacetic_) {
 			if (parse_elems_.size() == 0) {
 				// Not a template query, so auto-reset
 				reset();
@@ -580,6 +614,14 @@ Query::str(SQLQueryParms& p)
 }
 
 
+UseQueryResult 
+Query::use() 
+{ 
+	AutoFlag<> af(template_defaults.processing_);
+	return use(str(template_defaults)); 
+}
+
+
 UseQueryResult
 Query::use(SQLQueryParms& p)
 {
@@ -591,7 +633,7 @@ Query::use(SQLQueryParms& p)
 UseQueryResult
 Query::use(const SQLTypeAdapter& s)
 {
-	if ((parse_elems_.size() == 2) && !template_defaults.processing_) {
+	if (!parse_elems_.empty()  && !template_defaults.processing_) {
 		// We're a template query and this isn't a recursive call, so
 		// take s to be a lone parameter for the query.  We will come
 		// back in here with a completed query, but the processing_
@@ -609,6 +651,14 @@ Query::use(const SQLTypeAdapter& s)
 UseQueryResult
 Query::use(const char* str, size_t len)
 {
+	if (!parse_elems_.empty() && !template_defaults.processing_) {
+		// We're a template query and this isn't a recursive call, so
+		// take s to be a lone parameter for the query.  We will come
+		// back in here with a completed query, but the processing_
+		// flag will be set, allowing us to avoid an infinite loop.
+		AutoFlag<> af(template_defaults.processing_);
+		return use(SQLQueryParms() << str << len );
+	}
 	MYSQL_RES* res = 0;
 	if ((copacetic_ = conn_->driver()->execute(str, len)) == true) {
 		res = conn_->driver()->use_result();
@@ -624,7 +674,8 @@ Query::use(const char* str, size_t len)
 	else {
 		// See comments in store() above for why we distinguish between
 		// empty result sets and actual error returns here.
-		if (copacetic_ = (conn_->errnum() == 0)) {
+		copacetic_ = (conn_->errnum() == 0);
+		if (copacetic_) {
 			if (parse_elems_.size() == 0) {
 				// Not a template query, so auto-reset
 				reset();

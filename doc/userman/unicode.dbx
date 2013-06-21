@@ -30,10 +30,13 @@
     characters using only 7-bit ASCII.</para>
 
     <para>Unicode solves this problem. It encodes every character used
-    for writing in the world, using up to 4 bytes per character. The
+    for writing in the world, using up to 4 bytes per character.  The
     subset covering the most economically valuable cases takes two bytes
-    per character, so most Unicode-aware programs deal in 2-byte
-    characters, for efficiency.</para>
+    per character, so many Unicode-aware programs only support this
+    subset, storing characters as 2-byte values, rather than use 4-byte
+    characters so as to cover all possible cases, however rare. This
+    subset of Unicode is called the Basic Multilingual Plane, or
+    BMP.</para>
 
     <para>Unfortunately, Unicode was invented about two decades
     too late for Unix and C. Those decades of legacy created an
@@ -97,12 +100,20 @@
     <title>Unicode on Windows</title>
 
     <para>Each Windows API function that takes a string actually comes
-    in two versions. One version supports only 1-byte &#x201C;ANSI&#x201D;
-    characters (a superset of ASCII), so they end in 'A'. Windows also
-    supports the 2-byte subset of Unicode called <ulink
-    url="http://en.wikipedia.org/wiki/UCS-2">UCS-2</ulink>.  Some call
-    these &#x201C;wide&#x201D; characters, so the other set of functions
-    end in 'W'. The <function><ulink
+    in two versions. One version supports only 1-byte
+    &#x201C;ANSI&#x201D; characters (a superset of ASCII), so they end
+    in 'A'. Windows also supports the 2-byte subset of Unicode called
+    <ulink
+    url="http://en.wikipedia.org/wiki/UCS-2">UCS-2</ulink><footnote><para>Since
+    Windows XP, Windows actually uses the <ulink
+    url="http://en.wikipedia.org/wiki/UTF-16">UTF-16</ulink> encoding,
+    not UCS-2.  This means that if you use characters beyond the 16-bit
+    &ldquo;BMP&rdquo; range, they get encoded as 4-byte characters. But
+    again, since the most economically valuable subset of Unicode is the
+    BMP, many programs ignore this distinction and treat modern Windows
+    as supporting 2-byte characters.</para></footnote>. Some call these
+    &#x201C;wide&#x201D; characters, so the other set of functions end
+    in 'W'. The <function><ulink
     url="http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/dialogboxes/dialogboxreference/dialogboxfunctions/messagebox.asp">MessageBox</ulink>()</function>
     API, for instance, is actually a macro, not a real function. If you
     define the <symbol>UNICODE</symbol> macro when building your
@@ -168,11 +179,12 @@ System::Void ToUTF8(char* pcOut, int nOutLen, String^ sIn)
     routines.</para>
 
     <para>All of this assumes you&#x2019;re using Windows NT or one of
-    its direct descendants: Windows 2000, Windows XP, Windows Vista, or
-    any &#x201C;Server&#x201D; variant of Windows. Windows 95 and its
-    descendants (98, ME, and CE) do not support UCS-2. They still have
-    the 'W' APIs for compatibility, but they just smash the data down to
-    8-bit and call the 'A' version for you.</para>
+    its direct descendants: Windows 2000, Windows XP, Windows Vista,
+    Windows 7, or any &#x201C;Server&#x201D; variant of Windows.
+    Windows 95 and its descendants (98, ME, and CE) do not support
+    Unicode. They still have the 'W' APIs for compatibility, but they
+    just smash the data down to 8-bit and call the 'A' version for
+    you.</para>
   </sect2>
 
 

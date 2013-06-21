@@ -182,14 +182,14 @@
     <para>There are lots of ways to build programs on Unixy
     platforms.  We&#x2019;ll cover just the most generic way
     here, <filename>Makefile</filename>s. We&#x2019;ll use a very
-    simple example so it&#x2019;s clear how to translate this to
-    more sophisticated build systems such as GNU Autotools or
+    simple example so it&#x2019;s clear how to translate this
+    to more sophisticated build systems such as GNU Autotools or
     Bakefile.</para>
 
     <para>&#x201C;Hello, world!&#x201D; for MySQL++ might look something
     like this:</para>
 
-    <programlisting><xi:include href="hello.cpp" parse="text"
+    <programlisting><xi:include href="hello.txt" parse="text"
     xmlns:xi="http://www.w3.org/2001/XInclude"/></programlisting>
 
     <para>Here&#x2019;s a <filename>Makefile</filename> for building
@@ -198,36 +198,52 @@
     <programlisting><xi:include href="Makefile.hello.posix" parse="text"
     xmlns:xi="http://www.w3.org/2001/XInclude"/></programlisting>
 
-    <para>The first three lines are where all of the assumptions
-    about file and path names are laid out. Probably at least one of
-    these assumptions isn&#x2019;t true for your system, and so will
-    require changing.</para>
+    <para>The <varname>*FLAGS</varname> lines are where all of the
+    assumptions about file and path names are laid out. Probably at
+    least one of these assumptions isn&#x2019;t true for your system,
+    and so will require changing.</para>
 
-    <para>The trickiest line is the third one. MySQL++ programs
-    need to get built against both the MySQL and MySQL++
-    libraries, because MySQL++ is built on top of the MySQL C
-    API library. If you&#x2019;re building a threaded program,
-    use <filename>-lmysqlclient_r</filename> instead. (See <xref
+    <para>The trickiest line is the <varname>LDLIBS</varname>
+    one. MySQL++ programs need to get built against both the MySQL
+    and MySQL++ libraries, because MySQL++ is built on top of the
+    MySQL C API library<footnote><para>The MySQL C API library
+    is most commonly called <filename>libmysqlclient</filename>
+    on Unixy systems, though it is also known as <ulink
+    url="https://dev.mysql.com/downloads/connector/c/">Connector/C</ulink>.</para></footnote>
+    If you&#x2019;re building a threaded program, use
+    <filename>-lmysqlclient_r</filename> instead of
+    <filename>-lmysqlclient</filename> here. (See <xref
     linkend="threads"/> for more details on building thread-aware
     programs.)</para>
 
     <para>On some systems, the order of libraries in the
-    <varname>LDFLAGS</varname> line is important: these linkers collect
+    <varname>LDLIBS</varname> line is important: these linkers collect
     symbols from right to left, so the rightmost library needs to
     be the most generic. In this example, MySQL++ depends on MySQL,
     so the MySQL C API library is rightmost.</para>
 
     <para>You might need to add more libraries to the
-    <varname>LDFLAGS</varname> line.  <filename>-lnsl</filename>,
+    <varname>LDLIBS</varname> line. <filename>-lnsl</filename>,
     <filename>-lz</filename> and <filename>-lm</filename> are
     common. If you study how MySQL++ itself gets built on your system,
     you can see what it uses, and emulate that.</para>
 
+    <para>You may be wondering why we have used both
+    <varname>LDLIBS</varname> and <varname>LDFLAGS</varname>
+    here. Some <filename>Makefiles</filename> you have seen probably
+    try to collect both types of flags in a single variable. Whether
+    that works or not depends on where on the command line those
+    flags appear. Since we&rsquo;re depending on the standard
+    <filename>make</filename> rules here, we know have to separate
+    the <option>-l</option> and <option>-L</option> flags due to the
+    place they&rsquo;re inserted into the link command. If you were
+    writing your own compilation rules, you could write them in such
+    a way that you didn&rsquo;t have to do this.</para>
+
     <para>Beyond that, we have a pretty vanilla
-    <filename>Makefile</filename>. We don&#x2019;t have any special
-    dependency or build rules, because the default rules should work
-    fine, particularly if you&#x2019;re using GNU make, which is just
-    about universal these days.</para>
+    <filename>Makefile</filename>, thanks in large part to the fact
+    that the default <filename>make</filename> rules are fine for
+    such a simple program.</para>
   </sect2>
 
 
@@ -237,9 +253,10 @@
     <sect3 id="inc-osx-makefile">
       <title>Makefiles</title>
 
-      <para>The <link linkend="inc-unix">generic Makefile
-      instructions above</link> cover most of what you need to know
-      about using Makefiles on OS X.</para>
+      <para>The <link linkend="inc-unix">generic
+      <filename>Makefile</filename> instructions above</link>
+      cover most of what you need to know about using Makefiles on
+      OS X.</para>
 
       <para>One thing that may trip you up on OS X is that it uses an
       uncommon dynamic linkage system. The easiest way to cope with
@@ -269,8 +286,9 @@
     <sect3 id="inc-mingw-makefile">
       <title>Makefiles</title>
 
-      <para>The <link linkend="inc-unix">generic Makefile instructions
-      above</link> apply to MinGW&#x2019;s version of GNU make as
+      <para>The <link linkend="inc-unix">generic
+      <filename>Makefile</filename> instructions above</link> apply
+      to MinGW&#x2019;s version of GNU <filename>make</filename> as
       well. You will have some differences due to the platform, so
       here&#x2019;s the adjusted <filename>Makefile</filename>:</para>
 
@@ -278,76 +296,27 @@
       href="Makefile.hello.mingw" parse="text"
       xmlns:xi="http://www.w3.org/2001/XInclude"/></programlisting>
 
-      <para>Note the use of forward slashes. GNU make uses the
-      backslash as an escape character, so you&#x2019;d have to double
-      them if you&#x2019;re unwilling to use forward slashes.</para>
+      <para>Note that I&#x2019;ve used <command>del</command>
+      instead of <command>rm</command> in the clean target. In
+      the past, at least, MinGW <filename>make</filename>
+      had some funny rules about whether commands in target
+      rules would get run with <filename>sh.exe</filename>
+      or with <filename>cmd.exe</filename>. I can&rsquo;t
+      currently get my installation of MinGW to do anything
+      but use <filename>sh.exe</filename> by default, but that
+      may be because I have Cygwin installed, which provides
+      <filename>sh.exe</filename>.  This explains the first
+      line in the file, which overrides the default shell with
+      <filename>cmd.exe</filename>, purely to get consistent
+      behavior across platforms. If you knew all your platforms
+      would have a better shell, you&rsquo;d probably want to use
+      that instead.</para>
 
-      <para>Also note that I&#x2019;ve used <command>del</command>
-      instead of <command>rm</command> in the clean target. Unless
-      there is a program called <filename>sh.exe</filename> in
-      your <varname>PATH</varname>, MinGW make uses Windows&#x2019;
-      <filename>cmd.exe</filename> for shell commands. The most likely
-      reason to have <filename>sh.exe</filename> is if you also have
-      Cygwin or MSYS installed. The next section covers the best way
-      I&#x2019;ve found to cope with that.</para>
-
-      <sect4 id="inc-mingw-cygwin">
-        <title>Working with MinGW Under Cygwin</title>
-
-        <para>Compared to Unix, the biggest difference you&#x2019;ll
-        find is that MinGW calls its <filename>make</filename>
-        executable <filename>mingw32-make</filename>. As I understand
-        it, this is to allow it to coexist with Cygwin, since the two
-        versions have some behavioral differences, despite both being
-        based on GNU Make.  A <filename>Makefile</filename> written
-        for one is likely to fail to work correctly with the other,
-        so you have to be able to specify which one you mean.</para>
-
-        <para>If you have both MinGW and Cygwin installed, you may be
-        tempted to use Cygwin&#x2019;s superior command line environment
-        over a Windows command shell or MSYS. If you&#x2019;re like me,
-        you type <filename>make</filename> reflexively now; typing
-        <filename>mingw32-make</filename> instead isn&#x2019;t going
-        to work. Another problem with having Cygwin and MinGW on the
-        same system is that this puts a <filename>sh.exe</filename>
-        program in your system&#x2019;s <varname>PATH</varname>
-        which makes MinGW make send shell commands to it instead of
-        <filename>cmd.exe</filename> as it normally would.  I find it
-        best to set up a special MinGW environment to avoid problems
-        stemming from these platform differences.</para>
-
-        <para>I&#x2019;ve created a pair of scripts that let me work
-        in Cygwin mode most of the time and temporarily drop down
-        into &#x201C;MinGW mode&#x201D; only when necessary. I call the
-        first script <filename>mingw</filename>, and put it somewhere
-        in the Cygwin <varname>PATH</varname>:</para>
-
-        <programlisting>
-  #!/bin/sh
-  PATH=/cygdrive/c/mingw/bin:/cygdrive/c/windows:/cygdrive/c/windows/system32:/cygdrive/c/cygwin/bin
-  echo "Say 'exit' to leave MinGW shell and restore Cygwin environment."
-  /usr/bin/bash --rcfile ~/.mingwrc</programlisting>
-
-        <para>Then there&#x2019;s a tiny little file called
-        <filename>.mingwrc</filename> that goes in your Cygwin home
-        directory:</para>
-
-        <programlisting>
-  alias make=mingw32-make
-  PS1='MinGW: \W \$ '</programlisting>
-
-        <para>(This split is necessary due to the way Bash works.)</para>
-
-        <para>The first script sets up most of the MinGW environment,
-        putting the MinGW and Windows directories ahead of the Cygwin
-        directory so programs in those locations take precedence. Then
-        the second script finishes setting up the MinGW sub-shell,
-        causing the <filename>make</filename> command to invoke
-        MinGW&#x2019;s make program instead of Cygwin&#x2019;s, and
-        changing the command prompt to remind you that you&#x2019;re
-        in a sub-shell. Just say <command>exit</command> to get back
-        to Cygwin mode.</para>
-      </sect4>
+      <para>Note the use of forward slashes in the path to the MySQL
+      Connector/C development files. GNU <filename>make</filename>
+      uses the backslash as an escape character, so you&#x2019;d
+      have to double them if you&#x2019;re unwilling to use forward
+      slashes.</para>
     </sect3>
 
     <sect3 id="inc-mingw-ide">
@@ -356,7 +325,8 @@
       <para>I have no information on how to do this. We&#x2019;ve
       received reports on the mailing list from people that have made
       it work, but no specifics on what all needs to be done. The
-      Makefile discussion above should give you some hints.</para>
+      <filename>Makefile</filename> discussion above should give you
+      some hints.</para>
     </sect3>
   </sect2>
 
@@ -364,13 +334,13 @@
   <sect2 id="inc-eclipse">
     <title>Eclipse</title>
 
-    <para>As far as I can tell, the simplest way to build a C++
-    project with Eclipse is to set up a Makefile for it as described
-    <link linkend="inc-unix">above</link>, then add an external
-    run configuration for your local make tool. Get the project
-    building from the command line with make, then go to Run |
-    External Tools | Open External Tools Dialog and add a new launch
-    configuration.</para>
+    <para>As far as I can tell, the simplest way to build a C++ project
+    with Eclipse is to set up a <filename>Makefile</filename> for it
+    as described <link linkend="inc-unix">above</link>, then add an
+    external run configuration for your local <filename>make</filename>
+    tool. Get the project building from the command line with
+    <filename>make</filename>, then go to Run | External Tools | Open
+    External Tools Dialog and add a new launch configuration.</para>
 
     <para>For example, on my OS X system I use
     <filename>/usr/bin/gnumake</filename> for the program location

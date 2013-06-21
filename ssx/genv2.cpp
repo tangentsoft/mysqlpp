@@ -32,6 +32,7 @@
 
 #include "parsev2.h"
 
+#include <cstring>
 #include <iostream>
 #include <fstream>
 #include <typeinfo>

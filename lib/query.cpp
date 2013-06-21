@@ -177,7 +177,7 @@ Query::execute(SQLQueryParms& p)
 SimpleResult
 Query::execute(const SQLTypeAdapter& s)
 {
-	if (!parse_elems_.empty() && !template_defaults.processing_) {
+	if ((parse_elems_.size() == 2) && !template_defaults.processing_) {
 		// We're a template query and this isn't a recursive call, so
 		// take s to be a lone parameter for the query.  We will come
 		// back in here with a completed query, but the processing_
@@ -195,7 +195,7 @@ Query::execute(const SQLTypeAdapter& s)
 SimpleResult
 Query::execute(const char* str, size_t len)
 {
-	if (!parse_elems_.empty() && !template_defaults.processing_) {
+	if ((parse_elems_.size() == 2) && !template_defaults.processing_) {
 		// We're a template query and this isn't a recursive call, so
 		// take s to be a lone parameter for the query.  We will come
 		// back in here with a completed query, but the processing_
@@ -476,6 +476,13 @@ Query::reset()
 }
 
 
+bool
+Query::result_empty()
+{
+	return conn_->driver()->result_empty();
+}
+
+
 StoreQueryResult 
 Query::store() 
 { 
@@ -495,7 +502,7 @@ Query::store(SQLQueryParms& p)
 StoreQueryResult
 Query::store(const SQLTypeAdapter& s)
 {
-	if (!parse_elems_.empty() && !template_defaults.processing_) {
+	if ((parse_elems_.size() == 2) && !template_defaults.processing_) {
 		// We're a template query and this isn't a recursive call, so
 		// take s to be a lone parameter for the query.  We will come
 		// back in here with a completed query, but the processing_
@@ -513,7 +520,7 @@ Query::store(const SQLTypeAdapter& s)
 StoreQueryResult
 Query::store(const char* str, size_t len)
 {
-	if (!parse_elems_.empty() && !template_defaults.processing_) {
+	if ((parse_elems_.size() == 2) && !template_defaults.processing_) {
 		// We're a template query and this isn't a recursive call, so
 		// take s to be a lone parameter for the query.  We will come
 		// back in here with a completed query, but the processing_
@@ -633,7 +640,7 @@ Query::use(SQLQueryParms& p)
 UseQueryResult
 Query::use(const SQLTypeAdapter& s)
 {
-	if (!parse_elems_.empty()  && !template_defaults.processing_) {
+	if ((parse_elems_.size() == 2) && !template_defaults.processing_) {
 		// We're a template query and this isn't a recursive call, so
 		// take s to be a lone parameter for the query.  We will come
 		// back in here with a completed query, but the processing_
@@ -651,7 +658,7 @@ Query::use(const SQLTypeAdapter& s)
 UseQueryResult
 Query::use(const char* str, size_t len)
 {
-	if (!parse_elems_.empty() && !template_defaults.processing_) {
+	if ((parse_elems_.size() == 2) && !template_defaults.processing_) {
 		// We're a template query and this isn't a recursive call, so
 		// take s to be a lone parameter for the query.  We will come
 		// back in here with a completed query, but the processing_

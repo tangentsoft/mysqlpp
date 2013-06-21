@@ -85,3 +85,27 @@ Configure Options
         See the chapter on threading in the user manual for more
         details and advice on creating thread-safe programs with
         MySQL++.
+
+
+Building a Static Library
+~~~~~~~~~~~~~~~~~~~~~~~~~
+    As shipped, MySQL++ only builds a shared library.  It's possible to
+    change things so you get a static library instead.
+
+    Before we get to "how," beware that liking statically to MySQL++ has
+    legal consequences that may matter to you, due to the library's
+    license, the GNU LGPL.  Familiarize yourself with the license, and
+    consider getting legal counsel before proceeding.  Also, see the
+    MySQL++ FAQ: http://tangentsoft.net/mysql++/#faq  There is more on
+    this topic there.
+
+    The necessary changes are all in mysql++.bkl:
+
+        - Change the <dll> tag to <lib>.  (Remember the closing tag!)
+
+        - Remove the <dllname> tag
+
+        - Remove the <so_version> tag
+
+    Then, re-bootstrap the library.  See HACKERS.txt if you need further
+    instruction on doing that.

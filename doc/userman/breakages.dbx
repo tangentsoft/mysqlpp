@@ -801,7 +801,7 @@ for (i = 0; i &lt; res.num_rows(); ++i) {
   // Do something with row here
 }</programlisting>
 
-				<para>...or, in a more C++ish idiom:</para>
+        <para>...or, in a more C++ish idiom:</para>
 
         <programlisting>
 mysqlpp::Row row;
@@ -1012,8 +1012,11 @@ my_ssqls_type::table("MyTableName");</programlisting>
       exception when you pass an out-of-range index. These
       methods variously either did not check their indices,
       or threw <classname>std::out_of_range</classname> when
-      passed a bad index. The one exception that comes to mind is
-      <classname>Fields</classname>, which is just a typedef for a
+      passed a bad index.</para>
+      
+      <para>I say &ldquo;most&rdquo; because there is at
+      least one MySQL++ class that doesn&rsquo;t follow this
+      rule. <classname>Fields</classname> is just a typedef for a
       specialization of <classname>std::vector</classname>, and the
       Standard has its own rules for index checking.</para>
     </sect3>
@@ -1187,6 +1190,26 @@ my_ssqls_type::table("MyTableName");</programlisting>
       change the &#x201C;safe bool&#x201D; method signature to make it
       happen, so technically it&#x2019;s an API change, but it&#x2019;s
       still used the same way.</para>
+    </sect3>
+
+
+    <sect3 id="abi-3.1.0">
+      <title>v3.1.0</title>
+
+      <para>The addition of a few new virtual methods to
+      <classname>ConnectionPool</classname> inadvertently changed
+      the library ABI. I knew adding fields changed the ABI, but
+      erroneously assumed that the inverse of that truth &mdash; that
+      adding <emphasis>methods</emphasis> was always safe &mdash;
+      was also true. Adding normal methods <emphasis>is</emphasis>
+      safe, but adding <emphasis>virtual</emphasis> methods breaks
+      the ABI because it changes the class&rsquo;s vtable size.</para>
+
+      <para>That left us with two bad choices: either we could come
+      out with a 3.1.1 that removed these methods to restore the prior
+      ABI, or we could just declare this the &ldquo;new ABI&rdquo;
+      and move on, resolving not to fall into this trap again.
+      We&rsquo;ve chosen the latter path.</para>
     </sect3>
   </sect2>
 </sect1>

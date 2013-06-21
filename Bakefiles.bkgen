@@ -19,6 +19,6 @@
 		-ovc2005/mysql++.sln
 	</add-flags>
 	<add-flags formats="msvs2008prj">
-		-ovc2008/mysql++.sln
+		-ovc2008/mysql++.sln -DMSVS_PLATFORMS=win64
 	</add-flags>
 </bakefile-gen>

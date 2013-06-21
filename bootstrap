@@ -37,7 +37,7 @@ do
 			;;
 
 		pedantic)
-			export CXXFLAGS="-g -O2 -ansi -pedantic -Wall -W -Wold-style-cast -Wfloat-equal -Wwrite-strings -Wno-overloaded-virtual -Wno-long-long -Wno-variadic-macros -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC"
+			export CXXFLAGS="-g -O2 -ansi -pedantic -Wall -Wextra -W -Wold-style-cast -Wfloat-equal -Wwrite-strings -Wno-overloaded-virtual -Wno-long-long -Wno-variadic-macros -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC"
 			shift
 			;;
 
@@ -47,45 +47,42 @@ do
 	esac
 done
 
-rm -f config.cache
+# Find location of Bakefile's stock M4 autoconf macros
+for d in /usr/share/aclocal /usr/local/share/aclocal \
+	'/c/Program Files (x86)/Bakefile/autoconf'
+do
+	BAKEFILE_M4="$d"
+	if [ -e "$BAKEFILE_M4/bakefile.m4" ] ; then break ; fi
+done
+if [ ! -e "$BAKEFILE_M4/bakefile.m4" ]
+then
+	echo
+	echo "Failed to find bakefile.m4.  Add the directory containing"
+	echo "this to the bootstrap script."
+	echo
+	exit 1
+fi
 
-# Do Bakefile stuff first
+# Do Bakefile stuff first.  Autoconf can't succeed without
+# autoconf_in.m4, which Bakefile creates.
+success=
 set -x &&
 	for d in 3 5 8 ; do mkdir -p vc200$d ; done &&
 	bakefilize &&
+	rm -f INSTALL &&
 	bakefile_gen $BF_OPTIONS &&
 	bakefile -f gnu -o Makefile.simple -DBUILDLIBRARY=no mysql++.bkl &&
 	set +x &&
 	success=shonuff
 
-# Get rid of INSTALL symlink added by bakefilize.  We already have
-# INSTALL.txt.
-rm -f INSTALL
-
-# If that succeeded, move on to autotools stuff, etc.
-set +x
+# Do the autotools stuff if Bakefile steps succeeded
 if [ -n "$success" ]
 then
+	rm -f config.cache
 	mv autoconf_inc.m4 config > /dev/null 2>&1	# don't care if it fails
-
-	# Find location of Bakefile's stock M4 autoconf macros
-	for d in /usr /usr/local
-	do
-		BAKEFILE_M4=$d/share/aclocal
-		if [ -e $BAKEFILE_M4/bakefile.m4 ] ; then break ; fi
-	done
-	if [ ! -e $BAKEFILE_M4/bakefile.m4 ]
-	then
-		echo
-		echo "Failed to find bakefile.m4.  Add the directory containing"
-		echo "this to the bootstrap script."
-		echo
-		exit 1
-	fi
-
-	success=
 	set -x &&
-		aclocal -I config -I $BAKEFILE_M4 &&
+		aclocal -I config -I "$BAKEFILE_M4" &&
+		libtoolize &&
 		autoheader &&
 		autoconf &&
 		./configure $MAINT_FLAGS $* &&

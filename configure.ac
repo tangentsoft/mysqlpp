@@ -14,9 +14,15 @@
 # USA
 
 # Standard autotools stuff
-AC_INIT(mysql++, 3.1.0, plusplus@lists.mysql.com, mysql++)
+AC_INIT(mysql++, 3.2.0, plusplus@lists.mysql.com, mysql++)
 AC_CONFIG_HEADER(config.h)
+AC_CONFIG_MACRO_DIR([config])
 AC_CANONICAL_SYSTEM
+
+
+# Enable libtool to decide shared library compile flags (ie -fPIC)
+AC_PROG_LIBTOOL
+AC_SUBST([LIBTOOL_DEPS])
 
 
 # Break package version up into major, minor and bugfix components.
@@ -26,10 +32,6 @@ MYSQLPP_VERSION_MINOR=`echo $PACKAGE_VERSION | cut -f2 -d.`
 AC_SUBST(MYSQLPP_VERSION_MINOR)
 MYSQLPP_VERSION_BUGFIX=`echo $PACKAGE_VERSION | cut -f3 -d.`
 AC_SUBST(MYSQLPP_VERSION_BUGFIX)
-
-
-# Include Bakefile macros
-AC_BAKEFILE([m4_include(config/autoconf_inc.m4)])
 
 
 # Check for Standard C support
@@ -99,6 +101,10 @@ AC_LANG_CPLUSPLUS
 STL_SLIST_EXTENSION
 
 
+# Include Bakefile macros
+AC_BAKEFILE([m4_include(config/autoconf_inc.m4)])
+
+
 #
 # Configure process complete; write out files generated from *.in.
 #
@@ -108,7 +114,10 @@ AC_OUTPUT([\
 	lib/Doxyfile \
 	lib/mysql++.h \
 	ssx/Doxyfile \
+	abi.xml \
 	mysql++.spec \
 	Makefile \
+	version
 ])
+chmod +x version
 

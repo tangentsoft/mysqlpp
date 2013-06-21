@@ -5,9 +5,11 @@
 <sect1 id="intro">
   <title>Introduction</title>
 
-  <para>MySQL++ is a powerful C++ wrapper for MySQL&#x2019;s C API.  Its
-  purpose is to make working with queries as easy as working with STL
-  containers.</para>
+  <para>MySQL++ is a powerful C++ wrapper for MySQL&#x2019;s
+  C API<footnote><para>The MySQL C API is also known as <ulink
+  url="https://dev.mysql.com/downloads/connector/c/">Connector/C</ulink>.</para></footnote>.
+  Its purpose is to make working with queries as easy as working with
+  STL containers.</para>
 
   <para>The latest version of MySQL++ can be found at <ulink
   url="http://tangentsoft.net/mysql++/">the official web

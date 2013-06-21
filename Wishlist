@@ -3,6 +3,10 @@ file for instructions on sending patches.
 
 Any Version
 -----------
+    o The DateTime family's time_t conversion operators should detect
+      DATETIME("0") type values and return time_t(0) rather than
+      attempt to stuff an out-of-range value into a smaller box.
+
     o Any time you must hand-roll some SQL code in your program,
       consider whether it could be generalized to a widely-useful
       API feature.
@@ -12,7 +16,7 @@ Any Version
 
     o Need to link statically to connect to MySQL Embedded?
 
-      http://stackoverflow.com/questions/672451/howto-communicate-with-mysql-embedded-server-from-mysql-dll
+      http://stackoverflow.com/questions/672451/
 
     o When Bakefile allows, bring examples/vstudio/* into the top-level
       build system.  This will let us generate separate project
@@ -43,8 +47,15 @@ Any Version
       slist definition is available on that platform.  Xcode, for
       instance, will let us use <ext/slist>.
 
+    o Add ctor and assignment operator that takes mysqlpp::null.  You
+      now have to call a 4-argument version of either the ctor or
+      assign() to get a NULL SQL string.
 
-v3.2 Plan: Finish SSQLS v2
+    o The escape_q() functions aren't returning the right value when
+      dealing with Null<T> wrapped types, such as sql_blob_null.
+
+
+v3.3 Plan: Finish SSQLS v2
 --------------------------
     See http://lists.mysql.com/plusplus/6929 for high-level plan.
 
@@ -208,7 +219,7 @@ v3.2 Plan: Finish SSQLS v2
       so people can disable the warning.
 
 
-v3.3 Tentative Plan
+v3.4 Tentative Plan
 -------------------
     o Add Query::storein<Container, T>(container), getting table
       name from container::value_type.table() instead.
@@ -449,3 +460,7 @@ v4.0 or Later
       classes like Row?  Useful in apps that process lots of data over
       long periods, causing heap fragmentation with the default C++
       allocator.
+
+    o Audit library for non-virtual methods that could be profitably
+      made virtual.  Many are non-overridable now purely because
+      changing them would break the ABI, so now's the time to fix that.

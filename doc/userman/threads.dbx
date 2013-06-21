@@ -151,8 +151,8 @@
     could assume that they&#x2019;re simply allocated on the heap
     with <methodname>new</methodname>, but it can&#x2019;t be sure,
     so the base class delegates destruction, too. Finally, the base
-    class can&#x2019;t know what the connection idle timeout policy
-    in the client would make the most sense, so it asks its subclass
+    class can&#x2019;t know which connection idle timeout policy
+    would make the most sense to the client, so it asks its subclass
     via the <methodname>max_idle_time()</methodname> method.</para>
 
     <para><classname>ConnectionPool</classname> also allows you to

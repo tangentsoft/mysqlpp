@@ -3,46 +3,51 @@ Prerequisite: GCC Version
     If your MinGW version isn't using at least GCC 3.4.5, it needs
     to be updated.  Older versions are known to not work with MySQL++.
 
+    As of MySQL++ 3.1.1, the required version might need to be even
+    newer, as we are now depending on improvements to the MinGW linker
+    which probably don't go back that far.
+
 
 Prerequisite: MySQL C Development Files
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    MySQL++ is built atop MySQL's C API library, so you need to have
-    MySQL installed on your development system to get the current C API
-    development files.
+    MySQL++ is built atop MySQL's C API library.  The easiest way to
+    get that is to install Connector/C on your development system,
+    which you can download from mysql.com.  The distribution assumes
+    these files are in:
 
-    If you do a default installation of MySQL, the development files
-    probably won't be installed. As of this writing you have to do
-    either a Complete or Custom install to get these files.  (They keep
-    changing the way the Windows installer works, so this may not be
-    true any more by the time you read this.)
+        C:\Program Files\MySQL\MySQL Connector C 6.1\
 
-    The MySQL++ Makefile assumes that you installed MySQL in
+    There are a number of reasons why that path may not work for you:
+
+      - You have a newer version of Connector/C installed
+
+      - You're on a 64-bit system, but have the 32-bit versions of
+        Connector/C and MinGW installed and wish to build a 32-bit
+        binary.  In that case, the path will look like this instead:
+
+          C:\Program Files (x86)\MySQL\MySQL Connector C 6.1\
+
+      - You may have the MySQL Server on your system and installed the
+        development files along with it, and therefore don't want to
+        install Connector/C separately.  In that case, the path will
+        look like this instead:
+
+          C:\Program Files\MySQL\MySQL Server 5.6\
     
-        C:\Program Files\MySQL\MySQL Server 5.0\
-    
-    If not, you have two options.
+    Regardless of the reason you have for changing this path, there are
+    two ways that work:
 
-    The simplest is to edit Makefile.mingw.  This is a generated file,
-    but if that's the only change to MySQL++ you need, it works fine.
+      - The easy way is to do a global search and replace on the path
+        in Makefile.mingw.  This is a generated file, but if that's the
+        only change to MySQL++ you need, it works fine.
 
-    If you're doing deeper work on MySQL++, you should change the
-    variable MYSQL_WIN_DIR at the top of mysql++.bkl instead.  Then to
-    generate Makefile.mingw from that file, you will need the Win32
-    port of Bakefile from http://bakefile.org/  The command to do
-    that is:
-
-        bakefile_gen -f mingw
-
-
-Prerequisite: MySQL C API DLL Import Library
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Before you can build MySQL++ with MinGW, you will need to create
-    a MinGW-compatible import library for MySQL's C API library.
-    Using the current default install path for MySQL and assuming
-    MySQL++ is in c:\mysql++, the commands to do this are:
-
-        cd C:\Program Files\MySQL\MySQL Server 5.0\lib\opt
-        dlltool -k -d c:\mysql++\libmysqlclient.def -l libmysqlclient.a
+      - If you're doing deeper work on MySQL++, you should change the
+        MYSQL_WIN_DIR variable at the top of mysql++.bkl instead.
+        
+        Having done that, you can generate Makefile.mingw from that
+        file using the Windows port of Bakefile (http://bakefile.org/):
+        
+          bakefile_gen -f mingw
 
 
 Building the Library and Example Programs
@@ -131,12 +136,7 @@ Building on Linux
         4. Modify Makefile.mingw to match the install location for
            the MySQL C API files.
 
-        5. Create libmysqlclient.a as described above, except with
-           minor differences for running under Wine:
-
-           $ wine mingw32-dlltool -k -d /native/path/libmysqlclient.def...
-
-        6. Build MySQL++ with:
+        5. Build MySQL++ with:
         
            $ wine mingw32-make -f Makefile.mingw
 

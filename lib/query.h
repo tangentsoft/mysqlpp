@@ -3,7 +3,7 @@
 
 /***********************************************************************
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
+ (c) 2004-2011 by Educational Technology Resources, Inc.  Others may
  also hold copyrights on code in this file.  See the CREDITS.txt file
  in the top directory of the distribution for details.
 
@@ -273,6 +273,11 @@ public:
 	/// queries using one of the other methods.  (Static strings, SSQLS,
 	/// or the stream interface.)
 	void reset();
+
+	/// \brief Returns true if the most recent result set was empty
+	///
+	/// Wraps DBDriver::result_empty()
+	bool result_empty();
 
 	/// \brief Get built query as a C++ string
 	std::string str() { return str(template_defaults); }
@@ -748,17 +753,30 @@ public:
 	template <class Sequence>
 	void storein_sequence(Sequence& con, const SQLTypeAdapter& s)
 	{
-		UseQueryResult result = use(s);
-		while (1) {
-			MYSQL_ROW d = result.fetch_raw_row();
-			if (!d)
-				break;
-			Row row(d, &result, result.fetch_lengths(),
-					throw_exceptions());
-			if (!row)
-				break;
-			con.push_back(typename Sequence::value_type(row));
+		if (UseQueryResult result = use(s)) {
+			while (1) {
+				MYSQL_ROW d = result.fetch_raw_row();
+				if (!d) break;
+				Row row(d, &result, result.fetch_lengths(),
+						throw_exceptions());
+				if (!row) break;
+				con.push_back(typename Sequence::value_type(row));
+			}
 		}
+		else if (!result_empty()) {
+			// Underlying MySQL C API returned an empty result for this
+			// query, but it also says it should have returned
+			// something.  Reasons it can do that are given here:
+			// http://dev.mysql.com/doc/refman/5.5/en/null-mysql-store-result.html
+			// Regardless, it means the C library barfed, so we can't
+			// just return an empty result set.
+			copacetic_ = false;
+			if (throw_exceptions()) {
+				throw UseQueryError("Bogus empty result");
+			}
+		}
+		// else, it was *supposed* to return nothing, because query was
+		// an INSERT, CREATE, etc. sort.  So, leave con untouched.
 	}
 
 	/// \brief Execute template query using given parameters, storing
@@ -806,17 +824,30 @@ public:
 	template <class Set>
 	void storein_set(Set& con, const SQLTypeAdapter& s)
 	{
-		UseQueryResult result = use(s);
-		while (1) {
-			MYSQL_ROW d = result.fetch_raw_row();
-			if (!d)
-				return;
-			Row row(d, &result, result.fetch_lengths(),
-					throw_exceptions());
-			if (!row)
-				break;
-			con.insert(typename Set::value_type(row));
+		if (UseQueryResult result = use(s)) {
+			while (1) {
+				MYSQL_ROW d = result.fetch_raw_row();
+				if (!d) break;
+				Row row(d, &result, result.fetch_lengths(),
+						throw_exceptions());
+				if (!row) break;
+				con.insert(typename Set::value_type(row));
+			}
 		}
+		else if (!result_empty()) {
+			// Underlying MySQL C API returned an empty result for this
+			// query, but it also says it should have returned
+			// something.  Reasons it can do that are given here:
+			// http://dev.mysql.com/doc/refman/5.5/en/null-mysql-store-result.html
+			// Regardless, it means the C library barfed, so we can't
+			// just return an empty result set.
+			copacetic_ = false;
+			if (throw_exceptions()) {
+				throw UseQueryError("Bogus empty result");
+			}
+		}
+		// else, it was *supposed* to return nothing, because query was
+		// an INSERT, CREATE, etc. sort.  So, leave con untouched.
 	}
 
 	/// \brief Execute template query using given parameters, storing
@@ -1000,19 +1031,22 @@ public:
 	Query& insert(Iter first, Iter last)
 	{
 		reset();
-		if (first == last) {
-			return *this;	// empty set!
-		}
-		
-		MYSQLPP_QUERY_THISPTR << std::setprecision(16) <<
-				"INSERT INTO `" << first->table() << "` (" <<
-				first->field_list() << ") VALUES (" <<
-				first->value_list() << ')';
 
-		Iter it = first + 1;
-		while (it != last) {
-			MYSQLPP_QUERY_THISPTR << ",(" << it->value_list() << ')';
-			++it;
+		if (first != last) {
+			// Build SQL for first item in the container.  It's special
+			// because we need the table name and field list.
+			MYSQLPP_QUERY_THISPTR << std::setprecision(16) <<
+					"INSERT INTO `" << first->table() << "` (" <<
+					first->field_list() << ") VALUES (" <<
+					first->value_list() << ')';
+
+			// Now insert any remaining container elements.  Be careful
+			// hacking on the iterator use here: we want it to work
+			// with containers providing only a forward iterator.
+			Iter it = first;
+			while (++it != last) {
+				MYSQLPP_QUERY_THISPTR << ",(" << it->value_list() << ')';
+			}
 		}
 
 		return *this;
@@ -1106,6 +1140,94 @@ public:
 		return *this;
 	}
 
+	/// \brief Replace multiple new rows using an insert policy to
+	/// control how the REPLACE statements are created using
+	/// items from an STL container.
+	///
+	/// \param first iterator pointing to first element in range to
+	///    replace
+	/// \param last iterator pointing to one past the last element to
+	///    replace
+	/// \param policy insert policy object, see insertpolicy.h for
+	/// details
+	///
+	/// \sa insert()
+	template <class Iter, class InsertPolicy>
+	Query& replacefrom(Iter first, Iter last, InsertPolicy& policy)
+	{
+		bool success = true;
+		bool empty = true;
+
+		reset();
+
+		if (first == last) {
+			return *this;   // empty set!
+		}
+
+		typename InsertPolicy::access_controller ac(*conn_);
+
+		for (Iter it = first; it != last; ++it) {
+			if (policy.can_add(int(tellp()), *it)) {
+				if (empty) {
+					MYSQLPP_QUERY_THISPTR << std::setprecision(16) <<
+						"REPLACE INTO `" << it->table() << "` (" <<
+						it->field_list() << ") VALUES (";
+				}
+				else {
+					MYSQLPP_QUERY_THISPTR << ",(";
+				}
+
+				MYSQLPP_QUERY_THISPTR << it->value_list() << ')';
+
+				empty = false;
+			}
+			else {
+				// Execute what we've built up already, if there is anything
+				if (!empty) {
+					if (!exec()) {
+						success = false;
+						break;
+					}
+
+					empty = true;
+				}
+
+				// If we _still_ can't add, the policy is too strict
+				if (policy.can_add(int(tellp()), *it)) {
+					MYSQLPP_QUERY_THISPTR << std::setprecision(16) <<
+						"REPLACE INTO `" << it->table() << "` (" <<
+						it->field_list() << ") VALUES (" <<
+						it->value_list() << ')';
+
+					empty = false;
+				}
+				else {
+					// At this point all we can do is give up
+					if (throw_exceptions()) {
+						throw BadInsertPolicy("Insert policy is too strict");
+					}
+
+					success = false;
+					break;
+				}
+			}
+		}
+
+		// We might need to execute the last query here.
+		if (success && !empty && !exec()) {
+			success = false;
+		}
+
+		if (success) {
+			ac.commit();
+		}
+		else {
+			ac.rollback();
+		}
+
+		return *this;
+	}
+
 	/// \brief Insert new row unless there is an existing row that
 	/// matches on a unique index, in which case we replace it.
 	///
@@ -1144,19 +1266,21 @@ public:
 	Query& replace(Iter first, Iter last)
 	{
 		reset();
-		if (first == last) {
-			return *this;    // empty set!
-		}
+		if (first != last) {
+			// Build SQL for first item in the container.  It's special
+			// because we need the table name and field list.
+			MYSQLPP_QUERY_THISPTR << std::setprecision(16) <<
+					"REPLACE INTO " << first->table() << " (" <<
+					first->field_list() << ") VALUES (" <<
+					first->value_list() << ')';
 
-		MYSQLPP_QUERY_THISPTR << std::setprecision(16) <<
-				"REPLACE INTO " << first->table() << " (" <<
-				first->field_list() << ") VALUES (" <<
-				first->value_list() << ')';
-
-		Iter it = first + 1;
-		while (it != last) {
-			MYSQLPP_QUERY_THISPTR << ",(" << it->value_list() << ')';
-			++it;
+			// Now insert any remaining container elements.  Be careful
+			// hacking on the iterator use here: we want it to work
+			// with containers providing only a forward iterator.
+			Iter it = first;
+			while (++it != last) {
+				MYSQLPP_QUERY_THISPTR << ",(" << it->value_list() << ')';
+			}
 		}
 
 		return *this;

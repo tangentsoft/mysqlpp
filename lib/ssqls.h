@@ -3184,7 +3184,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	sql_construct_define_##CONTR(NAME, T1, I1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
 	static const char* names[];\
 	static void table(const char* t) { table_ = t; }\
-	const char* const table() const\
+	const char* table() const\
 			{ return table_override_ ? table_override_ : NAME::table_; }\
 	void instance_table(const char* t) { table_override_ = t; }\
 	NAME##_value_list<mysqlpp::quote_type0> value_list() const {\
@@ -3612,7 +3612,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
 	static const char* names[];\
 	static void table(const char* t) { table_ = t; }\
-	const char* const table() const\
+	const char* table() const\
 			{ return table_override_ ? table_override_ : NAME::table_; }\
 	void instance_table(const char* t) { table_override_ = t; }\
 	NAME##_value_list<mysqlpp::quote_type0> value_list() const {\
@@ -4074,7 +4074,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
 	static const char* names[];\
 	static void table(const char* t) { table_ = t; }\
-	const char* const table() const\
+	const char* table() const\
 			{ return table_override_ ? table_override_ : NAME::table_; }\
 	void instance_table(const char* t) { table_override_ = t; }\
 	NAME##_value_list<mysqlpp::quote_type0> value_list() const {\
@@ -4567,7 +4567,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
 	static const char* names[];\
 	static void table(const char* t) { table_ = t; }\
-	const char* const table() const\
+	const char* table() const\
 			{ return table_override_ ? table_override_ : NAME::table_; }\
 	void instance_table(const char* t) { table_override_ = t; }\
 	NAME##_value_list<mysqlpp::quote_type0> value_list() const {\
@@ -5091,7 +5091,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
 	static const char* names[];\
 	static void table(const char* t) { table_ = t; }\
-	const char* const table() const\
+	const char* table() const\
 			{ return table_override_ ? table_override_ : NAME::table_; }\
 	void instance_table(const char* t) { table_override_ = t; }\
 	NAME##_value_list<mysqlpp::quote_type0> value_list() const {\
@@ -5646,7 +5646,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
 	static const char* names[];\
 	static void table(const char* t) { table_ = t; }\
-	const char* const table() const\
+	const char* table() const\
 			{ return table_override_ ? table_override_ : NAME::table_; }\
 	void instance_table(const char* t) { table_override_ = t; }\
 	NAME##_value_list<mysqlpp::quote_type0> value_list() const {\
@@ -6232,7 +6232,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
 	static const char* names[];\
 	static void table(const char* t) { table_ = t; }\
-	const char* const table() const\
+	const char* table() const\
 			{ return table_override_ ? table_override_ : NAME::table_; }\
 	void instance_table(const char* t) { table_override_ = t; }\
 	NAME##_value_list<mysqlpp::quote_type0> value_list() const {\
@@ -6849,7 +6849,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
 	static const char* names[];\
 	static void table(const char* t) { table_ = t; }\
-	const char* const table() const\
+	const char* table() const\
 			{ return table_override_ ? table_override_ : NAME::table_; }\
 	void instance_table(const char* t) { table_override_ = t; }\
 	NAME##_value_list<mysqlpp::quote_type0> value_list() const {\
@@ -7497,7 +7497,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
 	static const char* names[];\
 	static void table(const char* t) { table_ = t; }\
-	const char* const table() const\
+	const char* table() const\
 			{ return table_override_ ? table_override_ : NAME::table_; }\
 	void instance_table(const char* t) { table_override_ = t; }\
 	NAME##_value_list<mysqlpp::quote_type0> value_list() const {\
@@ -8176,7 +8176,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
 	static const char* names[];\
 	static void table(const char* t) { table_ = t; }\
-	const char* const table() const\
+	const char* table() const\
 			{ return table_override_ ? table_override_ : NAME::table_; }\
 	void instance_table(const char* t) { table_override_ = t; }\
 	NAME##_value_list<mysqlpp::quote_type0> value_list() const {\
@@ -8886,7 +8886,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
 	static const char* names[];\
 	static void table(const char* t) { table_ = t; }\
-	const char* const table() const\
+	const char* table() const\
 			{ return table_override_ ? table_override_ : NAME::table_; }\
 	void instance_table(const char* t) { table_override_ = t; }\
 	NAME##_value_list<mysqlpp::quote_type0> value_list() const {\
@@ -9627,7 +9627,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
 	static const char* names[];\
 	static void table(const char* t) { table_ = t; }\
-	const char* const table() const\
+	const char* table() const\
 			{ return table_override_ ? table_override_ : NAME::table_; }\
 	void instance_table(const char* t) { table_override_ = t; }\
 	NAME##_value_list<mysqlpp::quote_type0> value_list() const {\
@@ -10399,7 +10399,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
 	static const char* names[];\
 	static void table(const char* t) { table_ = t; }\
-	const char* const table() const\
+	const char* table() const\
 			{ return table_override_ ? table_override_ : NAME::table_; }\
 	void instance_table(const char* t) { table_override_ = t; }\
 	NAME##_value_list<mysqlpp::quote_type0> value_list() const {\
@@ -11202,7 +11202,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
 	static const char* names[];\
 	static void table(const char* t) { table_ = t; }\
-	const char* const table() const\
+	const char* table() const\
 			{ return table_override_ ? table_override_ : NAME::table_; }\
 	void instance_table(const char* t) { table_override_ = t; }\
 	NAME##_value_list<mysqlpp::quote_type0> value_list() const {\
@@ -12036,7 +12036,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
 	static const char* names[];\
 	static void table(const char* t) { table_ = t; }\
-	const char* const table() const\
+	const char* table() const\
 			{ return table_override_ ? table_override_ : NAME::table_; }\
 	void instance_table(const char* t) { table_override_ = t; }\
 	NAME##_value_list<mysqlpp::quote_type0> value_list() const {\
@@ -12901,7 +12901,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
 	static const char* names[];\
 	static void table(const char* t) { table_ = t; }\
-	const char* const table() const\
+	const char* table() const\
 			{ return table_override_ ? table_override_ : NAME::table_; }\
 	void instance_table(const char* t) { table_override_ = t; }\
 	NAME##_value_list<mysqlpp::quote_type0> value_list() const {\
@@ -13797,7 +13797,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
 	static const char* names[];\
 	static void table(const char* t) { table_ = t; }\
-	const char* const table() const\
+	const char* table() const\
 			{ return table_override_ ? table_override_ : NAME::table_; }\
 	void instance_table(const char* t) { table_override_ = t; }\
 	NAME##_value_list<mysqlpp::quote_type0> value_list() const {\
@@ -14724,7 +14724,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
 	static const char* names[];\
 	static void table(const char* t) { table_ = t; }\
-	const char* const table() const\
+	const char* table() const\
 			{ return table_override_ ? table_override_ : NAME::table_; }\
 	void instance_table(const char* t) { table_override_ = t; }\
 	NAME##_value_list<mysqlpp::quote_type0> value_list() const {\
@@ -15682,7 +15682,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, T19, I19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
 	static const char* names[];\
 	static void table(const char* t) { table_ = t; }\
-	const char* const table() const\
+	const char* table() const\
 			{ return table_override_ ? table_override_ : NAME::table_; }\
 	void instance_table(const char* t) { table_override_ = t; }\
 	NAME##_value_list<mysqlpp::quote_type0> value_list() const {\
@@ -16671,7 +16671,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, T19, I19, T20, I20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\
 	static const char* names[];\
 	static void table(const char* t) { table_ = t; }\
-	const char* const table() const\
+	const char* table() const\
 			{ return table_override_ ? table_override_ : NAME::table_; }\
 	void instance_table(const char* t) { table_override_ = t; }\
 	NAME##_value_list<mysqlpp::quote_type0> value_list() const {\
@@ -17691,7 +17691,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, T19, I19, T20, I20, T21, I21, 0, 0, 0, 0, 0, 0, 0, 0)\
 	static const char* names[];\
 	static void table(const char* t) { table_ = t; }\
-	const char* const table() const\
+	const char* table() const\
 			{ return table_override_ ? table_override_ : NAME::table_; }\
 	void instance_table(const char* t) { table_override_ = t; }\
 	NAME##_value_list<mysqlpp::quote_type0> value_list() const {\
@@ -18742,7 +18742,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, T19, I19, T20, I20, T21, I21, T22, I22, 0, 0, 0, 0, 0, 0)\
 	static const char* names[];\
 	static void table(const char* t) { table_ = t; }\
-	const char* const table() const\
+	const char* table() const\
 			{ return table_override_ ? table_override_ : NAME::table_; }\
 	void instance_table(const char* t) { table_override_ = t; }\
 	NAME##_value_list<mysqlpp::quote_type0> value_list() const {\
@@ -19824,7 +19824,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, T19, I19, T20, I20, T21, I21, T22, I22, T23, I23, 0, 0, 0, 0)\
 	static const char* names[];\
 	static void table(const char* t) { table_ = t; }\
-	const char* const table() const\
+	const char* table() const\
 			{ return table_override_ ? table_override_ : NAME::table_; }\
 	void instance_table(const char* t) { table_override_ = t; }\
 	NAME##_value_list<mysqlpp::quote_type0> value_list() const {\
@@ -20937,7 +20937,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, T19, I19, T20, I20, T21, I21, T22, I22, T23, I23, T24, I24, 0, 0)\
 	static const char* names[];\
 	static void table(const char* t) { table_ = t; }\
-	const char* const table() const\
+	const char* table() const\
 			{ return table_override_ ? table_override_ : NAME::table_; }\
 	void instance_table(const char* t) { table_override_ = t; }\
 	NAME##_value_list<mysqlpp::quote_type0> value_list() const {\
@@ -22081,7 +22081,7 @@ inline int sql_cmp(const mysqlpp::Null<T>& a, const mysqlpp::Null<T>& b)
 	sql_construct_define_##CONTR(NAME, T1, I1, T2, I2, T3, I3, T4, I4, T5, I5, T6, I6, T7, I7, T8, I8, T9, I9, T10, I10, T11, I11, T12, I12, T13, I13, T14, I14, T15, I15, T16, I16, T17, I17, T18, I18, T19, I19, T20, I20, T21, I21, T22, I22, T23, I23, T24, I24, T25, I25)\
 	static const char* names[];\
 	static void table(const char* t) { table_ = t; }\
-	const char* const table() const\
+	const char* table() const\
 			{ return table_override_ ? table_override_ : NAME::table_; }\
 	void instance_table(const char* t) { table_override_ = t; }\
 	NAME##_value_list<mysqlpp::quote_type0> value_list() const {\

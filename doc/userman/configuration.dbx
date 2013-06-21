@@ -12,31 +12,39 @@
   <sect2 id="mysql-loc">
     <title>The Location of the MySQL Development Files</title>
 
-    <para>MySQL++ is built on top of the MySQL C API. It relies on
-    this low-level library for all communication with the database
-    server. Consequently, the build process for MySQL++ may fail if
-    it can&#x2019;t find the C API headers and library.</para>
+    <para>MySQL++ is built on top
+    of the MySQL C API. (Now called <ulink
+    url="https://dev.mysql.com/downloads/connector/c/">Connector/C</ulink>.)
+    MySQL++ relies on this low-level library for all communication
+    with the database server. Consequently, the build process for
+    MySQL++ may fail if it can&#x2019;t find the C API headers and
+    library.</para>
 
     <para>On platforms that use Autoconf<footnote><para>Linux,
     Solaris, the BSDs, Mac OS X command line (as opposed to the
     Xcode IDE), Cygwin... Basically, Unix or anything that works
     like it.</para></footnote>, the <filename>configure</filename>
     script can usually figure out the location of the C API
-    development files by itself. It simply tries a bunch of common
-    installation locations until it finds one that works. If
-    your MySQL server was installed in a nonstandard location,
-    you will have to tell the <filename>configure</filename>
+    development files by itself<footnote><para>I don&rsquo;t say
+    &ldquo;Connector/C&rdquo; here because the name change generally
+    hasn&rsquo;t percolated out to Unixy systems. It&rsquo;s more
+    commonly used on Windows systems, since the separate Connector/C
+    download lets them avoid installing a MySQL server just to get
+    development headers and libraries.</para></footnote> It simply
+    tries a bunch of common installation locations until it finds one
+    that works. If your MySQL server was installed in a nonstandard
+    location, you will have to tell the <filename>configure</filename>
     script where these files are with some combination
     of the <computeroutput>--with-mysql</computeroutput>,
     <computeroutput>--with-mysql-include</computeroutput>, and
     <computeroutput>--with-mysql-lib</computeroutput> flags. See
     <filename>README-Unix.txt</filename> for details.</para>
 
-    <para>No other platform allows this sort of auto-discovery,
-    so the build files for these platforms simply hard-code the
-    default installation location for whatever version of MySQL is
-    in GA state at the time that version of MySQL++ was released. For
-    example, the Visual C++ project files currently assume MySQL is in
+    <para>No other platform allows this sort of auto-discovery, so
+    the build files for these platforms simply hard-code the default
+    installation location for the current GA version of Connector/C
+    at the time that version of MySQL++ was released. For example,
+    the Visual C++ project files currently assume MySQL is in
     <filename>c:\Program Files\MySQL\MySQL Server 5.1</filename>. If
     you&#x2019;re using some other release of MySQL or you installed it
     somewhere else, you will have to modify the build files.  How you

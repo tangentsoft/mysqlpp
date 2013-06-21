@@ -54,7 +54,7 @@ namespace mysqlpp {
 /// In the future, it may be turned into an abstract base class, with
 /// subclasses for different database server types.
 
-class DBDriver
+class MYSQLPP_EXPORT DBDriver
 {
 public:
 	/// \brief Result code returned by next_result()

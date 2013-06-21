@@ -238,12 +238,12 @@ CommandLine::print_usage(const char* extra) const
 {
 	std::cout << "usage: " << program_name() <<
 			" [-s server_addr] [-u user] [-p password] " <<
-			extra << std::endl;
+			(extra ? extra : "") << std::endl;
 	std::cout << std::endl;
 	std::cout << "    If no options are given, connects to database "
 			"server on localhost" << std::endl;
 	std::cout << "    using your user name and no password." << std::endl;
-	if (strlen(extra) > 0) {
+	if (extra && (strlen(extra) > 0)) {
 		std::cout << std::endl;
 		std::cout << "    The extra parameter " << extra <<
 				" is required, regardless of which" << std::endl;

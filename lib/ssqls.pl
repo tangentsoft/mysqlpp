@@ -500,7 +500,7 @@ $defs
 	sql_construct_define_##CONTR(NAME, $parmC)
 	static const char* names[];
 	static void table(const char* t) { table_ = t; }
-	const char* const table() const
+	const char* table() const
 			{ return table_override_ ? table_override_ : NAME::table_; }
 	void instance_table(const char* t) { table_override_ = t; }
 

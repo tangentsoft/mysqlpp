@@ -2,7 +2,7 @@
 /// \brief Declares the RefCountedPointer template
 
 /***********************************************************************
- Copyright (c) 2007 by Educational Technology Resources, Inc. and
+ Copyright (c) 2007-2011 by Educational Technology Resources, Inc. and
  (c) 2007 by Jonathan Wakely.  Others may also hold copyrights on
  code in this file.  See the CREDITS.txt file in the top directory
  of the distribution for details.
@@ -29,6 +29,8 @@
 #define MYSQLPP_REFCOUNTED_H
 
 #include <memory>
+
+#include <stddef.h>
 
 namespace mysqlpp {
 

@@ -1,11 +1,15 @@
 <?xml version="1.0"?>
 <makefile>
-  <requires version="0.2.5"/>
+  <requires version="0.2.9"/>
   <using module="datafiles"/>
   <include file="presets/simple.bkl"/>
 
   <set var="DDD">$(DOLLAR)$(DOLLAR)d</set>
   <set var="DDF">$(DOLLAR)$(DOLLAR)f</set>
+
+  <set var="STABLEABI">3.1.0</set>
+  <set var="OLDABIDIR">../$(STABLEABI)/abi_dumps/mysqlpp</set>
+  <set var="NEWABIDIR">./abi_dumps/mysqlpp</set>
 
   <set var="PLATFORM_WINDOWS_NATIVE">no</set>
   <set var="THREAD_TYPE">single</set>
@@ -24,12 +28,17 @@
   </option>
 
   <set var="MYSQL_WIN_DIR">
-    C:\Program Files\MySQL\MySQL Server 5.1
+    C:\Program Files\MySQL\MySQL Connector C 6.1
   </set>
 
   <set var="DEBUGINFO">
     <if cond="BUILD=='debug'">on</if>
     <if cond="BUILD=='release'">off</if>
+  </set>
+  
+  <set var="OPTIMIZE_FLAG">
+    <if cond="BUILD=='debug'">off</if>
+    <if cond="BUILD=='release'">speed</if>
   </set>
 
   <!-- This convoluted syntax adds "_d" to the end of library and DLL
@@ -53,7 +62,7 @@
     <dll id="mysqlpp">
       <dllname>mysqlpp$(DEBUG_SUFFIX)</dllname>
       <libname>mysqlpp$(DEBUG_SUFFIX)</libname>
-      <so_version>3.1.0</so_version>
+      <so_version>3.2.0</so_version>
 
       <sources>
         lib/beemutex.cpp
@@ -89,6 +98,7 @@
       </sources>
 
       <debug-info>$(DEBUGINFO)</debug-info>
+      <optimize>$(OPTIMIZE_FLAG)</optimize>
 
       <threading>$(THREAD_TYPE)</threading>
       <cxx-rtti>on</cxx-rtti>
@@ -114,8 +124,9 @@
         <define>MYSQLPP_NO_DLL</define>
         <define>HAVE_MYSQL_SSL_SET</define>
         <include>"$(MYSQL_WIN_DIR)\include"</include>
+        <ldflags>-Wl,--enable-stdcall-fixup</ldflags>
         <lib-path>"$(MYSQL_WIN_DIR)\lib\opt"</lib-path>
-        <sys-lib>mysqlclient</sys-lib>
+        <sys-lib>mysql</sys-lib>
       </if>
 
       <if cond="FORMAT=='autoconf'">
@@ -130,10 +141,10 @@
       <if cond="FORMAT=='xcode2'">
         <define>HAVE_POSIX_GETOPT</define>
         <define>MYSQLPP_XCODE</define>
-	    <include>/usr/local/mysql/include</include>
+        <include>/usr/local/mysql/include</include>
         <ldflags>-lmysqlclient</ldflags>
-		<!-- Assume C API files came from MySQL.com DMGs, not source
-		     tarball, Fink, etc., inferring preference from use of Xcode. -->
+        <!-- Assume C API files came from MySQL.com DMGs, not source
+             tarball, Fink, etc., inferring preference from use of Xcode. -->
         <lib-path>/usr/local/mysql/lib</lib-path>
       </if>
     </dll>
@@ -154,6 +165,7 @@
     <cxx-rtti>on</cxx-rtti>
     <cxx-exceptions>on</cxx-exceptions>
     <debug-info>$(DEBUGINFO)</debug-info>
+    <optimize>$(OPTIMIZE_FLAG)</optimize>
 
     <if cond="FORMAT in ['autoconf', 'gnu', 'mingw', 'xcode2']">
       <include>lib</include>
@@ -166,7 +178,7 @@
     <if cond="FORMAT=='xcode2'">
       <define>HAVE_POSIX_GETOPT</define>
       <define>MYSQLPP_XCODE</define>
-	  <include>/usr/local/mysql/include</include>
+      <include>/usr/local/mysql/include</include>
       <ldflags>-lmysqlclient</ldflags>
       <lib-path>/usr/local/mysql/lib</lib-path>
     </if>
@@ -186,11 +198,11 @@
     <if cond="FORMAT=='mingw'">
       <define>MYSQLPP_NO_DLL</define>
       <ldflags>
-        -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc
+        -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup
       </ldflags>
       <include>"$(MYSQL_WIN_DIR)\include"</include>
       <lib-path>"$(MYSQL_WIN_DIR)\lib\opt"</lib-path>
-      <sys-lib>mysqlclient</sys-lib>
+      <sys-lib>mysql</sys-lib>
       <sys-lib>mysqlpp$(DEBUG_SUFFIX)</sys-lib>
     </if>
 
@@ -216,20 +228,24 @@
     </if>
   </template>
 
-  <!-- SSQLS v2 parser convenience library -->
-  <lib id="ssqls2parse" template="programs">
-    <libname>mysqlpp_ssqls2parse</libname>
-    <sources>ssx/parsev2.cpp</sources>
-    <include>.</include>
-  </lib>
+  <if cond="BUILDLIBRARY=='yes'">
+    <!-- SSQLS v2 parser convenience library -->
+    <lib id="ssqls2parse" template="programs">
+      <depends>mysqlpp</depends>
+      <libname>mysqlpp_ssqls2parse</libname>
+      <sources>ssx/parsev2.cpp</sources>
+      <include>.</include>
+    </lib>
 
-  <!-- Build rules for ssqlsxlat tool -->
-  <exe id="ssqlsxlat" template="programs">
-    <sources>ssx/genv2.cpp</sources>
-    <sources>ssx/main.cpp</sources>
-    <depends>ssqls2parse</depends>
-    <sys-lib>mysqlpp_ssqls2parse</sys-lib>
-  </exe>
+    <!-- Build rules for ssqlsxlat tool -->
+    <exe id="ssqlsxlat" template="programs">
+      <sources>ssx/genv2.cpp</sources>
+      <sources>ssx/main.cpp</sources>
+      <depends>ssqls2parse</depends>
+      <sys-lib>mysqlpp_ssqls2parse</sys-lib>
+      <sys-lib>mysqlpp</sys-lib>
+    </exe>
+  </if>
 
   <!-- Define library testing programs' output targets, if enabled -->
   <if cond="BUILDTEST=='yes'">
@@ -272,11 +288,14 @@
     <exe id="test_sqlstream" template="programs">
       <sources>test/sqlstream.cpp</sources>
     </exe>
-    <exe id="test_ssqls2" template="programs">
-      <sources>test/ssqls2.cpp</sources>
-      <depends>ssqls2parse</depends>
-      <sys-lib>mysqlpp_ssqls2parse</sys-lib>
-    </exe>
+    <if cond="BUILDLIBRARY=='yes'">
+      <exe id="test_ssqls2" template="programs">
+        <sources>test/ssqls2.cpp</sources>
+        <depends>ssqls2parse</depends>
+        <sys-lib>mysqlpp_ssqls2parse</sys-lib>
+        <sys-lib>mysqlpp</sys-lib>
+      </exe>
+    </if>
     <if cond="FORMAT!='msvs2003prj'">
       <!-- VC++ 2003 can't compile this -->
       <exe id="test_string" template="programs">
@@ -425,7 +444,6 @@
       <depends-on-file>lib/mysql++.h.in</depends-on-file>
       <depends-on-file>ssx/Doxyfile.in</depends-on-file>
       <command>bakefile_gen</command>
-      <command>autoreconf</command>
       <command>./config.status</command>
     </action>
 
@@ -490,10 +508,9 @@
       <!-- Copy files into package directory -->
       <!-- top directory -->
       <command>
-        cp -RL *.bat *.txt Bakefiles.bkgen bootstrap ChangeLog \
-          cleanmf config.guess config.h.in config.sub configure* \
-          dtest exrun install* libmysqlclient.def Makefile.* \
-          mysql++.* osver Wishlist $(PKGNAME)
+        cp -RL *.bat *.in *.txt Bakefiles.bkgen bootstrap ChangeLog \
+          cleanmf config.guess config.sub configure* dtest exrun \
+          install* Makefile.* mysql++.* osver Wishlist $(PKGNAME)
       </command>
 
       <!-- VC++ project file subdirs -->
@@ -513,7 +530,7 @@
           cp -RL doc/README* doc/pdf doc/ssqls-pretty $(PKGNAME)/doc
         </command>
         <command>
-          for f in LICENSE.txt Makefile mktxt README.txt \*.dbx \*.in \*.xsl ; \
+          for f in fo2pdf LICENSE.txt Makefile Makefile.hello.* mktxt README.txt \*.dbx \*.in \*.mod \*.txt \*.xsl ; \
           do \
             cp doc/userman/$(DDF) $(PKGNAME)/doc/userman ; \
           done
@@ -573,10 +590,22 @@
       <command>rm -fr $(PKGNAME)/autom4te.cache</command>
     </action>
 
+    <action id="abicheck">
+      <command>
+        <![CDATA[
+          abi-compliance-checker -lib mysqlpp -dump abi.xml
+          abi-compliance-checker -lib mysqlpp \
+              -old $(OLDABIDIR)/mysqlpp_$(STABLEABI).abi.tar.gz \
+              -new $(NEWABIDIR)/mysqlpp_@PACKAGE_VERSION@.abi.tar.gz
+          mv compat_reports/mysqlpp/*/compat_report.html ~/Desktop
+          find compat_reports -empty -delete
+        ]]>
+      </command>
+    </action>
+
     <action id="dist">
       <depends>doc</depends>
       <depends>$(PKGNAME)</depends>
-      <command>./checkvc8</command>
       <command>tar czf $(PKGNAME).tar.gz $(PKGNAME)</command>
       <command>rm -rf $(PKGNAME)</command>
     </action>
@@ -586,8 +615,8 @@
         <depends>doc</depends>
       </if>
       <depends>dist</depends>
-      <command>cp $(PKGNAME).tar.gz /usr/src/redhat/SOURCES</command>
-      <command>cd /usr/src/redhat/SPECS</command>
+      <command>cp $(PKGNAME).tar.gz ~/rpmbuild/SOURCES</command>
+      <command>cd ~/rpmbuild/SPECS</command>
       <command>rpmbuild -ba mysql++.spec</command>
     </action>
 

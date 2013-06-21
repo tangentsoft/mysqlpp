@@ -50,7 +50,7 @@ $(PDFFILE): *.dbx *.in $(FO_SS) $(COMMON_SS)
 	./fo2pdf $(FOFILE) $(PDFFILE)
 	mkdir -p ../pdf && cp $(PDFFILE) ../pdf
 
-$(HTML_DIR)/index.html: *.dbx *.in $(EX_TXT) $(HTML_SS) $(COMMON_SS)
+$(HTML_DIR)/index.html: *.dbx *.in *.mod *.txt *.xsl
 	@xmllint --xinclude --nonet --postvalid --noent --noout $(DOCFILE)
 	xsltproc --xinclude --nonet -o $(HTML_DIR)/ $(HTML_SS) $(DOCFILE)
 

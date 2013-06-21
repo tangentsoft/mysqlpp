@@ -1,3 +1,110 @@
+3.2.0, 2013.06.20 (r2746)
+
+    o References to MySQL 5.1 have been replaced with 5.6, that
+      being the current GA release.
+
+    o All Windows builds now assume you're using Connector/C 6.1
+      instead of having installed the MySQL server on your machine
+      just to get development files.  If you are running a MySQL
+      server on your development machine and don't want to install
+      Connector/C just to make MySQL++ happy, see the README-*.txt
+      file for your platform to get instructions on fixing the paths
+      so the build system finds the development files under the MySQL
+      server directory.
+
+    o The generated VC++ 2008 project files now assume you want 64-bit
+      executables.  (It is 2013 now, after all.)
+
+      Since the VC++ 2005 project files continue to be configured for
+      32-bit builds, the easiest way to get a 32-bit project in VC++
+      2008+ is to import the VC++ *2005* project files, rather than
+      adjust the build target settings of all 44 vc2008/*.vcproj
+      files within the IDE.
+
+      See README-Visual-C++.txt for more on this change.
+
+    o Added Query::replacefrom(): like insertfrom() but it uses
+      REPLACE statements instead of INSERT.  Patch by Adrian Cornish.
+
+    o Added support for SQL "unsigned float" columns.  Patch by
+      Leonardo Lang.
+
+    o Added "abicheck" top-level build target, which runs the
+      ISPRAS ABI checker tool (http://goo.gl/e19lD) against
+      a predecided "ABI-stable" version of MySQL++, comparing it
+      against the current version.  This should help avoid future
+      unplanned ABI breakages, as happened between 3.0.9 and 3.1.0.
+
+      We have chosen not to revert those changes that broke the ABI,
+      but instead have chosen to accept the 3.1.0 ABI as the new
+      stable ABI for the rest of the 3.x series.  Running the ABI
+      checker is now part of the release process, so we should not
+      change the ABI again until 4.0!
+
+    o The Query::insert() and replace() overloads that take a pair
+      of iterators now work with containers that only provide forward
+      iterators.  Idea by Adrian Cornish.
+
+    o Using libtool again on Autotools systems.  It gives us
+      relocatable libraries, which is needed in some linking
+      situations.  Patch by Adrian Cornish.
+
+    o VC++ release builds now have optimization enabled.  This might
+      also affect other toolchains that create separate Debug and
+      Release builds, if Bakefile obeys the directive for those
+      systems.  (Such as, perhaps, Xcode.)  Initial patch by Matthew
+      Bradbury.
+
+    o Fixed a crash in CommandLine mechanism when the usage message is
+      called up for programs that have no "extra" parameter and
+      corresponding usage appendage.  Initial patch by "Crazy Pete".
+
+    o Query::storein() now tolerates empty result sets, due either to
+      DBMS failure or passing a query that never returns results,
+      such as INSERT.
+
+    o Exposed DBDriver::result_empty() as Query::result_empty().  We
+      did this primarily because it was needed as a helper for the
+      previous fix, but it could also be useful more broadly.
+
+    o Added -Wextra to the pedantic build flags.
+
+    o Fixed the "escape" manipulator so it will work with Null<>
+      wrapped types.  Patch by "Kemet".
+
+    o ssqls2parse now depends on libmysqlpp.  (It wasn't getting
+      relinked when you changed the library.)
+
+    o The configure script's test for the existence of mysql_ssl_set()
+      got broken by a change in the mysql_loc.m4 test, causing it to
+      always return "no" even if the platform's MySQL C API library did
+      have the function.  Therefore, the SslOption could never be set.
+      Fixes this bug: stackoverflow.com/questions/7794408
+
+    o Fixed a missing a "buried headers" ifdef wrapper for
+      type_info.cpp.  Patch provided by Xavier Richez.
+
+    o We now export the DBDriver class from the MySQL++ DLL when
+      building on Windows.  Client programs can now access it directly,
+      instead of being able to access only the fields and members
+      exposed through Connection and Query.  Fix suggested by Xavier
+      Richez.
+
+    o MinGW builds no longer require that you manually create an import
+      library for the MySQL C API DLL from a .def file we provide,
+      which would inevitably get outdated.  We can now link directly to
+      the DLL, and rely on the MinGW linker to figure out the imports.
+
+    o Split the -l flags out of LDFLAGS in the userman's example
+      Makefiles.  They're now in LDLIBS, which causes them to be
+      put after -o $(EXE) by the default GNU make rules, where they
+      should be.
+
+    o Assorted documentation and build system improvements.
+
+    o Assorted fixes for newer GCCs.
+
+
 3.1.0, 2010.06.03 (r2670)
 
     o Default MySQL version now 5.1, having entered GA since 3.0.9.
@@ -44,7 +151,9 @@
       connection from the pool.
 
     o Added ConnectionPool::exchange(), which wraps remove()
-      and grab().
+      and grab().  It works like a customer support counter in a
+      store: "I'm sorry, but this Connection is defective.  Can I
+      have another, please?"
 
     o Added a feature to Transaction, where it can send a SET
       TRANSACTION ISOLATION LEVEL query before it starts the

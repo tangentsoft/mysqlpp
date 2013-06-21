@@ -65,12 +65,14 @@
 
     <para>All of the program arguments are optional.</para>
 
-    <para>If you don&#x2019;t give <option>-s</option>, the underlying
-    MySQL C API assumes the server is on the local machine. It chooses
+    <para>If you don&#x2019;t give <option>-s</option>,
+    the underlying MySQL C API (a.k.a. <ulink
+    url="https://dev.mysql.com/downloads/connector/c/">Connector/C</ulink>)
+    assumes the server is on the local machine. It chooses
     one of several different IPC options based on the platform
-    configuration. There are many different forms you can give as
-    <varname>server_addr</varname> with <option>-s</option> to override
-    this default behavior:</para>
+    configuration. There are many different forms you can give
+    as <varname>server_addr</varname> with <option>-s</option> to
+    override this default behavior:</para>
 
     <itemizedlist>
       <listitem>
@@ -1254,10 +1256,19 @@ cout &lt;&lt; int(myfield) &lt;&lt; endl;</programlisting>
     to allow for a little bit of additional idle time on either end
     of that period.</para>
 
-    <para>Alternately, you can change this parameter on a
-    per-connection basis by using MySQL++&#x2019;s <ulink
-    type="classref" url="ConnectTimeoutOption"/> <link
-    linkend="connopts">connection option</link>.</para>
+    <para>Another way around this, on a per-connection basis from
+    the client side, would be to set the <ulink type="classref"
+    url="ReconnectOption"/> <link linkend="connopts">connection
+    option</link>. This will cause MySQL++ to reconnect to the server
+    automatically if it drops the connection. Beware that unless
+    you&#x2019;re using MySQL 5.1.6 or higher, you have to set this
+    only after the connection is established, or it won&#x2019;t take
+    effect. This means there&#x2019;s a potential race condition:
+    it&#x2019;s possible the connection could drop shortly enough
+    after being established that you don&#x2019;t have time to apply
+    the option, so it won&#x2019;t come back up automatically. MySQL
+    5.1.6+ fixes this by allowing this option to be set before the
+    connection is established.</para>
 
     <para>A completely different way to tackle this, if your program
     doesn&#x2019;t block forever waiting on I/O while idle, is to

@@ -54,6 +54,65 @@ Any Version
     o The escape_q() functions aren't returning the right value when
       dealing with Null<T> wrapped types, such as sql_blob_null.
 
+    o The current method SSQLS uses to compare floating point numbers
+      is highly dubious.  It just subtracts them, and checks that
+      the absolute difference is under some threshold.  The manual
+      warns that this is fine for "human scale" applications, but even
+      that's not actually true.  It means that if Larry Ellison loses
+      a hundredth of a penny in his couch, it is somehow significant.
+      I have no idea how much money Larry Ellison is comfortable losing
+      to his couch cushions, but it's probably closer to 1 ppm than
+      the current threshold, which is 100 parts per quadrillion on
+      the scale of $1 bn.
+
+      For backards compatibility, we should keep this method, but we
+      should add these two more mathematically sound methods:
+
+      - Percentage: Divide the smaller number into the larger, then
+        compare against a threshold.  The default should be
+        something like 1.000001 (1 ppm), which lets us make much
+        finer distinctions without running out of precision, even
+        with single-precision numbers counting Bill Gates' losses to
+        his couch cushions.
+
+      - Logarithmic, or "Bels": Same as percentage, but on a log10
+        scale so it works better for FP numbers, which are based on
+        powers of 10.  Logarithms are more costly than division,
+        and we still need a division for this, so it shouldn't be
+        the new default.
+
+        1 ppm is ~4.3e-7, which is below what single-precision FP
+        can distinguish.  Increasing the threshold to a value you
+        *can* distinghish with a 32-bit IEEE float makes it ignore
+        significant amounts of money in Carlos Slim's couch cusions.
+        (Hundreds of dollars.)  Therefore, we should use something
+        like 1e-7 or 1e-8 anyway, and make it clear that the default
+        threshold is only suitable for doubles.
+        
+        Someone using single precision FP should increase the threshold
+        to 1e-5 or so.  Such a person would be assumed to know what
+        they're doing.
+
+        It's probably more efficient to change the algorithm from:
+
+           double diff = log10(a > b ? a / b : b / a);
+
+        to:
+
+          double diff = fabs(log10(a / b));
+
+        Logarithms give the same magnitude result for a/b as b/a,
+        differing only in sign.  fabs() is probably implemented as
+        an intrinsic that just clears a single bit, which should be
+        cheaper than a floating point comparison followed by a jump.
+
+        With suitable tuning, this method would allow you to
+        distinguish the change lost by a single Pentagon contractor's
+        lobbyist to a single couch, on a single occasion, as compared
+        to the combined net worth of all Pentagon contractors and
+        their employees, assigns, mistresses, and, ah, hired help.
+        If you use doubles, anyway.
+
 
 v3.3 Plan: Finish SSQLS v2
 --------------------------

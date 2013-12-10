@@ -1,4 +1,20 @@
-3.2.0, 2013.06.20 (r2746)
+3.2.1, 2013.12.10 (r2756)
+
+    o Connection copy ctor wasn't copying the "throw exceptions"
+      flag.  The copy always had exceptions enabled.
+
+    o Fixed resetdb's first output message when you run it without
+      arguments.  It was giving a misleading message that could
+      confuse someone.
+
+    o Previous release tarball was missing a few text files present in
+      the source repository.
+
+    o Updated build paths for VC++ and MinGW to track a file layout
+      change in Connector/C 6.1.2.
+
+
+3.2.0, 2013.06.20 (r2747)
 
     o References to MySQL 5.1 have been replaced with 5.6, that
       being the current GA release.

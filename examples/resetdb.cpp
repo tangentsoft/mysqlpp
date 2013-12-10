@@ -86,9 +86,9 @@ main(int argc, char *argv[])
 			cout << "Connecting to database server..." << endl;
 		}
 		else {
-			cout << "Connecting to '" << 
-					(cmdline.user() || "USERNAME") << "'@'" <<
-					(cmdline.server() || "localhost") << "', with" <<
+			const char* u = cmdline.user() ? cmdline.user() : "";
+			const char* s = cmdline.server() ? cmdline.server() : "localhost";
+			cout << "Connecting to '" << u << "'@'" << s << "', with" <<
 					(cmdline.pass() && cmdline.pass()[0] ? "" : "out") <<
 					" password..." << endl;
 		}

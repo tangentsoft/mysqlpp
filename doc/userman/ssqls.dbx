@@ -758,7 +758,7 @@ sql_create_complete_5(stock, 1, 5,
     <filename>doc/ssqls-pretty</filename>, like so:</para>
 
     <programlisting>
-doc/ssqls-pretty &lt; myprog.cpp |less</programlisting>
+doc/ssqls-pretty &lt; myprog.cpp | less</programlisting>
 
     <para>This Perl script locates the first SSQLS declaration in that
     file, then uses the C++ preprocessor to expand that macro. (The

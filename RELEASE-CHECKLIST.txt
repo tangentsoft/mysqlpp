@@ -36,5 +36,3 @@
 
 - Re-bootstrap it again without "pedantic", to avoid shipping the
   pedantic build files.
-
-- make rpm on each CentOS version we currently support.

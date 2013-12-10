@@ -358,7 +358,7 @@ clean:
 	-if exist transaction.exe del transaction.exe
 
 mysqlpp.dll: $(MYSQLPP_OBJECTS)
-	$(CXX) $(LINK_DLL_FLAGS) -fPIC -o $@ $(MYSQLPP_OBJECTS)  -Wl,--out-implib=libmysqlpp.a $(__DEBUGINFO) -mthreads -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lwsock32 -lmysql
+	$(CXX) $(LINK_DLL_FLAGS) -fPIC -o $@ $(MYSQLPP_OBJECTS)  -Wl,--out-implib=libmysqlpp.a $(__DEBUGINFO) -mthreads -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lwsock32 -lmysql
 
 libmysqlpp_ssqls2parse.a: $(SSQLS2PARSE_OBJECTS) mysqlpp.dll mysqlpp.dll
 	if exist $@ del $@
@@ -366,55 +366,55 @@ libmysqlpp_ssqls2parse.a: $(SSQLS2PARSE_OBJECTS) mysqlpp.dll mysqlpp.dll
 	ranlib $@
 
 ssqlsxlat.exe: $(SSQLSXLAT_OBJECTS) mysqlpp.dll libmysqlpp_ssqls2parse.a
-	$(CXX) -o $@ $(SSQLSXLAT_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysql -lmysqlpp -lmysqlpp_ssqls2parse -lmysqlpp
+	$(CXX) -o $@ $(SSQLSXLAT_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysql -lmysqlpp -lmysqlpp_ssqls2parse -lmysqlpp
 
 test_array_index.exe: $(TEST_ARRAY_INDEX_OBJECTS) mysqlpp.dll
-	$(CXX) -o $@ $(TEST_ARRAY_INDEX_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysql -lmysqlpp
+	$(CXX) -o $@ $(TEST_ARRAY_INDEX_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysql -lmysqlpp
 
 test_cpool.exe: $(TEST_CPOOL_OBJECTS) mysqlpp.dll
-	$(CXX) -o $@ $(TEST_CPOOL_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysql -lmysqlpp
+	$(CXX) -o $@ $(TEST_CPOOL_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysql -lmysqlpp
 
 test_datetime.exe: $(TEST_DATETIME_OBJECTS) mysqlpp.dll
-	$(CXX) -o $@ $(TEST_DATETIME_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysql -lmysqlpp
+	$(CXX) -o $@ $(TEST_DATETIME_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysql -lmysqlpp
 
 test_inttypes.exe: $(TEST_INTTYPES_OBJECTS) mysqlpp.dll
-	$(CXX) -o $@ $(TEST_INTTYPES_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysql -lmysqlpp
+	$(CXX) -o $@ $(TEST_INTTYPES_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysql -lmysqlpp
 
 test_insertpolicy.exe: $(TEST_INSERTPOLICY_OBJECTS) mysqlpp.dll
-	$(CXX) -o $@ $(TEST_INSERTPOLICY_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysql -lmysqlpp
+	$(CXX) -o $@ $(TEST_INSERTPOLICY_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysql -lmysqlpp
 
 test_manip.exe: $(TEST_MANIP_OBJECTS) mysqlpp.dll
-	$(CXX) -o $@ $(TEST_MANIP_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysql -lmysqlpp
+	$(CXX) -o $@ $(TEST_MANIP_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysql -lmysqlpp
 
 test_null_comparison.exe: $(TEST_NULL_COMPARISON_OBJECTS) mysqlpp.dll
-	$(CXX) -o $@ $(TEST_NULL_COMPARISON_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysql -lmysqlpp
+	$(CXX) -o $@ $(TEST_NULL_COMPARISON_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysql -lmysqlpp
 
 test_query_copy.exe: $(TEST_QUERY_COPY_OBJECTS) mysqlpp.dll
-	$(CXX) -o $@ $(TEST_QUERY_COPY_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysql -lmysqlpp
+	$(CXX) -o $@ $(TEST_QUERY_COPY_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysql -lmysqlpp
 
 test_qssqls.exe: $(TEST_QSSQLS_OBJECTS) mysqlpp.dll
-	$(CXX) -o $@ $(TEST_QSSQLS_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysql -lmysqlpp
+	$(CXX) -o $@ $(TEST_QSSQLS_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysql -lmysqlpp
 
 test_qstream.exe: $(TEST_QSTREAM_OBJECTS) mysqlpp.dll
-	$(CXX) -o $@ $(TEST_QSTREAM_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysql -lmysqlpp
+	$(CXX) -o $@ $(TEST_QSTREAM_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysql -lmysqlpp
 
 test_sqlstream.exe: $(TEST_SQLSTREAM_OBJECTS) mysqlpp.dll
-	$(CXX) -o $@ $(TEST_SQLSTREAM_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysql -lmysqlpp
+	$(CXX) -o $@ $(TEST_SQLSTREAM_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysql -lmysqlpp
 
 test_ssqls2.exe: $(TEST_SSQLS2_OBJECTS) mysqlpp.dll libmysqlpp_ssqls2parse.a
-	$(CXX) -o $@ $(TEST_SSQLS2_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysql -lmysqlpp -lmysqlpp_ssqls2parse -lmysqlpp
+	$(CXX) -o $@ $(TEST_SSQLS2_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysql -lmysqlpp -lmysqlpp_ssqls2parse -lmysqlpp
 
 test_string.exe: $(TEST_STRING_OBJECTS) mysqlpp.dll
-	$(CXX) -o $@ $(TEST_STRING_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysql -lmysqlpp
+	$(CXX) -o $@ $(TEST_STRING_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysql -lmysqlpp
 
 test_tcp.exe: $(TEST_TCP_OBJECTS) mysqlpp.dll
-	$(CXX) -o $@ $(TEST_TCP_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysql -lmysqlpp
+	$(CXX) -o $@ $(TEST_TCP_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysql -lmysqlpp
 
 test_uds.exe: $(TEST_UDS_OBJECTS) mysqlpp.dll
-	$(CXX) -o $@ $(TEST_UDS_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysql -lmysqlpp
+	$(CXX) -o $@ $(TEST_UDS_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysql -lmysqlpp
 
 test_wnp.exe: $(TEST_WNP_OBJECTS) mysqlpp.dll
-	$(CXX) -o $@ $(TEST_WNP_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysql -lmysqlpp
+	$(CXX) -o $@ $(TEST_WNP_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysql -lmysqlpp
 
 libmysqlpp_excommon.a: $(EXCOMMON_OBJECTS) mysqlpp.dll
 	if exist $@ del $@
@@ -422,76 +422,76 @@ libmysqlpp_excommon.a: $(EXCOMMON_OBJECTS) mysqlpp.dll
 	ranlib $@
 
 cgi_jpeg.exe: $(CGI_JPEG_OBJECTS) libmysqlpp_excommon.a mysqlpp.dll
-	$(CXX) -o $@ $(CGI_JPEG_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
+	$(CXX) -o $@ $(CGI_JPEG_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
 
 cpool.exe: $(CPOOL_OBJECTS) libmysqlpp_excommon.a mysqlpp.dll
-	$(CXX) -o $@ $(CPOOL_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
+	$(CXX) -o $@ $(CPOOL_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
 
 dbinfo.exe: $(DBINFO_OBJECTS) libmysqlpp_excommon.a mysqlpp.dll
-	$(CXX) -o $@ $(DBINFO_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
+	$(CXX) -o $@ $(DBINFO_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
 
 deadlock.exe: $(DEADLOCK_OBJECTS) libmysqlpp_excommon.a mysqlpp.dll
-	$(CXX) -o $@ $(DEADLOCK_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
+	$(CXX) -o $@ $(DEADLOCK_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
 
 fieldinf.exe: $(FIELDINF_OBJECTS) libmysqlpp_excommon.a mysqlpp.dll
-	$(CXX) -o $@ $(FIELDINF_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
+	$(CXX) -o $@ $(FIELDINF_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
 
 for_each.exe: $(FOR_EACH_OBJECTS) libmysqlpp_excommon.a mysqlpp.dll
-	$(CXX) -o $@ $(FOR_EACH_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
+	$(CXX) -o $@ $(FOR_EACH_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
 
 load_jpeg.exe: $(LOAD_JPEG_OBJECTS) libmysqlpp_excommon.a mysqlpp.dll
-	$(CXX) -o $@ $(LOAD_JPEG_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
+	$(CXX) -o $@ $(LOAD_JPEG_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
 
 multiquery.exe: $(MULTIQUERY_OBJECTS) libmysqlpp_excommon.a mysqlpp.dll
-	$(CXX) -o $@ $(MULTIQUERY_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
+	$(CXX) -o $@ $(MULTIQUERY_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
 
 resetdb.exe: $(RESETDB_OBJECTS) libmysqlpp_excommon.a mysqlpp.dll
-	$(CXX) -o $@ $(RESETDB_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
+	$(CXX) -o $@ $(RESETDB_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
 
 simple1.exe: $(SIMPLE1_OBJECTS) libmysqlpp_excommon.a mysqlpp.dll
-	$(CXX) -o $@ $(SIMPLE1_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
+	$(CXX) -o $@ $(SIMPLE1_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
 
 simple2.exe: $(SIMPLE2_OBJECTS) libmysqlpp_excommon.a mysqlpp.dll
-	$(CXX) -o $@ $(SIMPLE2_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
+	$(CXX) -o $@ $(SIMPLE2_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
 
 simple3.exe: $(SIMPLE3_OBJECTS) libmysqlpp_excommon.a mysqlpp.dll
-	$(CXX) -o $@ $(SIMPLE3_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
+	$(CXX) -o $@ $(SIMPLE3_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
 
 ssqls1.exe: $(SSQLS1_OBJECTS) libmysqlpp_excommon.a mysqlpp.dll
-	$(CXX) -o $@ $(SSQLS1_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
+	$(CXX) -o $@ $(SSQLS1_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
 
 ssqls2.exe: $(SSQLS2_OBJECTS) libmysqlpp_excommon.a mysqlpp.dll
-	$(CXX) -o $@ $(SSQLS2_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
+	$(CXX) -o $@ $(SSQLS2_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
 
 ssqls3.exe: $(SSQLS3_OBJECTS) libmysqlpp_excommon.a mysqlpp.dll
-	$(CXX) -o $@ $(SSQLS3_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
+	$(CXX) -o $@ $(SSQLS3_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
 
 ssqls4.exe: $(SSQLS4_OBJECTS) libmysqlpp_excommon.a mysqlpp.dll
-	$(CXX) -o $@ $(SSQLS4_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
+	$(CXX) -o $@ $(SSQLS4_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
 
 ssqls5.exe: $(SSQLS5_OBJECTS) libmysqlpp_excommon.a mysqlpp.dll
-	$(CXX) -o $@ $(SSQLS5_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
+	$(CXX) -o $@ $(SSQLS5_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
 
 ssqls6.exe: $(SSQLS6_OBJECTS) libmysqlpp_excommon.a mysqlpp.dll
-	$(CXX) -o $@ $(SSQLS6_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
+	$(CXX) -o $@ $(SSQLS6_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
 
 store_if.exe: $(STORE_IF_OBJECTS) libmysqlpp_excommon.a mysqlpp.dll
-	$(CXX) -o $@ $(STORE_IF_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
+	$(CXX) -o $@ $(STORE_IF_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
 
 tquery1.exe: $(TQUERY1_OBJECTS) libmysqlpp_excommon.a mysqlpp.dll
-	$(CXX) -o $@ $(TQUERY1_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
+	$(CXX) -o $@ $(TQUERY1_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
 
 tquery2.exe: $(TQUERY2_OBJECTS) libmysqlpp_excommon.a mysqlpp.dll
-	$(CXX) -o $@ $(TQUERY2_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
+	$(CXX) -o $@ $(TQUERY2_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
 
 tquery3.exe: $(TQUERY3_OBJECTS) libmysqlpp_excommon.a mysqlpp.dll
-	$(CXX) -o $@ $(TQUERY3_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
+	$(CXX) -o $@ $(TQUERY3_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
 
 tquery4.exe: $(TQUERY4_OBJECTS) libmysqlpp_excommon.a mysqlpp.dll
-	$(CXX) -o $@ $(TQUERY4_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
+	$(CXX) -o $@ $(TQUERY4_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
 
 transaction.exe: $(TRANSACTION_OBJECTS) libmysqlpp_excommon.a mysqlpp.dll
-	$(CXX) -o $@ $(TRANSACTION_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib\opt" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
+	$(CXX) -o $@ $(TRANSACTION_OBJECTS)  -mthreads $(__DEBUGINFO) -L. -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup -L"C:\Program Files\MySQL\MySQL Connector C 6.1\lib" $(LDFLAGS)  -lmysqlpp_excommon -lmysql -lmysqlpp
 
 mysqlpp_beemutex.o: ./lib/beemutex.cpp
 	$(CXX) -c -o $@ $(MYSQLPP_CXXFLAGS) $(CPPDEPS) $<

@@ -62,7 +62,7 @@
     <dll id="mysqlpp">
       <dllname>mysqlpp$(DEBUG_SUFFIX)</dllname>
       <libname>mysqlpp$(DEBUG_SUFFIX)</libname>
-      <so_version>3.2.0</so_version>
+      <so_version>3.2.1</so_version>
 
       <sources>
         lib/beemutex.cpp
@@ -116,7 +116,7 @@
         <define>MYSQLPP_MAKING_DLL</define>
         <define>HAVE_MYSQL_SSL_SET</define>
         <include>$(MYSQL_WIN_DIR)\include</include>
-        <lib-path>$(MYSQL_WIN_DIR)\lib\opt</lib-path>
+        <lib-path>$(MYSQL_WIN_DIR)\lib</lib-path>
         <sys-lib>libmysql</sys-lib>
       </if>
 
@@ -125,7 +125,7 @@
         <define>HAVE_MYSQL_SSL_SET</define>
         <include>"$(MYSQL_WIN_DIR)\include"</include>
         <ldflags>-Wl,--enable-stdcall-fixup</ldflags>
-        <lib-path>"$(MYSQL_WIN_DIR)\lib\opt"</lib-path>
+        <lib-path>"$(MYSQL_WIN_DIR)\lib"</lib-path>
         <sys-lib>mysql</sys-lib>
       </if>
 
@@ -201,7 +201,7 @@
         -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup
       </ldflags>
       <include>"$(MYSQL_WIN_DIR)\include"</include>
-      <lib-path>"$(MYSQL_WIN_DIR)\lib\opt"</lib-path>
+      <lib-path>"$(MYSQL_WIN_DIR)\lib"</lib-path>
       <sys-lib>mysql</sys-lib>
       <sys-lib>mysqlpp$(DEBUG_SUFFIX)</sys-lib>
     </if>
@@ -209,7 +209,7 @@
     <if cond="FORMAT in ['msvs2003prj', 'msvs2005prj', 'msvs2008prj']">
       <lib-path>$(BUILD)</lib-path>
       <include>$(MYSQL_WIN_DIR)\include</include>
-      <lib-path>$(MYSQL_WIN_DIR)\lib\opt</lib-path>
+      <lib-path>$(MYSQL_WIN_DIR)\lib</lib-path>
       <sys-lib>mysqlpp$(DEBUG_SUFFIX)</sys-lib>
       <sys-lib>libmysql</sys-lib>
     </if>
@@ -557,7 +557,7 @@
 
       <!-- examples subdir -->
       <command>
-        cp examples/*.cpp examples/*.h examples/*.jpg $(PKGNAME)/examples
+        cp examples/*.{cpp,h,jpg,txt} $(PKGNAME)/examples
       </command>
       <command>
         for d in mfc wforms ; \

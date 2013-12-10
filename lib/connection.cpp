@@ -54,7 +54,7 @@ copacetic_(true)
 
 
 Connection::Connection(const Connection& other) :
-OptionalExceptions(),
+OptionalExceptions(other.throw_exceptions()),
 driver_(new DBDriver(*other.driver_))
 {
 	copy(other);

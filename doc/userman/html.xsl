@@ -15,6 +15,12 @@
 	<!-- Bring in local changes common to both HTML and FO output -->
 	<xsl:include href="common.xsl"/>
 
+	<!-- The DocBook stylesheets use ISO 8859-1 by default, even when the
+	     XML files are marked UTF-8.  If you serve such files from a web
+			 server that advertises UTF-8 content, browsers display the page
+			 incorrectly, because they believe the web server. -->
+	<xsl:output method="html" encoding="UTF-8" indent="no"/>
+
 	<!-- HTML-specific XSL parameters -->
 	<xsl:param name="chunk.fast" select="0"/>
 	<xsl:param name="html.stylesheet" select="'tangentsoft.css'"/>

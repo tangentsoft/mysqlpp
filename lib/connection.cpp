@@ -49,7 +49,15 @@ OptionalExceptions(),
 driver_(new DBDriver()),
 copacetic_(true)
 {
-	connect(db, server, user, password, port);
+	try {
+		connect(db, server, user, password, port);
+	}
+	catch (...) {
+		// Exception thrown from ctor causes dtor to not be called, so
+		// we have to delete the DBDriver instance, else we'll leak it.
+		delete driver_;
+		throw;
+	}
 }
 
 

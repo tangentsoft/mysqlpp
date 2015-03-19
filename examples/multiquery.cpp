@@ -34,6 +34,7 @@
 
 #include <mysql++.h>
 
+#include <algorithm>
 #include <iostream>
 #include <iomanip>
 #include <vector>

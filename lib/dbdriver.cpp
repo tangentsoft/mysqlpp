@@ -127,11 +127,12 @@ DBDriver::connect_prepare()
 void
 DBDriver::copy(const DBDriver& other)
 {
+	if (connected()) {
+		disconnect();
+	}
+
 	if (other.connected()) {
 		connect(other.mysql_);
-	}
-	else {
-		is_connected_ = false;
 	}
 }
 

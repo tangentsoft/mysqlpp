@@ -123,11 +123,11 @@ class MYSQLPP_EXPORT Query :
 		public OptionalExceptions
 {
 public:
-#if !defined(DOXYGEN_IGNORE)
 	// Bring in InsertPolicy template as part of this class's interface,
 	// separate only in the sense that it's a self-contained concept.
+	#define MYSQLPP_DEFINE_INSERT_POLICY_TEMPLATES
 	#include "insertpolicy.h"
-#endif
+	#undef MYSQLPP_DEFINE_INSERT_POLICY_TEMPLATES
 
 	/// \brief Create a new query object attached to a connection.
 	///

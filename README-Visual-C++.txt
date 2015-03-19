@@ -51,12 +51,24 @@ Project Files
     versions of Visual C++, but beware that the upgrade feature tends
     to be problematic.
 
-    When converting the VC++ 2008 project files to VC++ 2012,
-    I found that it will screw up the output file names for the
-    libraries, so that none of the executables will link properly.
-    This problem is detected by the migration process, so that even
-    though the tool doesn't know how to fix it itself, you can fix
-    it up manually afterward.
+    If you want to do a 32-bit build on VC++ 2008 or newer, it is
+    easiest to open the vc2005\* project files and let Visual Studio
+    upgrade them for you.  The alternative, starting with the vc2008
+    files, requires that you add a 32-bit build option to all of the
+    many targets in MySQL++, then optionally delete the 64-bit targets.
+    This is a lot more work.  Plus, it only works if you have the
+    64-bit compilers installed, since Visual Studio will refuse to
+    open project files where all targets must be built with compilers
+    that aren't installed, even if your goal is to immediately adjust
+    them to use compilers that *are* installed.
+
+    When converting the VC++ 2008 project files to VC++ 2012, Visual
+    Studio will change the output directories from Debug to Debug\x64
+    (and similar for Release), but it won't also change the link paths
+    from Debug to Debug\x64, so that the library and examples will
+    compile but not link.  The migration tool detects that there is
+    a problem, but it can't fix its own mess.  You have to manually
+    fix it.
 
     There were also problems in VC++ 2010 when you had converted 32-bit
     VC++ 2008 projects and then were trying to switch them to 64-bit.

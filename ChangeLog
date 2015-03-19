@@ -1,11 +1,41 @@
+3.2.2, 2015.03.18 (r2780)
+
+    o The DBDriver::operator= would leak a live connection if you
+      assigned a disconnected DBDriver to it.  Patch by Quentin Armitage.
+
+    o Plugged a potential DBDriver instance leak in Connection ctor.
+      Patch by Yury Alekseev.
+
+    o Explicitly #including algorithm.h in examples/multiquery.cpp for
+      std::max().
+
+    o Added missing "break;" statements in Transaction ctor taking an
+      isolation level parameter, which caused only the last one to do
+      the right thing.  Problem noticed by Tony Whyman, fix by me.
+
+    o The bootstrap script now checks for the existence of needed build
+      tools before trying to use them.  This lets us emit a clearer
+      error message than the shell will.  Original patch by Adrian
+      Cornish.
+
+    o Fixed a build problem related to std::min/max with Visual C++ 2013
+      due to a change in the definitions provided by its header files.
+
+    o Tracked several changes made to Connector/C made since 3.2.1.
+
+    o Assorted documentation updates.
+
+    o Generating HTML with UTF-8 encoding, not 8859-1
+
+
 3.2.1, 2013.12.10 (r2756)
 
     o Connection copy ctor wasn't copying the "throw exceptions"
       flag.  The copy always had exceptions enabled.
 
-    o Fixed resetdb's first output message when you run it without
-      arguments.  It was giving a misleading message that could
-      confuse someone.
+    o The resetdb example would print a bogus message about logging in
+      as '1'@'1' instead of showing the actual values passed on the
+      command line.  This did not affect how it actually logged in.
 
     o Previous release tarball was missing a few text files present in
       the source repository.

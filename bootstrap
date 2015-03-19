@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ARGS=1
 BF_OPTIONS=
@@ -45,6 +45,23 @@ do
 			ARGS=0
 			;;
 	esac
+done
+
+# Check for existence of needed tools, so we can give a better error
+# message than the shell will.
+tools="make"											# POSIX
+tools="$tools aclocal autoconf autoheader libtoolize"	# autotools
+tools="$tools bakefile bakefilize bakefile_gen"			# Bakefile
+for tool in $tools
+do
+	if ! type -p $tool > /dev/null
+	then
+		echo "FAILED to find build tool '$tool'!"
+		echo
+		echo BOOTSTRAP FAILED!
+		echo
+		exit 1
+	fi
 done
 
 # Find location of Bakefile's stock M4 autoconf macros

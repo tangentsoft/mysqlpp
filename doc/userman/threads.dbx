@@ -68,10 +68,11 @@
         <para><emphasis>Link your program to a thread-aware build of the
         MySQL C API library.</emphasis></para>
 
-        <para>If you use a binary distribution of MySQL on Unixy
-        systems, you usually get two different versions of the MySQL
-        C API library, one with thread support and one without. These
-        are typically called <filename>libmysqlclient</filename> and
+        <para>If you use a binary distribution of MySQL on
+        Unixy systems (including Cygwin) you usually get
+        two different versions of the MySQL C API library,
+        one with thread support and one without. These are
+        typically called <filename>libmysqlclient</filename> and
         <filename>libmysqlclient_r</filename>, the latter being the
         thread-safe one. (The &#x201C;<filename>_r</filename>&#x201D;
         means reentrant.)</para>
@@ -86,9 +87,7 @@
         <para>If you build MySQL from source, you might only get
         one version of the MySQL C API library, and it can have
         thread awareness or not, depending on your configuration
-        choices. This is the case with Cygwin, where you currently
-        have no choice but to build the C API library from source. (See
-        <filename>README-Cygwin.txt</filename>.)</para>
+        choices.</para>
       </listitem>
 
       <listitem>

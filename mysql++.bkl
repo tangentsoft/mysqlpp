@@ -62,7 +62,7 @@
     <dll id="mysqlpp">
       <dllname>mysqlpp$(DEBUG_SUFFIX)</dllname>
       <libname>mysqlpp$(DEBUG_SUFFIX)</libname>
-      <so_version>3.2.1</so_version>
+      <so_version>3.2.2</so_version>
 
       <sources>
         lib/beemutex.cpp
@@ -508,9 +508,10 @@
       <!-- Copy files into package directory -->
       <!-- top directory -->
       <command>
-        cp -RL *.bat *.in *.txt Bakefiles.bkgen bootstrap ChangeLog \
-          cleanmf config.guess config.sub configure* dtest exrun \
-          install* Makefile.* mysql++.* osver Wishlist $(PKGNAME)
+        cp -RL *.bat *.in *.txt abi.xml aclocal.m4 Bakefiles.bkgen \
+	  bootstrap ChangeLog cleanmf config.guess config.h config.sub \
+	  configure* dtest exrun install* Makefile.* mysql++.* osver \
+	  Wishlist $(PKGNAME)
       </command>
 
       <!-- VC++ project file subdirs -->
@@ -536,11 +537,7 @@
           done
         </command>
         <command>
-          for d in refman userman ; do \
-            for f in *.css *.html ; do \
-              cp doc/html/$(DDD)/$(DDF) $(PKGNAME)/doc/html/$(DDD) ; \
-            done ; \
-          done
+	  find doc \( -name *.css -o -name *.html \) -exec install {} $(PKGNAME)/{} \;
         </command>
         <command>
           cp doc/html/refman/*.png $(PKGNAME)/doc/html/refman
@@ -610,14 +607,23 @@
       <command>rm -rf $(PKGNAME)</command>
     </action>
 
-    <action id="rpm">
+    <action id="rpm-prep">
       <if cond="BUILDDOCS=='yes'">
         <depends>doc</depends>
       </if>
       <depends>dist</depends>
       <command>cp $(PKGNAME).tar.gz ~/rpmbuild/SOURCES</command>
       <command>cd ~/rpmbuild/SPECS</command>
+    </action>
+
+    <action id="rpm">
+			<depends>rpm-prep</depends>
       <command>rpmbuild -ba mysql++.spec</command>
+    </action>
+
+    <action id="srpm">
+			<depends>rpm-prep</depends>
+      <command>rpmbuild -bs mysql++.spec</command>
     </action>
 
     <action id="ebuild">

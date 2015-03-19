@@ -49,9 +49,9 @@
       configurations.)</para>
 
       <itemizedlist>
-        <listitem><para>Append the following to C/C++
-        | General | Additional Include Directories:
-        <filename>C:\Program Files\MySQL\MySQL Server 5.0\include,
+        <listitem><para>Append the following to C/C++ | General |
+        Additional Include Directories: <filename>C:\Program
+        Files\MySQL\MySQL Connector C 6.1\include,
         C:\mysql++\include</filename></para></listitem>
 
         <listitem><para>Under C/C++ | Code Generation change
@@ -61,14 +61,13 @@
         (/MD)&#x201D;.</para></listitem>
 
         <listitem>
-          <para>Append the following to Linker | General |
-          Additional Library Directories for the Debug configuration:
-          <filename>C:\Program Files\MySQL\MySQL Server 5.0\lib\debug,
-          C:\mysql++\vc\debug</filename></para>
+          <para>For both Release and Debug builds, append the following
+          to Linker | General | Additional Library Directories:
+          <filename>C:\Program Files\MySQL\MySQL Connector C 6.1\lib,
+          C:\mysql++\lib</filename></para>
 
-          <para>For the Release configuration, make it the same,
-          but change the &#x201C;debug&#x201D; directory names to
-          &#x201C;opt&#x201D;.</para>
+          <para>Connector/C does include debug libraries, but you
+          will probably not need to use them.</para>
         </listitem>
 
         <listitem>
@@ -229,16 +228,15 @@
     you can see what it uses, and emulate that.</para>
 
     <para>You may be wondering why we have used both
-    <varname>LDLIBS</varname> and <varname>LDFLAGS</varname>
-    here. Some <filename>Makefiles</filename> you have seen probably
-    try to collect both types of flags in a single variable. Whether
-    that works or not depends on where on the command line those
-    flags appear. Since we&rsquo;re depending on the standard
-    <filename>make</filename> rules here, we know have to separate
-    the <option>-l</option> and <option>-L</option> flags due to the
-    place they&rsquo;re inserted into the link command. If you were
-    writing your own compilation rules, you could write them in such
-    a way that you didn&rsquo;t have to do this.</para>
+    <varname>LDLIBS</varname> and <varname>LDFLAGS</varname> here. Some
+    <filename>Makefiles</filename> you have seen collect both types
+    of flags in a single variable. That can work if the variable
+    is used in the right place in the link command. However, this
+    particular <filename>Makefile</filename> is made with GNU make
+    in mind, and uses its standard rules implicitly. Those rules
+    are designed to use these two variables separately like this.
+    If you were writing your own compilation rules, you could write
+    them in such a way that you didn&rsquo;t have to do this.</para>
 
     <para>Beyond that, we have a pretty vanilla
     <filename>Makefile</filename>, thanks in large part to the fact

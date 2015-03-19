@@ -30,7 +30,7 @@
 /// Query::insertfrom().  You access it as Query::InsertPolicy<T>
 
 /***********************************************************************
- Copyright (c) 2008-2009 by AboveNet, Inc., and (c) 2009 by Educational
+ Copyright © 2008-2009 by AboveNet, Inc., and © 2009 by Educational
  Technology Resources, Inc.  Others may also hold copyrights on code
  in this file.  See the CREDITS file in the top directory of the
  distribution for details.
@@ -55,6 +55,17 @@
 
 #if !defined(MYSQLPP_INSERTPOLICY_H)
 #define MYSQLPP_INSERTPOLICY_H
+
+// Only allow these templates to be defined if they're being bodily
+// included into class Query's definition.  They're in this separate
+// file only for claity, so they don't get lost among the other
+// definitions in class Query.  Without this, Doxygen will pick them
+// up and treat them as a) outside namespace mysqlpp; and b) not member
+// templates of class Query.  We also don't want end-users of the
+// library to #include this file in their own code; these templates
+// should only be used as mysqlpp::Query::*.
+#if defined(MYSQLPP_DEFINE_INSERT_POLICY_TEMPLATES)
+
 
 /// \brief An insert policy object that triggers a new INSERT
 /// statement after a given number of rows have been inserted.
@@ -209,6 +220,8 @@ private:
 	Connection* conn_;
 	int size_;
 };
+
+#endif // defined(MYSQLPP_DEFINE_INSERT_POLICY_TEMPLATES)
 
 #endif // !defined(MYSQLPP_INSERTPOLICY_H)
 

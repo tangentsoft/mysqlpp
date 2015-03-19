@@ -1,7 +1,7 @@
 /***********************************************************************
  transaction.cpp - Implements the Transaction class.
 
- Copyright (c) 2006-2007 by Educational Technology Resources, Inc.
+ Copyright © 2006-2014 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the
  CREDITS.txt file in the top directory of the distribution for details.
 
@@ -63,10 +63,10 @@ finished_(true)		// don't bother rolling it back if ctor fails
 	if (scope == global)  q << "GLOBAL ";
 	q << "TRANSACTION ISOLATION LEVEL ";
 	switch (level) {
-		case read_uncommitted:	q << "READ UNCOMMITTED";
-		case read_committed:	q << "READ COMMITTED";
-		case repeatable_read:	q << "REPEATABLE READ";
-		case serializable:		q << "SERIALIZABLE";
+		case read_uncommitted:	q << "READ UNCOMMITTED"; break;
+		case read_committed:	q << "READ COMMITTED";   break;
+		case repeatable_read:	q << "REPEATABLE READ";  break;
+		case serializable:		q << "SERIALIZABLE";     break;
 	}
 	q.execute();
 

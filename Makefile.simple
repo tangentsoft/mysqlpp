@@ -41,163 +41,178 @@ BUILD ?= debug
 
 CPPDEPS = -MT$@ -MF`echo $@ | sed -e 's,\.o$$,.d,'` -MD -MP
 TEST_ARRAY_INDEX_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib \
-	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+	-I@MYSQL_C_INC_DIR@ -I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) \
+	$(CXXFLAGS)
 TEST_ARRAY_INDEX_OBJECTS =  \
 	test_array_index_array_index.o
 TEST_CPOOL_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib \
-	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+	-I@MYSQL_C_INC_DIR@ -I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) \
+	$(CXXFLAGS)
 TEST_CPOOL_OBJECTS =  \
 	test_cpool_cpool.o
 TEST_DATETIME_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib \
-	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+	-I@MYSQL_C_INC_DIR@ -I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) \
+	$(CXXFLAGS)
 TEST_DATETIME_OBJECTS =  \
 	test_datetime_datetime.o
 TEST_INTTYPES_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib \
-	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+	-I@MYSQL_C_INC_DIR@ -I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) \
+	$(CXXFLAGS)
 TEST_INTTYPES_OBJECTS =  \
 	test_inttypes_inttypes.o
 TEST_INSERTPOLICY_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib \
-	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+	-I@MYSQL_C_INC_DIR@ -I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) \
+	$(CXXFLAGS)
 TEST_INSERTPOLICY_OBJECTS =  \
 	test_insertpolicy_insertpolicy.o
 TEST_MANIP_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib \
-	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+	-I@MYSQL_C_INC_DIR@ -I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) \
+	$(CXXFLAGS)
 TEST_MANIP_OBJECTS =  \
 	test_manip_manip.o
 TEST_NULL_COMPARISON_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib \
-	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+	-I@MYSQL_C_INC_DIR@ -I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) \
+	$(CXXFLAGS)
 TEST_NULL_COMPARISON_OBJECTS =  \
 	test_null_comparison_null_comparison.o
 TEST_QUERY_COPY_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib \
-	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+	-I@MYSQL_C_INC_DIR@ -I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) \
+	$(CXXFLAGS)
 TEST_QUERY_COPY_OBJECTS =  \
 	test_query_copy_query_copy.o
 TEST_QSSQLS_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib \
-	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+	-I@MYSQL_C_INC_DIR@ -I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) \
+	$(CXXFLAGS)
 TEST_QSSQLS_OBJECTS =  \
 	test_qssqls_qssqls.o
 TEST_QSTREAM_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib \
-	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+	-I@MYSQL_C_INC_DIR@ -I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) \
+	$(CXXFLAGS)
 TEST_QSTREAM_OBJECTS =  \
 	test_qstream_qstream.o
 TEST_SQLSTREAM_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib \
-	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+	-I@MYSQL_C_INC_DIR@ -I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) \
+	$(CXXFLAGS)
 TEST_SQLSTREAM_OBJECTS =  \
 	test_sqlstream_sqlstream.o
 TEST_STRING_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib \
-	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+	-I@MYSQL_C_INC_DIR@ -I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) \
+	$(CXXFLAGS)
 TEST_STRING_OBJECTS =  \
 	test_string_string.o
-TEST_TCP_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib \
+TEST_TCP_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I@MYSQL_C_INC_DIR@ \
 	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 TEST_TCP_OBJECTS =  \
 	test_tcp_tcp.o
-TEST_UDS_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib \
+TEST_UDS_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I@MYSQL_C_INC_DIR@ \
 	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 TEST_UDS_OBJECTS =  \
 	test_uds_uds.o
-TEST_WNP_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib \
+TEST_WNP_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I@MYSQL_C_INC_DIR@ \
 	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 TEST_WNP_OBJECTS =  \
 	test_wnp_wnp.o
-EXCOMMON_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib \
+EXCOMMON_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I@MYSQL_C_INC_DIR@ \
 	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 EXCOMMON_OBJECTS =  \
 	excommon_printdata.o
-CGI_JPEG_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib \
+CGI_JPEG_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I@MYSQL_C_INC_DIR@ \
 	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 CGI_JPEG_OBJECTS =  \
 	cgi_jpeg_cgi_jpeg.o
-CPOOL_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I/usr/include/mysql \
-	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+CPOOL_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I@MYSQL_C_INC_DIR@ \
+	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 CPOOL_OBJECTS =  \
 	cpool_cpool.o
-DBINFO_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I/usr/include/mysql \
-	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+DBINFO_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I@MYSQL_C_INC_DIR@ \
+	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 DBINFO_OBJECTS =  \
 	dbinfo_dbinfo.o
-DEADLOCK_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib \
+DEADLOCK_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I@MYSQL_C_INC_DIR@ \
 	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 DEADLOCK_OBJECTS =  \
 	deadlock_deadlock.o
-FIELDINF_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib \
+FIELDINF_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I@MYSQL_C_INC_DIR@ \
 	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 FIELDINF_OBJECTS =  \
 	fieldinf_fieldinf.o
-FOR_EACH_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib \
+FOR_EACH_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I@MYSQL_C_INC_DIR@ \
 	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 FOR_EACH_OBJECTS =  \
 	for_each_for_each.o
 LOAD_JPEG_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib \
-	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+	-I@MYSQL_C_INC_DIR@ -I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) \
+	$(CXXFLAGS)
 LOAD_JPEG_OBJECTS =  \
 	load_jpeg_load_jpeg.o
 MULTIQUERY_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib \
-	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+	-I@MYSQL_C_INC_DIR@ -I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) \
+	$(CXXFLAGS)
 MULTIQUERY_OBJECTS =  \
 	multiquery_multiquery.o
-RESETDB_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I/usr/include/mysql \
-	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+RESETDB_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I@MYSQL_C_INC_DIR@ \
+	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 RESETDB_OBJECTS =  \
 	resetdb_resetdb.o
-SIMPLE1_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I/usr/include/mysql \
-	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+SIMPLE1_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I@MYSQL_C_INC_DIR@ \
+	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 SIMPLE1_OBJECTS =  \
 	simple1_simple1.o
-SIMPLE2_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I/usr/include/mysql \
-	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+SIMPLE2_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I@MYSQL_C_INC_DIR@ \
+	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 SIMPLE2_OBJECTS =  \
 	simple2_simple2.o
-SIMPLE3_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I/usr/include/mysql \
-	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+SIMPLE3_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I@MYSQL_C_INC_DIR@ \
+	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 SIMPLE3_OBJECTS =  \
 	simple3_simple3.o
-SSQLS1_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I/usr/include/mysql \
-	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+SSQLS1_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I@MYSQL_C_INC_DIR@ \
+	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 SSQLS1_OBJECTS =  \
 	ssqls1_ssqls1.o
-SSQLS2_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I/usr/include/mysql \
-	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+SSQLS2_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I@MYSQL_C_INC_DIR@ \
+	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 SSQLS2_OBJECTS =  \
 	ssqls2_ssqls2.o
-SSQLS3_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I/usr/include/mysql \
-	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+SSQLS3_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I@MYSQL_C_INC_DIR@ \
+	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 SSQLS3_OBJECTS =  \
 	ssqls3_ssqls3.o
-SSQLS4_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I/usr/include/mysql \
-	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+SSQLS4_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I@MYSQL_C_INC_DIR@ \
+	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 SSQLS4_OBJECTS =  \
 	ssqls4_ssqls4.o
-SSQLS5_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I/usr/include/mysql \
-	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+SSQLS5_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I@MYSQL_C_INC_DIR@ \
+	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 SSQLS5_OBJECTS =  \
 	ssqls5_ssqls5.o
-SSQLS6_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I/usr/include/mysql \
-	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+SSQLS6_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I@MYSQL_C_INC_DIR@ \
+	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 SSQLS6_OBJECTS =  \
 	ssqls6_ssqls6.o
-STORE_IF_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib \
+STORE_IF_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I@MYSQL_C_INC_DIR@ \
 	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 STORE_IF_OBJECTS =  \
 	store_if_store_if.o
-TQUERY1_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I/usr/include/mysql \
-	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+TQUERY1_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I@MYSQL_C_INC_DIR@ \
+	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 TQUERY1_OBJECTS =  \
 	tquery1_tquery1.o
-TQUERY2_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I/usr/include/mysql \
-	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+TQUERY2_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I@MYSQL_C_INC_DIR@ \
+	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 TQUERY2_OBJECTS =  \
 	tquery2_tquery2.o
-TQUERY3_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I/usr/include/mysql \
-	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+TQUERY3_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I@MYSQL_C_INC_DIR@ \
+	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 TQUERY3_OBJECTS =  \
 	tquery3_tquery3.o
-TQUERY4_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I/usr/include/mysql \
-	-I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+TQUERY4_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib -I@MYSQL_C_INC_DIR@ \
+	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
 TQUERY4_OBJECTS =  \
 	tquery4_tquery4.o
 TRANSACTION_CXXFLAGS = $(__DEBUGINFO) $(__OPTIMIZE_FLAG) -Ilib \
-	-I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) $(CXXFLAGS)
+	-I@MYSQL_C_INC_DIR@ -I/usr/include/mysql -I/usr/include/mysql++ $(CPPFLAGS) \
+	$(CXXFLAGS)
 TRANSACTION_OBJECTS =  \
 	transaction_transaction.o
 
@@ -270,49 +285,49 @@ clean:
 	rm -f transaction
 
 test_array_index: $(TEST_ARRAY_INDEX_OBJECTS)
-	$(CXX) -o $@ $(TEST_ARRAY_INDEX_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TEST_ARRAY_INDEX_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
 
 test_cpool: $(TEST_CPOOL_OBJECTS)
-	$(CXX) -o $@ $(TEST_CPOOL_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TEST_CPOOL_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
 
 test_datetime: $(TEST_DATETIME_OBJECTS)
-	$(CXX) -o $@ $(TEST_DATETIME_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TEST_DATETIME_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
 
 test_inttypes: $(TEST_INTTYPES_OBJECTS)
-	$(CXX) -o $@ $(TEST_INTTYPES_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TEST_INTTYPES_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
 
 test_insertpolicy: $(TEST_INSERTPOLICY_OBJECTS)
-	$(CXX) -o $@ $(TEST_INSERTPOLICY_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TEST_INSERTPOLICY_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
 
 test_manip: $(TEST_MANIP_OBJECTS)
-	$(CXX) -o $@ $(TEST_MANIP_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TEST_MANIP_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
 
 test_null_comparison: $(TEST_NULL_COMPARISON_OBJECTS)
-	$(CXX) -o $@ $(TEST_NULL_COMPARISON_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TEST_NULL_COMPARISON_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
 
 test_query_copy: $(TEST_QUERY_COPY_OBJECTS)
-	$(CXX) -o $@ $(TEST_QUERY_COPY_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TEST_QUERY_COPY_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
 
 test_qssqls: $(TEST_QSSQLS_OBJECTS)
-	$(CXX) -o $@ $(TEST_QSSQLS_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TEST_QSSQLS_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
 
 test_qstream: $(TEST_QSTREAM_OBJECTS)
-	$(CXX) -o $@ $(TEST_QSTREAM_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TEST_QSTREAM_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
 
 test_sqlstream: $(TEST_SQLSTREAM_OBJECTS)
-	$(CXX) -o $@ $(TEST_SQLSTREAM_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TEST_SQLSTREAM_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
 
 test_string: $(TEST_STRING_OBJECTS)
-	$(CXX) -o $@ $(TEST_STRING_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TEST_STRING_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
 
 test_tcp: $(TEST_TCP_OBJECTS)
-	$(CXX) -o $@ $(TEST_TCP_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TEST_TCP_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
 
 test_uds: $(TEST_UDS_OBJECTS)
-	$(CXX) -o $@ $(TEST_UDS_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TEST_UDS_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
 
 test_wnp: $(TEST_WNP_OBJECTS)
-	$(CXX) -o $@ $(TEST_WNP_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TEST_WNP_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp -lmysqlclient
 
 libmysqlpp_excommon.a: $(EXCOMMON_OBJECTS)
 	rm -f $@
@@ -320,76 +335,76 @@ libmysqlpp_excommon.a: $(EXCOMMON_OBJECTS)
 	$(RANLIB) $@
 
 cgi_jpeg: $(CGI_JPEG_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(CGI_JPEG_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(CGI_JPEG_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 cpool: $(CPOOL_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(CPOOL_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(CPOOL_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 dbinfo: $(DBINFO_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(DBINFO_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(DBINFO_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 deadlock: $(DEADLOCK_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(DEADLOCK_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(DEADLOCK_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 fieldinf: $(FIELDINF_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(FIELDINF_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(FIELDINF_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 for_each: $(FOR_EACH_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(FOR_EACH_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(FOR_EACH_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 load_jpeg: $(LOAD_JPEG_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(LOAD_JPEG_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(LOAD_JPEG_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 multiquery: $(MULTIQUERY_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(MULTIQUERY_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(MULTIQUERY_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 resetdb: $(RESETDB_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(RESETDB_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(RESETDB_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 simple1: $(SIMPLE1_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(SIMPLE1_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(SIMPLE1_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 simple2: $(SIMPLE2_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(SIMPLE2_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(SIMPLE2_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 simple3: $(SIMPLE3_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(SIMPLE3_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(SIMPLE3_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 ssqls1: $(SSQLS1_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(SSQLS1_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(SSQLS1_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 ssqls2: $(SSQLS2_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(SSQLS2_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(SSQLS2_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 ssqls3: $(SSQLS3_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(SSQLS3_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(SSQLS3_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 ssqls4: $(SSQLS4_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(SSQLS4_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(SSQLS4_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 ssqls5: $(SSQLS5_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(SSQLS5_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(SSQLS5_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 ssqls6: $(SSQLS6_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(SSQLS6_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(SSQLS6_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 store_if: $(STORE_IF_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(STORE_IF_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(STORE_IF_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 tquery1: $(TQUERY1_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(TQUERY1_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TQUERY1_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 tquery2: $(TQUERY2_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(TQUERY2_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TQUERY2_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 tquery3: $(TQUERY3_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(TQUERY3_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TQUERY3_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 tquery4: $(TQUERY4_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(TQUERY4_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TQUERY4_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 transaction: $(TRANSACTION_OBJECTS) libmysqlpp_excommon.a
-	$(CXX) -o $@ $(TRANSACTION_OBJECTS)   $(__DEBUGINFO) -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
+	$(CXX) -o $@ $(TRANSACTION_OBJECTS)   $(__DEBUGINFO) -L@MYSQL_C_LIB_DIR@ -L. $(LDFLAGS)  -lmysqlpp_excommon -lmysqlpp -lmysqlclient
 
 test_array_index_array_index.o: ./test/array_index.cpp
 	$(CXX) -c -o $@ $(TEST_ARRAY_INDEX_CXXFLAGS) $(CPPDEPS) $<

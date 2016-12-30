@@ -88,8 +88,11 @@
 #		pragma warning(disable: 4800)
 		// Disable nagging about new "secure" functions like strncpy_s()
 #		pragma warning(disable: 4996)
-		// Call _snprintf() for VC++ version of snprintf() function
-#		define snprintf _snprintf
+
+		// Prior to Visual C++ 2015, we must use _snprintf()
+#		if _MSC_VER < 1900
+#			define snprintf _snprintf
+#		endif
 #	endif
 
 	// Define DLL import/export tags for Windows compilers, where we build

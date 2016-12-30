@@ -62,7 +62,7 @@
     <dll id="mysqlpp">
       <dllname>mysqlpp$(DEBUG_SUFFIX)</dllname>
       <libname>mysqlpp$(DEBUG_SUFFIX)</libname>
-      <so_version>3.2.2</so_version>
+      <so_version>3.2.3</so_version>
 
       <sources>
         lib/beemutex.cpp
@@ -135,6 +135,8 @@
 
         <cxxflags>@PTHREAD_CFLAGS@</cxxflags>
         <include>.</include>
+				<include>@MYSQL_C_INC_DIR@</include>
+        <ldflags>-L@MYSQL_C_LIB_DIR@</ldflags>
         <ldflags>-l@MYSQL_C_LIB_NAME@ @PTHREAD_LIBS@ @MYSQLPP_EXTRA_LIBS@</ldflags>
       </if>
 
@@ -169,6 +171,8 @@
 
     <if cond="FORMAT in ['autoconf', 'gnu', 'mingw', 'xcode2']">
       <include>lib</include>
+			<include>@MYSQL_C_INC_DIR@</include>
+			<lib-path>@MYSQL_C_LIB_DIR@</lib-path>
       <lib-path>.</lib-path>
     </if>
     <if cond="FORMAT in ['msvs2003prj', 'msvs2005prj', 'msvs2008prj']">
@@ -485,7 +489,7 @@
       <depends-on-file>doc/userman/*.dbx</depends-on-file>
       <depends-on-file>doc/userman/userman.dbx.in</depends-on-file>
       <command>
-        cd doc/userman ; make html pdf ; cp userman.pdf ../pdf
+        cd doc/userman ; make html pdf
       </command>
     </action>
 

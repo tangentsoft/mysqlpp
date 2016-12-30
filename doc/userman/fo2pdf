@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 AHCMD=/usr/XSLFormatterV42/run.sh
-FOPCMD=`which /usr/local/fop/fop /usr/bin/fop | head -1 2> /dev/null`
+FOPCMD=$(type -p fop)
 XEPCMD=/usr/local/xep/xep
 
 FOFILE=$1

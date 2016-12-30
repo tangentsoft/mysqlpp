@@ -142,6 +142,7 @@ public:
 	template <class RowT>
 	bool can_add(int size, const RowT& object) const
 	{
+		(void)object;		// we don't use this, but other policies do
 		return (size < size_);
 	}
 

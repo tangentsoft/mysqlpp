@@ -1,3 +1,22 @@
+3.2.3, 2016.12.29 (r2790)
+
+    o Now using snprintf() instead of _snprintf() on Visual C++ 2015.
+
+    o Cygwin changed its naming for the MySQL C API library since the
+      last time we successfully tried building MySQL++ there.  Reworked
+      the autoconf detection macro to make it less dependent on such
+      individual platform differences.
+
+      The macro is in fact now entirely side-effect-free, just setting
+      MYSQL_C_* variables that the top-level Bakefile uses when and
+      as it needs them, rather than expecting that major variables
+      like CPPLFAGS and LIBS were overridden by the autoconf macro.
+      This makes the autoconf case more like that of the non-autoconf
+      Bakefile outputs.
+
+    o Squished a Clang warning
+
+
 3.2.2, 2015.03.18 (r2780)
 
     o The DBDriver::operator= would leak a live connection if you

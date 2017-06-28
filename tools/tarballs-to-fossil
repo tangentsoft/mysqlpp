@@ -1,0 +1,40 @@
+#!/bin/bash
+ignores="$(tr '\n' ',' < ../tb-ignore-glob)"
+rdir=~/tangentsoft.com/mysql++/releases
+
+set -e
+ls $rdir/*.tar.gz | 
+        ggrep -Po '\d[\d.]+\d[.a-f]{0,2}' | 
+        sed -e 's/\.$//' |
+        gsort -t. -k 1,1n -k 2,2n -k 3,3n -k 4,4n |
+while read ver
+do
+    f=$(echo $rdir/*-${ver}.tar.gz)
+    echo -e "\n----------------------------------------------------------"
+    echo -e "Processing MySQL++ v$ver, $(basename $f)...\n"
+
+    find . -type f -not -name .fslckout -delete
+    find . -type d -delete
+
+    if gtar -x --strip-components=1 -f "$f"
+    then
+        fossil addremove --ignore "$ignores"
+
+        if [ -e ChangeLog ]
+        then
+            newest=ChangeLog
+        else
+            newest=$(find . -type f -print0 | xargs -0 ls -t | head -n 2 | tail -1)
+        fi
+        mtime=$(date -u -r "$newest" +%FT%TZ)
+        
+        echo "Checking in MySQL++ v$ver, mtime=$mtime..."
+        fossil ci \
+            --comment "Version $ver" \
+            --date-override $mtime \
+            --no-warnings \
+            --tag "v$ver"
+    fi
+done
+
+fossil ui

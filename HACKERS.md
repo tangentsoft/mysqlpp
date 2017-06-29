@@ -6,46 +6,46 @@ hints and commentary you may find helpful.
 
 ## Code Repository Access
 
-MySQL++ uses the [Fossil][1] [distributed version control system][2]
-since Gna! shut down in June of 2017.
+MySQL++ uses the [Fossil][fsl] [distributed version control
+system][dvcs] since Gna! shut down in June of 2017.
 
 To clone the code repository anonymously, say:
 
-$ fossil clone https://tangentsoft.com/mysqlpp mysqlpp.fossil
+    $ fossil clone https://tangentsoft.com/mysqlpp mysqlpp.fossil
 
 If you have a developer account on the MySQL++ Fossil instance, just add
 your username to the URL like so:
 
-$ fossil clone https://username@tanentsoft.com/mysqlpp mysqlpp.fossil
+    $ fossil clone https://username@tanentsoft.com/mysqlpp mysqlpp.fossil
 
 That will get you a file called `mysqlpp.fossil` containing the
 release-level history of the MySQL++ project from its founding until the
-3.2.3 release. This means we do not have checkin comments prior to the
-27th of June 2017 any more, so if you need to track down when a given
-change happened, consult the `ChangeLog`. That file also tells you who did
-what, but you can find a summary of that information in the
-`CREDITS.txt` file.
+3.2.3 release. The oldest checkin-level history in the repository now
+begins at 2017.07.28, so if you need to track down when a given change
+happened, consult [the `ChangeLog`][cl]. If you're more interested in
+*who* did what, the `ChangeLog` also has those details, though if you
+only wanted a summary, see [the `CREDITS.txt` file][cred].
 
 The repository clone file can be named anything you like. Even the
 `.fossil` extension is just a convention, not a requirement.
 
 To "open" the repo clone so you can hack on it, say:
 
-$ mkdir mysqlpp
-$ cd mysqlpp
-$ fossil open ../mysqlpp.fossil
+    $ mkdir mysqlpp
+    $ cd mysqlpp
+    $ fossil open ../mysqlpp.fossil
 
 As with `mysqlpp.fossil`, you can call the working directory anythihg
 you like. I actually prefer a working tree that looks like this:
 
-~/museum/                  # Where fossils are kept
-    mysqlpp.fossil
-~/src/                     # Working tree for software projects
-    mysqlpp/
-        skull/             # Fossil head, get it?   I crack me up.
-        trunk -> skull/    # Alias to match Fossil branch naming
-        some-branch/       # Separately-opened working branch
-        3.2.3/             # Release branch checkout
+    ~/museum/                  # Where fossils are kept
+        mysqlpp.fossil
+    ~/src/                     # Working tree for software projects
+        mysqlpp/
+            skull/             # Fossil head, get it?   I crack me up.
+            trunk -> skull/    # Alias to match Fossil branch naming
+            some-branch/       # Separately-opened working branch
+            3.2.3/             # Release branch checkout
 
 Fossil will let you make any modifications you like to your local
 repository copy. For those with privileges on the upstream copy,
@@ -58,14 +58,14 @@ your local clone.
 Developers are expected to make all changes that affect the libary's
 API, ABI, or behavior on a branch, rather than check such changes
 directly into the trunk. Once we have discussed the change on the
-mailing list and resolved any isssues with the experimental branch, it
-will be merged into the trunk.
+[mailing list][ml] and resolved any isssues with the experimental
+branch, it will be merged into the trunk.
 
 Creating a branch in Fossil is scary-simple, to the point that those
 coming from other version control systems may ask, "Is that really all
 there is to it?" Yes, really, this is it:
 
-$ fossil checkin --branch new-branch-name
+    $ fossil checkin --branch new-branch-name
 
 That is to say, you make your changes as you normally would; then when
 you go to check them in, you give the `--branch` option to the
@@ -76,6 +76,12 @@ At some point, the trunk version becomes the next major version. Stable
 versions become either tags or branches. (The only difference between
 tags and branches in Fossil is that branches may have subsequent changes
 made to them.)
+
+[fsl]:  http://fossil-scm.org/
+[dvcs]: http://en.wikipedia.org/wiki/Distributed_revision_control
+[ml]:   https://lists.mysql.com/plusplus/
+[cl]:   https://tangentsoft.com/mysqlpp/file/ChangeLog
+[cred]: https://tangentsoft.com/mysqlpp/file/CREDITS.txt
 
 
 ## Bootstrapping the Library
@@ -91,10 +97,10 @@ X, BSD, Solaris...any version released since 2005 or so. It's
 possible to do it on Windows, but much harder; we cover the options
 below in a separate section.
 
-Two of the tools you need to do this are commonly available on
-Unixy systems, at least as an option: Perl 5, and autoconf 1.59
-or higher. If they're not installed, you can probably run your
-system's package manager to install suitable versions.
+Two of the tools you need to do this are commonly available on Unixy
+systems, at least as an option: Perl 5, and GNU Autoconf 1.59 or higher.
+If they're not installed, you can probably run your system's package
+manager to install suitable versions.
 
 There's a third tool you'll need to bootstrap MySQL++, called
 Bakefile, which you can get from http://bakefile.org/  You will
@@ -117,130 +123,133 @@ For more unusual situations, here's the complete usage:
 
 Arguments:
 
-    nodoc   The documentation won't be considered a prerequisite for
-            building the distribution tarball. This is useful on systems
-            where the documentation doesn't build correctly, and you only
-            need to make a binary RPM. That process requires a tarball,
-            but doesn't need the documentation. Don't distribute the
-            tarball or SRPM that results, as they are no good for any
-            other purpose.
+*   `nodoc`
 
-    noex    The generated Makefiles and project files won't try to build
-            any of the examples.
+    The documentation won't be considered a prerequisite for building
+    the distribution tarball. This is useful on systems where the
+    documentation doesn't build correctly, and you only need to make a
+    binary RPM. That process requires a tarball, but doesn't need the
+    documentation. Don't distribute the tarball or SRPM that results, as
+    they are no good for any other purpose.
 
-    nolib   The generated Makefiles and project files won't try to build
-            the MySQL++ library.
+*   `noex`
 
-    nomaint Turn off "maintainer mode" stuff in the build. These are
-            features used only by those building MySQL++ from Fossil. The
-            'dist' build target uses this when creating the tarball.
+    The generated `Makefiles` and project files won't try to build any of
+    the examples.
 
-    noopt   Compiler optimization will be turned off. (This currently
-            has no effect on MinGW or Visual C++.)
+*   `nolib`
 
-    pedantic
-            Turns on all of GCC's warnings and portability checks.
-            Good for checking changes before making a public release.
+    The generated `Makefiles` and project files won't try to build the
+    MySQL++ library.
 
-    bat     Asks cmd.exe to run bootstrap.bat for you. This is useful
-            when using Cygwin just as a command shell in preference
-            to cmd.exe, as opposed to using Cygwin to build MySQL++
-            using its native tools. Passing 'bat' stops all command
-            line processing in the bootstrap script, so if you
-            also pass some of the other options, make 'bat' last.
-            The only options that affect the built project files and
-            Makefiles work are the no* ones.
+*   `nomaint`
 
-    configure options
-            As soon as the bootstrap script sees an option that it
-            doesn't understand, it stops processing the command line.
-            Any subsequent options are passed to the configure script.
-            See README-Unix.txt for more on configure script options.
+    Turn off "maintainer mode" stuff in the build. These are features
+    used only by those building MySQL++ from Fossil. The `dist` build
+    target uses this when creating the tarball.
+
+*   `noopt`
+
+    Compiler optimization will be turned off. (This currently has no
+    effect on MinGW or Visual C++.)
+
+*   `pedantic`
+
+    Turns on all of GCC's warnings and portability checks.  Good for
+    checking changes before making a public release.
+
+*   `bat`
+
+    Asks `cmd.exe` to run `bootstrap.bat` for you. This is useful when
+    using Cygwin just as a command shell in preference to `cmd.exe`, as
+    opposed to using Cygwin to build MySQL++ using its native tools.
+    Passing 'bat' stops all command line processing in the bootstrap
+    script, so if you also pass some of the other options, make "`bat`"
+    last.  The only options that affect the built project files and
+    `Makefiles` work are the no* ones.
+
+*   `configure` script options
+
+    As soon as the bootstrap script sees an option that it doesn't
+    understand, it stops processing the command line.  Any subsequent
+    options are passed to the configure script.  See README-Unix.txt for
+    more on configure script options.
 
 
-## Bootstrapping the Library Using only Windows
+## Bootstrapping the Library Using Only Windows
 
-The thing that makes bootstrapping on Windows difficult is that
-one of the required steps uses a Unix-centric tool, autoconf.
-This section is about working out a way to get that working on
-Windows, or avoiding the need for it, so you can get on with
-hacking on MySQL++ on Windows.
+The thing that makes bootstrapping on Windows difficult is that one of
+the required steps uses a Unix-centric tool, `autoconf`.  This section
+is about working out a way to get that working on Windows, or avoiding
+the need for it, so you can get on with hacking on MySQL++ on Windows.
 
-The thing autoconf does that's relevant to Windows builds
-of MySQL++ is that it substitutes the current MySQL++ version
-number into several source files. This allows us to change the
-version number in just one place -- configure.ac -- and have
-it applied to all these other places. Until you do this step,
-an Fossil checkout of MySQL++ won't build, because these files with
-the version numbers in them won't be generated.
+The thing `autoconf` does that's relevant to Windows builds of MySQL++
+is that it substitutes the current MySQL++ version number into several
+source files. This allows us to change the version number in just one
+place — `configure.ac` — and have it applied to all these other places.
+Until you do this step, an Fossil checkout of MySQL++ won't build,
+because these files with the version numbers in them won't be generated.
 
 
 ### Option 1: Copy the generated files over from a released version
 
-    Only one of these generated files is absolutely critical to
-    allowing MySQL++ to build: lib/mysql++.h. So, the simplest
-    option you have to bootstrap MySQL++ entirely on Windows is to
-    copy lib/mysql++.h over from a released version of MySQL++.
-    While you're doing that, you might copy over the other such
-    generated files:
+Only one of these generated files is absolutely critical to allowing
+MySQL++ to build: `lib/mysql++.h`. So, the simplest option you have to
+bootstrap MySQL++ entirely on Windows is to copy `lib/mysql++.h` over
+from a released version of MySQL++. While you're doing that, you might
+copy over the other such generated files:
 
-        install.hta
-        mysql++.spec
-        doc/userman/userman.dbx
-        lib/Doxyfile
+    install.hta
+    mysql++.spec
+    doc/userman/userman.dbx
+    lib/Doxyfile
 
-    Having done that, you can complete the bootstrapping process by
-    running bootstrap.bat. It has the same purpose as the Bourne
-    shell script described above, but much simpler. It has none
-    of the command line options described above, for one thing.
+Having done that, you can complete the bootstrapping process by running
+`bootstrap.bat`. It has the same purpose as the Bourne shell script
+described above, but much simpler. It has none of the command line
+options described above, for one thing.
 
-    The main downside of doing it this way is that your changed
-    version will have the same version number as the release of
-    MySQL++ you copied the files from, unless you go into each
-    file and change the version numbers.
+The main downside of doing it this way is that your changed version will
+have the same version number as the release of MySQL++ you copied the
+files from, unless you go into each file and change the version numbers.
 
 
 ### Option 2: Cygwin
 
-    If you'd like to hack on MySQL++ entirely on Windows and
-    have all the build freedoms enjoyed by those working on Unixy
-    platforms, the simplest solution is probably to install Cygwin.
+If you'd like to hack on MySQL++ entirely on Windows and have all the
+build freedoms enjoyed by those working on Unixy platforms, the simplest
+solution is probably to install Cygwin.
 
-    Get the Cygwin installer from http://cygwin.com/setup.exe
+Get [the Cygwin installer](http://cygwin.com/setup-x86_64.exe). (64-bit.
+A [32-bit installer](http://cygwin.com/setup-x86.exe) is also
+available.)
 
-    When you run it, it will walk you through the steps to
-    install Cygwin. Autoconf and Perl 5 aren't installed in
-    Cygwin by default, so when you get to the packages list,
-    be sure to select them. Autoconf is in the Devel category,
-    and Perl 5 in the Interpreters category.
+When you run it, it will walk you through the steps to install Cygwin.
+Autoconf and Perl 5 aren't installed in Cygwin by default, so when you
+get to the packages list, be sure to select them. Autoconf is in the
+Devel category, and Perl 5 in the Interpreters category.
 
-    You will also need to install the native Windows binary
-    version of Bakefile, from http://bakefile.org/  Don't get
-    the source version and try to build Bakefile under Cygwin; it
-    won't work. The Windows binary version of Bakefile includes
-    an embedded version of Python, so you won't need to install
-    Cygwin's Python.
-    
-    Having done all this, you can follow the Unix bootstrapping
-    instructions in the previous section.
+You will also need to install the native Windows binary version of
+[Bakefile](http://bakefile.org/).  Don't get the source version and try
+to build Bakefile under Cygwin; it won't work. The Windows binary
+version of Bakefile includes an embedded version of Python, so you won't
+need to install Cygwin's Python.
+
+Having done all this, you can follow the Unix bootstrapping
+instructions in the previous section.
 
 
-### Option 3: "Here's a nickel, kid, get yourself a better computer."
+### Option 3: ["Here's a nickel, kid, get yourself a better computer."][dc]
 
-    http://tomayko.com/writings/that-dilbert-cartoon
+Finally, you might have access to a Unixy system, or the ability to set
+one up. You don't even need a separate physical computer, now that
+virtual machine techology is free.
 
-    Finally, you might have access to a Unixy system, or the
-    ability to set one up. You don't even need a separate physical
-    computer, now that virtual machine techology is free.
+Given such a machine, you'd do the Fossil checkout of MySQL++ on that
+machine, then bootstrap it there using the instructions in the previous
+section, and copy the generated files back to the Windows box.
 
-    For example, you could download a Linux "appliance" from
-    http://www.vmware.com/appliances/ and a copy of the free
-    VMware Player to run it on your Windows machine. You'd do the
-    Fossil checkout of MySQL++ on that machine, bootstrap it there
-    using the instructions in the previous section.
-    
-    That done, just copy the result over to the Windows machine
-    to continue hacking on it.
+[dc]: http://tomayko.com/writings/that-dilbert-cartoon
 
 
 ## On Manipulating the Build System Source Files
@@ -251,23 +260,22 @@ small number of source files. This system lets us support many
 platforms without having to maintain separate build system files
 for each platform.
 
-[Bakefile](http://bakefile.org/) produces most of these project
-and make files from a single source file called mysql++.bkl.
+[Bakefile](http://bakefile.org/) produces most of these project and make
+files from a single source file called [`mysql++.bkl`][bkl].
 
-Except for small local changes, it's best to change mysql++.bkl
-and "re-bake" the project and make files rather than change
-those files directly. You can do this with the bootstrap scripts
-covered above. On Windows, if all you've changed is mysql++.bkl,
-you can use rebake.bat instead, which doesn't try to do as much
-as bootstrap.bat.
+Except for small local changes, it's best to change `mysql++.bkl` and
+"re-bake" the project and make files rather than change those files
+directly. You can do this with the bootstrap scripts covered above. On
+Windows, if all you've changed is `mysql++.bkl`, you can use
+`rebake.bat` instead, which doesn't try to do as much as
+`bootstrap.bat`.
 
-Bakefile produces finished project files for Visual C++ and Xcode
-and finished Makefiles for MinGW. It also produces Makefile.in,
-which is input to GNU Autoconf along with configure.ac
-and `config/*`. You may need to change these latter files in
-addition to or instead of mysql++.bkl to get the effect you want.
-Running bootstrap incorporates changes to all of these files in
-the GNU autoconf output.
+Bakefile produces finished project files for Visual C++ and Xcode and
+finished `Makefiles` for MinGW. It also produces `Makefile.in`, which is
+input to GNU Autoconf along with configure.ac and `config/*`. You may
+need to change these latter files in addition to or instead of
+`mysql++.bkl` to get the effect you want.  Running bootstrap
+incorporates changes to all of these files in the GNU Autoconf output.
 
 While Bakefile's documentation isn't as comprehensive as it
 ought to be, you can at least count on it to list all of the
@@ -276,11 +284,13 @@ do something, it's likely it just can't do it. Bakefile is a
 high-level abstraction of build systems in general, so it'll never
 support all the particulars of every odd build system out there.
 
+[bkl]: https://tangentsoft.com/mysqlpp/file/mysql%2B%2B.bkl
+
 
 ## Submitting Patches
 
 If you wish to submit a patch to the library, please send it to the
-MySQL++ mailing list.  We want patches in unified diff format.
+[MySQL++ mailing list][ml].  We want patches in unified diff format.
 
 We will also accept trivial patches not needing discussion as text
 in a Fossil ticket.
@@ -292,28 +302,27 @@ for you:
 
     $ fossil diff > mychange.patch
 
-If your patch adds new files, moves files, or needs to be understood
-in terms of multiple checkins, it's best to do that work on a local
-Fossil branch, then send a [bundle][fb] instead of a patch.
+If your patch adds new files, moves files, or needs to be understood in
+terms of multiple checkins, it's best to do that work on a [local
+private branch](#private), then send a [bundle][fb] instead of a patch.
 
 If you've sent patches to MySQL++ before and don't have a Fossil
-developer login, another alternative is to ask for a login before
-you begin work so that your changes are automatically sync'd to the
-main Fossil repository as you work, so you don't have to send
-bundles or patch files. (As a rule, we give out developer logins on
-our Fossil repository only to people who have sent a few successful
-patches to the mailing list.)
+developer login, another alternative is to ask for a login before you
+begin work so that your changes are automatically sync'd to the main
+Fossil repository as you work, so you don't have to send bundles or
+patch files. We generally don't refuse such requests if you've already
+proven your ability to work well with the MySQL++ project.
 
-If you're making a patch against a MySQL++ distribution tarball,
-then you can generate a patch this way:
+If you're making a patch against a MySQL++ distribution tarball, then
+you can generate a patch this way:
 
     $ diff -ruN mysql++-olddir mysql++-newdir > mychange.patch
 
-The `diff` command is part of every Unix and Linux system, and
-should be installed by default. If you're on a Windows machine, GNU
-diff is part of [Cygwin](http://cygwin.com/). Fossil is also
-available for all of these systems. There are no excuses for not
-being able to make unified diffs. :)
+The `diff` command is part of every Unix and Linux system, and should be
+installed by default. If you're on a Windows machine, GNU diff is part
+of [Cygwin](http://cygwin.com/). Fossil is also available for all of
+these systems. There are no excuses for not being able to make unified
+diffs. :)
 
 [fb]: http://fossil-scm.org/index.html/help?cmd=bundle
 
@@ -386,8 +395,8 @@ File types: `txt`
     Better than the converse, anyway.
 
 
-When in doubt, mimic what you see in the current code. When still
-in doubt, ask on the mailing list.
+When in doubt, mimic what you see in the current code. When still in
+doubt, ask on the [mailing list][ml].
 
 
 ## Testing Your Proposed Change
@@ -410,26 +419,26 @@ evaluated anyway. Otherwise, we are likely to view the change as a bug.
 `dtest` also runs all of the unit tests in `test/*`. The purpose of
 `test/*` is different from that of `examples/*`:
 
-    -   `test/*` are unit tests: each tests only one MySQL++ class,
-        independent of everything else. Because DB access requires
-        several MySQL++ classes to cooperate, a unit test never accesses
-        a database; hence, no unit test needs DB connection parameters.
-        We will never get 100% code coverage from `test/*` alone.
+-   `test/*` are unit tests: each tests only one MySQL++ class,
+    independent of everything else. Because DB access requires
+    several MySQL++ classes to cooperate, a unit test never accesses
+    a database; hence, no unit test needs DB connection parameters.
+    We will never get 100% code coverage from `test/*` alone.
 
-    -   `examples/*` can be thought of as integration tests: they test
-        many pieces of MySQL++ working together, accessing a real
-        database server. In addition to ensuring that all the pieces
-        work together and give consistent results from platform to
-        platform and run to run, it also fills in gaps in the code
-        coverage where no suitable test/* module could be created.
+-   `examples/*` can be thought of as integration tests: they test
+    many pieces of MySQL++ working together, accessing a real
+    database server. In addition to ensuring that all the pieces
+    work together and give consistent results from platform to
+    platform and run to run, it also fills in gaps in the code
+    coverage where no suitable test/* module could be created.
 
-    -   `test/*` programs always run silently on success, writing output
-        only to indicate test failures. This is because they're usually
-        only run via dtest.
+-   `test/*` programs always run silently on success, writing output
+    only to indicate test failures. This is because they're usually
+    only run via dtest.
 
-    -   `examples/*` are always "noisy," regardless of whether they
-        succeed or fail, because they're also run interactively by
-        people learning to use MySQL++.
+-   `examples/*` are always "noisy," regardless of whether they
+    succeed or fail, because they're also run interactively by
+    people learning to use MySQL++.
 
 Patches should include tests if they introduce new functionality or fix
 a bug that the existing test coverage failed to catch.  If the test is
@@ -477,7 +486,7 @@ usually acceptable alternatives.  Therefore, such ports become
 maintenance baggage with little compensating value.
 
 
-## Maintaining a Private Repository
+## <a name="private"></a>Maintaining a Private Repository
 
 Although Fossil syncs changes back to the `tangentsoft.com/mysqlpp`
 Fossil repository by default, it is possible to maintain a private copy
@@ -517,4 +526,4 @@ you come to that decision.
 
 If you ever decide to contribute your private branch to the MySQL++
 project, there are a couple of easy ways to achieve that. Ask about it
-on the mailing list if you find yourself in this situation.
+on the [mailing list][ml] if you find yourself in this situation.

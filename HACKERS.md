@@ -7,7 +7,12 @@ hints and commentary you may find helpful.
 ## Code Repository Access
 
 MySQL++ uses the [Fossil][fsl] [distributed version control
-system][dvcs] since Gna! shut down in June of 2017.
+system][dvcs].
+
+You must be running Fossil version 2.1 or higher to access the MySQL++
+repository. If your operating system includes an older Fossil package,
+you will either have to install a binary from `fossil-scm.org` or build
+it from source.
 
 To clone the code repository anonymously, say:
 
@@ -18,7 +23,7 @@ your username to the URL like so:
 
     $ fossil clone https://username@tanentsoft.com/mysqlpp mysqlpp.fossil
 
-That will get you a file called `mysqlpp.fossil` containing an [abridged
+That will get you a file called `mysqlpp.fossil` containing the [abridged
 version history][avh] of MySQL++ back to the project's founding.
 
 The repository clone file can be named anything you like. Even the

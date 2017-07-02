@@ -11,8 +11,8 @@ system][dvcs].
 
 You must be running Fossil version 2.1 or higher to access the MySQL++
 repository. If your operating system includes an older Fossil package,
-you will either have to install a binary from `fossil-scm.org` or build
-it from source.
+you will either have to install [an official binary][fslb] or [build
+it from source][fsls].
 
 To clone the code repository anonymously, say:
 
@@ -80,10 +80,12 @@ versions become either tags or branches. (The only difference between
 tags and branches in Fossil is that branches may have subsequent changes
 made to them.)
 
-[fsl]:  http://fossil-scm.org/
-[dvcs]: http://en.wikipedia.org/wiki/Distributed_revision_control
-[ml]:   https://lists.mysql.com/plusplus/
 [avh]:  https://tangentsoft.com/mysqlpp/wiki?name=Abridged+Version+History
+[dvcs]: http://en.wikipedia.org/wiki/Distributed_revision_control
+[fsl]:  http://fossil-scm.org/
+[fslb]: http://fossil-scm.org/index.html/uv/download.html
+[fsls]: http://fossil-scm.org/index.html/doc/trunk/www/build.wiki
+[ml]:   https://lists.mysql.com/plusplus/
 
 
 ## Bootstrapping the Library

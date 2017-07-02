@@ -227,11 +227,8 @@ files from, unless you go into each file and change the version numbers.
 
 If you'd like to hack on MySQL++ entirely on Windows and have all the
 build freedoms enjoyed by those working on Unixy platforms, the simplest
-solution is probably to install Cygwin.
-
-Get [the Cygwin installer](http://cygwin.com/setup-x86_64.exe). (64-bit.
-A [32-bit installer](http://cygwin.com/setup-x86.exe) is also
-available.)
+solution is probably to [install Cygwin][cyg64]. (64-bit. A [32-bit
+installer][cyg32] is also available.)
 
 When you run it, it will walk you through the steps to install Cygwin.
 Autoconf and Perl 5 aren't installed in Cygwin by default, so when you
@@ -246,6 +243,9 @@ need to install Cygwin's Python.
 
 Having done all this, you can follow the Unix bootstrapping
 instructions in the previous section.
+
+[cyg32]: http://cygwin.com/setup-x86.exe
+[cyg64]: http://cygwin.com/setup-x86_64.exe
 
 
 ### Option 3: ["Here's a nickel, kid, get yourself a better computer."][dc]

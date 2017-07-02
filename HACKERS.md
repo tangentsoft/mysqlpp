@@ -7,7 +7,8 @@ hints and commentary you may find helpful.
 ## Code Repository Access
 
 MySQL++ uses the [Fossil][fsl] [distributed version control
-system][dvcs].
+system][dvcs]. See its [quick start guide][fslq] if you are unfamilar
+with Fossil.
 
 You must be running Fossil version 2.1 or higher to access the MySQL++
 repository. If your operating system includes an older Fossil package,
@@ -84,6 +85,7 @@ made to them.)
 [dvcs]: http://en.wikipedia.org/wiki/Distributed_revision_control
 [fsl]:  http://fossil-scm.org/
 [fslb]: http://fossil-scm.org/index.html/uv/download.html
+[fslq]: http://fossil-scm.org/index.html/doc/trunk/www/quickstart.wiki
 [fsls]: http://fossil-scm.org/index.html/doc/trunk/www/build.wiki
 [ml]:   https://lists.mysql.com/plusplus/
 

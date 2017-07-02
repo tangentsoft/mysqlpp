@@ -411,20 +411,21 @@ doubt, ask on the [mailing list][ml].
 
 ## Testing Your Proposed Change
 
-MySQL++ includes a self-test mechanism called `dtest`. It's a Bourne shell
-script, run much like `exrun`:
+MySQL++ includes a self-test mechanism called `dtest`. It's a Bourne
+shell script, run much like `exrun`:
 
     $ ./dtest [-s server_addr] [-u user] [-p password]
 
 This automatically runs most of the examples, captures the outputs to a
 file, and then compares that to a known-good run's outputs, stored in
-bmark.txt. So, before you submit a patch, run dtest to see if anything
-has changed. If something has and you can't account for it, it
+`bmark.txt`. So, before you submit a patch, run `dtest` to see if
+anything has changed. If something has and you can't account for it, it
 represents a problem that you'll have to fix before submitting the
-patch. If it gives an expected change, remove bmark.txt, re-run dtest,
-and include the bmark.txt diffs in your patch. This communicates to us
-the fact that you know there are differences and want the patch
-evaluated anyway. Otherwise, we are likely to view the change as a bug.
+patch. If it gives an expected change, remove `bmark.txt`, re-run
+`dtest`, and include the `bmark.txt` diffs in your patch. This
+communicates to us the fact that you know there are differences and want
+the patch evaluated anyway. Otherwise, we are likely to view the change
+as a bug.
 
 `dtest` also runs all of the unit tests in `test/*`. The purpose of
 `test/*` is different from that of `examples/*`:
@@ -444,7 +445,7 @@ evaluated anyway. Otherwise, we are likely to view the change as a bug.
 
 -   `test/*` programs always run silently on success, writing output
     only to indicate test failures. This is because they're usually
-    only run via dtest.
+    only run via `dtest`.
 
 -   `examples/*` are always "noisy," regardless of whether they
     succeed or fail, because they're also run interactively by

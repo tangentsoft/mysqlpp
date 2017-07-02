@@ -15,7 +15,7 @@ repository. If your operating system includes an older Fossil package,
 you will either have to install [an official binary][fslb] or [build
 it from source][fsls].
 
-To clone the code repository anonymously, say:
+To clone the MySQL++ repository anonymously, say:
 
     $ fossil clone https://tangentsoft.com/mysqlpp mysqlpp.fossil
 
@@ -39,7 +39,7 @@ To "open" the repo clone so you can hack on it, say:
 We created a new subdirectory because the `open` command checks out the
 tip of the repository's trunk into the current directory by default.
 
-As with `mysqlpp.fossil`, you can call the working directory anythihg
+As with `mysqlpp.fossil`, you can call the working directory anything
 you like. I actually prefer a working tree that looks like this:
 
     ~/museum/                  # Where fossils are kept
@@ -49,7 +49,7 @@ you like. I actually prefer a working tree that looks like this:
             skull/             # Fossil head, get it?   I crack me up.
             trunk -> skull/    # Alias to match Fossil branch naming
             some-branch/       # Separately-opened working branch
-            3.2.3/             # Release branch checkout
+            3.2.3/             # Tagged release checkout
 
 Fossil will let you make any modifications you like to your local
 repository copy. For those with privileges on the upstream copy,
@@ -108,24 +108,24 @@ systems, at least as an option: Perl 5, and GNU Autoconf 1.59 or higher.
 If they're not installed, you can probably run your system's package
 manager to install suitable versions.
 
-There's a third tool you'll need to bootstrap MySQL++, called
-Bakefile, which you can get from http://bakefile.org/  You will
-need Bakefile 0.2.5 or higher, which in turn requires Python 2.3
-or higher to run. To build Bakefile from source, you will also
-need SWIG, so if you don't have that, you'll want to use one of
-the binary builds of Bakefile.
+There's a third tool you'll need to bootstrap MySQL++ called
+[Bakefile][bf]. You will need Bakefile 0.2.5 or higher, which in turn
+requires Python 2.3 or higher to run. (MySQL++ is currently not
+compatible with Bakefile 1.x, as it is still a work in progress as of
+this writing.) To build Bakefile from source, you will also need SWIG,
+so if you don't have that, you'll want to use one of the binary builds
+of Bakefile.
 
-Once you have all the tools in place, you can bootstrap MySQL++
-with a Bourne shell script called bootstrap, which you get as part
-of the Fossil checkout. It's fairly powerful, with many options.
-For most cases, it suffices to just run it without any arguments:
+Once you have all the tools in place, you can bootstrap MySQL++ with a
+Bourne shell script called `bootstrap`, which you get as part of the
+Fossil checkout. It's fairly powerful, with many options.  For most
+cases, it suffices to just run it without any arguments:
 
     $ ./bootstrap
 
 For more unusual situations, here's the complete usage:
 
-    $ ./bootstrap [no{doc,ex,lib,opt}] [pedantic] [bat] \
-                  [configure flags]
+    $ ./bootstrap [no{doc,ex,lib,opt}] [pedantic] [bat] [configure flags]
 
 Arguments:
 
@@ -178,8 +178,11 @@ Arguments:
 
     As soon as the bootstrap script sees an option that it doesn't
     understand, it stops processing the command line.  Any subsequent
-    options are passed to the configure script.  See README-Unix.txt for
-    more on configure script options.
+    options are passed to the `configure` script. See
+    [README-Unix.txt][rmu] for more on `configure` script options.
+
+[bf]:  http://bakefile.org/
+[rmu]: https://tangentsoft.com/mysqlpp/file/README-Unix.txt
 
 
 ## Bootstrapping the Library Using Only Windows

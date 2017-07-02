@@ -30,6 +30,9 @@ To "open" the repo clone so you can hack on it, say:
     $ cd mysqlpp
     $ fossil open ../mysqlpp.fossil
 
+We created a new subdirectory because the `open` command checks out the
+tip of the repository's trunk into the current directory by default.
+
 As with `mysqlpp.fossil`, you can call the working directory anythihg
 you like. I actually prefer a working tree that looks like this:
 

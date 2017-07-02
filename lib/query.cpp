@@ -178,10 +178,12 @@ SimpleResult
 Query::execute(const SQLTypeAdapter& s)
 {
 	if ((parse_elems_.size() == 2) && !template_defaults.processing_) {
-		// We're a template query and this isn't a recursive call, so
-		// take s to be a lone parameter for the query.  We will come
-		// back in here with a completed query, but the processing_
-		// flag will be set, allowing us to avoid an infinite loop.
+		// We're a 1-parameter template query (2 = 1 parameter + 1
+		// query string; see parse()) and this isn't a recursive call,
+		// so take s to be a lone parameter for the query rather than
+		// a finished query string.  We will come back in here with a
+		// completed query, but the processing_ flag will be set,
+		// allowing us to avoid an infinite loop.
 		AutoFlag<> af(template_defaults.processing_);
 		return execute(SQLQueryParms() << s);
 	}
@@ -195,11 +197,16 @@ Query::execute(const SQLTypeAdapter& s)
 SimpleResult
 Query::execute(const char* str, size_t len)
 {
-	if ((parse_elems_.size() == 2) && !template_defaults.processing_) {
-		// We're a template query and this isn't a recursive call, so
-		// take s to be a lone parameter for the query.  We will come
-		// back in here with a completed query, but the processing_
-		// flag will be set, allowing us to avoid an infinite loop.
+	if ((parse_elems_.size() == 3) && !template_defaults.processing_) {
+		// We're a 2-parameter template query (3 = 2 params + 1 template
+		// query string; see parse()) and this isn't a recursive call,
+		// so take str & len to be parameters for a 2-parameter template
+		// query, rather than the normal case where it's a query string
+		// and the length of that string.
+		//
+		// (We have to handle this case explicitly because otherwise
+		// there would be no way to pass a C string and an int as tquery
+		// parameters due to C++/ overloading limitations.)
 		AutoFlag<> af(template_defaults.processing_);
 		return execute(SQLQueryParms() << str << len );
 	}
@@ -503,10 +510,8 @@ StoreQueryResult
 Query::store(const SQLTypeAdapter& s)
 {
 	if ((parse_elems_.size() == 2) && !template_defaults.processing_) {
-		// We're a template query and this isn't a recursive call, so
-		// take s to be a lone parameter for the query.  We will come
-		// back in here with a completed query, but the processing_
-		// flag will be set, allowing us to avoid an infinite loop.
+		// See execute(const SQLTypeAdapter&) for an explanation of
+		// what we're doing here.
 		AutoFlag<> af(template_defaults.processing_);
 		return store(SQLQueryParms() << s);
 	}
@@ -520,11 +525,9 @@ Query::store(const SQLTypeAdapter& s)
 StoreQueryResult
 Query::store(const char* str, size_t len)
 {
-	if ((parse_elems_.size() == 2) && !template_defaults.processing_) {
-		// We're a template query and this isn't a recursive call, so
-		// take s to be a lone parameter for the query.  We will come
-		// back in here with a completed query, but the processing_
-		// flag will be set, allowing us to avoid an infinite loop.
+	if ((parse_elems_.size() == 3) && !template_defaults.processing_) {
+		// See execute(const char*, size_t) for an explanation of what
+		// we're doing here.
 		AutoFlag<> af(template_defaults.processing_);
 		return store(SQLQueryParms() << str << len );
 	}
@@ -641,10 +644,8 @@ UseQueryResult
 Query::use(const SQLTypeAdapter& s)
 {
 	if ((parse_elems_.size() == 2) && !template_defaults.processing_) {
-		// We're a template query and this isn't a recursive call, so
-		// take s to be a lone parameter for the query.  We will come
-		// back in here with a completed query, but the processing_
-		// flag will be set, allowing us to avoid an infinite loop.
+		// See execute(const SQLTypeAdapter&) for an explanation of
+		// what we're doing here.
 		AutoFlag<> af(template_defaults.processing_);
 		return use(SQLQueryParms() << s);
 	}
@@ -658,11 +659,9 @@ Query::use(const SQLTypeAdapter& s)
 UseQueryResult
 Query::use(const char* str, size_t len)
 {
-	if ((parse_elems_.size() == 2) && !template_defaults.processing_) {
-		// We're a template query and this isn't a recursive call, so
-		// take s to be a lone parameter for the query.  We will come
-		// back in here with a completed query, but the processing_
-		// flag will be set, allowing us to avoid an infinite loop.
+	if ((parse_elems_.size() == 3) && !template_defaults.processing_) {
+		// See execute(const char*, size_t) for an explanation of what
+		// we're doing here.
 		AutoFlag<> af(template_defaults.processing_);
 		return use(SQLQueryParms() << str << len );
 	}

@@ -431,32 +431,32 @@ as a bug.
 `test/*` is different from that of `examples/*`:
 
 -   `test/*` are unit tests: each tests only one MySQL++ class,
-    independent of everything else. Because DB access requires
-    several MySQL++ classes to cooperate, a unit test never accesses
-    a database; hence, no unit test needs DB connection parameters.
-    We will never get 100% code coverage from `test/*` alone.
+    independent of everything else. Because DB access requires several
+    MySQL++ classes to cooperate, a unit test never accesses a database;
+    hence, no unit test needs DB connection parameters.  We will never
+    get 100% code coverage from `test/*` alone.
 
--   `examples/*` can be thought of as integration tests: they test
-    many pieces of MySQL++ working together, accessing a real
-    database server. In addition to ensuring that all the pieces
-    work together and give consistent results from platform to
-    platform and run to run, it also fills in gaps in the code
-    coverage where no suitable test/* module could be created.
+-   `examples/*` can be thought of as integration tests: they test many
+    pieces of MySQL++ working together, accessing a real database
+    server. In addition to ensuring that all the pieces work together
+    and give consistent results from platform to platform and run to
+    run, it also fills in gaps in the code coverage where no suitable
+    `test/*` module could be created.
 
 -   `test/*` programs always run silently on success, writing output
-    only to indicate test failures. This is because they're usually
-    only run via `dtest`.
+    only to indicate test failures. This is because they're usually only
+    run via `dtest`.
 
--   `examples/*` are always "noisy," regardless of whether they
-    succeed or fail, because they're also run interactively by
-    people learning to use MySQL++.
+-   `examples/*` are always "noisy," regardless of whether they succeed
+    or fail, because they're also run interactively by people learning
+    to use MySQL++.
 
 Patches should include tests if they introduce new functionality or fix
 a bug that the existing test coverage failed to catch.  If the test is
 noisy, needs DB access, or tests multiple parts of the library at once,
 it goes in `examples/*`. If your change affects only one class in
 MySQL++ and testing it can be done without instantiating other MySQL++
-classes -- other than by composition, of course -- it should go in
+classes — other than by composition, of course — it should go in
 `test/*`.
 
 In general, prefer modifying an existing `examples/*` or `test/*`
@@ -513,10 +513,10 @@ Then, I recommend that you make any local changes on a branch:
     $ fossil ci --branch my-local-branch
 
 After you give the `--branch` option on a checkin, Fossil automatically
-switches your local checkout to tht branch, so that all further checkins
-can be made without the `--branch` option.  To get back to the trunk,
-you'd say `fossil up trunk`, but under this workflow, the need for that
-will be rare.
+switches your local checkout to that branch, so that all further
+checkins can be made without the `--branch` option.  To get back to the
+trunk, you'd say `fossil up trunk`, but under this workflow, the need
+for that will be rare.
 
 When something happens on the official trunk on `tangentsoft.com` that
 you want pulled into your private repository, say:

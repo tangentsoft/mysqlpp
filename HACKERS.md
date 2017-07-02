@@ -18,13 +18,8 @@ your username to the URL like so:
 
     $ fossil clone https://username@tanentsoft.com/mysqlpp mysqlpp.fossil
 
-That will get you a file called `mysqlpp.fossil` containing the
-release-level history of the MySQL++ project from its founding until the
-3.2.3 release. The oldest checkin-level history in the repository now
-begins at 2017.07.28, so if you need to track down when a given change
-happened, consult [the `ChangeLog`][cl]. If you're more interested in
-*who* did what, the `ChangeLog` also has those details, though if you
-only wanted a summary, see [the `CREDITS.txt` file][cred].
+That will get you a file called `mysqlpp.fossil` containing an [abridged
+version history][avh] of MySQL++ back to the project's founding.
 
 The repository clone file can be named anything you like. Even the
 `.fossil` extension is just a convention, not a requirement.
@@ -80,8 +75,7 @@ made to them.)
 [fsl]:  http://fossil-scm.org/
 [dvcs]: http://en.wikipedia.org/wiki/Distributed_revision_control
 [ml]:   https://lists.mysql.com/plusplus/
-[cl]:   https://tangentsoft.com/mysqlpp/file/ChangeLog
-[cred]: https://tangentsoft.com/mysqlpp/file/CREDITS.txt
+[avh]:  https://tangentsoft.com/mysqlpp/wiki?name=Abridged+Version+History
 
 
 ## Bootstrapping the Library

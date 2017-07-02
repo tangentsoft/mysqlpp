@@ -312,8 +312,8 @@ for you:
     $ fossil diff > mychange.patch
 
 If your patch adds new files, moves files, or needs to be understood in
-terms of multiple checkins, it's best to do that work on a [local
-private branch](#private), then send a [bundle][fb] instead of a patch.
+terms of multiple checkins, it's best to do that work on a [private
+local branch][pbr], then send a [bundle][fb] instead of a patch.
 
 If you've sent patches to MySQL++ before and don't have a Fossil
 developer login, another alternative is to ask for a login before you
@@ -333,7 +333,8 @@ of [Cygwin](http://cygwin.com/). Fossil is also available for all of
 these systems. There are no excuses for not being able to make unified
 diffs. :)
 
-[fb]: http://fossil-scm.org/index.html/help?cmd=bundle
+[fb]:  http://fossil-scm.org/index.html/help?cmd=bundle
+[pbr]: https://tangentsoft.com/mysqlpp/file/HACKERS.md#private
 
 
 ## The MySQL++ Code Style

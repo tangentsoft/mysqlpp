@@ -257,7 +257,11 @@ DBDriver::set_option(unsigned int o, bool arg)
 	}
 	
 	if ((n == 1) &&
+#ifdef CLIENT_LONG_PASSWORD
 			(o >= CLIENT_LONG_PASSWORD) &&
+#else
+			(o >= CLIENT_MYSQL) &&
+#endif
 #if MYSQL_VERSION_ID > 40000	// highest flag value varies by version
 			(o <= CLIENT_MULTI_RESULTS)
 #else

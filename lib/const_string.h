@@ -3,8 +3,8 @@
 /// in a way more useful to MySQL++.
 
 /***********************************************************************
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
+ Copyright © 1998 by Kevin Atkinson, © 1999, 2000 and 2001 by MySQL AB,
+ and © 2004-2005, 2007, 2017 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -32,6 +32,7 @@
 #include "common.h"
 
 #include <algorithm>
+#include <cstring>
 #include <iostream>
 #include <stdexcept>
 #include <string>

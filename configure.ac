@@ -18,6 +18,8 @@ AC_INIT(mysql++, 2.3.2, plusplus@lists.mysql.com, mysql++)
 AC_CONFIG_HEADER(config.h)
 AC_DISABLE_STATIC
 AC_CANONICAL_SYSTEM
+AC_PROG_CC
+AC_PROG_CXX
 
 
 # Break package version up into major, minor and bugfix components.
@@ -34,7 +36,6 @@ AC_BAKEFILE([m4_include(config/autoconf_inc.m4)])
 
 
 # Check for Standard C support
-AC_PROG_CC
 AC_HEADER_STDC
 
 
@@ -73,7 +74,6 @@ esac
 # Check for Standard C++ support, and extensions.  This must be near
 # the end, because the CPLUSPLUS directive makes autoconf use C++
 # compiler for all subsequent tests!
-AC_PROG_CXX
 AC_LANG_CPLUSPLUS
 STL_SLIST_EXTENSION
 

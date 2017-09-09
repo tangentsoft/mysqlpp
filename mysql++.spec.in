@@ -18,7 +18,7 @@ programs, you also need to install the -devel package.
 %package devel
 Summary:   MySQL++ developer files (headers, examples, etc.)
 Group:     Development/Libraries
-Requires:  mysql++=%{version}-%{release} mysql-devel
+Requires:  mysql++ = %{version}-%{release}, mysql-devel
 
 %description devel
 These are the files needed to compile MySQL++ based programs, plus

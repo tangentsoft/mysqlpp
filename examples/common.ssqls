@@ -1,0 +1,4 @@
+option implementation_extension cc
+option header_extension hh
+option accessor_style getX 
+option exception_on_schema_mismatch true

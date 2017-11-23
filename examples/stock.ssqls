@@ -1,0 +1,10 @@
+include common.ssqls
+
+table stock alias SQLStock filebase ssqls_stock
+	field item type bigint alias id is autoinc is key
+	field num type bigint
+	field weight type double
+	field price type double
+	field sdate type date
+	field description type mediumtext is null
+

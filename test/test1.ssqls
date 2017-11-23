@@ -1,0 +1,13 @@
+# This is a comment.
+# The following blank lines should also be ignored.
+
+include test2.ssqls
+
+table test_ssqls alias TestSsqls filebase test3
+	field item type bigint alias id is autoinc is key
+	field num type bigint
+	field weight type double
+	field price type decimal(2)
+	field sdate type date
+	field description type mediumtext is null
+

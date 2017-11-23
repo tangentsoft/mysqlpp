@@ -34,8 +34,6 @@
 
 namespace mysqlpp {
 
-namespace internal { extern void str_to_lwr(std::string& s); }
-
 void
 FieldNames::init(const ResultBase* res)
 {
@@ -51,17 +49,17 @@ FieldNames::init(const ResultBase* res)
 unsigned int
 FieldNames::operator [](const std::string& s) const
 {
-	std::string temp1(s);
-	internal::str_to_lwr(temp1);
-	for (const_iterator it = begin(); it != end(); ++it) {
-	std::string temp2(*it);
-		internal::str_to_lwr(temp2);
-		if (temp2.compare(temp1) == 0) {
-			return it - begin();
-		}
-	}
+    for (const_iterator it = begin(); it != end(); ++it) {
+        std::string temp(*it);
+        const std::string::size_type len = s.length();
+        if (len == temp.length()) {
+            std::string::size_type i = 0;
+            while ((i < len) && (tolower(s[i]) == tolower(temp[i]))) ++i;
+            if (i == len) return it - begin();
+        }
+    }
 
-	return end() - begin();
+    return end() - begin();    
 }
 
 } // end namespace mysqlpp

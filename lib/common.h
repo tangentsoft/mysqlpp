@@ -130,12 +130,6 @@
 	#define MYSQLPP_PATH_SEPARATOR '/'
 #endif
 
-#if defined(MYSQLPP_MYSQL_HEADERS_BURIED)
-#	include <mysql/mysql_version.h>
-#else
-#	include <mysql_version.h>
-#endif
-
 namespace mysqlpp {
 
 /// \brief Alias for 'true', to make code requesting exceptions more

@@ -10,7 +10,7 @@ dnl         suffixes on like /lib and /include.
 dnl		--with-mysql-lib: Same as --with-mysql, but for library only.
 dnl		--with-mysql-include: Same as --with-mysql, but for headers only.
 dnl
-dnl @version 1.5, 2016/12/31
+dnl @version 1.6, 2017/11/23
 dnl @author Warren Young <mysqlpp@etr-usa.com>
 AC_DEFUN([MYSQL_C_API_LOCATION],
 [
@@ -80,27 +80,30 @@ AC_DEFUN([MYSQL_C_API_LOCATION],
 	MYSQL_C_LIB_DIR=
 	for m in $MYSQL_lib_check
 	do
-		LDFLAGS="$save_LDFLAGS -L$m"
-		LIBS="$save_LIBS -l$MYSQL_C_LIB_NAME"
-		AC_TRY_LINK(
-			[ #include <mysql.h> ],
-			[ mysql_store_result(0); ],
-			[ AC_MSG_RESULT([$m])
-			  MYSQL_C_LIB_DIR=$m
-			  break
-			],
-			[ LIBS="$save_LIBS -l$MYSQL_C_LIB_NAME -lz"
-			  AC_TRY_LINK(
-				  [ #include <mysql.h> ],
-				  [ mysql_store_result(0); ],
-				  [ AC_MSG_RESULT([$m])
-				    MYSQLPP_EXTRA_LIBS="$MYSQLPP_EXTRA_LIBS -lz"
-			  		MYSQL_C_LIB_DIR=$m
-					break
-				  ],
-				  [ ]
-			  )
-			])
+        if test -d $m
+        then
+            LDFLAGS="$save_LDFLAGS -L$m"
+            LIBS="$save_LIBS -l$MYSQL_C_LIB_NAME"
+            AC_TRY_LINK(
+                [ #include <mysql.h> ],
+                [ mysql_store_result(0); ],
+                [ AC_MSG_RESULT([$m])
+                  MYSQL_C_LIB_DIR=$m
+                  break
+                ],
+                [ LIBS="$save_LIBS -l$MYSQL_C_LIB_NAME -lz"
+                  AC_TRY_LINK(
+                      [ #include <mysql.h> ],
+                      [ mysql_store_result(0); ],
+                      [ AC_MSG_RESULT([$m])
+                        MYSQLPP_EXTRA_LIBS="$MYSQLPP_EXTRA_LIBS -lz"
+                        MYSQL_C_LIB_DIR=$m
+                        break
+                      ],
+                      [ ]
+                  )
+                ])
+        fi
 	done
 	CPPFLAGS=$save_CPPFLAGS
 	LIBS=$save_LIBS
@@ -117,8 +120,8 @@ AC_DEFUN([MYSQL_C_API_LOCATION],
 		* )  AC_MSG_ERROR([The MySQL library directory ($MYSQL_C_LIB_DIR) must be an absolute path.]) ;;
 	esac
 
-	if [	"$MYSQL_C_LIB_DIR" = "/usr/lib" -o \
-			"$MYSQL_C_LIB_DIR" = "/usr/lib64" ]
+	if  test "$MYSQL_C_LIB_DIR" = "/usr/lib" || \
+		test "$MYSQL_C_LIB_DIR" = "/usr/lib64"
 	then
 		# Remove redundant lib paths
 		MYSQL_C_LIB_DIR=

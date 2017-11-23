@@ -120,13 +120,6 @@ AC_DEFUN([MYSQL_C_API_LOCATION],
 		* )  AC_MSG_ERROR([The MySQL library directory ($MYSQL_C_LIB_DIR) must be an absolute path.]) ;;
 	esac
 
-	if  test "$MYSQL_C_LIB_DIR" = "/usr/lib" || \
-		test "$MYSQL_C_LIB_DIR" = "/usr/lib64"
-	then
-		# Remove redundant lib paths
-		MYSQL_C_LIB_DIR=
-	fi
-
 	AC_SUBST(MYSQL_C_INC_DIR)
 	AC_SUBST(MYSQL_C_LIB_DIR)
 	AC_SUBST(MYSQL_C_LIB_NAME)

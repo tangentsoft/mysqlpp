@@ -73,7 +73,7 @@ BeecryptMutex::BeecryptMutex() throw (MutexFailed)
 		throw MutexFailed("CreateMutex failed");
 #else
 #	if HAVE_SYNCH_H || HAVE_PTHREAD
-	register int rc;
+	int rc;
 #	endif
 #	if HAVE_PTHREAD
 		if ((rc = pthread_mutex_init(impl_ptr(pmutex_), 0)))
@@ -111,7 +111,7 @@ BeecryptMutex::lock() throw (MutexFailed)
 	throw MutexFailed("WaitForSingleObject failed");
 #else
 #	if HAVE_SYNCH_H || HAVE_PTHREAD
-	register int rc;
+	int rc;
 #	endif
 #	if HAVE_PTHREAD
 		if ((rc = pthread_mutex_lock(impl_ptr(pmutex_))))
@@ -138,7 +138,7 @@ BeecryptMutex::trylock() throw (MutexFailed)
 				throw MutexFailed("WaitForSingleObbject failed");
 		}
 #	else
-		register int rc;
+		int rc;
 #		if HAVE_PTHREAD
 			if ((rc = pthread_mutex_trylock(impl_ptr(pmutex_))) == 0)
 				return true;
@@ -167,7 +167,7 @@ BeecryptMutex::unlock() throw (MutexFailed)
 		throw MutexFailed("ReleaseMutex failed");
 #else
 #	if HAVE_SYNCH_H || HAVE_PTHREAD
-		register int rc;
+		int rc;
 #	endif
 #	if HAVE_PTHREAD
 		if ((rc = pthread_mutex_unlock(impl_ptr(pmutex_))))

@@ -135,7 +135,7 @@
 
         <cxxflags>@PTHREAD_CFLAGS@</cxxflags>
         <include>.</include>
-				<include>@MYSQL_C_INC_DIR@</include>
+        <include>@MYSQL_C_INC_DIR@</include>
         <ldflags>-L@MYSQL_C_LIB_DIR@</ldflags>
         <ldflags>-l@MYSQL_C_LIB_NAME@ @PTHREAD_LIBS@ @MYSQLPP_EXTRA_LIBS@</ldflags>
       </if>
@@ -171,8 +171,8 @@
 
     <if cond="FORMAT in ['autoconf', 'gnu', 'mingw', 'xcode2']">
       <include>lib</include>
-			<include>@MYSQL_C_INC_DIR@</include>
-			<lib-path>@MYSQL_C_LIB_DIR@</lib-path>
+        <include>@MYSQL_C_INC_DIR@</include>
+        <lib-path>@MYSQL_C_LIB_DIR@</lib-path>
       <lib-path>.</lib-path>
     </if>
     <if cond="FORMAT in ['msvs2003prj', 'msvs2005prj', 'msvs2008prj']">
@@ -513,9 +513,9 @@
       <!-- top directory -->
       <command>
         cp -RL *.bat *.in *.txt abi.xml aclocal.m4 Bakefiles.bkgen \
-	  bootstrap ChangeLog cleanmf config.guess config.h config.sub \
-	  configure* dtest exrun install* Makefile.* mysql++.* osver \
-	  Wishlist $(PKGNAME)
+          bootstrap ChangeLog cleanmf config.guess config.h config.sub \
+          configure* dtest exrun install* Makefile.* mysql++.* osver \
+          Wishlist $(PKGNAME)
       </command>
 
       <!-- VC++ project file subdirs -->
@@ -541,7 +541,7 @@
           done
         </command>
         <command>
-	  find doc \( -name *.css -o -name *.html \) -exec install {} $(PKGNAME)/{} \;
+          find doc \( -name *.css -o -name *.html \) -exec install {} $(PKGNAME)/{} \;
         </command>
         <command>
           cp doc/html/refman/*.png $(PKGNAME)/doc/html/refman
@@ -621,12 +621,12 @@
     </action>
 
     <action id="rpm">
-			<depends>rpm-prep</depends>
+      <depends>rpm-prep</depends>
       <command>rpmbuild -ba mysql++.spec</command>
     </action>
 
     <action id="srpm">
-			<depends>rpm-prep</depends>
+      <depends>rpm-prep</depends>
       <command>rpmbuild -bs mysql++.spec</command>
     </action>
 

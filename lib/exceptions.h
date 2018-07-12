@@ -5,8 +5,8 @@
 /// derivative, any of these exceptions can be thrown on error.
 
 /***********************************************************************
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2010 by Educational Technology Resources, Inc.  Others may
+ Copyright © 1998 by Kevin Atkinson, © 1999-2001 by MySQL AB, and
+ © 2004-2010, 2018 by Educational Technology Resources, Inc.  Others may
  also hold copyrights on code in this file.  See the CREDITS.txt file
  in the top directory of the distribution for details.
 
@@ -46,7 +46,7 @@ class MYSQLPP_EXPORT Exception : public std::exception
 {
 public:
 	/// \brief Create exception object as copy of another
-	Exception(const Exception& e) throw() :
+	Exception(const Exception& e) MAY_THROW() :
 	std::exception(e),
 	what_(e.what_)
 	{

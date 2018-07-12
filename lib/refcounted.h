@@ -2,8 +2,8 @@
 /// \brief Declares the RefCountedPointer template
 
 /***********************************************************************
- Copyright (c) 2007-2011 by Educational Technology Resources, Inc. and
- (c) 2007 by Jonathan Wakely.  Others may also hold copyrights on
+ Copyright © 2007-2011, 2018 by Educational Technology Resources, Inc.
+ and © 2007 by Jonathan Wakely.  Others may also hold copyrights on
  code in this file.  See the CREDITS.txt file in the top directory
  of the distribution for details.
 
@@ -27,6 +27,8 @@
 
 #if !defined(MYSQLPP_REFCOUNTED_H)
 #define MYSQLPP_REFCOUNTED_H
+
+#include "common.h"
 
 #include <memory>
 
@@ -101,7 +103,7 @@ public:
 	counted_(c),
 	refs_(0)
 	{
-		std::auto_ptr<T> exception_guard(counted_);
+		UNIQUE_PTR(T) exception_guard(counted_);
 		if (counted_) {
 			refs_ = new size_t(1);
 		}

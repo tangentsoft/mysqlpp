@@ -1,7 +1,7 @@
 /***********************************************************************
  dbdriver.cpp - Implements the DBDriver class.
 
- Copyright (c) 2005-2009 by Educational Technology Resources, Inc.
+ Copyright © 2005-2009, 2018 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the
  CREDITS.txt file in the top directory of the distribution for details.
 
@@ -304,7 +304,7 @@ bool
 DBDriver::set_option_impl(Option* o)
 {
 	std::ostringstream os;
-	std::auto_ptr<Option> cleanup(o);
+	UNIQUE_PTR(Option) cleanup(o);
 
 	switch (o->set(this)) {
 		case Option::err_NONE:

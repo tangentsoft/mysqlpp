@@ -150,6 +150,16 @@
 #	define MAY_THROW(junk) noexcept(false)
 #endif
 
+// C++11 added unique_ptr as a replacement for auto_ptr.  We don't have
+// the ABI problem above with this one, so we switch to it with the
+// oldest release possible.  As with the above ifdef, this one only
+// currently works for g++ and clang++.
+#if __cplusplus >= 201103L
+#	define UNIQUE_PTR(what) std::unique_ptr<what>
+#else
+#	define UNIQUE_PTR(what) std::auto_ptr<what>
+#endif
+
 
 namespace mysqlpp {
 

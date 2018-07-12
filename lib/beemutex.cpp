@@ -4,7 +4,7 @@
 	Beecrypt library, which is also LGPL.  See beecrypt.h for the list
 	of changes we made on integrating it into MySQL++.
 
- Copyright (c) 2004 Beeyond Software Holding BV and (c) 2007 by
+ Copyright © 2004 Beeyond Software Holding BV and © 2007, 2018
  Educational Technology Resources, Inc.  Others may also hold
  copyrights on code in this file.  See the CREDITS.txt file in the
  top directory of the distribution for details.
@@ -61,7 +61,7 @@ namespace mysqlpp {
 #endif
 
 
-BeecryptMutex::BeecryptMutex() throw (MutexFailed)
+BeecryptMutex::BeecryptMutex() MAY_THROW(MutexFailed)
 #if defined(ACTUALLY_DOES_SOMETHING)
 	: pmutex_(new bc_mutex_t)
 #endif
@@ -103,7 +103,7 @@ BeecryptMutex::~BeecryptMutex()
 
 
 void
-BeecryptMutex::lock() throw (MutexFailed)
+BeecryptMutex::lock() MAY_THROW(MutexFailed)
 {
 #if defined(MYSQLPP_PLATFORM_WINDOWS)
 	if (WaitForSingleObject(impl_val(pmutex_), INFINITE) == WAIT_OBJECT_0)
@@ -125,7 +125,7 @@ BeecryptMutex::lock() throw (MutexFailed)
 
 
 bool
-BeecryptMutex::trylock() throw (MutexFailed)
+BeecryptMutex::trylock() MAY_THROW(MutexFailed)
 {
 #if defined(ACTUALLY_DOES_SOMETHING)
 #	if defined(MYSQLPP_PLATFORM_WINDOWS)
@@ -160,7 +160,7 @@ BeecryptMutex::trylock() throw (MutexFailed)
 
 
 void
-BeecryptMutex::unlock() throw (MutexFailed)
+BeecryptMutex::unlock() MAY_THROW(MutexFailed)
 {
 #if defined(MYSQLPP_PLATFORM_WINDOWS)
 	if (!ReleaseMutex(impl_val(pmutex_)))

@@ -5,9 +5,9 @@
 /// This file mostly takes care of platform differences.
 
 /***********************************************************************
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB,
- (c) 2004-2009 by Educational Technology Resources, Inc., and
- (c) 2009 by Warren Young.  Others may also hold copyrights on code
+ Copyright © 1998 by Kevin Atkinson, © 1999-2001 by MySQL AB,
+ © 2004-2009, 2018  by Educational Technology Resources, Inc., and
+ © 2009 by Warren Young.  Others may also hold copyrights on code
  in this file.  See the CREDITS.txt file in the top directory of the
  distribution for details.
 
@@ -129,6 +129,27 @@
 	// Assume POSIX path separator
 	#define MYSQLPP_PATH_SEPARATOR '/'
 #endif
+
+// Workarounds for deprecations in C++11 and newer.  We must still
+// support systems whose contemporaneous C++ compiler only understands
+// C++98.  Because of the large gap between C++98 and C++11, it will
+// likely be years yet until we can start using C++11 unconditionally
+// within MySQL++, then years more until we can use C++14, etc.
+//
+// Our test here currently only works for g++ and clang++: it's testing
+// for C++17.
+//
+// That release finally did away with throwspecs, a feature of C++ that
+// is only used by the oldest parts of MySQL++.  We can't drop the
+// throwspecs until MySQL++ 4, if we ever get around to that, since
+// that would break the library's ABI on systems whose C++ compiler
+// still supports throwspecs.
+#if __cplusplus < 201703L
+#	define MAY_THROW(what) throw(what)
+#else
+#	define MAY_THROW(junk) noexcept(false)
+#endif
+
 
 namespace mysqlpp {
 

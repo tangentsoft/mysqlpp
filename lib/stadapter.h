@@ -2,8 +2,8 @@
 /// \brief Declares the SQLTypeAdapter class
 
 /***********************************************************************
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
+ Copyright © 1998 by Kevin Atkinson, © 1999-2001 by MySQL AB, and
+ © 2004-2009, 2018 by Educational Technology Resources, Inc.  Others may
  also hold copyrights on code in this file.  See the CREDITS.txt file
  in the top directory of the distribution for details.
 
@@ -221,7 +221,7 @@ public:
 	/// WARNING: The throw-spec is incorrect, but it can't be changed
 	/// until v4, where we can break the ABI.  Throw-specs shouldn't be
 	/// relied on anyway.
-	char at(size_type i) const throw(std::out_of_range);
+	char at(size_type i) const MAY_THROW(std::out_of_range);
 
 	/// \brief Compare the internal buffer to the given string
 	///

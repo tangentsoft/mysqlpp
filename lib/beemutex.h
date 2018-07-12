@@ -15,9 +15,11 @@
 /// - made private mutex member a void* so we don't have to define the
 ///   full type in the .h file, due to previous item
 /// - added more Doxygen comments, and changed some existing comments
+/// - using MAY_THROW() from MySQL++'s common.h to allow it to compile
+///   on C++17 and newer compilers
 
 /***********************************************************************
- Copyright (c) 2004 Beeyond Software Holding BV and (c) 2007-2008
+ Copyright © 2004 Beeyond Software Holding BV and © 2007-2008, 2018
  by Educational Technology Resources, Inc.  Others may also hold
  copyrights on code in this file.  See the CREDITS.txt file in the
  top directory of the distribution for details.
@@ -61,7 +63,7 @@ public:
 	///
 	/// Throws a MutexFailed exception if we can't acquire the lock for
 	/// some reason.  The exception contains a message saying why.
-	BeecryptMutex() throw (MutexFailed);
+	BeecryptMutex() MAY_THROW(MutexFailed);
 
 	/// \brief Destroy the mutex
 	///
@@ -70,14 +72,14 @@ public:
 
 	/// \brief Acquire the mutex, blocking if it can't be acquired
 	/// immediately.
-	void lock() throw (MutexFailed);
+	void lock() MAY_THROW(MutexFailed);
 
 	/// \brief Acquire the mutex immediately and return true, or return
 	/// false if it would have to block to acquire the mutex.
-	bool trylock() throw (MutexFailed);
+	bool trylock() MAY_THROW(MutexFailed);
 
 	/// \brief Release the mutex
-	void unlock() throw (MutexFailed);
+	void unlock() MAY_THROW(MutexFailed);
 
 private:
 	void* pmutex_;

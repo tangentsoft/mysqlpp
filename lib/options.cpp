@@ -1,7 +1,7 @@
 /***********************************************************************
  options.cpp - Implements the Option class hierarchy.
 
- Copyright (c) 2007-2009 by Educational Technology Resources, Inc.
+ Copyright © 2007-2009, 2018 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the
  CREDITS file in the top directory of the distribution for details.
 
@@ -67,7 +67,7 @@ FoundRowsOption::set(DBDriver* dbd)
 Option::Error
 GuessConnectionOption::set(DBDriver* dbd)
 {
-#if MYSQL_VERSION_ID >= 40101
+#if (MYSQL_VERSION_ID >= 40101 && MYSQL_VERSION_ID <= 80100) || defined(MARIADB_BASE_VERSION)
 	return dbd->connected() ? Option::err_connected :
 			dbd->set_option(MYSQL_OPT_GUESS_CONNECTION) ?
 				Option::err_NONE : Option::err_api_reject;
@@ -290,7 +290,7 @@ SetCharsetNameOption::set(DBDriver* dbd)
 Option::Error
 SetClientIpOption::set(DBDriver* dbd)
 {
-#if MYSQL_VERSION_ID >= 40101
+#if (MYSQL_VERSION_ID >= 40101 && MYSQL_VERSION_ID <= 80100) || defined(MARIADB_BASE_VERSION)
 	return dbd->connected() ? Option::err_connected :
 			dbd->set_option(MYSQL_SET_CLIENT_IP, arg_.c_str()) ?
 				Option::err_NONE : Option::err_api_reject;
@@ -335,7 +335,7 @@ SslOption::set(DBDriver* dbd)
 Option::Error
 UseEmbeddedConnectionOption::set(DBDriver* dbd)
 {
-#if MYSQL_VERSION_ID >= 40101
+#if (MYSQL_VERSION_ID >= 40101 && MYSQL_VERSION_ID <= 80100) || defined(MARIADB_BASE_VERSION)
 	return dbd->connected() ? Option::err_connected :
 			dbd->set_option(MYSQL_OPT_USE_EMBEDDED_CONNECTION) ?
 				Option::err_NONE : Option::err_api_reject;
@@ -348,7 +348,7 @@ UseEmbeddedConnectionOption::set(DBDriver* dbd)
 Option::Error
 UseRemoteConnectionOption::set(DBDriver* dbd)
 {
-#if MYSQL_VERSION_ID >= 40101
+#if (MYSQL_VERSION_ID >= 40101 && MYSQL_VERSION_ID <= 80100) || defined(MARIADB_BASE_VERSION)
 	return dbd->connected() ? Option::err_connected :
 			dbd->set_option(MYSQL_OPT_USE_REMOTE_CONNECTION) ?
 				Option::err_NONE : Option::err_api_reject;

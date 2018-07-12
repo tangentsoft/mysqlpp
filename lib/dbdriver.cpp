@@ -131,7 +131,16 @@ DBDriver::copy(const DBDriver& other)
 		disconnect();
 	}
 
+	applied_options_.clear();
+	pending_options_.clear();
+
 	if (other.connected()) {
+		pending_options_.resize(other.applied_options_.size());
+		for (OptionList::const_iterator it = other.applied_options_.begin();
+				it != other.applied_options_.end(); ++it) {
+			pending_options_.push_back(*it);
+		}
+
 		connect(other.mysql_);
 	}
 }

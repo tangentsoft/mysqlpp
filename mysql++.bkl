@@ -5,6 +5,7 @@
   <include file="presets/simple.bkl"/>
 
   <set var="DDD">$(DOLLAR)$(DOLLAR)d</set>
+  <set var="DDE">$(DOLLAR)$(DOLLAR)e</set>
   <set var="DDF">$(DOLLAR)$(DOLLAR)f</set>
 
   <set var="STABLEABI">3.1.0</set>
@@ -425,7 +426,10 @@
       <command>
         rm -rf doc/latex doc/pdf ; \
         cd doc/html/refman ; \
-        rm -f doxygen.css [a-z]*.{dot,html,map,md5,png}
+        for e in dot html map md5 png ; \
+        do \
+          rm -f doxygen.css [a-z]*.$(DDE) ; \
+        done
       </command>
     </modify-target>
 
@@ -502,7 +506,7 @@
     <action id="@PACKAGE_NAME@-@PACKAGE_VERSION@">
       <!-- Set up package directory -->
       <command>
-        for d in config doc/html/refman doc/html/userman \
+        for d in config doc/html/refman/ssx doc/html/userman \
             doc/refman doc/userman examples lib ssx test ; \
         do \
           mkdir -p $(PKGNAME)/$(DDD) ; \
@@ -558,7 +562,10 @@
 
       <!-- examples subdir -->
       <command>
-        cp examples/*.{cpp,h,jpg,txt} $(PKGNAME)/examples
+        for e in cpp h jpg txt ; \
+        do \
+          cp examples/*.$(DDE) $(PKGNAME)/examples ; \
+        done
       </command>
       <command>
         for d in mfc wforms ; \

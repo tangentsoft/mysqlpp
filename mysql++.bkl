@@ -614,7 +614,7 @@
     <action id="dist">
       <depends>doc</depends>
       <depends>$(PKGNAME)</depends>
-      <command>tar czf $(PKGNAME).tar.gz $(PKGNAME)</command>
+      <command>tar -chz -f $(PKGNAME).tar.gz $(PKGNAME)</command>
       <command>rm -rf $(PKGNAME)</command>
     </action>
 

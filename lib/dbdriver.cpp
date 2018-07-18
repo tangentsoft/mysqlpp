@@ -32,13 +32,6 @@
 #include <memory>
 #include <sstream>
 
-// An argument was added to mysql_shutdown() in MySQL 4.1.3 and 5.0.1.
-#if ((MYSQL_VERSION_ID >= 40103) && (MYSQL_VERSION_ID <= 49999)) || (MYSQL_VERSION_ID >= 50001)
-#	define SHUTDOWN_ARG ,SHUTDOWN_DEFAULT
-#else
-#	define SHUTDOWN_ARG
-#endif
-
 using namespace std;
 
 namespace mysqlpp {
@@ -339,7 +332,19 @@ bool
 DBDriver::shutdown()
 {
 	error_message_.clear();
-	return mysql_shutdown(&mysql_ SHUTDOWN_ARG);
+#if (MYSQL_VERSION_ID >= 80000)
+    // The C API function we were depending on is removed in 8.0.0.  It
+    // was replaced in 8.0.1, but they claim they're going to remove it
+    // again later, so we prefer to behave as if it's gone for good as
+    // of 8.0.0, so we've got a well-tested workaround before then.
+    return connected() ? execute("SHUTDOWN", 8) : false;
+#elif ((MYSQL_VERSION_ID >= 40103) && (MYSQL_VERSION_ID <= 49999)) || (MYSQL_VERSION_ID >= 50001)
+    // An argument was added to mysql_shutdown() in MySQL 4.1.3 and 5.0.1.
+	return mysql_shutdown(&mysql_, SHUTDOWN_DEFAULT);
+#else
+    // Prior versions had no argument
+	return mysql_shutdown(&mysql_);
+#endif
 }
 
 

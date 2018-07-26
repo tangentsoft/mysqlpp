@@ -94,10 +94,13 @@
     &#x201C;utf8mb3.&#x201D;</para>
 
     <para>As of MySQL++ 3.2.4, we&#x2019;ve defined the
-    <varname>MYSQLPP_UTF8_CS</varname> macro which expands to
-    &#x201C;utf8mb4&#x201D; when you build it against MySQL 5.5 and
-    newer and to &#x201C;utf8&#x201D; otherwise. We use this macro in
-    our <filename>resetdb</filename> example.</para>
+    <varname>MYSQLPP_UTF8_CS</varname> and
+    <varname>MYSQLPP_UTF8_COL</varname> macros which expand to
+    &#x201C;utf8mb4&#x201D; and &#x201C;utf8mb4_general_ci&#x201D; when
+    you build MySQL++ against MySQL 5.5 and newer and to
+    &#x201C;utf8&#x201D; and &#x201C;utf8_general_ci&#x201D; otherwise.
+    We use these macros in our <filename>resetdb</filename>
+    example.</para>
   </sect2>
 
 

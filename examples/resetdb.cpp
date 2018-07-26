@@ -140,8 +140,9 @@ main(int argc, char *argv[])
 				"  price DECIMAL(6,2) NULL, " << // NaN & inf. == NULL
 				"  sdate DATE NOT NULL, " <<
 				"  description MEDIUMTEXT NULL) " <<
-				"ENGINE = InnoDB " <<
-				"CHARACTER SET " MYSQLPP_UTF8_CS " COLLATE utf8_general_ci";
+				"ENGINE = InnoDB" <<
+				" CHARACTER SET " MYSQLPP_UTF8_CS
+                " COLLATE " MYSQLPP_UTF8_COL;
 		query.execute();
 
 		// Set up the template query to insert the data.  The parse()

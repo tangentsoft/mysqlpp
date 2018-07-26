@@ -38,14 +38,14 @@
     subset of Unicode is called the Basic Multilingual Plane, or
     BMP.</para>
 
-    <para>Unfortunately, Unicode was invented about two decades
-    too late for Unix and C. Those decades of legacy created an
-    immense inertia preventing a widespread move away from 8-bit
-    characters. MySQL and C++ come out of these older traditions, and
-    so they share the same practical limitations. MySQL++ currently
-    doesn't have any code in it for Unicode conversions; it just
-    passes data along unchanged from the underlying MySQL C API,
-    so you still need to be aware of these underlying issues.</para>
+    <para>Unfortunately, Unicode was invented about two decades too late
+    for Unix and C. Those decades of legacy created an immense inertia
+    preventing a widespread move away from 8-bit characters. MySQL and
+    C++ come out of these older traditions, and so they share the same
+    practical limitations. MySQL++ doesn&#x2019;t have any code in it
+    for Unicode conversions, and it likely never will; it just passes
+    data along unchanged from the underlying MySQL C API, so you still
+    need to be aware of these underlying issues.</para>
 
     <para>During the development of the <ulink
     url="http://en.wikipedia.org/wiki/Plan_9_from_Bell_Labs">Plan
@@ -62,6 +62,42 @@
     support for Unicode was added in MySQL v4.1, they chose to make
     UTF-8 the native encoding, to preserve backward compatibility with
     programs that had no Unicode support.</para>
+  </sect2>
+
+
+  <sect2 id="unicode-mysql">
+    <title>Unicode in MySQL</title>
+
+    <para>Since MySQL comes out of the Unix world, and it predates the
+    widespread use of UTF-8 in Unix, it started out not supporting
+    Unicode at all. You could store raw UTF-8 strings in old versions of
+    MySQL, but it wouldn&#x2019;t know how to do things like sort a
+    column of UTF-8 strings.</para>
+
+    <para>MySQL 4.1 added the first true support for Unicode. This
+    version of MySQL supported only the BMP, meaning that if you told it
+    to expect strings to be in UTF-8, it could only use up to 3 bytes
+    per character.</para>
+
+    <para>MySQL 5.5 was the first release to completely support Unicode.
+    Because the BMP-only Unicode support had been in the wild for about
+    6 yeras by that point, and changing to the new character set
+    requires a table rebuild, the new one was called
+    &#x201C;utf8mb4&#x201D; rather than change the longstanding meaning
+    of &#x201C;utf8&#x201D; in MySQL. This release also added a new
+    alias for the old UTF-8 subset character set,
+    &#x201C;utf8mb3.&#x201D;</para>
+
+    <para>Finally, in MySQL 8.0, &#x201C;utf8mb4&#x201D; became the
+    default character set. For backwards compatibility,
+    &#x201C;utf8&#x201D; remains an alias for
+    &#x201C;utf8mb3.&#x201D;</para>
+
+    <para>As of MySQL++ 3.2.4, we&#x2019;ve defined the
+    <varname>MYSQLPP_UTF8_CS</varname> macro which expands to
+    &#x201C;utf8mb4&#x201D; when you build it against MySQL 5.5 and
+    newer and to &#x201C;utf8&#x201D; otherwise. We use this macro in
+    our <filename>resetdb</filename> example.</para>
   </sect2>
 
 

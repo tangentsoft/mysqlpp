@@ -4,10 +4,10 @@
 	examples, and it is helpful sometimes to run it again, as some of
 	the examples modify the table in this database.
 
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
- also hold copyrights on code in this file.  See the CREDITS file in
- the top directory of the distribution for details.
+ Copyright © 1998 by Kevin Atkinson, © 1999-2001 by MySQL AB, and
+ © 2004-2009, 2018 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS file in the
+ top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -141,7 +141,7 @@ main(int argc, char *argv[])
 				"  sdate DATE NOT NULL, " <<
 				"  description MEDIUMTEXT NULL) " <<
 				"ENGINE = InnoDB " <<
-				"CHARACTER SET utf8 COLLATE utf8_general_ci";
+				"CHARACTER SET " MYSQLPP_UTF8_CS " COLLATE utf8_general_ci";
 		query.execute();
 
 		// Set up the template query to insert the data.  The parse()

@@ -517,7 +517,7 @@
       <!-- top directory -->
       <command>
         cp -RL *.bat *.in *.txt abi.xml aclocal.m4 Bakefiles.bkgen \
-          bootstrap ChangeLog cleanmf config.guess config.h config.sub \
+          bootstrap ChangeLog.md cleanmf config.guess config.h config.sub \
           configure* dtest exrun install* Makefile.* mysql++.* osver \
           Wishlist $(PKGNAME)
       </command>

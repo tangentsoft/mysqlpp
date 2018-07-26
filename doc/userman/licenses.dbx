@@ -9,8 +9,9 @@
   documentation are Kevin Atkinson (1998), MySQL AB (1999 through 2001)
   and Educational Technology Resources, Inc. (2004 through the date of
   this writing). There are other contributors, who also retain
-  copyrights on their additions; see the ChangeLog file in the MySQL++
-  distribution tarball for details.</para>
+  copyrights on their additions; see the
+  <filename>ChangeLog.md</filename> file in the MySQL++ distribution
+  tarball for details.</para>
 
   <para>The MySQL++ library and its Reference Manual are released under
   the GNU Lesser General Public License (LGPL), reproduced below.</para>

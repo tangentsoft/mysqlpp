@@ -1,5 +1,65 @@
 # Change Log
 
+## 3.2.4, UNRELEASED
+
+*   Added the `MYSQLPP_UTF8_CS` macro to allow a given bit of code use
+    either the legacy "utf8" character set or the new full-Unicode
+    "utf8mb4" version depending on whether MySQL++ is built against
+    MySQL 5.5 or newer, the version where `utf8mb4` was added.  See the
+    [Unicode chapter in the user manual][umuc] for more details.
+
+*   Recent versions of MySQL and MariaDB have removed some obsolete
+    features, causing MySQL++ build errors in places where the library
+    wraps one of these features:
+
+    *   MySQL 8.0 removed the embedded database feature, which caused
+        build errors in four `Option::set()` overrides.  For MySQL 8.0
+        and newer, these methods are now no-ops.
+
+    *   Removal of the `CLIENT_LONG_PASSWORD` define in MariaDB 10.2
+        caused a build error which we now fix with a conditional test
+        for this before trying to use it.  Thanks for this fix go to
+        Augusto Caringi of Red Hat.
+
+*   Updated the library to work with newer toolchains, particularly
+    Clang on current macOS and the C++17 aware versions of GCC:
+
+    *   Methods with throw specifications still have them for ABI
+        compatibility on systems with older compilers, but if we detect
+        that the compiler is expecting C++14 or newer, we elide them.
+
+    *   If the compiler is detected as expecting C++11 or newer, we now
+        use `std::unique_ptr` everywere we used to use `auto_ptr`.
+
+    *   Removed all `register` variable qualifiers.  It's officially
+        obsolete in C++17 and it's been anywhere from unnecessary to
+        unhelpful in C++ compilers for quite a long time now.
+
+*   It is now possible to build a release tarball (`make dist`) on
+    systems like Debian where `/bin/sh` is not Bash.
+
+*   All prior MySQL++ 3.2.x release tarballs contain a symlink from
+    `ltmain.sh` to the copy provided by Libtool on the system the
+    tarball was made on.  If your system doesn't have Libtool installed
+    or it's installed somewhere other than where Red Hat Enterprise
+    Linux puts it, that symlink will be broken, preventing those
+    tarballs from building until you fix the symlink somehow.  We're now
+    dereferencing all symlinks when building the tarball to avoid this
+    sort of problem.
+
+There are also several changes to MySQL++ due purely to converting the
+MySQL++ source code repository from Subversion to Fossil:
+
+*   Updated the hackers' guide to reflect all of the differences this
+    repository conversion entails.
+
+*   Converted the old `HACKERS.txt` and this change log file to Markdown
+    format.  Fossil will display plain text just fine, but it has a web
+    renderer for Markdown, which gives nicer output.
+
+[umuc]: https://tangentsoft.com/mysqlpp/doc/html/userman/unicode.html
+
+
 ## 3.2.3, 2016.12.29
 
 *   Now using `snprintf()` instead of `_snprintf()` on Visual C++ 2015.
@@ -1222,6 +1282,13 @@ version.
 
 
 ## 2.3.2, 2007.07.11
+
+**NOTE:** Because this is the last release in the 2.x line, and because
+I have no plans to make another formal 2.x release, there is now a
+[branch][m232] with minimal changes to allow this version of the
+software to build on modern systems.
+
+[m232]: https://tangentsoft.com/mysqlpp/timeline?r=v2.3.2-modern
 
 *   Previous release's `const_string` change caused more problems
     than it fixed.  This release contains the real fix. :)

@@ -5,9 +5,9 @@ nor Sinisa are currently involved in MySQL++ development.  The current
 maintainer is Warren Young <mysqlpp@etr-usa.com>, starting with
 version 1.7.10 in August of 2004.
 
-For a fuller account of the library's history, see the first chapter
-of the user manual.  For the nitty-gritty details, see the ChangeLog
-in the root package directory.  ChangeLog items since 1.7.9 that
+For a fuller account of the library's history, see the first chapter of
+the user manual.  For the nitty-gritty details, see the ChangeLog.md
+file in the root package directory.  Change log items since 1.7.9 that
 aren't attributed to anyone else were done by Warren Young.
 
 
@@ -86,8 +86,8 @@ apparently written by Kevin Atkinson:
     D. Hawkins and E. Loic for their autoconf + automake contribution.
 
 
-See the ChangeLog for further credits, and details about the differences
-between the many versions of this library.
+See the ChangeLog.md file for further credits and details about the
+differences between the many versions of this library.
 
 
 Please do not email any of these people with general questions about

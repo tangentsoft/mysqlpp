@@ -7,12 +7,13 @@
 
   <para>This chapter documents those library changes since the epochal
   1.7.9 release that break end-user programs. You can dig this stuff out
-  of the ChangeLog, but the ChangeLog focuses more on explaining and
-  justifying the facets of each change, while this section focuses on
-  how to migrate your code between these library versions.</para>
+  of the <filename>ChangeLog.md</filename> file, but the change log
+  focuses more on explaining and justifying the facets of each change,
+  while this section focuses on how to migrate your code between these
+  library versions.</para>
 
   <para>Since pure additions do not break programs, those changes are
-  still documented only in the ChangeLog.</para>
+  still documented only in the change log.</para>
 
 
   <sect2 id="api-changes">

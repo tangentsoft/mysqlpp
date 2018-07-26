@@ -51,7 +51,7 @@ src_compile() {
 src_install() {
 	emake DESTDIR="${D}" install || die
 	# install the docs and HTML pages
-	dodoc README* CREDITS ChangeLog HACKERS Wishlist
+	dodoc README* CREDITS ChangeLog.md HACKERS Wishlist
 	dodoc doc/*
 	cp -ra doc/html "${D}"/usr/share/doc/${PF}/html
 	prepalldocs

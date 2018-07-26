@@ -1,6 +1,6 @@
 # Change Log
 
-## 3.2.3, 2016.12.29 (r2790)
+## 3.2.3, 2016.12.29
 
 *   Now using `snprintf()` instead of `_snprintf()` on Visual C++ 2015.
 
@@ -18,7 +18,7 @@
 *   Squished a Clang warning
 
 
-## 3.2.2, 2015.03.18 (r2780)
+## 3.2.2, 2015.03.18
 
 *   The DBDriver::operator= would leak a live connection if you
     assigned a disconnected DBDriver to it.  Patch by Quentin Armitage.
@@ -48,7 +48,7 @@
 *   Generating HTML with UTF-8 encoding, not 8859-1
 
 
-## 3.2.1, 2013.12.10 (r2756)
+## 3.2.1, 2013.12.10
 
 *   Connection copy ctor wasn't copying the "throw exceptions"
     flag.  The copy always had exceptions enabled.
@@ -64,7 +64,7 @@
     change in Connector/C 6.1.2.
 
 
-## 3.2.0, 2013.06.20 (r2747)
+## 3.2.0, 2013.06.20
 
 *   References to MySQL 5.1 have been replaced with 5.6, that
     being the current GA release.
@@ -171,7 +171,7 @@
 *   Assorted fixes for newer GCCs.
 
 
-## 3.1.0, 2010.06.03 (r2670)
+## 3.1.0, 2010.06.03
 
 *   Default MySQL version now 5.1, having entered GA since 3.0.9.
 
@@ -378,7 +378,7 @@
 *   Many, many documentation enhancements.
 
 
-## 3.0.9, 2009.02.04 (r2442)
+## 3.0.9, 2009.02.04
 
 *   It is now possible to use Null<T> objects in const context.
 
@@ -407,7 +407,7 @@
     using for 2.3.2.
 
 
-## 3.0.7, 2008.11.21 (r2423)
+## 3.0.7, 2008.11.21
 
 *   Fixed bug where initting a Query with a query string and then
     appending more to it with operator <<() would start overwriting
@@ -442,7 +442,7 @@
 *   Lots of documentation improvements.
 
 
-## 3.0.6, 2008.08.16 (r2350)
+## 3.0.6, 2008.08.16
 
 *   Several fixes to allow thread-aware build on Solaris
 
@@ -451,7 +451,7 @@
 *   Various improvements to Windows installer (install.hta)
 
 
-## 3.0.5, 2008.08.06 (r2332)
+## 3.0.5, 2008.08.06
 
 *   Replaced install.bat with new install.hta, which has a GUI and a
     lot of embeded logic for doing The Right Thing, which we couldn't
@@ -489,7 +489,7 @@
     library, adding default locations for Fink and Solaris.
 
 
-## 3.0.4, 2008.07.02 (r2303)
+## 3.0.4, 2008.07.02
 
 *   Fixed a few bugs in SslOption that prevented it from actually
     working.  If you've been having SSL problems since upgrading
@@ -503,7 +503,7 @@
 *   Many user manual improvements.
 
 
-## 3.0.3, 2008.05.11 (r2284)
+## 3.0.3, 2008.05.11
 
 *   Fixed query well-formedness handling in Query::store() and use().
     It was quietly eating these errors, confusing them with the
@@ -519,7 +519,7 @@
     in the empty side, which matches everything.  (Fixes bug 11588.)
 
 
-## 3.0.2, 2008.04.13 (r2275)
+## 3.0.2, 2008.04.13
 
 *   Increased float to string conversion precision from 7 to 9 and
     double from 16 to 17 digits.  Previous values weren't enough
@@ -540,7 +540,7 @@
     allow one to better understand program flow.
 
 
-## 3.0.1, 2008.03.23 (r2263)
+## 3.0.1, 2008.03.23
 
 *   String objects can now be compared to mysqlpp::null directly.
 
@@ -1221,7 +1221,7 @@ version.
     newer operating systems and compilers.
 
 
-## 2.3.2, 2007.07.11 (r1669)
+## 2.3.2, 2007.07.11
 
 *   Previous release's `const_string` change caused more problems
     than it fixed.  This release contains the real fix. :)
@@ -1269,7 +1269,7 @@ version.
 *   Fixed simple examples-only Makefile generation, for RPMs.
 
 
-## 2.3.0, 2007.07.02 (r1645)
+## 2.3.0, 2007.07.02
 
 *   Added `Query::for_each()` and `Query::store_if()` methods
     proposed by Joel Fielder, and added examples for each.
@@ -1464,7 +1464,7 @@ version.
     position to fix.
 
 
-## 2.2.1, 2007.02.28 (r1433)
+## 2.2.1, 2007.02.28
 
 *   Fixed the new localtime() alternative selection code
     for VS2003 and various uses of STLport.
@@ -1487,7 +1487,7 @@ version.
     build error under RHEL4 with recent versions of MySQL 5.0.
 
 
-## 2.2.0, 2007.01.23 (r1417)
+## 2.2.0, 2007.01.23
 
 *   `ColData`, `const_string`, and `SQLString` can now be constructed
     with an explicit length parameter.  Furthermore, Query
@@ -1585,7 +1585,7 @@ version.
 *   Using Doxygen 1.5.1 to generate documentation.
 
 
-## 2.1.1, 2006.04.04 (r1289)
+## 2.1.1, 2006.04.04
 
 *   MinGW and Cygwin will now build and link to mysqlpp DLLs.
 
@@ -1600,7 +1600,7 @@ version.
     suppressed the test for this feature in examples/util.cpp.
 
 
-## 2.1.0, 2006.03.24 (r1269)
+## 2.1.0, 2006.03.24
 
 *   Converted automake and makemake files to their equivalents in
     Bakefile format.
@@ -1668,7 +1668,7 @@ version.
     documented, and nobody seems to want to defend it.
 
 
-## 2.0.7, 2005.11.23 (r1147)
+## 2.0.7, 2005.11.23
 
 *   Added explicit mysqlpp namespace qualifiers to generated code in
     custom*.h so you can use SSQLS in places where it doesn't make
@@ -1706,14 +1706,14 @@ version.
     etc.)
 
     
-## 2.0.6, 2005.09.28 (r1123)
+## 2.0.6, 2005.09.28
 
 *   Fixed makemake.bat so it works on cmd.exe, not just 4NT.
 
 *   Documentation fixes.
 
 
-## 2.0.5, 2005.09.13 (r1114)
+## 2.0.5, 2005.09.13
 
 *   Visual C++ build now requires GNU make.  It is tested to work
     with either the Cygwin or the MinGW versions.  The previous
@@ -1747,7 +1747,7 @@ version.
     Tutorial chapter.
 
 
-## 2.0.4, 2005.08.29 (r1076)
+## 2.0.4, 2005.08.29
 
 *   Made `mysql_shutdown()` second parameter autoconf check less
     sensitive to compiler pedantry.
@@ -1762,7 +1762,7 @@ version.
 *   Renamed LGPL file to LICENSE.
 
 
-## 2.0.3, 2005.08.25 (r1060)
+## 2.0.3, 2005.08.25
 
 *   Visual C++ makemake system updated to build both debug and
     release versions of library DLL.
@@ -1775,7 +1775,7 @@ version.
     autotools-based systems.  Fixed.
 
 
-## 2.0.2, 2005.08.18 (r1050)
+## 2.0.2, 2005.08.18
 
 *   Fixes to makemake system for cmd.exe.
 
@@ -1783,7 +1783,7 @@ version.
     implementation in namespace std.
 
 
-## 2.0.1, 2005.08.17 (r1046)
+## 2.0.1, 2005.08.17
 
 *   Added new simple1 example, showing how to retrieve just one
     column from a table.  Old simple1 is now called simple2, and
@@ -2109,7 +2109,7 @@ guide to migrating your code to this new version.
     individually...
 
 
-## 1.7.40, 2005.05.26 (r719)
+## 1.7.40, 2005.05.26
 
 *   Multiple item form of insert() now works if you're using the
     SQLQuery class, or its derivative, Query.  Thanks to Mark
@@ -2249,7 +2249,7 @@ guide to migrating your code to this new version.
 *   Added lib/Doxyfile to distribution.
     
 
-## 1.7.34, 2005.04.30 (r573)
+## 1.7.34, 2005.04.30
 
 *   Added a multiple-insert method for Query, which lets you insert
     a range of records from an STL container (or the whole thing,
@@ -2277,7 +2277,7 @@ guide to migrating your code to this new version.
 *   Some more small doucmentation improvements.
 
 
-## 1.7.33, 2005.04.29 (r555)
+## 1.7.33, 2005.04.29
 
 *   Worked around an overloaded operator lookup bug in VC++ 7.1 that
     caused SSQLS insert, replace and update queries to get mangled.
@@ -2310,7 +2310,7 @@ guide to migrating your code to this new version.
 
 
 
-## 1.7.32, 2005.03.10 (r479)
+## 1.7.32, 2005.03.10
 
 *   Example building may now be skipped with --disable-examples
     configure script flag.
@@ -2405,7 +2405,7 @@ guide to migrating your code to this new version.
     be platform-independent, finally.
 
 
-## 1.7.28, 2005.02.04 (r403)
+## 1.7.28, 2005.02.04
 
 *  ` --with-mysql*` flags to configure script now try the given
     directory explicitly, and only if that fails do they try
@@ -2419,7 +2419,7 @@ guide to migrating your code to this new version.
     by making that part of the library truly optional.
 
 
-## 1.7.27, 2005.01.12 (r395)
+## 1.7.27, 2005.01.12
 
 *   configure check for libmysqlclient now halts configuration if the
     library isn't found.  Previously, it would just be flagged as
@@ -2437,7 +2437,7 @@ guide to migrating your code to this new version.
 *   Worked around a BCBuilder C++ syntax processing bug in row.h.
 
 
-## 1.7.26, 2004.12.17 (r382)
+## 1.7.26, 2004.12.17
 
 *   Moved all of the SQLString definitions out of the header and into
     a new .cpp file, reformatted it all, and made the integer
@@ -2473,7 +2473,7 @@ guide to migrating your code to this new version.
     recompiles after running bootstrap script.
 
 
-## 1.7.25, 2004.12.09 (r360)
+## 1.7.25, 2004.12.09
 
 *   Yet more fixes to the --with-mysql-lib and --with-mysql-include
     flags.
@@ -2488,7 +2488,7 @@ guide to migrating your code to this new version.
 *   Some style changes (mostly whitespace) in header files.
 
 
-## 1.7.24, 2004.12.08 (r343)
+## 1.7.24, 2004.12.08
 
 *   Fixed the --with-mysql-lib and --with-mysql-include flags'
     behavior, and extended their search ability to handle one other
@@ -2508,7 +2508,7 @@ guide to migrating your code to this new version.
 *   Reformatted all of `lib/*.cc`.
 
 
-## 1.7.23, 2004.11.20 (r333)
+## 1.7.23, 2004.11.20
 
 *   Query::reset() now empties the stored query string.  If you
     subsequently stored a longer query in the object, you'd overwrite
@@ -2562,7 +2562,7 @@ guide to migrating your code to this new version.
 *   Some VC++ type warnings squished.  Some remain.
     
 
-## 1.7.22, 2004.11.17 (r302)
+## 1.7.22, 2004.11.17
 
 *   Applied patches by Zahroof Mohammed to allow it to build under GCC
     3.4.2.  Tested on MinGW and Fedora Core 3 systems.
@@ -2587,7 +2587,7 @@ guide to migrating your code to this new version.
     just a nicety for those running in 'maintainer mode'.
 
 
-## 1.7.21, 2004.11.05 (r273)
+## 1.7.21, 2004.11.05
 
 *   Generating a main mysql++ RPM containing just the library files
     and basic documentation, and the -devel package containing
@@ -2606,7 +2606,7 @@ guide to migrating your code to this new version.
     build-time dependencies and shortening compile times.
 
 
-## 1.7.20, 2004.11.03 (r258)
+## 1.7.20, 2004.11.03
 
 *   Collapsed all numbered `*.hh` headers into a single `*.h` file.  For
     example, the contents of row1.hh, row2.hh and row3.hh are now in
@@ -2646,7 +2646,7 @@ guide to migrating your code to this new version.
 *   Beautified the example programs.
 
 
-## 1.7.19, 2004.10.25 (r186)
+## 1.7.19, 2004.10.25
 
 *   Fixed an infinite loop in the query mechanism resulting from the
     strstream change in the previous version.  There is an overloaded
@@ -2675,7 +2675,7 @@ guide to migrating your code to this new version.
     c:\program files\mysql.)
 
 
-## 1.7.18, 2004.10.01 (r177)
+## 1.7.18, 2004.10.01
 
 *   Changed all the strstream (and friends) stuff to stringstream type
     classes.  Let there be much rejoicing.
@@ -2694,7 +2694,7 @@ guide to migrating your code to this new version.
     current.  Ooops....
 
 
-## 1.7.17, 2004.09.16 (r170)
+## 1.7.17, 2004.09.16
 
 *   Reverted one of the VC++ warning fix changes from 1.7.16 that
     caused crashes on Linux.
@@ -2704,7 +2704,7 @@ guide to migrating your code to this new version.
     5.0.1.
 
 
-## 1.7.16, 2004.09.13 (r160)
+## 1.7.16, 2004.09.13
 
 *   Building VC++ version with DLL version of C runtime libraries, and
     at warning level 3 with no warnings emitted.
@@ -2713,7 +2713,7 @@ guide to migrating your code to this new version.
     the Wishlist for further thoughts on this.
 
 
-## 1.7.15, 2004.09.02 (r144)
+## 1.7.15, 2004.09.02
 
 *   Renamed Configure file to common.am, to avoid file name conflict
     with configure script on case-sensitive file systems.
@@ -2725,7 +2725,7 @@ guide to migrating your code to this new version.
     Initial idea by Chris Frey, improvements by Warren Young.
 
 
-## 1.7.14, 2004.08.26 (r130)
+## 1.7.14, 2004.08.26
 
 *   Builds with Visual C++ 7.1.
 
@@ -2733,7 +2733,7 @@ guide to migrating your code to this new version.
     GCC 3.4.  (X_cus_value_list ctor definition was broken.)
 
 
-## 1.7.13, 2004.08.23 (r92)
+## 1.7.13, 2004.08.23
 
 *   Removed USL CC support.  (System V stock system compiler.)  Use
     GCC on these platforms instead.
@@ -2754,7 +2754,7 @@ guide to migrating your code to this new version.
     Thanks to Totte Karlsson for these.
 
 
-## 1.7.12, 2004.08.19 (r63)
+## 1.7.12, 2004.08.19
 
 *   Many Standard C++ fixes, most from the GCC 3.4 patch by
     Rune Kleveland.
@@ -2769,7 +2769,7 @@ guide to migrating your code to this new version.
 *   Fixed the idempotency guard in datetime1.hh.
 
 
-## 1.7.11, 2004.08.17 (r50)
+## 1.7.11, 2004.08.17
 
 *   Renamed `mysql++`, `defs` and `define_short` files, adding `.hh` to the
     end of each.  (They're header files!)  This shouldn't impact
@@ -2790,7 +2790,7 @@ guide to migrating your code to this new version.
     versions of libtool.
 
 
-## 1.7.10, 2004.08.16 (r27)
+## 1.7.10, 2004.08.16
 
 Maintenance taken over by Warren Young.  See [the mailing list
 post](http://lists.mysql.com/plusplus/3326) for rationale.

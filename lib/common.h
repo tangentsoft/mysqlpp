@@ -219,4 +219,11 @@ typedef unsigned long ulong;
 #	include <mysql.h>
 #endif
 
+// The Unicode chapter of the user manual justifies the following.
+#if MYSQL_VERSION_ID >= 50500
+#   define MYSQLPP_UTF8_CS "utf8mb4"
+#else
+#   define MYSQLPP_UTF8_CS "utf8"
+#endif
+
 #endif // !defined(MYSQLPP_COMMON_H)

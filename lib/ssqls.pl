@@ -754,6 +754,7 @@ $equal_list;
 	{
 		bool before = false;
 $value_list_cus
+        (void)before;
 		return s;
 	}
 
@@ -762,6 +763,7 @@ $value_list_cus
 	{
 		bool before = false;
 $cus_field_list
+        (void)before;
 		return s;
 	}
 
@@ -770,6 +772,7 @@ $cus_field_list
 	{
 		bool before = false;
 $cus_equal_list
+        (void)before;
 		return s;
 	}
 

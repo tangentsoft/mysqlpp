@@ -57,11 +57,8 @@
     compatible with C strings, since it doesn&#x2019;t use 0 bytes
     anywhere as multi-byte Unicode encodings do. As a result, many
     programs that deal in text will cope with UTF-8 data even though
-    they have no explicit support for UTF-8. (Follow the last link above
-    to see how the design of UTF-8 allows this.) Thus, when explicit
-    support for Unicode was added in MySQL v4.1, they chose to make
-    UTF-8 the native encoding, to preserve backward compatibility with
-    programs that had no Unicode support.</para>
+    they have no explicit support for UTF-8. Follow the last link above
+    to see how the design of UTF-8 allows this.</para>
   </sect2>
 
 
@@ -69,19 +66,19 @@
     <title>Unicode in MySQL</title>
 
     <para>Since MySQL comes out of the Unix world, and it predates the
-    widespread use of UTF-8 in Unix, it started out not supporting
-    Unicode at all. You could store raw UTF-8 strings in old versions of
-    MySQL, but it wouldn&#x2019;t know how to do things like sort a
-    column of UTF-8 strings.</para>
+    widespread use of UTF-8 in Unix, the early versinos of MySQL had no
+    explicit support for Unicode. From the start, you could store raw
+    UTF-8 strings, but it wouldn&#x2019;t know how to do things like
+    sort a column of UTF-8 strings.</para>
 
-    <para>MySQL 4.1 added the first true support for Unicode. This
+    <para>MySQL 4.1 added the first explicit support for Unicode. This
     version of MySQL supported only the BMP, meaning that if you told it
     to expect strings to be in UTF-8, it could only use up to 3 bytes
     per character.</para>
 
     <para>MySQL 5.5 was the first release to completely support Unicode.
     Because the BMP-only Unicode support had been in the wild for about
-    6 yeras by that point, and changing to the new character set
+    6 years by that point, and changing to the new character set
     requires a table rebuild, the new one was called
     &#x201C;utf8mb4&#x201D; rather than change the longstanding meaning
     of &#x201C;utf8&#x201D; in MySQL. This release also added a new
@@ -99,8 +96,8 @@
     &#x201C;utf8mb4&#x201D; and &#x201C;utf8mb4_general_ci&#x201D; when
     you build MySQL++ against MySQL 5.5 and newer and to
     &#x201C;utf8&#x201D; and &#x201C;utf8_general_ci&#x201D; otherwise.
-    We use these macros in our <filename>resetdb</filename>
-    example.</para>
+    We use these macros in our <filename>resetdb</filename> example;
+    you're welcome to use them in your code as well.</para>
   </sect2>
 
 

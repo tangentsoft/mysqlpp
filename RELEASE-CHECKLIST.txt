@@ -1,3 +1,5 @@
+- Update ChangeLog.md.
+
 - Change version number in configure.ac and mysql++.bkl.
 
   All other places the version number occurs are generated files
@@ -14,8 +16,8 @@
 
       $ abi-compliance-checker -lib mysqlpp -dump abi.xml
 
-  ("Stable" is assumed to be in ../3.1.0 relative to the svn "head"
-  checkout, as I write this.)
+  ("Stable" is assumed to be in ../3.1.0 relative to the trunk checkout,
+  as I write this.)
 
   This dependence on an existing ABI dump file is deemed reasonable
   since the ABI of the stable version had better not be changing!
@@ -36,3 +38,7 @@
 
 - Re-bootstrap it again without "pedantic", to avoid shipping the
   pedantic build files.
+
+- Run tools/mkrel to check the new ChangeLog.md, configure.ac, and
+  mysqyl++.bkl files in with the proper version tag and to merge it into
+  the release branch.

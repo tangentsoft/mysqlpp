@@ -30,13 +30,12 @@
     characters using only 7-bit ASCII.</para>
 
     <para>Unicode solves this problem. It encodes every character used
-    for writing in the world, using up to 4 bytes per character.  The
-    subset covering the most economically valuable cases takes two bytes
-    per character, so many Unicode-aware programs only support this
-    subset, storing characters as 2-byte values, rather than use 4-byte
-    characters so as to cover all possible cases, however rare. This
-    subset of Unicode is called the Basic Multilingual Plane, or
-    BMP.</para>
+    for writing in the world, using up to 4 bytes per character.  Before
+    emoji became popular, the subset covering the most economically
+    valuable cases fit into the lower 65536 code points, so you could
+    encode most texts using only two bytes per character.  Many
+    nominally Unicode-aware programs only support this subset, called
+    the Basic Multilingual Plane, or BMP.</para>
 
     <para>Unfortunately, Unicode was invented about two decades too late
     for Unix and C. Those decades of legacy created an immense inertia
@@ -143,13 +142,14 @@
     url="http://en.wikipedia.org/wiki/UCS-2">UCS-2</ulink><footnote><para>Since
     Windows XP, Windows actually uses the <ulink
     url="http://en.wikipedia.org/wiki/UTF-16">UTF-16</ulink> encoding,
-    not UCS-2.  This means that if you use characters beyond the 16-bit
-    &ldquo;BMP&rdquo; range, they get encoded as 4-byte characters. But
-    again, since the most economically valuable subset of Unicode is the
-    BMP, many programs ignore this distinction and treat modern Windows
-    as supporting 2-byte characters.</para></footnote>. Some call these
-    &#x201C;wide&#x201D; characters, so the other set of functions end
-    in 'W'. The <function><ulink
+    not UCS-2. This means that if you use characters beyond the 16-bit
+    BMP range, they get encoded as 4-byte characters. But again, since
+    the most economically valuable subset of Unicode is the BMP if you
+    ignore emoji, many programs ignore this distinction and assume
+    Unicode strings on Windows are always 2 bytes per
+    character.</para></footnote>. Some call these &#x201C;wide&#x201D;
+    characters, so the other set of functions end in 'W'. The
+    <function><ulink
     url="http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/dialogboxes/dialogboxreference/dialogboxfunctions/messagebox.asp">MessageBox</ulink>()</function>
     API, for instance, is actually a macro, not a real function. If you
     define the <symbol>UNICODE</symbol> macro when building your

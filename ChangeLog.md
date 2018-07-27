@@ -1,12 +1,15 @@
 # Change Log
 
-## 3.2.4, UNRELEASED
+## 3.2.4, 2018.07.26
 
 *   Added the `MYSQLPP_UTF8_CS` and `MYSQLPP_UTF8_COL` macros to allow a
-    given bit of code use either the legacy "utf8" character set or the new
-    full-Unicode "utf8mb4" version depending on whether MySQL++ is built
-    against MySQL 5.5 or newer, the version where `utf8mb4` was added.
-    See the [Unicode chapter in the user manual][umuc] for more details.
+    given bit of code use either the legacy "utf8" character set or the
+    new full-Unicode "utf8mb4" version depending on whether MySQL++ is
+    built against MySQL 5.5 or newer, the version where `utf8mb4` was
+    added.  Using this in the `resetdb` example to demo the feature.
+
+*   Updated the [Unicode chapter of the user manual][umuc] to cover this
+    and other changes in the Unicode world over the past several years.
 
 *   Recent versions of MySQL and MariaDB have removed some obsolete
     features, causing MySQL++ build errors in places where the library

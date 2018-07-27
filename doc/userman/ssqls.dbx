@@ -1033,16 +1033,15 @@ public:
       the library.</para></listitem>
 
       <listitem><para>There&#x2019;s <ulink
-      url="http://svn.gna.org/viewcvs/*checkout*/mysqlpp/trunk/Wishlist">a
+      url="https://tangentsoft.com/mysqlpp/wiki?name=SSQLSv2+Design">a
       plan</ulink> to replace the current SSQLS mechanism with an
-      entirely new code base. Although this is being done primarily
-      to get new features that are too difficult to add within the
-      current design, it also means we&#x2019;ll have the chance to
-      test step-by-step along the way that we don&#x2019;t reintroduce
-      code that Visual C++ 2003 doesn&#x2019;t support. This may happen
-      without you doing anything, but if there&#x2019;s someone on
-      the team who cares about this, that will naturally increase
-      the chances that it does happen.</para></listitem>
-    </orderedlist>
-  </sect2>
+      entirely new code base. Although this is being done primarily to
+      get new features that are too difficult to add within the current
+      design, it also means we&#x2019;ll have the chance to test
+      step-by-step along the way that we don&#x2019;t reintroduce code
+      that Visual C++ 2003 doesn&#x2019;t support. This may happen
+      without you doing anything, but if there&#x2019;s someone on the
+      team who cares about this, that will naturally increase the
+      chances that it does happen.</para></listitem>
+    </orderedlist> </sect2>
 </sect1>

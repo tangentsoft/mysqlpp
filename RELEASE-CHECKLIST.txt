@@ -42,3 +42,7 @@
 - Run tools/mkrel to check the new ChangeLog.md, configure.ac, and
   mysqyl++.bkl files in with the proper version tag and to merge it into
   the release branch.
+
+- Copy mysql++-$(VERSION).tar.gz to tangentsoft.com releases directory.
+
+- Update "MySQL++" wiki document to point to new release.

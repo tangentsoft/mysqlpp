@@ -222,7 +222,12 @@ public:
     /// they're obsolete in modern C++ now anyway, since they were
     /// always unreliable.  If we ever get to MySQL++ 4 and can break
     /// the ABI, this throw-spec will just go away.
-	char at(size_type i) const MAY_THROW(std::out_of_range);
+#if !defined(DOXYGEN_IGNORE) && __cplusplus >= 201703L
+    // Can't use MAY_THROW() here: it confuses Doxygen 1.8.14.
+	char at(size_type i) const noexcept(false);
+#else
+	char at(size_type i) const throw(std::out_of_range);
+#endif
 
 	/// \brief Compare the internal buffer to the given string
 	///

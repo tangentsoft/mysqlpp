@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
-                         "http://www.docbook.org/xml/4.2/docbookx.dtd"
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+                         "http://www.docbook.org/xml/4.4/docbookx.dtd"
 [ <!ENTITY % xinclude SYSTEM "xinclude.mod">
 %xinclude;
 ]>
@@ -31,7 +31,7 @@
 		</authorgroup>
 
 		<copyright>
-			<year>1998-2001, 2005-2015</year>
+			<year>1998-2001, 2005-2018</year>
 			<holder>Kevin Atkinson (original author)</holder>
 			<holder>MySQL AB</holder>
 			<holder>Educational Technology Resources</holder>
@@ -39,7 +39,6 @@
 
 		<pubdate><?dbtimestamp format="B d, Y"?></pubdate>
 	</articleinfo>
-
 
 	<xi:include href="intro.dbx" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 	<xi:include href="overview.dbx" xmlns:xi="http://www.w3.org/2001/XInclude"/>

@@ -64,6 +64,8 @@ namespace mysqlpp {
 BeecryptMutex::BeecryptMutex() MAY_THROW(MutexFailed)
 #if defined(ACTUALLY_DOES_SOMETHING)
 	: pmutex_(new bc_mutex_t)
+#else
+	: pmutex_(0)
 #endif
 {
 #if defined(MYSQLPP_PLATFORM_WINDOWS)
@@ -98,6 +100,8 @@ BeecryptMutex::~BeecryptMutex()
 #	endif
 
 	delete impl_ptr(pmutex_);
+#else
+    (void)pmutex_;
 #endif
 }
 

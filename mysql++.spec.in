@@ -85,7 +85,7 @@ rm -rf %{buildroot} doc/examples
 
 %files devel
 %defattr(-,root,root,-)
-%doc doc/examples doc/README-devel-RPM.txt README-examples.txt Wishlist
+%doc doc/examples doc/README-devel-RPM.txt README-examples.txt
 %{_includedir}/mysql++
 %{_libdir}/libmysqlpp.so
 

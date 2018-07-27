@@ -109,12 +109,12 @@ If they're not installed, you can probably run your system's package
 manager to install suitable versions.
 
 There's a third tool you'll need to bootstrap MySQL++ called
-[Bakefile][bf]. You will need Bakefile 0.2.5 or higher, which in turn
-requires Python 2.3 or higher to run. (MySQL++ is currently not
-compatible with Bakefile 1.x, as it is still a work in progress as of
-this writing.) To build Bakefile from source, you will also need SWIG,
-so if you don't have that, you'll want to use one of the binary builds
-of Bakefile.
+[Bakefile][bf]. The syntax used in `mysql++.bkl` requires at least
+Bakefile 0.2.5 or higher, which in turn requires Python 2.3 or higher to
+run. You may require a newer version of Bakefile to support newer OSes
+and Python versions; we've tested with versions up to 0.2.11
+successfully.  Do not use any of the Bakefile 1.x versions: it's a major
+change in direction which we haven't tried to follow.
 
 Once you have all the tools in place, you can bootstrap MySQL++ with a
 Bourne shell script called `bootstrap`, which you get as part of the

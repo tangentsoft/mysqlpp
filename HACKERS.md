@@ -166,13 +166,34 @@ Arguments:
 
 *   `bat`
 
-    Asks `cmd.exe` to run `bootstrap.bat` for you. This is useful when
-    using Cygwin just as a command shell in preference to `cmd.exe`, as
-    opposed to using Cygwin to build MySQL++ using its native tools.
-    Passing 'bat' stops all command line processing in the bootstrap
-    script, so if you also pass some of the other options, make "`bat`"
-    last.  The only options that affect the built project files and
-    `Makefiles` work are the no* ones.
+    Runs `bootstrap.bat` via `cmd.exe` for you, passing along equivalent
+    options to any of the "*no*" options you give before it.
+
+    None of the other options above have any effect on the generated
+    build system files when you give "`bat`".  If you need those
+    features, leave this option off.
+
+    Passing `bat` stops all command line processing in the `bootstrap`
+    script, so if you also pass some of the other options, "`bat`" must
+    be last.
+    
+    The `bootstrap.bat` script is useful only when you intend to build
+    MySQL++ with MinGW or Visual C++, and you are using Cygwin only as a
+    command line environment.  If you intend to build MySQL++ with
+    Cygwin's GCC toolchain, you must not give this option, else you will
+    not end up with the necessary build system files.
+
+    One advantage of this feature is that the commands necessary to
+    achieve a given effect with `bootstrap.bat` when run via `bootstrap`
+    are shorter than when you run the batch file directly.
+
+    Another advantage is that this low-strength version of the bootstrap
+    script runs faster than the full-strength form, because it produces
+    fewer files.
+
+    Finally, running `bootstrap.bat` indirectly like this lets you avoid
+    using `cmd.exe`, a command shell greatly inferior to any of those
+    available for Cygwin.
 
 *   `configure` script options
 

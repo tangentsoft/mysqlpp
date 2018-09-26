@@ -1,15 +1,10 @@
 /***********************************************************************
- multiquery.cpp - Example showing how to iterate over result sets upon
-	execution of a query that returns more than one result set.  You can
-	get multiple result sets when executing multiple separate SQL
-	statments in a single query, or when dealing with the results of
-	calling a stored procedure.
+ test/insertpolicy.cpp - Checks that the *InsertPolicy objects work
+ 	as expected.
 
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB,
- (c) 2004-2009 by Educational Technology Resources, Inc., and (c)
- 2005 by Arnon Jalon.  Others may also hold copyrights on code in
- this file.  See the CREDITS.txt file in the top directory of the
- distribution for details.
+ Copyright (c) 2009 by Educational Technology Resources, Inc.
+ Others may also hold copyrights on code in this file.  See the
+ CREDITS.txt file in the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -29,181 +24,82 @@
  USA
 ***********************************************************************/
 
-#include "cmdline.h"
-#include "printdata.h"
-
 #include <mysql++.h>
 
-#include <algorithm>
+#include <climits>
 #include <iostream>
-#include <iomanip>
-#include <vector>
 
-using namespace std;
-using namespace mysqlpp;
+static const unsigned char nonzero = 4;
 
 
-typedef vector<size_t> IntVectorType;
-
-
-static void
-print_header(IntVectorType& widths, StoreQueryResult& res)
+template <class InsertPolicy>
+static bool
+test_policy(InsertPolicy& ip, unsigned char max, bool expected_to_fail)
 {
-	cout << "  |" << setfill(' ');
-	for (size_t i = 0; i < res.field_names()->size(); i++) {
-		cout << " " << setw(widths.at(i)) << res.field_name(int(i)) << " |";
+	unsigned char i;
+	mysqlpp::Row dummy;
+	for (i = 0; i < UCHAR_MAX; ++i) {
+		if (!ip.can_add(i, dummy)) {
+			break;
+		}
 	}
-	cout << endl;
-}
 
-
-static void
-print_row(IntVectorType& widths, Row& row)
-{
-	cout << "  |" << setfill(' ');
-	for (size_t i = 0; i < row.size(); ++i) {
-		cout << " " << setw(widths.at(i)) << row[int(i)] << " |";
-	}
-	cout << endl;
-}
-
-
-static void
-print_row_separator(IntVectorType& widths)
-{
-	cout << "  +" << setfill('-');
-	for (size_t i = 0; i < widths.size(); i++) {
-		cout << "-" << setw(widths.at(i)) << '-' << "-+";
-	}
-	cout << endl;
-}
-
-
-static void
-print_result(StoreQueryResult& res, int index)
-{
-	// Show how many rows are in result, if any
-	StoreQueryResult::size_type num_results = res.size();
-	if (res && (num_results > 0)) {
-		cout << "Result set " << index << " has " << num_results <<
-				" row" << (num_results == 1 ? "" : "s") << ':' << endl;
+	if (expected_to_fail ? i != max : i == max) {
+		return true;
 	}
 	else {
-		cout << "Result set " << index << " is empty." << endl;
-		return;
+		std::cerr << typeid(ip).name() << '(' << int(max) << 
+				") allowed " << int(i) << " inserts!" << std::endl;
+		return false;
 	}
-
-	// Figure out the widths of the result set's columns
-	IntVectorType widths;
-	size_t size = res.num_fields();
-	for (size_t i = 0; i < size; i++) {
-		widths.push_back(max(
-				res.field(i).max_length(),
-				res.field_name(i).size()));
-	}
-
-	// Print result set header
-	print_row_separator(widths);
-	print_header(widths, res);
-	print_row_separator(widths);
-
-	// Display the result set contents
-	for (StoreQueryResult::size_type i = 0; i < num_results; ++i) {
-		print_row(widths, res[i]);
-	}
-
-	// Print result set footer
-	print_row_separator(widths);
 }
 
 
-static void
-print_multiple_results(Query& query)
+template <class InsertPolicy>
+static bool
+test_policy(InsertPolicy& ip, unsigned char expected_allow_count)
 {
-	// Execute query and print all result sets
-	StoreQueryResult res = query.store();
-	print_result(res, 0);
-	for (int i = 1; query.more_results(); ++i) {
-		res = query.store_next();
-		print_result(res, i);
-	}
+	return	test_policy(ip, expected_allow_count, false) &&
+			test_policy(ip, expected_allow_count + 1, true) &&
+			test_policy(ip, expected_allow_count - 1, true) &&
+			test_policy(ip, expected_allow_count ? 0 : nonzero, true);
+}
+
+
+static bool
+test_row_count_nonzero()
+{
+	mysqlpp::Query::RowCountInsertPolicy<> ip_nonzero(nonzero);
+	return test_policy(ip_nonzero, nonzero);
+}
+
+
+static bool
+test_row_count_zero()
+{
+	mysqlpp::Query::RowCountInsertPolicy<> ip_zero(0);
+	return test_policy(ip_zero, 0);
+}
+
+
+static bool
+test_row_count()
+{
+	return	test_row_count_nonzero() &&
+			test_row_count_zero();
 }
 
 
 int
-main(int argc, char *argv[])
+main()
 {
-	// Get connection parameters from command line
-	mysqlpp::examples::CommandLine cmdline(argc, argv);
-	if (!cmdline) {
-		return 1;
-	}
-
 	try {
-		// Enable multi-queries.  Notice that you almost always set
-		// MySQL++ connection options before establishing the server
-		// connection, and options are always set using this one
-		// interface.  If you're familiar with the underlying C API,
-		// you know that there is poor consistency on these matters;
-		// MySQL++ abstracts these differences away.
-		Connection con;
-		con.set_option(new MultiStatementsOption(true));
-
-		// Connect to the database
-		if (!con.connect(mysqlpp::examples::db_name, cmdline.server(),
-				cmdline.user(), cmdline.pass())) {
-			return 1;
-		}
-
-		// Set up query with multiple queries.
-		Query query = con.query();
-		query << "DROP TABLE IF EXISTS test_table; " <<
-				"CREATE TABLE test_table(id INT); " <<
-				"INSERT INTO test_table VALUES(10); " <<
-				"UPDATE test_table SET id=20 WHERE id=10; " <<
-				"SELECT * FROM test_table; " <<
-				"DROP TABLE test_table";
-		cout << "Multi-query: " << endl << query << endl;
-
-		// Execute statement and display all result sets.
-		print_multiple_results(query);
-
-#if MYSQL_VERSION_ID >= 50000
-		// If it's MySQL v5.0 or higher, also test stored procedures, which
-		// return their results the same way multi-queries do.
-		query << "DROP PROCEDURE IF EXISTS get_stock; " <<
-				"CREATE PROCEDURE get_stock" <<
-				"( i_item varchar(20) ) " <<
-				"BEGIN " <<
-				"SET i_item = concat('%', i_item, '%'); " <<
-				"SELECT * FROM stock WHERE lower(item) like lower(i_item); " <<
-				"END;";
-		cout << "Stored procedure query: " << endl << query << endl;
-
-		// Create the stored procedure.
-		print_multiple_results(query);
-
-		// Call the stored procedure and display its results.
-		query << "CALL get_stock('relish')";
-		cout << "Query: " << query << endl;
-		print_multiple_results(query);
-#endif
-
-		return 0;
+		return test_row_count() ? 0 : 1;
 	}
-	catch (const BadOption& err) {
-		cerr << err.what() << endl;
-		cerr << "This example requires MySQL 4.1.1 or later." << endl;
-		return 1;
-	}
-	catch (const ConnectionFailed& err) {
-		cerr << "Failed to connect to database server: " <<
-				err.what() << endl;
-		return 1;
-	}
-	catch (const Exception& er) {
-		// Catch-all for any other MySQL++ exceptions
-		cerr << "Error: " << er.what() << endl;
-		return 1;
+	catch (...) {
+		std::cerr << "Unhandled exception caught by "
+				"test/insertpolicy!" << std::endl;
+		return 2;
 	}
 }
+

@@ -1,131 +1,198 @@
-#-######################################################################
-# mysql++.m4 - Example autoconf macro showing how to find MySQL++
-#	library and header files.
-#
-# Copyright (c) 2004-2009 by Educational Technology Resources, Inc.
-#
-# This file is free software; you can redistribute it and/or modify it
-# under the terms of the GNU Lesser General Public License as published
-# by the Free Software Foundation; either version 2.1 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with MySQL++; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
-# USA
-#-######################################################################
+/// \file cpool.h
+/// \brief Declares the ConnectionPool class.
 
-dnl @synopsis MYSQLPP_DEVEL
-dnl 
-dnl This macro tries to find the MySQL++ library and header files.
-dnl
-dnl We define the following configure script flags:
-dnl
-dnl		--with-mysqlpp: Give prefix for both library and headers, and try
-dnl			to guess subdirectory names for each.  (e.g. tack /lib and
-dnl			/include onto given dir name, and other common schemes.)
-dnl		--with-mysqlpp-lib: Similar to --with-mysqlpp, but for library only.
-dnl		--with-mysqlpp-include: Similar to --with-mysqlpp, but for headers
-dnl			only.
-dnl
-dnl This macro depends on having the default compiler and linker flags
-dnl set up for building programs against the MySQL C API.  The mysql.m4
-dnl macro in this directory fits this bill; run it first.
-dnl
-dnl @version 1.3, 2009/11/22
-dnl @author Warren Young <mysqlpp@etr-usa.com>
+/***********************************************************************
+ Copyright (c) 2007-2008 by Educational Technology Resources, Inc. and
+ (c) 2007 by Jonathan Wakely.  Others may also hold copyrights on
+ code in this file.  See the CREDITS file in the top directory of
+ the distribution for details.
 
-AC_DEFUN([MYSQLPP_DEVEL],
-[
-	dnl
-	dnl Set up configure script macros
-	dnl
-	AC_ARG_WITH(mysqlpp,
-		[  --with-mysqlpp=<path>     path containing MySQL++ header and library subdirs],
-		[MYSQLPP_lib_check="$with_mysqlpp/lib64 $with_mysqlpp/lib $with_mysqlpp/lib64/mysql++ $with_mysqlpp/lib/mysql++"
-		  MYSQLPP_inc_check="$with_mysqlpp/include $with_mysqlpp/include/mysql++"],
-		[MYSQLPP_lib_check="/usr/local/mysql++/lib64 /usr/local/mysql++/lib /usr/local/lib64/mysql++ /usr/local/lib/mysql++ /opt/mysql++/lib64 /opt/mysql++/lib /usr/lib64/mysql++ /usr/lib/mysql++ /usr/local/lib64 /usr/local/lib /usr/lib64 /usr/lib"
-		  MYSQLPP_inc_check="/usr/local/mysql++/include /usr/local/include/mysql++ /opt/mysql++/include /usr/local/include/mysql++ /usr/local/include /usr/include/mysql++ /usr/include"])
-	AC_ARG_WITH(mysqlpp-lib,
-		[  --with-mysqlpp-lib=<path> directory path of MySQL++ library],
-		[MYSQLPP_lib_check="$with_mysqlpp_lib $with_mysqlpp_lib/lib64 $with_mysqlpp_lib/lib $with_mysqlpp_lib/lib64/mysql $with_mysqlpp_lib/lib/mysql"])
-	AC_ARG_WITH(mysqlpp-include,
-		[  --with-mysqlpp-include=<path> directory path of MySQL++ headers],
-		[MYSQLPP_inc_check="$with_mysqlpp_include $with_mysqlpp_include/include $with_mysqlpp_include/include/mysql"])
+ This file is part of MySQL++.
 
-	dnl
-	dnl Look for MySQL++ library
-	dnl
-	AC_CACHE_CHECK([for MySQL++ library location], [ac_cv_mysqlpp_lib],
-	[
-		for dir in $MYSQLPP_lib_check
-		do
-			if test -d "$dir" && \
-				( test -f "$dir/libmysqlpp.so" ||
-				  test -f "$dir/libmysqlpp.a" )
-			then
-				ac_cv_mysqlpp_lib=$dir
-				break
-			fi
-		done
+ MySQL++ is free software; you can redistribute it and/or modify it
+ under the terms of the GNU Lesser General Public License as published
+ by the Free Software Foundation; either version 2.1 of the License, or
+ (at your option) any later version.
 
-		if test -z "$ac_cv_mysqlpp_lib"
-		then
-			AC_MSG_ERROR([Didn't find the MySQL++ library dir in '$MYSQLPP_lib_check'])
-		fi
+ MySQL++ is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+ License for more details.
 
-		case "$ac_cv_mysqlpp_lib" in
-			/* ) ;;
-			* )  AC_MSG_ERROR([The MySQL++ library directory ($ac_cv_mysqlpp_lib) must be an absolute path.]) ;;
-		esac
-	])
-	AC_SUBST([MYSQLPP_LIB_DIR],[$ac_cv_mysqlpp_lib])
+ You should have received a copy of the GNU Lesser General Public
+ License along with MySQL++; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
+ USA
+***********************************************************************/
 
-	dnl
-	dnl Look for MySQL++ header file directory
-	dnl
-	AC_CACHE_CHECK([for MySQL++ include path], [ac_cv_mysqlpp_inc],
-	[
-		for dir in $MYSQLPP_inc_check
-		do
-			if test -d "$dir" && test -f "$dir/mysql++.h"
-			then
-				ac_cv_mysqlpp_inc=$dir
-				break
-			fi
-		done
+#if !defined(MYSQLPP_CPOOL_H)
+#define MYSQLPP_CPOOL_H
 
-		if test -z "$ac_cv_mysqlpp_inc"
-		then
-			AC_MSG_ERROR([Didn't find the MySQL++ header dir in '$MYSQLPP_inc_check'])
-		fi
+#include "beemutex.h"
 
-		case "$ac_cv_mysqlpp_inc" in
-			/* ) ;;
-			* )  AC_MSG_ERROR([The MySQL++ header directory ($ac_cv_mysqlpp_inc) must be an absolute path.]) ;;
-		esac
-	])
-	AC_SUBST([MYSQLPP_INC_DIR],[$ac_cv_mysqlpp_inc])
+#include <list>
 
-	dnl
-	dnl Now check that the above checks resulted in -I and -L flags that
-	dnl let us build actual programs against MySQL++.
-	dnl
-	case "$ac_cv_mysqlpp_lib" in
-	  /usr/lib) ;;
-	  *) LDFLAGS="$LDFLAGS -L${ac_cv_mysqlpp_lib}" ;;
-	esac
-	CPPFLAGS="$CPPFLAGS -I${ac_cv_mysqlpp_inc} -I${MYSQL_C_INC_DIR}"
-	AC_MSG_CHECKING([that we can build MySQL++ programs])
-	AC_COMPILE_IFELSE(
-		[AC_LANG_PROGRAM([#include <mysql++.h>],
-			[mysqlpp::Connection c(false)])],
-		AC_MSG_RESULT([yes]),
-		AC_MSG_ERROR([no]))
-]) dnl End MYSQLPP_DEVEL
+#include <assert.h>
+#include <time.h>
+
+namespace mysqlpp {
+
+#if !defined(DOXYGEN_IGNORE)
+// Make Doxygen ignore this
+class MYSQLPP_EXPORT Connection;
+#endif
+
+/// \brief Manages a pool of connections for programs that need more
+/// than one Connection object at a time, but can't predict how many
+/// they need in advance.
+///
+/// This class is useful in programs that need to make multiple
+/// simultaneous queries on the database; this requires multiple
+/// Connection objects due to a hard limitation of the underlying
+/// C API.  Connection pools are most useful in multithreaded programs,
+/// but it can be helpful to have one in a single-threaded program as
+/// well.  Sometimes it's necessary to get more data from the server
+/// while in the middle of processing data from an earlier query; this
+/// requires multiple connections.  Whether you use a pool or manage
+/// connections yourself is up to you, but realize that this class
+/// takes care of a lot of subtle details for you that aren't obvious.
+///
+/// The pool's policy for connection reuse is to always return the 
+/// \em most recently used connection that's not being used right now.
+/// This ensures that excess connections don't hang around any longer
+/// than they must.  If the pool were to return the \em least recently
+/// used connection, it would be likely to result in a large pool of
+/// sparsely used connections because we'd keep resetting the last-used 
+/// time of whichever connection is least recently used at that moment.
+
+class MYSQLPP_EXPORT ConnectionPool
+{
+public:
+	/// \brief Create empty pool
+	ConnectionPool() { }
+
+	/// \brief Destroy object
+	///
+	/// If the pool raises an assertion on destruction, it means our
+	/// subclass isn't calling clear() in its dtor as it should.
+	virtual ~ConnectionPool() { assert(empty()); }
+
+	/// \brief Returns true if pool is empty
+	bool empty() const { return pool_.empty(); }
+
+	/// \brief Grab a free connection from the pool.
+	///
+	/// This method creates a new connection if an unused one doesn't
+	/// exist, and destroys any that have remained unused for too long.
+	/// If there is more than one free connection, we return the most
+	/// recently used one; this allows older connections to die off over
+	/// time when the caller's need for connections decreases.
+	///
+	/// Do not delete the returned pointer.  This object manages the
+	/// lifetime of connection objects it creates.
+	///
+	/// \retval a pointer to the connection
+	Connection* grab();
+
+	/// \brief Return a connection to the pool
+	///
+	/// Marks the connection as no longer in use.
+	///
+	/// The pool updates the last-used time of a connection only on
+	/// release, on the assumption that it was used just prior.  There's
+	/// nothing forcing you to do it this way: your code is free to
+	/// delay releasing idle connections as long as it likes.  You
+	/// want to avoid this because it will make the pool perform poorly;
+	/// if it doesn't know approximately how long a connection has
+	/// really been idle, it can't make good judgements about when to
+	/// remove it from the pool.
+	void release(const Connection* pc);
+
+	/// \brief Remove all unused connections from the pool
+	void shrink() { clear(false); }
+
+protected:
+	/// \brief Drains the pool, freeing all allocated memory.
+	///
+	/// A derived class must call this in its dtor to avoid leaking all
+	/// Connection objects still in existence.  We can't do it up at
+	/// this level because this class's dtor can't call our subclass's
+	/// destroy() method.
+	///
+	/// \param all if true, remove all connections, even those in use
+	void clear(bool all = true);
+
+	/// \brief Create a new connection
+	///
+	/// Subclasses must override this.
+	///
+	/// Essentially, this method lets your code tell ConnectionPool
+	/// what server to connect to, what login parameters to use, what
+	/// connection options to enable, etc.  ConnectionPool can't know
+	/// any of this without your help.
+	///
+	/// \retval A connected Connection object
+	virtual Connection* create() = 0;
+
+	/// \brief Destroy a connection
+	///
+	/// Subclasses must override this.
+	///
+	/// This is for destroying the objects returned by create().
+	/// Because we can't know what the derived class did to create the
+	/// connection we can't reliably know how to destroy it.
+	virtual void destroy(Connection*) = 0;
+
+	/// \brief Returns the maximum number of seconds a connection is
+	/// able to remain idle before it is dropped.
+	///
+	/// Subclasses must override this as it encodes a policy issue,
+	/// something that MySQL++ can't declare by fiat.
+	///
+	/// \retval number of seconds before an idle connection is destroyed
+	/// due to lack of use
+	virtual unsigned int max_idle_time() = 0;
+
+private:
+	//// Internal types
+	struct ConnectionInfo {
+		Connection* conn;
+		time_t last_used;
+		bool in_use;
+
+		ConnectionInfo(Connection* c) :
+		conn(c),
+		last_used(time(0)),
+		in_use(true)
+		{
+		}
+
+		// Strict weak ordering for ConnectionInfo objects.
+		// 
+		// This ordering defines all in-use connections to be "less
+		// than" those not in use.  Within each group, connections
+		// less recently touched are less than those more recent.
+		bool operator<(const ConnectionInfo& rhs) const
+		{
+			const ConnectionInfo& lhs = *this;
+			return lhs.in_use == rhs.in_use ?
+					lhs.last_used < rhs.last_used :
+					lhs.in_use;
+		}
+	};
+	typedef std::list<ConnectionInfo> PoolT;
+	typedef PoolT::iterator PoolIt;
+
+	//// Internal support functions
+	Connection* find_mru();
+	void remove_old_connections();
+
+	//// Internal data
+	PoolT pool_;
+	BeecryptMutex mutex_;
+};
+
+} // end namespace mysqlpp
+
+#endif // !defined(MYSQLPP_CPOOL_H)
 

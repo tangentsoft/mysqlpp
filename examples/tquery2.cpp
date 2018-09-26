@@ -1,14 +1,10 @@
 /***********************************************************************
- tquery2.cpp - Same as tquery1.cpp, except that it passes the template
-	query parameters in a SQLQueryParms object, instead of separately.
-	This is useful when the calling code doesn't know in advance how
-	many parameters there will be.  This is most likely because the
-	templates are coming from somewhere else, or being generated.
+ cpool.cpp - Implements the ConnectionPool class.
 
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
- also hold copyrights on code in this file.  See the CREDITS.txt file
- in the top directory of the distribution for details.
+ Copyright (c) 2007-2009 by Educational Technology Resources, Inc. and
+ (c) 2007 by Jonathan Wakely.  Others may also hold copyrights on
+ code in this file.  See the CREDITS.txt file in the top directory
+ of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -28,72 +24,199 @@
  USA
 ***********************************************************************/
 
-#include "cmdline.h"
-#include "printdata.h"
+#include "cpool.h"
 
-#include <iostream>
+#include "connection.h"
 
-using namespace std;
+#include <algorithm>
+#include <functional>
 
-int
-main(int argc, char *argv[])
+namespace mysqlpp {
+
+
+/// \brief Functor to test whether a given ConnectionInfo object is
+/// "too old".
+///
+/// \internal This is a template only because ConnectionInfo is private.
+/// Making it a template means the private type is only used at the point
+/// of instantiation, where it is accessible.
+
+template <typename ConnInfoT>
+class TooOld : std::unary_function<ConnInfoT, bool>
 {
-	// Get database access parameters from command line
-	mysqlpp::examples::CommandLine cmdline(argc, argv);
-	if (!cmdline) {
-		return 1;
+public:
+#if !defined(DOXYGEN_IGNORE)
+	TooOld(unsigned int tmax) :
+	min_age_(time(0) - tmax)
+	{
 	}
 
-	try {
-		// Establish the connection to the database server.
-		mysqlpp::Connection con(mysqlpp::examples::db_name,
-				cmdline.server(), cmdline.user(), cmdline.pass());
+	bool operator()(const ConnInfoT& conn_info) const
+	{
+		return !conn_info.in_use && conn_info.last_used <= min_age_;
+	}
 
-		// Build a template query to retrieve a stock item given by
-		// item name.
-		mysqlpp::Query query = con.query(
-				"select * from stock where item = %0q");
-		query.parse();
+#endif
+private:
+	time_t min_age_;
+};
 
-		// Retrieve an item added by resetdb; it won't be there if
-		// tquery* or ssqls3 is run since resetdb.
-		mysqlpp::SQLQueryParms sqp;
-		sqp << "Nürnberger Brats";
-		mysqlpp::StoreQueryResult res1 = query.store(sqp);
-		if (res1.empty()) {
-			throw mysqlpp::BadQuery("UTF-8 bratwurst item not found in "
-					"table, run resetdb");
+
+
+//// clear /////////////////////////////////////////////////////////////
+// Destroy connections in the pool, either all of them (completely
+// draining the pool) or just those not currently in use.  The public
+// method shrink() is an alias for clear(false).
+
+void
+ConnectionPool::clear(bool all)
+{
+	ScopedLock lock(mutex_);	// ensure we're not interfered with
+
+	PoolIt it = pool_.begin();
+	while (it != pool_.end()) {
+		if (all || !it->in_use) {
+			remove(it++);
 		}
-
-		// Replace the proper German name with a 7-bit ASCII
-		// approximation using a different template query.
-		query.reset();		// forget previous template query info
-		query << "update stock set item = %0q where item = %1q";
-		query.parse();
-		sqp.clear();
-		sqp << "Nuerenberger Bratwurst" << res1[0][0].c_str();
-		mysqlpp::SimpleResult res2 = query.execute(sqp);
-
-		// Print the new table contents.
-		print_stock_table(query);
+		else {
+			++it;
+		}
 	}
-	catch (const mysqlpp::BadQuery& er) {
-		// Handle any query errors
-		cerr << "Query error: " << er.what() << endl;
-		return -1;
-	}
-	catch (const mysqlpp::BadConversion& er) {
-		// Handle bad conversions
-		cerr << "Conversion error: " << er.what() << endl <<
-				"\tretrieved data size: " << er.retrieved <<
-				", actual size: " << er.actual_size << endl;
-		return -1;
-	}
-	catch (const mysqlpp::Exception& er) {
-		// Catch-all for any other MySQL++ exceptions
-		cerr << "Error: " << er.what() << endl;
-		return -1;
-	}
-
-	return 0;
 }
+
+
+//// exchange //////////////////////////////////////////////////////////
+// Passed connection is defective, so remove it from the pool and return
+// a new one.
+
+Connection*
+ConnectionPool::exchange(const Connection* pc)
+{
+	// Don't grab the mutex first.  remove() and grab() both do.
+	// Inefficient, but we'd have to hoist their contents up into this
+	// method or extract a mutex-free version of each mechanism for
+	// each, both of which are also inefficient.
+	remove(pc);
+	return grab();
+}
+
+
+//// find_mru //////////////////////////////////////////////////////////
+// Find most recently used available connection.  Uses operator< for
+// ConnectionInfo to order pool with MRU connection last.  Returns 0 if
+// there are no connections not in use.
+
+Connection*
+ConnectionPool::find_mru()
+{
+	PoolIt mru = std::max_element(pool_.begin(), pool_.end());
+	if (mru != pool_.end() && !mru->in_use) {
+		mru->in_use = true;
+		return mru->conn;
+	}
+	else {
+		return 0;
+	}
+}
+
+
+//// grab //////////////////////////////////////////////////////////////
+
+Connection*
+ConnectionPool::grab()
+{
+	ScopedLock lock(mutex_);	// ensure we're not interfered with
+	remove_old_connections();
+	if (Connection* mru = find_mru()) {
+		return mru;
+	}
+	else {
+		// No free connections, so create and return a new one.
+		pool_.push_back(ConnectionInfo(create()));
+		return pool_.back().conn;
+	}
+}
+
+
+//// release ///////////////////////////////////////////////////////////
+
+void
+ConnectionPool::release(const Connection* pc)
+{
+	ScopedLock lock(mutex_);	// ensure we're not interfered with
+
+	for (PoolIt it = pool_.begin(); it != pool_.end(); ++it) {
+		if (it->conn == pc) {
+			it->in_use = false;
+			it->last_used = time(0);
+			break;
+		}
+	}
+}
+
+
+//// remove ////////////////////////////////////////////////////////////
+// 2 versions:
+//
+// First takes a Connection pointer, finds it in the pool, and calls
+// the second.  It's public, because Connection pointers are all
+// outsiders see of the pool.
+//
+// Second takes an iterator into the pool, destroys the referenced
+// connection and removes it from the pool.  This is only a utility
+// function for use by other class internals.
+
+void
+ConnectionPool::remove(const Connection* pc)
+{
+	ScopedLock lock(mutex_);	// ensure we're not interfered with
+
+	for (PoolIt it = pool_.begin(); it != pool_.end(); ++it) {
+		if (it->conn == pc) {
+			remove(it);
+			return;
+		}
+	}
+}
+
+void
+ConnectionPool::remove(const PoolIt& it)
+{
+	// Don't grab the mutex.  Only called from other functions that do
+	// grab it.
+	destroy(it->conn);
+	pool_.erase(it);
+}
+
+
+//// remove_old_connections ////////////////////////////////////////////
+// Remove connections that were last used too long ago.
+
+void
+ConnectionPool::remove_old_connections()
+{
+	TooOld<ConnectionInfo> too_old(max_idle_time());
+
+	PoolIt it = pool_.begin();
+	while ((it = std::find_if(it, pool_.end(), too_old)) != pool_.end()) {
+		remove(it++);
+	}
+}
+
+
+//// safe_grab /////////////////////////////////////////////////////////
+
+Connection*
+ConnectionPool::safe_grab()
+{
+	Connection* pc;
+	while (!(pc = grab())->ping()) {
+		remove(pc);
+		pc = 0;
+	}
+	return pc;
+}
+
+
+} // end namespace mysqlpp
+

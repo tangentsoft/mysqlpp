@@ -1,170 +1,87 @@
-/***********************************************************************
- test/manip.cpp - Tests the quoting and escaping manipulators.
+Platform Variations
+~~~~~~~~~~~~~~~~~~~
+    This file only covers details common to all Unix variants
+    supported by MySQL++.  For platform-specific details, see the
+    file appropriate to your OS:
 
- Copyright (c) 2007 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the
- CREDITS.txt file in the top directory of the distribution for details.
+        README-Cygwin.txt
+        README-Linux.txt
+        README-Mac-OS-X.txt
+        README-Solaris.txt
 
- This file is part of MySQL++.
-
- MySQL++ is free software; you can redistribute it and/or modify it
- under the terms of the GNU Lesser General Public License as published
- by the Free Software Foundation; either version 2.1 of the License, or
- (at your option) any later version.
-
- MySQL++ is distributed in the hope that it will be useful, but WITHOUT
- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
- License for more details.
-
- You should have received a copy of the GNU Lesser General Public
- License along with MySQL++; if not, write to the Free Software
- Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
- USA
-***********************************************************************/
-
-#include <mysql++.h>
-
-#include <iostream>
-#include <sstream>
-#include <string>
+    There are no special instructions for any other Unix flavors.
 
 
-template <class T>
-static bool
-is_quoted(const std::string& s, T orig_str, size_t orig_len)
-{
-	return (s.length() == (orig_len + 2)) &&
-			(s.at(0) == '\'') &&
-			(s.at(orig_len + 1) == '\'') &&
-			(s.compare(1, orig_len, orig_str) == 0);
-}
+Building the Library and Example Programs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    MySQL++ uses GNU autoconf, so you can build it with the standard
+    commands:
+
+    $ ./configure
+    $ make
+    $ su
+    # make install
 
 
-template <class T>
-static bool
-is_quoted(const std::string& s, mysqlpp::Null<T> orig_str, size_t orig_len)
-{
-	return is_quoted(s, orig_str.data, orig_len);
-}
+Configure Options
+~~~~~~~~~~~~~~~~~
+    The configure script takes several interesting options. Say:
 
+        $ ./configure --help
 
-// Stringish types should be quoted when inserted into Query when an
-// explicit quote manipulator is used.
-template <class T>
-static bool
-explicit_query_quote(T test, size_t len)
-{
-	mysqlpp::Query q(0);
-	q << mysqlpp::quote << test;
-	if (!is_quoted(q.str(), test, len)) {
-		std::cerr << "Explicit quote of " << typeid(test).name() <<
-				" in Query failed: " << q.str() << std::endl;
-		return false;
-	}
+    to get a list.  Some of the more interesting flags are:
 
-	mysqlpp::SQLStream s(0);
-	s << mysqlpp::quote << test;
-	if (is_quoted(s.str(), test, len)) {
-		return true;
-	}
-	else {
-		std::cerr << "Explicit quote of " << typeid(test).name() <<
-				" in Query failed: " << q.str() << std::endl;
-		return false;
-	}
-}
+    --prefix:
 
+        If you wish to install mysql++ in a root directory other than
+        /usr/local, run configure with --prefix=/some/dir/name
 
-// Nothing should be quoted when inserted into an ostream, even when an
-// explicit quote manipulator is used.  The manipulators are only for
-// use with Query streams.
-template <class T>
-static bool
-no_explicit_ostream_quote(T test, size_t len)
-{
-	std::ostringstream outs;
-	outs << mysqlpp::quote << test;
-	if (!is_quoted(outs.str(), test, len)) {
-		return true;
-	}
-	else {
-		std::cerr << "Explicit quote of " << typeid(test).name() <<
-				" in ostream erroneously honored!" << std::endl;
-		return false;
-	}
-}
+    --with-mysql*:
 
+        If you installed MySQL in an atypical location, the configure
+        script will not be able to find the library and header
+        files without help.  The simplest way to clue configure into
+        where MySQL is installed is with the --with-mysql option.
+        Try something like "--with-mysql=/usr/local/mysql", for
+        instance.  The configure script will then try to guess which
+        subdirectories under the given directory contain the library
+        and include files.
 
-// Nothing should be implicitly quoted as of v3.  We used to do it for
-// mysqlpp::String (formerly ColData) when inserted into Query, but
-// that's a silly edge case.  The only time end-user code should be
-// using Strings to build queries via the Query stream interface is when
-// using BLOBs or when turning result set data back around in a new
-// query.  In each case, there's no reason for String to behave
-// differently from std::string, which has always had to be explicitly
-// quoted.
-template <class T>
-static bool
-no_implicit_quote(T test, size_t len)
-{
-	std::ostringstream outs;
-	outs << test;
-	if (!is_quoted(outs.str(), test, len)) {
-		mysqlpp::Query q(0);
-		q << test;
-		if (is_quoted(q.str(), test, len)) {
-			std::cerr << typeid(test).name() << " erroneously implicitly "
-					"quoted in Query: " << outs.str() <<
-					std::endl;
-			return false;
-		}
+        If that doesn't work, it's because the library and header
+        files aren't in typical locations under the directory you gave
+        for configure to find them.  So, you need to specify them
+        separately with --with-mysql-include and --with-mysql-lib
+        instead.  As with --with-mysql, configure can often guess
+        which subdirectory under the given directory contains the
+        needed files, so you don't necessarily have to give the full
+        path to these files.
+    
+    --with-field-limit:
 
-		mysqlpp::SQLStream s(0);
-		s << test;
-		if (!is_quoted(s.str(), test, len)) {
-			return true;
-		}
-		else {
-			std::cerr << typeid(test).name() << " erroneously implicitly "
-					"quoted in Query: " << outs.str() <<
-					std::endl;
-			return false;
-		}
-	}
-	else {
-		std::cerr << typeid(test).name() << " erroneously implicitly "
-				"quoted in ostringstream: " << outs.str() <<
-				std::endl;
-		return false;
-	}
-}
+        This lets you increase the maximum field limit for template
+        queries and SSQLSes.  By default, both are limited to 25
+        fields.  See chapter 8.2 in the user manual for details:
 
+        http://tangentsoft.net/mysql++/doc/html/userman/configuration.html
 
-// Run all tests above for the given type
-template <class T>
-static bool
-test(T test, size_t len)
-{
-	return explicit_query_quote(test, len) &&
-			no_explicit_ostream_quote(test, len) &&
-			no_implicit_quote(test, len);
-}
+    --enable-thread-check:
 
+        Builds MySQL++ with threading support, if possible.
+        
+        This option simply turns on two tests: first, that your
+        system uses a compatible threading library; and second,
+        that the thread-safe version of the MySQL C API library
+        (libmysqlclient_r) is installed and working.  If both of
+        these are true, you get a thread-aware version of MySQL++.
+        "Thread-aware" means that the library does make an effort to
+        prevent problems, but we don't guarantee that all possible
+        uses of MySQL++ are thread-safe.
 
-int
-main()
-{
-	char s[] = "Doodle me, James, doodle me!";
-	const size_t len = strlen(s);
+        Note that this is a suggestion, not a command.  If we can't
+        figure out the system's threading model or can't find the
+        thread-aware build of the C API library, configure won't fail.
+        It just reverts to the standard single-thread build.
 
-	int failures = 0;
-	failures += test(s, len) == false;
-	failures += test(static_cast<char*>(s), len) == false;
-	failures += test(static_cast<const char*>(s), len) == false;
-	failures += test(std::string(s), len) == false;
-	failures += test(mysqlpp::SQLTypeAdapter(s), len) == false;
-	failures += test(mysqlpp::Null<std::string>(s), len) == false;
-	return failures;
-}
-
+        See the chapter on threading in the user manual for more
+        details and advice on creating thread-safe programs with
+        MySQL++.

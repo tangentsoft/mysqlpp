@@ -1,9 +1,10 @@
 /***********************************************************************
- test/tcp.cpp - Tests the address parser/verifier in TCPConnection.
+ field_names.cpp - Implements the FieldNames class.
 
- Copyright (c) 2007 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the
- CREDITS.txt file in the top directory of the distribution for details.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS file in
+ the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -23,89 +24,36 @@
  USA
 ***********************************************************************/
 
-#include <exceptions.h>
-#include <tcp_connection.h>
+#define MYSQLPP_NOT_HEADER
+#include "common.h"
 
-#include <iostream>
-#include <sstream>
+#include "field_names.h"
+#include "result.h"
 
+#include <algorithm>
 
-static void
-test(const char* addr_svc, unsigned int port, const char* exp_addr,
-		unsigned int exp_port)
+namespace mysqlpp {
+
+void
+FieldNames::init(const ResultBase* res)
 {
-	std::string addr(addr_svc), error;
+	int num = res->num_fields();
+	reserve(num);
 
-	mysqlpp::TCPConnection::parse_address(addr, port, error);
-	if (error.size()) {
-		throw mysqlpp::SelfTestFailed("TCP address parse error: " +
-				error);
-	}
-	else if (addr.compare(exp_addr) != 0) {
-		std::ostringstream outs;
-		outs << "TCP address parse mismatch: '" << addr << "' != '" <<
-				exp_addr << "'";
-		throw mysqlpp::SelfTestFailed(outs.str());
-	}
-	else if (port != exp_port) {
-		std::ostringstream outs;
-		outs << "TCP port parse mismatch: '" << port << "' != '" <<
-				exp_port << "'";
-		throw mysqlpp::SelfTestFailed(outs.str());
+	for (int i = 0; i < num; i++) {
+		std::string p(res->fields().at(i).name());
+		str_to_lwr(p);
+		push_back(p);
 	}
 }
 
 
-static void
-fail(const char* addr_svc, unsigned int port, const char* exp_addr,
-		unsigned int exp_port)
+unsigned int
+FieldNames::operator [](const std::string& s) const
 {
-	try {
-		test(addr_svc, port, exp_addr, exp_port);
-	}
-	catch (...) {
-		return;		// eat expected error
-	}
-
-	std::ostringstream outs;
-	outs << "'" << addr_svc << "' == ('" << exp_addr <<
-			"', " << exp_port << ") but should not.";
-	throw mysqlpp::SelfTestFailed(outs.str());
+	std::string temp(s);
+	str_to_lwr(temp);
+	return static_cast<unsigned int>(std::find(begin(), end(), temp) - begin());
 }
 
-
-int
-main()
-{
-	try {
-		// Domain name and IPv4 literal tests
-		test(":", 0, "", 0);
-		test("1.2.3.4", 0, "1.2.3.4", 0);
-		test("1.2.3.4:", 0, "1.2.3.4", 0);
-		test("1.2.3.4:567", 0, "1.2.3.4", 567);
-		test("1.2.3.4", 890, "1.2.3.4", 890);
-		test("1.2.3.4:telnet", 0, "1.2.3.4", 23);
-		test("a.b.com", 0, "a.b.com", 0);
-		test("a.b.com", 987, "a.b.com", 987);
-		fail("@", 0, "@", 0);
-		fail("::", 0, "", 0);
-		fail(":", 0, "1.2.3.4", 45);
-		fail("a.b.com::", 0, "a.b.com", 0);
-		fail("a.b:com:1", 0, "a.b.com", 1);
-
-		// IPv6 literal tests
-		test("[]:123", 0, "", 123);
-		test("[::]:telnet", 0, "::", 23);
-
-		std::cout << "TCP address parsing passed." << std::endl;
-		return 0;
-	}
-	catch (mysqlpp::SelfTestFailed& e) {
-		std::cerr << "TCP address parse error: " << e.what() << std::endl;
-		return 1;
-	}
-	catch (std::exception& e) {
-		std::cerr << "Unexpected test failure: " << e.what() << std::endl;
-		return 2;
-	}
-}
+} // end namespace mysqlpp

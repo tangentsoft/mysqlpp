@@ -1,11 +1,9 @@
-/// \file cpool.h
-/// \brief Declares the ConnectionPool class.
-
 /***********************************************************************
- Copyright (c) 2007-2008 by Educational Technology Resources, Inc. and
- (c) 2007 by Jonathan Wakely.  Others may also hold copyrights on
- code in this file.  See the CREDITS.txt file in the top directory
- of the distribution for details.
+ options.cpp - Implements the Option class hierarchy.
+
+ Copyright (c) 2007-2009 by Educational Technology Resources, Inc.
+ Others may also hold copyrights on code in this file.  See the
+ CREDITS file in the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -25,231 +23,353 @@
  USA
 ***********************************************************************/
 
-#if !defined(MYSQLPP_CPOOL_H)
-#define MYSQLPP_CPOOL_H
+#define MYSQLPP_NOT_HEADER
+#include "options.h"
 
-#include "beemutex.h"
+#include "dbdriver.h"
 
-#include <list>
-
-#include <assert.h>
-#include <time.h>
 
 namespace mysqlpp {
 
 #if !defined(DOXYGEN_IGNORE)
-// Make Doxygen ignore this
-class MYSQLPP_EXPORT Connection;
+// We're hiding all the Option subclass internals from Doxygen.  All the
+// upper-level classes are documented fully, and each leaf class itself
+// is documented.  It's just the ctors and set() methods we're refusing
+// to document over and over again.
+
+Option::Error
+CompressOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_OPT_COMPRESS) ?
+				Option::err_NONE : Option::err_api_reject;
+}
+
+
+Option::Error
+ConnectTimeoutOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_OPT_CONNECT_TIMEOUT, &arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+}
+
+
+Option::Error
+FoundRowsOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(CLIENT_FOUND_ROWS, arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+}
+
+
+Option::Error
+GuessConnectionOption::set(DBDriver* dbd)
+{
+#if MYSQL_VERSION_ID >= 40101
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_OPT_GUESS_CONNECTION) ?
+				Option::err_NONE : Option::err_api_reject;
+#else
+	return Option::err_api_limit;
+#endif
+}
+
+
+Option::Error
+IgnoreSpaceOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(CLIENT_IGNORE_SPACE, arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+}
+
+
+Option::Error
+InitCommandOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_INIT_COMMAND, arg_.c_str()) ?
+				Option::err_NONE : Option::err_api_reject;
+}
+
+
+Option::Error
+InteractiveOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(CLIENT_INTERACTIVE, arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+}
+
+
+Option::Error
+LocalFilesOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(CLIENT_LOCAL_FILES, arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+}
+
+
+Option::Error
+LocalInfileOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_OPT_LOCAL_INFILE, &arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+}
+
+
+Option::Error
+MultiResultsOption::set(DBDriver* dbd)
+{
+#if MYSQL_VERSION_ID >= 40101
+	if (dbd->connected()) {
+		return dbd->set_option(arg_ ? MYSQL_OPTION_MULTI_STATEMENTS_ON :
+				MYSQL_OPTION_MULTI_STATEMENTS_OFF) ?
+				Option::err_NONE : Option::err_api_reject;
+	}
+	else {
+		return dbd->set_option(CLIENT_MULTI_RESULTS, arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+	}
+#else
+	return Option::err_api_limit;
+#endif
+}
+
+
+Option::Error
+MultiStatementsOption::set(DBDriver* dbd)
+{
+#if MYSQL_VERSION_ID >= 40101
+	if (dbd->connected()) {
+		return dbd->set_option(arg_ ? MYSQL_OPTION_MULTI_STATEMENTS_ON :
+				MYSQL_OPTION_MULTI_STATEMENTS_OFF) ?
+				Option::err_NONE : Option::err_api_reject;
+	}
+	else {
+		return dbd->set_option(CLIENT_MULTI_STATEMENTS, arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+	}
+#else
+	return Option::err_api_limit;
+#endif
+}
+
+
+Option::Error
+NamedPipeOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_OPT_NAMED_PIPE) ?
+				Option::err_NONE : Option::err_api_reject;
+}
+
+
+Option::Error
+NoSchemaOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(CLIENT_NO_SCHEMA, arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+}
+
+
+#if MYSQL_VERSION_ID > 40000		// only in 4.0 +
+Option::Error
+ProtocolOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_OPT_PROTOCOL, &arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+}
 #endif
 
-/// \brief Manages a pool of connections for programs that need more
-/// than one Connection object at a time, but can't predict how many
-/// they need in advance.
-///
-/// This class is useful in programs that need to make multiple
-/// simultaneous queries on the database; this requires multiple
-/// Connection objects due to a hard limitation of the underlying
-/// C API.  Connection pools are most useful in multithreaded programs,
-/// but it can be helpful to have one in a single-threaded program as
-/// well.  Sometimes it's necessary to get more data from the server
-/// while in the middle of processing data from an earlier query; this
-/// requires multiple connections.  Whether you use a pool or manage
-/// connections yourself is up to you, but realize that this class
-/// takes care of a lot of subtle details for you that aren't obvious.
-///
-/// The pool's policy for connection reuse is to always return the 
-/// \em most recently used connection that's not being used right now.
-/// This ensures that excess connections don't hang around any longer
-/// than they must.  If the pool were to return the \em least recently
-/// used connection, it would be likely to result in a large pool of
-/// sparsely used connections because we'd keep resetting the last-used 
-/// time of whichever connection is least recently used at that moment.
 
-class MYSQLPP_EXPORT ConnectionPool
+Option::Error
+ReadDefaultFileOption::set(DBDriver* dbd)
 {
-public:
-	/// \brief Create empty pool
-	ConnectionPool() { }
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_READ_DEFAULT_FILE, arg_.c_str()) ?
+				Option::err_NONE : Option::err_api_reject;
+}
 
-	/// \brief Destroy object
-	///
-	/// If the pool raises an assertion on destruction, it means our
-	/// subclass isn't calling clear() in its dtor as it should.
-	virtual ~ConnectionPool() { assert(empty()); }
 
-	/// \brief Returns true if pool is empty
-	bool empty() const { return pool_.empty(); }
+Option::Error
+ReadDefaultGroupOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_READ_DEFAULT_GROUP, arg_.c_str()) ?
+				Option::err_NONE : Option::err_api_reject;
+}
 
-	/// \brief Return a defective connection to the pool and get a new
-	/// one back.
-	///
-	/// Call this on receiving a BadQuery exception, with errnum()
-	/// equal to CR_SERVER_GONE_ERROR.  It means the server was
-	/// restarted or otherwise dropped your connection to it, so the
-	/// Connection object is no longer usable.  You can avoid the
-	/// need to use this by setting the ReconnectOption in your grab()
-	/// override, but perhaps there are other reasons to need to
-	/// exchange a bad connection for a good one.
-	///
-	/// This function wraps grab(), not safe_grab(), even though that
-	/// could return another dead connection.  The assumption is that if
-	/// your code is smart enough to detect one bad connection, it should
-	/// be smart enough to detect a whole string of them.  Worst case,
-	/// the whole pool is bad -- remote server went away -- and we have
-	/// to empty the pool and start re-filling it.
-	///
-	/// \param pc pointer to a Connection object to be returned to the
-	/// pool and marked as unused.
-	///
-	/// \retval a pointer to a different Connection object; not
-	/// guaranteed to still be connected!
-	virtual Connection* exchange(const Connection* pc);
 
-	/// \brief Grab a free connection from the pool.
-	///
-	/// This method creates a new connection if an unused one doesn't
-	/// exist, and destroys any that have remained unused for too long.
-	/// If there is more than one free connection, we return the most
-	/// recently used one; this allows older connections to die off over
-	/// time when the caller's need for connections decreases.
-	///
-	/// Do not delete the returned pointer.  This object manages the
-	/// lifetime of connection objects it creates.
-	///
-	/// \retval a pointer to the connection
-	virtual Connection* grab();
+Option::Error
+ReadTimeoutOption::set(DBDriver* dbd)
+{
+#if MYSQL_VERSION_ID >= 40101
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_OPT_READ_TIMEOUT, &arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+#else
+	return Option::err_api_limit;
+#endif
+}
 
-	/// \brief Return a connection to the pool
-	///
-	/// Marks the connection as no longer in use.
-	///
-	/// The pool updates the last-used time of a connection only on
-	/// release, on the assumption that it was used just prior.  There's
-	/// nothing forcing you to do it this way: your code is free to
-	/// delay releasing idle connections as long as it likes.  You
-	/// want to avoid this because it will make the pool perform poorly;
-	/// if it doesn't know approximately how long a connection has
-	/// really been idle, it can't make good judgements about when to
-	/// remove it from the pool.
-	///
-	/// \param pc pointer to a Connection object to be returned to the
-	/// pool and marked as unused.
-	virtual void release(const Connection* pc);
 
-	/// \brief Removes the given connection from the pool
-	///
-	/// If you mean to simply return a connection to the pool after
-	/// you're finished using it, call release() instead.  This method
-	/// is primarily for error handling: you somehow have figured out
-	/// that the connection is defective, so want it destroyed and
-	/// removed from the pool.  If you also want a different connection
-	/// to retry your operation on, call exchange() instead.
-	///
-	/// \param pc pointer to a Connection object to be removed from
-	/// the pool and destroyed
-	void remove(const Connection* pc);
+Option::Error
+ReconnectOption::set(DBDriver* dbd)
+{
+#if MYSQL_VERSION_ID >= 50106
+	// Option fixed in this version to work correctly whether set before
+	// connection comes up, or after
+	return dbd->set_option(MYSQL_OPT_RECONNECT, &arg_) ?
+			Option::err_NONE : Option::err_api_reject;
+#elif MYSQL_VERSION_ID >= 50013
+	// Between the time the option was created in 5.0.13 and when it was
+	// fixed in 5.1.6, it only worked correctly if set after initial
+	// connection.  So, don't accept it if disconnected, even though API
+	// does accept it; option gets reset when the connection comes up.
+	return dbd->connected() ?
+			dbd->set_option(MYSQL_OPT_RECONNECT, &arg_) ?
+				Option::err_NONE : Option::err_api_reject :
+				Option::err_disconnected;
+#else
+	return Option::err_api_limit;
+#endif
+}
 
-	/// \brief Grab a free connection from the pool, testing that it's
-	/// connected before returning it.
-	///
-	/// This is just a wrapper around grab(), Connection::ping() and
-	/// release(), and is thus less efficient than grab().  Use it only
-	/// when it's possible for MySQL server connections to go away
-	/// unexpectedly, such as when the DB server can be restarted out
-	/// from under your application.
-	///
-	/// \retval a pointer to the connection
-	virtual Connection* safe_grab();
 
-	/// \brief Remove all unused connections from the pool
-	void shrink() { clear(false); }
+Option::Error
+ReportDataTruncationOption::set(DBDriver* dbd)
+{
+#if MYSQL_VERSION_ID >= 50003
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_REPORT_DATA_TRUNCATION, &arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+#else
+	return Option::err_api_limit;
+#endif
+}
 
-protected:
-	/// \brief Drains the pool, freeing all allocated memory.
-	///
-	/// A derived class must call this in its dtor to avoid leaking all
-	/// Connection objects still in existence.  We can't do it up at
-	/// this level because this class's dtor can't call our subclass's
-	/// destroy() method.
-	///
-	/// \param all if true, remove all connections, even those in use
-	void clear(bool all = true);
 
-	/// \brief Create a new connection
-	///
-	/// Subclasses must override this.
-	///
-	/// Essentially, this method lets your code tell ConnectionPool
-	/// what server to connect to, what login parameters to use, what
-	/// connection options to enable, etc.  ConnectionPool can't know
-	/// any of this without your help.
-	///
-	/// \retval A connected Connection object
-	virtual Connection* create() = 0;
+Option::Error
+SecureAuthOption::set(DBDriver* dbd)
+{
+#if MYSQL_VERSION_ID >= 40101
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_SECURE_AUTH, &arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+#else
+	return Option::err_api_limit;
+#endif
+}
 
-	/// \brief Destroy a connection
-	///
-	/// Subclasses must override this.
-	///
-	/// This is for destroying the objects returned by create().
-	/// Because we can't know what the derived class did to create the
-	/// connection we can't reliably know how to destroy it.
-	virtual void destroy(Connection*) = 0;
 
-	/// \brief Returns the maximum number of seconds a connection is
-	/// able to remain idle before it is dropped.
-	///
-	/// Subclasses must override this as it encodes a policy issue,
-	/// something that MySQL++ can't declare by fiat.
-	///
-	/// \retval number of seconds before an idle connection is destroyed
-	/// due to lack of use
-	virtual unsigned int max_idle_time() = 0;
+Option::Error
+SetCharsetDirOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_SET_CHARSET_DIR, arg_.c_str()) ?
+				Option::err_NONE : Option::err_api_reject;
+}
 
-	/// \brief Returns the current size of the internal connection pool.
-	size_t size() const { return pool_.size(); }
 
-private:
-	//// Internal types
-	struct ConnectionInfo {
-		Connection* conn;
-		time_t last_used;
-		bool in_use;
+Option::Error
+SetCharsetNameOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_SET_CHARSET_NAME, arg_.c_str()) ?
+				Option::err_NONE : Option::err_api_reject;
+}
 
-		ConnectionInfo(Connection* c) :
-		conn(c),
-		last_used(time(0)),
-		in_use(true)
-		{
-		}
 
-		// Strict weak ordering for ConnectionInfo objects.
-		// 
-		// This ordering defines all in-use connections to be "less
-		// than" those not in use.  Within each group, connections
-		// less recently touched are less than those more recent.
-		bool operator<(const ConnectionInfo& rhs) const
-		{
-			const ConnectionInfo& lhs = *this;
-			return lhs.in_use == rhs.in_use ?
-					lhs.last_used < rhs.last_used :
-					lhs.in_use;
-		}
-	};
-	typedef std::list<ConnectionInfo> PoolT;
-	typedef PoolT::iterator PoolIt;
+Option::Error
+SetClientIpOption::set(DBDriver* dbd)
+{
+#if MYSQL_VERSION_ID >= 40101
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_SET_CLIENT_IP, arg_.c_str()) ?
+				Option::err_NONE : Option::err_api_reject;
+#else
+	return Option::err_api_limit;
+#endif
+}
 
-	//// Internal support functions
-	Connection* find_mru();
-	void remove(const PoolIt& it);
-	void remove_old_connections();
 
-	//// Internal data
-	PoolT pool_;
-	BeecryptMutex mutex_;
-};
+Option::Error
+SharedMemoryBaseNameOption::set(DBDriver* dbd)
+{
+#if MYSQL_VERSION_ID >= 40100
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_SHARED_MEMORY_BASE_NAME, arg_.c_str()) ?
+				Option::err_NONE : Option::err_api_reject;
+#else
+	return Option::err_api_limit;
+#endif
+}
+
+
+Option::Error
+SslOption::set(DBDriver* dbd)
+{
+#if defined(HAVE_MYSQL_SSL_SET)
+	return dbd->connected() ? Option::err_connected :
+			dbd->enable_ssl(
+				key_.size() ? key_.c_str() : 0,
+				cert_.size() ? cert_.c_str() : 0,
+				ca_.size() ? ca_.c_str() : 0,
+				capath_.size() ? capath_.c_str() : 0,
+				cipher_.size() ? cipher_.c_str() : 0) ?
+				Option::err_NONE : Option::err_api_reject;
+#else
+	(void)dbd;
+	return Option::err_api_limit;
+#endif
+}
+
+
+Option::Error
+UseEmbeddedConnectionOption::set(DBDriver* dbd)
+{
+#if MYSQL_VERSION_ID >= 40101
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_OPT_USE_EMBEDDED_CONNECTION) ?
+				Option::err_NONE : Option::err_api_reject;
+#else
+	return Option::err_api_limit;
+#endif
+}
+
+
+Option::Error
+UseRemoteConnectionOption::set(DBDriver* dbd)
+{
+#if MYSQL_VERSION_ID >= 40101
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_OPT_USE_REMOTE_CONNECTION) ?
+				Option::err_NONE : Option::err_api_reject;
+#else
+	return Option::err_api_limit;
+#endif
+}
+
+
+Option::Error
+WriteTimeoutOption::set(DBDriver* dbd)
+{
+#if MYSQL_VERSION_ID >= 40101
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_OPT_WRITE_TIMEOUT, &arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+#else
+	return Option::err_api_limit;
+#endif
+}
+
+#endif // !defined(DOXYGEN_IGNORE)
 
 } // end namespace mysqlpp
-
-#endif // !defined(MYSQLPP_CPOOL_H)
-

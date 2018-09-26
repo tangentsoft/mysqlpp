@@ -1,205 +1,203 @@
-/***********************************************************************
- row.cpp - Implements the Row class.
+<?xml version="1.0" encoding='UTF-8'?>
+<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook V4.2//EN"
+    "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
 
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
- also hold copyrights on code in this file.  See the CREDITS.txt file
- in the top directory of the distribution for details.
+<sect1 id="configuration">
+  <title>Configuring MySQL++</title>
 
- This file is part of MySQL++.
+  <para>The default configuration of MySQL++ is suitable for most
+  purposes, but there are a few things you can change to make it meet
+  special needs.</para>
 
- MySQL++ is free software; you can redistribute it and/or modify it
- under the terms of the GNU Lesser General Public License as published
- by the Free Software Foundation; either version 2.1 of the License, or
- (at your option) any later version.
+  <sect2 id="mysql-loc">
+    <title>The Location of the MySQL Development Files</title>
 
- MySQL++ is distributed in the hope that it will be useful, but WITHOUT
- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
- License for more details.
+    <para>MySQL++ is built on top of the MySQL C API. It relies on
+    this low-level library for all communication with the database
+    server. Consequently, the build process for MySQL++ may fail if
+    it can&#x2019;t find the C API headers and library.</para>
 
- You should have received a copy of the GNU Lesser General Public
- License along with MySQL++; if not, write to the Free Software
- Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
- USA
-***********************************************************************/
+    <para>On platforms that use Autoconf<footnote><para>Linux,
+    Solaris, the BSDs, Mac OS X command line (as opposed to the
+    Xcode IDE), Cygwin... Basically, Unix or anything that works
+    like it.</para></footnote>, the <filename>configure</filename>
+    script can usually figure out the location of the C API
+    development files by itself. It simply tries a bunch of common
+    installation locations until it finds one that works. If
+    your MySQL server was installed in a nonstandard location,
+    you will have to tell the <filename>configure</filename>
+    script where these files are with some combination
+    of the <computeroutput>--with-mysql</computeroutput>,
+    <computeroutput>--with-mysql-include</computeroutput>, and
+    <computeroutput>--with-mysql-lib</computeroutput> flags. See
+    <filename>README-Unix.txt</filename> for details.</para>
 
-#include "row.h"
-
-#include "result.h"
-
-
-namespace mysqlpp {
-
-Row::Row(MYSQL_ROW row, const ResultBase* res,
-		const unsigned long* lengths, bool throw_exceptions) :
-OptionalExceptions(throw_exceptions),
-initialized_(false)
-{
-	if (row) {
-		if (res) {
-			size_type size = res->num_fields();
-			data_.reserve(size);
-			for (size_type i = 0; i < size; ++i) {
-				bool is_null = row[i] == 0;
-				data_.push_back(value_type(
-						is_null ? "NULL" : row[i],
-						is_null ? 4 : lengths[i],
-						res->field_type(int(i)),
-						is_null));
-			}
-
-			field_names_ = res->field_names();
-			initialized_ = true;
-		}
-		else if (throw_exceptions) {
-			throw ObjectNotInitialized("RES is NULL");
-		}
-	}
-	else if (throw_exceptions) {
-		throw ObjectNotInitialized("ROW is NULL");
-	}
-}
+    <para>No other platform allows this sort of auto-discovery,
+    so the build files for these platforms simply hard-code the
+    default installation location for whatever version of MySQL is
+    in GA state at the time that version of MySQL++ was released. For
+    example, the Visual C++ project files currently assume MySQL is in
+    <filename>c:\Program Files\MySQL\MySQL Server 5.1</filename>. If
+    you&#x2019;re using some other release of MySQL or you installed it
+    somewhere else, you will have to modify the build files.  How you
+    do this, exactly, varies based on platform and what tools you
+    have on hand. See <filename>README-Visual-C++.txt</filename>,
+    <filename>README-MinGW.txt</filename>, or
+    <filename>README-Mac-OS-X.txt</filename>, as appropriate.</para>
+  </sect2>
 
 
-Row::const_reference
-Row::at(size_type i) const
-{
-	if (i < size()) {
-		return data_[i];
-	}
-	else {
-		throw BadIndex("Row", int(i), int(size()));
-	}
-}
+  <sect2 id="max-fields">
+    <title>The Maximum Number of Fields Allowed</title>
+
+    <para>MySQL++ offers two ways to automatically build SQL
+    queries at run time: <xref linkend="tquery"/> and <link
+    linkend="ssqls">SSQLS</link>. There&#x2019;s a limit on the number
+    of fields these mechanisms support, defaulting to 25 fields in the
+    official MySQL++ packages.<footnote><para>If you&#x2019;re using
+    a third-party MySQL++ package, its maintainer may have increased
+    these field counts so the resulting headers more closely approach
+    the size limit of the compiler the package was built with. In that
+    case, you can look at the top of each generated header file to
+    find out how many fields each supports.</para></footnote> The files
+    embodying these limits are <filename>lib/querydef.h</filename> and
+    <filename>lib/ssqls.h</filename>, each generated by Perl scripts of
+    the same name but with a <filename>.pl</filename> extension.</para>
+
+    <para>The default <filename>querydef.h</filename> is small and
+    its size only increases linearly with respect to maximum field
+    count.</para>
+
+    <para><filename>ssqls.h</filename> is a totally
+    different story. The default 25 field limit
+    makes <filename>ssqls.pl</filename> generate an
+    <filename>ssqls.h</filename> over 1&nbsp;MB. Worse,
+    the field limit to file size relation is
+    <emphasis>quadratic</emphasis>.<footnote><para>The file
+    size equation, for you amateur mathematicians out there,
+    is <phrase role="math">N<subscript>lines</subscript> =
+    18.5f<superscript>2</superscript> + 454.5f + 196.4</phrase>,
+    where <varname>f</varname> is the field count.</para></footnote>
+    This has a number of bad effects:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>Generating header files to support more fields than
+        you actually require is a waste of space and bandwidth.</para>
+      </listitem>
+
+      <listitem>
+        <para>Some compilers have arbitrary limits on the size of
+        macros they&#x2019;re able to parse. Exceeding these limits
+        usually causes the compiler to misbehave badly, rather than
+        fail gracefully.</para>
+      </listitem>
+
+      <listitem>
+        <para>Because it increases the size of two key files used
+        in building MySQL++ itself and programs built on it, it
+        increases compile times significantly. One test I did here
+        showed a tripling of compile time from quadrupling the field
+        limit.</para>
+      </listitem>
+
+      <listitem>
+        <para>More than 25 fields in a table is a good sign of a bad
+        database design, most likely a denormalization problem.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>The default limits try to mitigate against all of these
+    factors while still being high enough to be useful with most
+    DB designs.</para>
+
+    <para>If you&#x2019;re building MySQL++ from source on a platform
+    that uses Autoconf, the easiest way to change these limits is at
+    configuration time:</para>
+
+    <screen>
+./configure --with-field-limit=50</screen>
+
+    <para>That causes the configuration script to pass the
+    <command>-f</command> flag to the two Perl scripts named above,
+    overriding the default of 25 fields. Obviously you need a
+    Perl interpreter on the system for this to work, but Perl is
+    usually installed by default on systems MySQL++ supports via
+    Autoconf.</para>
+
+    <para>On all other platforms, you&#x2019;ll have to give the
+    <command>-f</command> flag to these scripts yourself. This
+    may require installing Perl and putting it in the command
+    path first. Having done that, you can do something like this to
+    raise the limits:</para>
+
+    <screen>
+cd lib
+perl ssqls.pl -f 50
+perl querydef.pl -f 50</screen>
+
+    <para>Note the need to run these commands within the
+    <filename>lib</filename> subdirectory of the MySQL++ source
+    tree. (This is done for you automatically on systems where you
+    are able to use the Autoconf method.)</para>
+  </sect2>
 
 
-equal_list_ba<FieldNames, Row, quote_type0>
-Row::equal_list(const char* d, const char* e) const
-{
-	return equal_list_ba<FieldNames, Row, quote_type0>(
-			*field_names_, *this, d, e, quote);
-}
+  <sect2 id="buried-headers">
+    <title>Buried MySQL C API Headers</title>
+
+    <para>It&#x2019;s common these days on Unixy systems to install
+    the MySQL C API headers in a <filename>mysql</filename> directory
+    under some common <filename>include</filename> directory. If the
+    C API headers are in <filename>/usr/include/mysql</filename>, we
+    say they are &#x201C;buried&#x201D; underneath the system&#x2019;s
+    main include directory, <filename>/usr/include</filename>. Since
+    the MySQL++ headers depend on these C API headers, it can be
+    useful for MySQL++ to know this fact.</para>
+
+    <para>When MySQL++ includes one of the C API headers, it normally
+    does so in the obvious way:</para>
+
+    <programlisting>
+#include &lt;mysql.h&gt;
+</programlisting>
+
+    <para>But, if you define the
+    <varname>MYSQLPP_MYSQL_HEADERS_BURIED</varname> macro, it switches
+    to this style:</para>
+
+    <programlisting>
+#include &lt;mysql/mysql.h&gt;
+</programlisting>
+
+    <para>In common situations like the
+    <filename>/usr/include/mysql</filename> one, this simplifies the
+    include path options you pass to your compiler.</para>
+  </sect2>
 
 
-template <class Manip>
-equal_list_ba<FieldNames, Row, Manip>
-Row::equal_list(const char* d, const char* e, Manip m) const
-{
-	return equal_list_ba<FieldNames, Row, Manip>(
-			*field_names_, *this, d, e, m);
-}
+  <sect2 id="c99">
+    <title>Building MySQL++ on Systems Without Complete C99
+    Support</title>
 
+    <para>MySQL++ uses the <ulink
+    url="http://en.wikipedia.org/wiki/C_(programming_language)#C99">C99</ulink>
+    header <filename>stdint.h</filename> for portable fixed-size
+    integer typedefs where possible. The C99 extensions aren&#x2019;t
+    yet officially part of the C++ Standard, so there are still
+    some C++ compilers that don&#x2019;t offer this header. MySQL++
+    works around the lack of this header where it knows it needs
+    to, but your platform might not be recognized, causing
+    the build to break. If this happens, you can define the
+    <varname>MYSQLPP_NO_STDINT_H</varname> macro to make MySQL++
+    use its best guess for suitable integer types instead of relying
+    on <filename>stdint.h</filename>.</para>
 
-value_list_ba<FieldNames, do_nothing_type0>
-Row::field_list(const char* d) const
-{
-	return value_list_ba<FieldNames, do_nothing_type0>
-			(*field_names_, d, do_nothing);
-}
-
-
-template <class Manip>
-value_list_ba<FieldNames, Manip>
-Row::field_list(const char *d, Manip m) const
-{
-	return value_list_ba<FieldNames, Manip>(*field_names_, d, m);
-}
-
-
-template <class Manip>
-value_list_b<FieldNames, Manip>
-Row::field_list(const char *d, Manip m, const std::vector<bool>& vb) const
-{
-	return value_list_b<FieldNames, Manip>(*field_names_, vb, d, m);
-}
-
-
-value_list_b<FieldNames, quote_type0>
-Row::field_list(const char* d, const std::vector<bool>& vb) const
-{
-	return value_list_b<FieldNames, quote_type0>(*field_names_,
-			vb, d, quote);
-}
-
-
-value_list_b<FieldNames, quote_type0>
-Row::field_list(const std::vector<bool>& vb) const
-{
-	return value_list_b<FieldNames, quote_type0>(*field_names_,
-			vb, ",", quote);
-}
-
-
-template <class Manip> value_list_b<FieldNames, Manip>
-Row::field_list(const char* d, Manip m, bool t0, bool t1, bool t2,
-		bool t3, bool t4, bool t5, bool t6, bool t7, bool t8, bool t9,
-		bool ta, bool tb, bool tc) const
-{
-	std::vector<bool> vb;
-	create_vector(field_names_->size(), vb, t0, t1, t2, t3, t4,
-			t5, t6, t7, t8, t9, ta, tb, tc);
-	return value_list_b<FieldNames, Manip>(*field_names_, vb, d, m);
-}
-
-
-value_list_b<FieldNames, quote_type0>
-Row::field_list(const char *d, bool t0, bool t1, bool t2, bool t3,
-		bool t4, bool t5, bool t6, bool t7, bool t8, bool t9, bool ta,
-		bool tb, bool tc) const
-{
-	std::vector<bool> vb;
-	create_vector(field_names_->size(), vb, t0, t1, t2, t3, t4,
-			t5, t6, t7, t8, t9, ta, tb, tc);
-	return value_list_b<FieldNames, quote_type0>(*field_names_,
-			vb, d, quote);
-}
-
-
-value_list_b<FieldNames, quote_type0>
-Row::field_list(bool t0, bool t1, bool t2, bool t3, bool t4, bool t5,
-		bool t6, bool t7, bool t8, bool t9, bool ta, bool tb,
-		bool tc) const
-{
-	std::vector<bool> vb;
-	create_vector(field_names_->size(), vb, t0, t1, t2, t3, t4,
-			t5, t6, t7, t8, t9, ta, tb, tc);
-	return value_list_b<FieldNames, quote_type0>(*field_names_,
-			vb, ",", quote);
-}
-
-
-Row::size_type
-Row::field_num(const char* name) const
-{
-	if (field_names_) {
-		return (*field_names_)[name];
-	}
-	else if (throw_exceptions()) {
-		throw BadFieldName(name);
-	}
-	else {
-		return 0;
-	}
-}
-
-
-const Row::value_type&
-Row::operator [](const char* field) const
-{
-	size_type si = field_num(field);
-	if (si < size()) {
-		return at(si);
-	}
-	else if (throw_exceptions()) {
-		throw BadFieldName(field);
-	}
-	else {
-		static value_type empty;
-		return empty;
-	}
-}
-
-
-} // end namespace mysqlpp
-
+    <para>MySQL++ also uses C99&#x2019;s <type>long long</type>
+    data type where available. MySQL++ has workarounds for platforms
+    where this is known not to be available, but if you get errors in
+    <filename>common.h</filename> about this type, you can define the
+    macro <varname>MYSQLPP_NO_LONG_LONGS</varname> to make MySQL++
+    fall back to portable constructs.</para>
+  </sect2>
+</sect1>

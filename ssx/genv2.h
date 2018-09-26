@@ -1,33 +1,17 @@
-/***********************************************************************
- ssx/genv2.h - Mechanism for generating SSQLS v2 DSL code from
- 	an SSQLS v2 parse result.  Implements ssqlsxlat -o flag.
+<!ELEMENT xi:include (xi:fallback?) >
+<!ATTLIST xi:include
+    xmlns:xi   CDATA       #FIXED    "http://www.w3.org/2001/XInclude"
+    href       CDATA       #IMPLIED
+    parse      (xml|text)  "xml"
+    xpointer   CDATA       #IMPLIED
+    encoding   CDATA       #IMPLIED 
+    accept     CDATA       #IMPLIED
+    accept-language CDATA  #IMPLIED >
 
- Copyright (c) 2009 by Warren Young.  Others may also hold copyrights
- on code in this file.  See the CREDITS.txt file in the top directory
- of the distribution for details.
+<!ELEMENT xi:fallback ANY>
+<!ATTLIST xi:fallback
+    xmlns:xi   CDATA   #FIXED   "http://www.w3.org/2001/XInclude" >
 
- This file is part of MySQL++.
-
- MySQL++ is free software; you can redistribute it and/or modify it
- under the terms of the GNU Lesser General Public License as published
- by the Free Software Foundation; either version 2.1 of the License, or
- (at your option) any later version.
-
- MySQL++ is distributed in the hope that it will be useful, but WITHOUT
- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
- License for more details.
-
- You should have received a copy of the GNU Lesser General Public
- License along with MySQL++; if not, write to the Free Software
- Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
- USA
-***********************************************************************/
-
-#if !defined(MYSQLPP_SSX_GENV2_H)
-#define MYSQLPP_SSX_GENV2_H
-
-class ParseV2;
-extern bool generate_ssqls2(const char* file_name, const ParseV2* pparse);
-
-#endif // !defined(MYSQLPP_SSX_GENV2_H)
+<!ENTITY % local.chapter.class "| xi:include">
+<!ENTITY % local.divcomponent.mix "| xi:include">
+<!ENTITY % local.para.char.mix "| xi:include">

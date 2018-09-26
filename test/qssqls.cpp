@@ -1,5 +1,6 @@
 /***********************************************************************
- test/qssqls.cpp - Tests SQL query creation from SSQLS in Query.
+ test/null_comparison.cpp - Tests that Null<T> and null_type comparison
+	operators and SSQLS comparison functions work correctly.
 
  Copyright (c) 2008-2009 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the
@@ -29,49 +30,39 @@
 
 #include <iostream>
 
-using namespace mysqlpp;
-using namespace std;
-
-
-sql_create_19(test,
-	19, 0,
-	sql_tinyint,			tinyint_v,
-	sql_tinyint_unsigned,	tinyint_unsigned_v,
-	sql_smallint,			smallint_v,
-	sql_smallint_unsigned,	smallint_unsigned_v,
-	sql_int,				int_v,
-	sql_int_unsigned,		int_unsigned_v,
-	sql_mediumint,			mediumint_v,
-	sql_mediumint_unsigned, mediumint_unsigned_v,
-	sql_bigint,				bigint_v,
-	sql_bigint_unsigned,	bigint_unsigned_v,
-	sql_float,				float_v,
-	sql_double,				double_v,
-	sql_decimal,			decimal_v,
-	sql_bool,				bool_v,
-	sql_date,				date_v,
-	sql_time,				time_v,
-	sql_datetime,			datetime_v,
-	sql_char,				char_v,	// only need one stringish type...
-	sql_blob,				blob_v)	// ...and one blob type; they're all
-									// the same under the hood in MySQL++
+sql_create_1(ssqls, 1, 0, mysqlpp::Null<int>, a_column)
 
 int
 main()
 {
-	Query q(0);		// don't pass 0 for conn parameter in real code
-	test empty(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false,
-			Date(), Time(), DateTime(), "", sql_blob());
-	test filled(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11.0, 12.0, 13.0,
-			bool(14), Date("1515-15-15"), Time("16:16:16"),
-			DateTime("1717-17-17 17:17:17"), "18", sql_blob("1\09", 3));
-
-	cout << q.insert(empty) << endl << endl;
-	cout << q.insert(filled) << endl << endl;
-	cout << q.replace(empty) << endl << endl;
-	cout << q.replace(filled) << endl << endl;
-	cout << q.update(filled, empty) << endl << endl;
-
-	return 0;
+	mysqlpp::Null<int> null_int = mysqlpp::null;
+	mysqlpp::Null<int> non_null_int = 42;
+	if (	!(null_int == non_null_int) &&
+			(null_int != non_null_int) &&
+			(null_int < non_null_int) &&
+			!(non_null_int == null_int) &&
+			(non_null_int != null_int) &&
+			!(non_null_int < null_int) &&
+			(null_int == mysqlpp::null) &&
+			!(null_int != mysqlpp::null) &&
+			(non_null_int != mysqlpp::null) &&
+			!(non_null_int == mysqlpp::null) &&
+			(mysqlpp::sql_cmp(null_int, null_int) == 0) &&
+			(mysqlpp::sql_cmp(null_int, non_null_int) < 0) &&
+			(mysqlpp::sql_cmp(non_null_int, null_int) > 0)) {
+		ssqls foo(null_int), bar(non_null_int);
+		if ((foo < bar) && (foo != bar) && !(bar < foo) && !(foo == bar)) {
+			return 0;
+		}
+		else {
+			std::cerr << "SSQLS comparison gave unexpected result" <<
+					std::endl;
+			return 1;
+		}
+	}
+	else {
+		std::cerr << "Null comparison gave unexpected result" << std::endl;
+		return 1;
+	}
 }
 

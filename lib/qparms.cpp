@@ -1,83 +1,75 @@
-/***********************************************************************
- qparms.cpp - Implements the SQLQueryParms class.
+## This file contains the 'make' rules specific to Visual C++.  The
+## ../makemake.bat script prepends this to Makefile.base to create a
+## complete Makefile.
 
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
- MySQL AB, and (c) 2004-2007 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the CREDITS
- file in the top directory of the distribution for details.
+# This file is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as published
+# by the Free Software Foundation; either version 2.1 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with MySQL++; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
+# USA
 
- This file is part of MySQL++.
+MYSQL_DIR=c:\mysql
 
- MySQL++ is free software; you can redistribute it and/or modify it
- under the terms of the GNU Lesser General Public License as published
- by the Free Software Foundation; either version 2.1 of the License, or
- (at your option) any later version.
+CYGWIN_MAKE=$(wildcard /bin/cygwin1.dll)
 
- MySQL++ is distributed in the hope that it will be useful, but WITHOUT
- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
- License for more details.
+BIN_DIR=debug
+EX_BIN_DIR=$(if $(CYGWIN_MAKE),../examples/$(BIN_DIR)/,..\examples\$(BIN_DIR)\)
 
- You should have received a copy of the GNU Lesser General Public
- License along with MySQL++; if not, write to the Free Software
- Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
- USA
-***********************************************************************/
+CXX=cl
+CXXFLAGS=/I$(MYSQL_DIR)\include /DMYSQLPP_MAKING_DLL /D_WINDLL /D_UNICODE \
+		/G6 /EHsc /nologo /c
 
-#include "qparms.h"
+LIB_BASE=mysqlpp
+LIB_FILE=$(LIB_BASE).dll
+IMP_FILE=$(LIB_BASE).lib
+VC_LIB_PATH=$(BIN_DIR)\$(LIB_FILE)
+PLAT_LIB_PATH=$(if $(CYGWIN_MAKE),\
+		$(shell cygpath -u $(VC_LIB_PATH)),\
+		$(VC_LIB_PATH))
 
-#include "query.h"
+LD=link
+LDFLAGS=/OUT:$(VC_LIB_PATH) /DLL /NOLOGO \
+		/LIBPATH:$(MYSQL_DIR)\lib\opt libmysql.lib
 
-using namespace std;
+ifeq "$(BIN_DIR)" "debug"
+	CXXFLAGS += /MDd /Od /D_DEBUG /ZI /Zi
+	LDFLAGS += /DEBUG
+else
+	CXXFLAGS += /MD /O2
+endif
 
-namespace mysqlpp {
+vpath %.obj $(BIN_DIR)
+vpath %.dll $(BIN_DIR)
+vpath %.lib $(BIN_DIR)
 
-size_t
-SQLQueryParms::escape_string(std::string* ps, const char* original,
-		size_t length) const
-{
-	return parent_ ? parent_->escape_string(ps, original, length) : 0;
-}
+EXE=.exe
+OBJ=obj
 
-size_t
-SQLQueryParms::escape_string(char* escaped, const char* original,
-		size_t length) const
-{
-	return parent_ ? parent_->escape_string(escaped, original, length) : 0;
-}
+RM=$(if $(CYGWIN_MAKE),rm -rf,del /q)
+CP=$(if $(CYGWIN_MAKE),cp,copy)
 
-SQLTypeAdapter&
-SQLQueryParms::operator [](const char* str)
-{
-	if (parent_) {
-		return operator [](parent_->parsed_nums_[str]);
-	}
-	throw ObjectNotInitialized("SQLQueryParms object has no parent!");
-}
-
-const SQLTypeAdapter&
-SQLQueryParms::operator[] (const char* str) const
-{
-	if (parent_) {
-		return operator [](parent_->parsed_nums_[str]);
-	}
-	throw ObjectNotInitialized("SQLQueryParms object has no parent!");
-}
-
-SQLQueryParms
-SQLQueryParms::operator +(const SQLQueryParms& other) const
-{
-	if (other.size() <= size()) {
-		return *this;
-	}
-	SQLQueryParms New = *this;
-	size_t i;
-	for (i = size(); i < other.size(); i++) {
-		New.push_back(other[i]);
-	}
-
-	return New;
-}
+LOCAL_CLEAN=debug release
 
 
-} // end namespace mysqlpp
+.SUFFIXES: .cpp .obj
+.cpp.obj:
+	$(CXX) $(CXXFLAGS) /Fo$(BIN_DIR)\$@ $<
+
+
+vc: all
+
+example_setup:
+	$(CP) $(PLAT_LIB_PATH) $(EX_BIN_DIR)
+
+$(IMP_FILE):
+	$(if $(wildcard $(BIN_DIR)/$(IMP_FILE)),,$(shell $(RM) $(BIN_DIR)/$(LIB_FILE)))
+	$(MAKE) $(LIB_FILE)

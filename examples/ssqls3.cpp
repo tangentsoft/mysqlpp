@@ -1,6 +1,10 @@
 /***********************************************************************
- ssqls3.cpp - Example showing how to update an SQL row using the
-	Specialized SQL Structures feature of MySQL++.
+ tquery3.cpp - Similar to tquery1.cpp but uses unquoted parameters.
+	It's here more for code test coverage than because it shows
+	something interesting.  We've historically had a problem with
+	tqueries with just one parameter; we cover the quoted case in
+	resetdb and the other tquery examples, so we get the unquoted
+	one here.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
  (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
@@ -27,7 +31,6 @@
 
 #include "cmdline.h"
 #include "printdata.h"
-#include "stock.h"
 
 #include <iostream>
 
@@ -47,62 +50,33 @@ main(int argc, char *argv[])
 		mysqlpp::Connection con(mysqlpp::examples::db_name,
 				cmdline.server(), cmdline.user(), cmdline.pass());
 
-		// Build a query to retrieve the stock item that has Unicode
-		// characters encoded in UTF-8 form.
-		mysqlpp::Query query = con.query("select * from stock ");
-		query << "where item = " << mysqlpp::quote << "Nürnberger Brats";
+		// Build a template query to retrieve item names for stock
+		// entries with a quantity over some threshold.
+		mysqlpp::Query query = con.query(
+				"select item from stock where num > %0");
+		query.parse();
 
-		// Retrieve the row, throwing an exception if it fails.
-		mysqlpp::StoreQueryResult res = query.store();
-		if (res.empty()) {
-			throw mysqlpp::BadQuery("UTF-8 bratwurst item not found in "
-					"table, run resetdb");
+		// Get a list of things we have lots of in stock
+		if (mysqlpp::StoreQueryResult res = query.store(80)) {
+			cout << "Stuff we have a lot of in stock:" << endl;
+			for (size_t i = 0; i < res.num_rows(); ++i) {
+				cout << '\t' << res[i]["item"] << endl;
+			}
 		}
-
-		// Because there should only be one row in the result set,
-		// there's no point in storing the result in an STL container.
-		// We can store the first row directly into a stock structure
-		// because one of an SSQLS's constructors takes a Row object.
-		stock row = res[0];
-
-		// Create a copy so that the replace query knows what the
-		// original values are.
-		stock orig_row = row;
-
-		// Change the stock object's item to use only 7-bit ASCII, and
-		// to deliberately be wider than normal column widths printed
-		// by print_stock_table().
-		row.item = "Nuerenberger Bratwurst";
-
-		// Form the query to replace the row in the stock table.
-		query.update(orig_row, row);
-
-		// Show the query about to be executed.
-		cout << "Query: " << query << endl;
-
-		// Run the query with execute(), since UPDATE doesn't return a
-		// result set.
-		query.execute();
-
-		// Retrieve and print out the new table contents.
-		print_stock_table(query);
+		else {
+			cerr << "Failed to get item list: " << query.error() << endl;
+			return 1;
+		}
 	}
 	catch (const mysqlpp::BadQuery& er) {
 		// Handle any query errors
 		cerr << "Query error: " << er.what() << endl;
-		return -1;
-	}
-	catch (const mysqlpp::BadConversion& er) {
-		// Handle bad conversions
-		cerr << "Conversion error: " << er.what() << endl <<
-				"\tretrieved data size: " << er.retrieved <<
-				", actual size: " << er.actual_size << endl;
-		return -1;
+		return 2;
 	}
 	catch (const mysqlpp::Exception& er) {
 		// Catch-all for any other MySQL++ exceptions
 		cerr << "Error: " << er.what() << endl;
-		return -1;
+		return 2;
 	}
 
 	return 0;

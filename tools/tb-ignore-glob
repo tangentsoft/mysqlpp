@@ -1,101 +1,40 @@
-*~
-*/#*
-*.dsp
-*.dsw
-*.log
-*.old
-*.svn/*
-*.vcproj
-abi.xml
-acconfig.h
-acinclude.m4
-aclocal.m4
-bk.deps
-config.guess
-config.h
-config.status
-config.sub
-Configure
-configure
-config/libtool.m4
-config/lt*.m4
-devel/*
-depcomp
-doc/*.pdf
-doc/*.tex
-doc/CVS/*
-doc/html/*
-doc/html.sty
-doc/Makefile.in
-doc/Makefile.org
-doc/man-html/*
-doc/man-text/*
-doc/manual.aux
-doc/manual.dvi
-doc/manual.ps
-doc/manual.ps.gz
-doc/manual.toc
-doc/refman/html/*
-doc/userman/*.txt
-doc/userman/html/*
-examples/*.bpg
-examples/*.bpf
-examples/*.bpr
-examples/*.dsp
-examples/*.dsw
-examples/*.vcproj
-examples/Makefile.in
-html.sty
-install.hta
-install-sh
-lib/Doxyfile
-lib/mysql++.h
-libtool
-ltconfig
-ltmain.sh
-macros/Makefile.in
-Makefile
-Makefile.in
-man-html/*
-man-text/*
-manual.aux
-manual.dvi
-manual.tex
-manual.toc
-missing
-mkinstalldirs
-mysql-config
-mysql++-config.hh
-mysql++-int/*.gif
-mysql++-int/gifs.db
-mysql++-int/less
-mysql++-int/libmysql++.so
-mysql++.xcodeproj/*
-mysql++.spec
-sqlplusint/*.bpg
-sqlplusint/*.bpf
-sqlplusint/*.bpr
-sqlplusint/*.flt
-sqlplusint/*.gif
-sqlplusint/*.plt
-sqlplusint/bad_query.hh
-sqlplusint/custom*.hh
-sqlplusint/doc-fix.pl
-sqlplusint/doc-trim.pl
-sqlplusint/doc.tex
-sqlplusint/doc.tex.tmpl
-sqlplusint/headers
-sqlplusint/includes.pl
-sqlplusint/gifs.db
-sqlplusint/less
-sqlplusint/stamp-h2
-sqlplusint/stamp-h2.in
-sqlplusint/undef_short
-ssx/Doxyfile
-stamp-h
-stamp-h.in
-stamp-h1
-stamp-h1.in
-vc2*/*
-version
+#!/bin/bash
+ignores="$(tr '\n' ',' < ../tb-ignore-glob)"
+rdir=~/tangentsoft.com/mysql++/releases
 
+set -e
+ls $rdir/*.tar.gz | 
+        ggrep -Po '\d[\d.]+\d[.a-f]{0,2}' | 
+        sed -e 's/\.$//' |
+        gsort -t. -k 1,1n -k 2,2n -k 3,3n -k 4,4n |
+while read ver
+do
+    f=$(echo $rdir/*-${ver}.tar.gz)
+    echo -e "\n----------------------------------------------------------"
+    echo -e "Processing MySQL++ v$ver, $(basename $f)...\n"
+
+    find . -type f -not -name .fslckout -delete
+    find . -type d -delete
+
+    if gtar -x --strip-components=1 -f "$f"
+    then
+        fossil addremove --ignore "$ignores"
+
+        if [ -e ChangeLog ]
+        then
+            newest=ChangeLog
+        else
+            newest=$(find . -type f -print0 | xargs -0 ls -t | head -n 2 | tail -1)
+        fi
+        mtime=$(date -u -r "$newest" +%FT%TZ)
+        
+        echo "Checking in MySQL++ v$ver, mtime=$mtime..."
+        fossil ci \
+            --comment "Version $ver" \
+            --date-override $mtime \
+            --no-warnings \
+            --tag "v$ver"
+    fi
+done
+
+fossil ui

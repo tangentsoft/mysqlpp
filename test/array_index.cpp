@@ -1,8 +1,7 @@
 /***********************************************************************
- test/array_index.cpp - Tests operator[] and at() on indexable objects
-	to ensure they throw exceptions when given bad indices.
+ test/qssqls.cpp - Tests SQL query creation from SSQLS in Query.
 
- Copyright (c) 2008 by Educational Technology Resources, Inc.
+ Copyright (c) 2008-2009 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the
  CREDITS.txt file in the top directory of the distribution for details.
 
@@ -25,146 +24,54 @@
 ***********************************************************************/
 
 #include <mysql++.h>
+#define MYSQLPP_ALLOW_SSQLS_V1	// suppress deprecation warning
+#include <ssqls.h>
 
 #include <iostream>
 
-
-template <class ContainerT>
-static bool
-test_exception(const ContainerT& container, int index)
-{
-	try {
-		container[index];
-		container.at(index);
-		std::cerr << "Bad index " << index << " allowed in " <<
-				typeid(container).name() << '!' << std::endl;
-		return false;
-	}
-	catch (const mysqlpp::BadIndex&) {
-		return true;
-	}
-	catch (const mysqlpp::Exception& e) {
-		std::cerr << "Unexpected mysqlpp::Exception caught for " <<
-				typeid(container).name() << ", index " << index <<
-				": " << e.what() << std::endl;
-		return false;
-	}
-	catch (const std::exception& e) {
-		std::cerr << "Unexpected std::exception caught for " <<
-				typeid(container).name() << ", index " << index <<
-				": " << e.what() << std::endl;
-		return false;
-	}
-	catch (...) {
-		std::cerr << "Unexpected exception type caught for " <<
-				typeid(container).name() << ", index " << index <<
-				'!' << std::endl;
-		return false;
-	}
-}
+using namespace mysqlpp;
+using namespace std;
 
 
-template <class ContainerT>
-static bool
-test_no_exception(const ContainerT& container)
-{
-	mysqlpp::NoExceptions ne(container);
-
-	try {
-		container[-1];
-		std::cerr << "Mandatory exception suppressed for " <<
-				typeid(container).name() << "::operator[]()!" <<
-				std::endl;
-		return false;
-	}
-	catch (...) {
-	}
-
-	try {
-		container.at(-1);
-		std::cerr << "Mandatory exception suppressed for " <<
-				typeid(container).name() << "::at()!" << std::endl;
-		return false;
-	}
-	catch (...) {
-		return true;
-	}
-}
-
-
-// Separate test needed because string indices work different from
-// integer indices.  Exceptions for bad field names *can* be suppressed;
-// SSQLS needs this to support population of partial structures, with
-// the un-queried fields getting default values.
-template <class ContainerT>
-static bool
-test_string_index(const ContainerT& container)
-{
-	// This test should cause an exception...
-	try {
-		container["fred"];
-		std::cerr << "Bad string index allowed in " <<
-				typeid(container).name() << '!' << std::endl;
-		return false;
-	}
-	catch (const mysqlpp::BadFieldName&) {
-		// Good; fall through to next test
-	}
-	catch (const mysqlpp::Exception& e) {
-		std::cerr << "Unexpected mysqlpp::Exception caught for "
-				"bad string index in " << typeid(container).name() <<
-				": " << e.what() << std::endl;
-		return false;
-	}
-	catch (const std::exception& e) {
-		std::cerr << "Unexpected std::exception caught for "
-				"bad string index in " << typeid(container).name() <<
-				": " << e.what() << std::endl;
-		return false;
-	}
-	catch (...) {
-		std::cerr << "Unexpected exception type caught for "
-				"bad string index in " << typeid(container).name() <<
-				'!' << std::endl;
-		return false;
-	}
-
-	// ...but not this one
-	mysqlpp::NoExceptions ne(container);
-	try {
-		container["fred"];
-		return true;
-	}
-	catch (const mysqlpp::BadFieldName&) {
-		std::cerr << "Exception not suppressed for nonexistent field "
-				"in " << typeid(container).name() << '!' << std::endl;
-		return false;
-	}
-}
-
-
-template <class ContainerT>
-static bool
-test_numeric_index(const ContainerT& container)
-{
-	return	test_exception(container, -1) &&
-			test_exception(container, 0) &&
-			test_exception(container, 1);
-}
-
+sql_create_19(test,
+	19, 0,
+	sql_tinyint,			tinyint_v,
+	sql_tinyint_unsigned,	tinyint_unsigned_v,
+	sql_smallint,			smallint_v,
+	sql_smallint_unsigned,	smallint_unsigned_v,
+	sql_int,				int_v,
+	sql_int_unsigned,		int_unsigned_v,
+	sql_mediumint,			mediumint_v,
+	sql_mediumint_unsigned, mediumint_unsigned_v,
+	sql_bigint,				bigint_v,
+	sql_bigint_unsigned,	bigint_unsigned_v,
+	sql_float,				float_v,
+	sql_double,				double_v,
+	sql_decimal,			decimal_v,
+	sql_bool,				bool_v,
+	sql_date,				date_v,
+	sql_time,				time_v,
+	sql_datetime,			datetime_v,
+	sql_char,				char_v,	// only need one stringish type...
+	sql_blob,				blob_v)	// ...and one blob type; they're all
+									// the same under the hood in MySQL++
 
 int
 main()
 {
-	try {
-		return	test_no_exception(mysqlpp::Row()) &&
-				test_numeric_index(mysqlpp::Row()) &&
-				test_string_index(mysqlpp::Row()) ? 0 : 1;
-	}
-	catch (...) {
-		std::cerr << "Unhandled exception caught by array_index!" <<
-				std::endl;
-		return 2;
-	}
+	Query q(0);		// don't pass 0 for conn parameter in real code
+	test empty(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false,
+			Date(), Time(), DateTime(), "", sql_blob());
+	test filled(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11.0, 12.0, 13.0,
+			bool(14), Date("1515-15-15"), Time("16:16:16"),
+			DateTime("1717-17-17 17:17:17"), "18", sql_blob("1\09", 3));
+
+	cout << q.insert(empty) << endl << endl;
+	cout << q.insert(filled) << endl << endl;
+	cout << q.replace(empty) << endl << endl;
+	cout << q.replace(filled) << endl << endl;
+	cout << q.update(filled, empty) << endl << endl;
+
+	return 0;
 }
 

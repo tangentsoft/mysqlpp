@@ -1,8 +1,6 @@
 /***********************************************************************
- cgi_jpeg.cpp - Example code showing how to fetch JPEG data from a BLOB
- 	column and send it back to a browser that requested it by ID.
-	
-	Use load_jpeg.cpp to load JPEG files into the database we query.
+ fieldinf.cpp - Shows how to request information about the fields in a
+	table, such as their SQL and C++-equivalent types.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
  (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
@@ -28,89 +26,89 @@
 ***********************************************************************/
 
 #include "cmdline.h"
-#include "images.h"
+#include "printdata.h"
 
-#define CRLF			"\r\n"
-#define CRLF2			"\r\n\r\n"
+#include <iostream>
+#include <iomanip>
+
+using namespace std;
+
 
 int
-main(int argc, char* argv[])
+main(int argc, char *argv[])
 {
-	// Get database access parameters from command line if present, else
-	// use hard-coded values for true CGI case.
-	mysqlpp::examples::CommandLine cmdline(argc, argv, "root",
-			"nunyabinness");
+	// Get database access parameters from command line
+	mysqlpp::examples::CommandLine cmdline(argc, argv);
 	if (!cmdline) {
 		return 1;
 	}
 
-	// Parse CGI query string environment variable to get image ID
-	unsigned int img_id = 0;
-	char* cgi_query = getenv("QUERY_STRING");
-	if (cgi_query) {
-		if ((strlen(cgi_query) < 4) || memcmp(cgi_query, "id=", 3)) {
-			std::cout << "Content-type: text/plain" << std::endl << std::endl;
-			std::cout << "ERROR: Bad query string" << std::endl;
-			return 1;
-		}
-		else {
-			img_id = atoi(cgi_query + 3);
-		}
-	}
-	else {
-		std::cerr << "Put this program into a web server's cgi-bin "
-				"directory, then" << std::endl;
-		std::cerr << "invoke it with a URL like this:" << std::endl;
-		std::cerr << std::endl;
-		std::cerr << "    http://server.name.com/cgi-bin/cgi_jpeg?id=2" <<
-				std::endl;
-		std::cerr << std::endl;
-		std::cerr << "This will retrieve the image with ID 2." << std::endl;
-		std::cerr << std::endl;
-		std::cerr << "You will probably have to change some of the #defines "
-				"at the top of" << std::endl;
-		std::cerr << "examples/cgi_jpeg.cpp to allow the lookup to work." <<
-				std::endl;
-		return 1;
-	}
-
-	// Retrieve image from DB by ID
 	try {
+		// Establish the connection to the database server.
 		mysqlpp::Connection con(mysqlpp::examples::db_name,
 				cmdline.server(), cmdline.user(), cmdline.pass());
-		mysqlpp::Query query = con.query();
-		query << "SELECT * FROM images WHERE id = " << img_id;
+
+		// Get contents of main example table
+		mysqlpp::Query query = con.query("select * from stock");
 		mysqlpp::StoreQueryResult res = query.store();
-		if (res && res.num_rows()) {
-			images img = res[0];
-			if (img.data.is_null) {
-				std::cout << "Content-type: text/plain" << CRLF2;
-				std::cout << "No image content!" << CRLF;
-			}
-			else {
-				std::cout << "X-Image-Id: " << img_id << CRLF; // for debugging
-				std::cout << "Content-type: image/jpeg" << CRLF;
-				std::cout << "Content-length: " <<
-						img.data.data.length() << CRLF2;
-				std::cout << img.data;
-			}
+
+		// Show info about each field in that table
+		char widths[] = { 12, 22, 46 };
+		cout.setf(ios::left);
+		cout << setw(widths[0]) << "Field" <<
+				setw(widths[1]) << "SQL Type" <<
+				setw(widths[2]) << "Equivalent C++ Type" <<
+				endl;
+		for (size_t i = 0; i < sizeof(widths) / sizeof(widths[0]); ++i) {
+			cout << string(widths[i] - 1, '=') << ' ';
+		}
+		cout << endl;
+		
+		for (size_t i = 0; i < res.field_names()->size(); i++) {
+			// Suppress C++ type name outputs when run under dtest,
+			// as they're system-specific.
+			const char* cname = res.field_type(int(i)).name();
+			mysqlpp::FieldTypes::value_type ft = res.field_type(int(i));
+			ostringstream os;
+			os << ft.sql_name() << " (" << ft.id() << ')';
+			cout << setw(widths[0]) << res.field_name(int(i)).c_str() <<
+					setw(widths[1]) << os.str() <<
+					setw(widths[2]) << cname <<
+					endl;
+		}
+		cout << endl;
+
+		// Simple type check
+		if (res.field_type(0) == typeid(string)) {
+			cout << "SQL type of 'item' field most closely resembles "
+					"the C++ string type." << endl;
+		}
+
+		// Tricky type check: the 'if' path shouldn't happen because the
+		// description field has the NULL attribute.  We need to dig a
+		// little deeper if we want to ignore this in our type checks.
+		if (res.field_type(5) == typeid(string)) {
+			cout << "Should not happen! Type check failure." << endl;
+		}
+		else if (res.field_type(5) == typeid(mysqlpp::sql_blob_null)) {
+			cout << "SQL type of 'description' field resembles "
+					"a nullable variant of the C++ string type." << endl;
 		}
 		else {
-			std::cout << "Content-type: text/plain" << CRLF2;
-			std::cout << "ERROR: No image with ID " << img_id << CRLF;
+			cout << "Weird: fifth field's type is now " <<
+					res.field_type(5).name() << endl;
+			cout << "Did something recently change in resetdb?" << endl;
 		}
 	}
 	catch (const mysqlpp::BadQuery& er) {
 		// Handle any query errors
-		std::cout << "Content-type: text/plain" << CRLF2;
-		std::cout << "QUERY ERROR: " << er.what() << CRLF;
-		return 1;
+		cerr << "Query error: " << er.what() << endl;
+		return -1;
 	}
 	catch (const mysqlpp::Exception& er) {
 		// Catch-all for any other MySQL++ exceptions
-		std::cout << "Content-type: text/plain" << CRLF2;
-		std::cout << "GENERAL ERROR: " << er.what() << CRLF;
-		return 1;
+		cerr << "Error: " << er.what() << endl;
+		return -1;
 	}
 
 	return 0;

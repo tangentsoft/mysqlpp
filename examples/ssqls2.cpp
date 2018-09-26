@@ -1,6 +1,9 @@
 /***********************************************************************
- ssqls2.cpp - Example showing how to insert a row using the Specialized
-	SQL Structures feature of MySQL++.
+ tquery2.cpp - Same as tquery1.cpp, except that it passes the template
+	query parameters in a SQLQueryParms object, instead of separately.
+	This is useful when the calling code doesn't know in advance how
+	many parameters there will be.  This is most likely because the
+	templates are coming from somewhere else, or being generated.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
  (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
@@ -27,10 +30,8 @@
 
 #include "cmdline.h"
 #include "printdata.h"
-#include "stock.h"
 
 #include <iostream>
-#include <limits>
 
 using namespace std;
 
@@ -48,25 +49,32 @@ main(int argc, char *argv[])
 		mysqlpp::Connection con(mysqlpp::examples::db_name,
 				cmdline.server(), cmdline.user(), cmdline.pass());
 
-		// Create and populate a stock object.  We could also have used
-		// the set() member, which takes the same parameters as this
-		// constructor.
-		stock row("Hot Dogs", 100, 1.5,
-				numeric_limits<double>::infinity(),	// "priceless," ha!
-				mysqlpp::sql_date("1998-09-25"), mysqlpp::null);
+		// Build a template query to retrieve a stock item given by
+		// item name.
+		mysqlpp::Query query = con.query(
+				"select * from stock where item = %0q");
+		query.parse();
 
-		// Form the query to insert the row into the stock table.
-		mysqlpp::Query query = con.query();
-		query.insert(row);
+		// Retrieve an item added by resetdb; it won't be there if
+		// tquery* or ssqls3 is run since resetdb.
+		mysqlpp::SQLQueryParms sqp;
+		sqp << "Nürnberger Brats";
+		mysqlpp::StoreQueryResult res1 = query.store(sqp);
+		if (res1.empty()) {
+			throw mysqlpp::BadQuery("UTF-8 bratwurst item not found in "
+					"table, run resetdb");
+		}
 
-		// Show the query about to be executed.
-		cout << "Query: " << query << endl;
+		// Replace the proper German name with a 7-bit ASCII
+		// approximation using a different template query.
+		query.reset();		// forget previous template query info
+		query << "update stock set item = %0q where item = %1q";
+		query.parse();
+		sqp.clear();
+		sqp << "Nuerenberger Bratwurst" << res1[0][0].c_str();
+		mysqlpp::SimpleResult res2 = query.execute(sqp);
 
-		// Execute the query.  We use execute() because INSERT doesn't
-		// return a result set.
-		query.execute();
-
-		// Retrieve and print out the new table contents.
+		// Print the new table contents.
 		print_stock_table(query);
 	}
 	catch (const mysqlpp::BadQuery& er) {
@@ -74,7 +82,7 @@ main(int argc, char *argv[])
 		cerr << "Query error: " << er.what() << endl;
 		return -1;
 	}
-	catch (const mysqlpp::BadConversion& er) {	
+	catch (const mysqlpp::BadConversion& er) {
 		// Handle bad conversions
 		cerr << "Conversion error: " << er.what() << endl <<
 				"\tretrieved data size: " << er.retrieved <<

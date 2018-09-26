@@ -1,37 +1,26 @@
-dnl @synopsis LIB_MATH
-dnl 
-dnl This macro figures out how whether programs using C's math routines
-dnl need to link to libm or not.  This is common on SysV Unices.
-dnl
-dnl @category C
-dnl @author Warren Young <warren@etr-usa.com>
-dnl @version 1.2, 2006-03-06
+<?xml version="1.0" ?>
+<makefile>
+	<include file="presets/simple.bkl"/>
 
-AC_DEFUN([LIB_MATH],
-[
-	AC_MSG_CHECKING([whether -lm is needed to use C math functions])
-	
-	MYSQLPP_EXTRA_LIBS=
-	TRY_LIBM=no
-	AC_TRY_LINK(
-		[ #include <math.h> ],
-		[ floor(0); ], AC_MSG_RESULT(no), TRY_LIBM=yes)
+	<set var="DBLDOLLAR">$(DOLLAR)$(DOLLAR)</set>
+	<set var="ZLIB">yes</set>
 
-	if test "x$TRY_LIBM" = "xyes"
-	then
-		save_LIBS=$LIBS
-		LIBS="$LIBS -lm"
-		AC_TRY_LINK(
-			[ #include <math.h> ],
-			[ floor(0); ],
-			[ 
-				MYSQLPP_EXTRA_LIBS=-lm 
-				AC_MSG_RESULT(yes)
-			],
-			AC_MSG_ERROR([Failed to build program containing math functions!]))
-		LIBS="$save_LIBS"
-	fi
+	<set var="THREAD_TYPE">single</set>
+	<if cond="FORMAT in ['msvc6prj', 'mingw']">
+		<set var="THREAD_TYPE">multi</set>
+	</if>
+		
+    <option name="BUILD">
+        <values>debug,release</values>
+        <values-description>Debug,Release</values-description>
+        <default-value>debug</default-value>
+        <description>
+            Type of compiled binaries
+        </description>
+    </option>
 
-	AC_SUBST(MYSQLPP_EXTRA_LIBS)
-])
-
+    <set var="DEBUGINFO">
+        <if cond="BUILD=='debug'">on</if>
+        <if cond="BUILD=='release'">off</if>
+    </set>
+</makefile>

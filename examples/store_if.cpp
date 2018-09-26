@@ -1,12 +1,10 @@
-/***********************************************************************
- store_if.cpp - Demonstrates Query::store_if(), showing only the rows
-	from the sample table with prime quantities.  This isn't intended
-	to be useful, only to show how you can do result set filtering that
-	outstrips the power of SQL.
+/// \file wnp_connection.h
+/// \brief Declares the WindowsNamedPipeConnection class.
 
- Copyright (c) 2005-2010 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the CREDITS
- file in the top directory of the distribution for details.
+/***********************************************************************
+ Copyright (c) 2007-2008 by Educational Technology Resources, Inc.
+ Others may also hold copyrights on code in this file.  See the
+ CREDITS.txt file in the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -26,79 +24,89 @@
  USA
 ***********************************************************************/
 
-#include "cmdline.h"
-#include "printdata.h"
-#include "stock.h"
+#if !defined(MYSQLPP_WNP_CONNECTION_H)
+#define MYSQLPP_WNP_CONNECTION_H
 
-#include <mysql++.h>
+#include "connection.h"
 
-#include <iostream>
+namespace mysqlpp {
 
-#include <math.h>
+/// \brief Specialization of \c Connection for Windows named pipes
+///
+/// This class just simplifies the connection creation interface of
+/// \c Connection.  It does not add new functionality.
 
-
-// Define a functor for testing primality.
-struct is_prime
+class MYSQLPP_EXPORT WindowsNamedPipeConnection : public Connection
 {
-	bool operator()(const stock& s)
+public:
+	/// \brief Create object without connecting it to the MySQL server.
+	WindowsNamedPipeConnection() :
+	Connection()
 	{
-		if ((s.num == 2) || (s.num == 3)) {
-			return true;	// 2 and 3 are trivial cases
-		}
-		else if ((s.num < 2) || ((s.num % 2) == 0)) {
-			return false;	// can't be prime if < 2 or even
-		}
-		else {
-			// The only possibility left is that it's divisible by an
-			// odd number that's less than or equal to its square root.
-			for (int i = 3; i <= sqrt(double(s.num)); i += 2) {
-				if ((s.num % i) == 0) {
-					return false;
-				}
-			}
-			return true;
-		}
 	}
+
+	/// \brief Create object and connect to database server over Windows
+	/// named pipes in one step.
+	///
+	/// \param db name of database to use
+	/// \param user user name to log in under, or 0 to use the user
+	///		name the program is running under
+	/// \param password password to use when logging in
+	WindowsNamedPipeConnection(const char* db, const char* user = 0,
+			const char* password = 0) :
+	Connection()
+	{
+		connect(db, user, password);
+	}
+
+	/// \brief Establish a new connection using the same parameters as
+	/// an existing connection.
+	///
+	/// \param other pre-existing connection to clone
+	WindowsNamedPipeConnection(const WindowsNamedPipeConnection& other) :
+	Connection(other)
+	{
+	}
+
+	/// \brief Destroy object
+	~WindowsNamedPipeConnection() { }
+
+	/// \brief Connect to database after object is created.
+	///
+	/// It's better to use the connect-on-create constructor if you can.
+	/// See its documentation for the meaning of these parameters.
+	///
+	/// If you call this method on an object that is already connected
+	/// to a database server, the previous connection is dropped and a
+	/// new connection is established.
+	bool connect(const char* db = 0, const char* user = 0,
+			const char* password = 0);
+
+	/// \brief Check that given string denotes a Windows named pipe
+	/// connection to MySQL
+	///
+	/// \param server the server address
+	///
+	/// \return false if server address does not denote a Windows
+	/// named pipe connection, or we are not running on Windows
+	static bool is_wnp(const char* server);
+
+private:
+	/// \brief Provide uncallable versions of the parent class ctors we
+	/// don't want to provide so we don't get warnings about hidden
+	/// overloads with some compilers
+	WindowsNamedPipeConnection(bool) { }
+	WindowsNamedPipeConnection(const char*, const char*, const char*,
+			const char*, unsigned int) { }
+
+	/// \brief Explicitly override parent class version so we don't get
+	/// complaints about hidden overloads with some compilers
+	bool connect(const char*, const char*, const char*, const char*,
+			unsigned int) { return false; }
 };
 
 
-int
-main(int argc, char *argv[])
-{
-	// Get database access parameters from command line
-	mysqlpp::examples::CommandLine cmdline(argc, argv);
-	if (!cmdline) {
-		return 1;
-	}
+} // end namespace mysqlpp
 
-	try {
-		// Establish the connection to the database server.
-		mysqlpp::Connection con(mysqlpp::examples::db_name,
-				cmdline.server(), cmdline.user(), cmdline.pass());
+#endif // !defined(MYSQLPP_WNP_CONNECTION_H)
 
-		// Collect the stock items with prime quantities
-		std::vector<stock> results;
-		mysqlpp::Query query = con.query();
-		query.store_if(results, stock(), is_prime());
-
-		// Show the results
-		print_stock_header(results.size());
-		std::vector<stock>::const_iterator it;
-		for (it = results.begin(); it != results.end(); ++it) {
-			print_stock_row(it->item.c_str(), it->num, it->weight,
-					it->price, it->sDate);
-		}
-	}
-	catch (const mysqlpp::BadQuery& e) {
-		// Something went wrong with the SQL query.
-		std::cerr << "Query failed: " << e.what() << std::endl;
-		return 1;
-	}
-	catch (const mysqlpp::Exception& er) {
-		// Catch-all for any other MySQL++ exceptions
-		std::cerr << "Error: " << er.what() << std::endl;
-		return 1;
-	}
-
-	return 0;
-}

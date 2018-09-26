@@ -1,90 +1,165 @@
-/// \file scopedconnection.h
-/// \brief Declares the ScopedConnection class.
-///
-/// This class lets you grab a connection from a ConnectionPool in a
-/// scoped and therefore RAII way.  The Connection object will always be
-/// returned to the pool when the scope block ends, plugging a potential
-/// leak in the pool.
+Prerequisite: GCC Version
+~~~~~~~~~~~~~~~~~~~~~~~~~
+    If your MinGW version isn't using at least GCC 3.4.5, it needs
+    to be updated.  Older versions are known to not work with MySQL++.
 
-/***********************************************************************
- Copyright (c) 2010 by Joel Fielder.  Others may also hold copyrights
- on code in this file.  See the CREDITS.txt file in the top directory
- of the distribution for details.
+    As of MySQL++ 3.1.1, the required version might need to be even
+    newer, as we are now depending on improvements to the MinGW linker
+    which probably don't go back that far.
 
- This file is part of MySQL++.
 
- MySQL++ is free software; you can redistribute it and/or modify it
- under the terms of the GNU Lesser General Public License as published
- by the Free Software Foundation; either version 2.1 of the License, or
- (at your option) any later version.
+Prerequisite: MySQL C Development Files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    MySQL++ is built atop MySQL's C API library.  The easiest way to
+    get that is to install Connector/C on your development system,
+    which you can download from mysql.com.  The distribution assumes
+    these files are in:
 
- MySQL++ is distributed in the hope that it will be useful, but WITHOUT
- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
- License for more details.
+        C:\Program Files\MySQL\MySQL Connector C 6.1\
 
- You should have received a copy of the GNU Lesser General Public
- License along with MySQL++; if not, write to the Free Software
- Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
- USA
-***********************************************************************/
+    There are a number of reasons why that path may not work for you:
 
-#if !defined(MYSQLPP_SCOPEDCONNECTION_H)
-#define MYSQLPP_SCOPEDCONNECTION_H
+      - You have a newer version of Connector/C installed
 
-#include "common.h"
+      - You're on a 64-bit system, but have the 32-bit versions of
+        Connector/C and MinGW installed and wish to build a 32-bit
+        binary.  In that case, the path will look like this instead:
 
-namespace mysqlpp {
+          C:\Program Files (x86)\MySQL\MySQL Connector C 6.1\
 
-#if !defined(DOXYGEN_IGNORE)
-// Make Doxygen ignore this
-class MYSQLPP_EXPORT Connection;
-class MYSQLPP_EXPORT ConnectionPool;
-#endif
+      - You may have the MySQL Server on your system and installed the
+        development files along with it, and therefore don't want to
+        install Connector/C separately.  In that case, the path will
+        look like this instead:
 
-/// \brief Grabs a Connection from a ConnectionPool on construction
-/// and releases it back to the pool on destruction, and provides access
-/// to the relevant Connection pointer.
-class MYSQLPP_EXPORT ScopedConnection
-{
-public:
-	/// \brief Standard constructor
-	///
-	/// Grabs a Connection from the specified pool.
-	///
-	/// \internal Note that there is no default ctor on purpose.  RAII.
-	///
-	/// \param pool The ConnectionPool to use.
-	/// \param safe By default, we get the connection from the pool with
-	/// ConnectionPool::grab(), but we can call safe_grab() instead.
-	explicit ScopedConnection(ConnectionPool& pool, bool safe = false);
+          C:\Program Files\MySQL\MySQL Server 5.6\
+    
+    Regardless of the reason you have for changing this path, there are
+    two ways that work:
 
-	/// \brief Destructor
-	///
-	/// Releases the Connection back to the ConnectionPool.
-	~ScopedConnection();
+      - The easy way is to do a global search and replace on the path
+        in Makefile.mingw.  This is a generated file, but if that's the
+        only change to MySQL++ you need, it works fine.
 
-	/// \brief Access the Connection pointer
-	Connection* operator->() const { return connection_; }
+      - If you're doing deeper work on MySQL++, you should change the
+        MYSQL_WIN_DIR variable at the top of mysql++.bkl instead.
+        
+        Having done that, you can generate Makefile.mingw from that
+        file using the Windows port of Bakefile (http://bakefile.org/):
+        
+          bakefile_gen -f mingw
 
-	/// \brief Dereference
-	Connection& operator*() const { return *connection_; }
 
-	/// \brief Truthiness operator
-	operator void*() const { return connection_; }
+Building the Library and Example Programs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    With the prerequisites above taken care of, you can build MySQL++
+    with this command:
 
-private:
-	// ScopedConnection objects cannot be copied.  We want them to be
-	// tightly scoped to their use point, not put in containers or
-	// passed around promiscuously.
-	ScopedConnection(const ScopedConnection& no_copies);   
-	const ScopedConnection& operator=(const ScopedConnection& no_copies);
+        mingw32-make -f Makefile.mingw
 
-	ConnectionPool& pool_;
-	Connection* const connection_;
-};
+    Notice that we're using the MinGW-specific version of GNU make, not
+    the Cygwin or MSYS versions.  Many things will break otherwise: path
+    separator handling, shell commands used by the Makefile, etc.
 
-} // end namespace mysqlpp
+    Speaking of Cygwin and MSYS, if you have either these or any other
+    Unix emulation environment installed, be sure their executables
+    aren't in the PATH when building MySQL++.  MinGW's version of GNU
+    make does some funny things if it thinks it's running in the
+    presence of Unixy tools, which will break the MySQL++ build.
 
-#endif // !defined(MYSQLPP_SCOPEDCONNECTION_H)
+    Once the library is built, you should run the examples.  At minimum,
+    run resetdb and simple1.
 
+    Once you're satisfied that the library is working correctly, you can
+    run install.hta to automatically install the library files and
+    headers in subdirectories under c:\mysql++.
+
+
+Cygwin and MinGW Coexistence
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    It's possible to have both Cygwin and MinGW installed and build
+    with the MinGW tools without interference from the Cygwin bits.
+    The main thing you have to take care of is that MinGW's bin
+    directory must precede the Cygwin bin directory in the PATH,
+    so that its tools are found first.  If you use Cygwin's bash
+    as a command shell in preference to the DOS-like cmd.exe, you
+    can use this shell script to temporarily set the environment to
+    "MinGW mode" and make it easy to get back to "Cygwin mode":
+
+        #!/bin/sh
+        PATH=/c/mingw/bin:/c/windows:/c/windows/system32:/c/cygwin/bin
+        echo "Say 'exit' to leave MinGW shell and restore Cygwin environment."
+        /usr/bin/bash --rcfile ~/.mingwrc
+
+    I recommend having at least this in the ~/.mingwrc file:
+
+        alias make=mingw32-make
+        PS1='MinGW: \W \$ '
+
+    The prompt change reminds you that you are in a sub-shell set up for
+    MinGW.  The alias for 'make' ensures you don't accidentally run
+    Cygwin's make, which won't work with Makefile.mingw.  We could just
+    leave /c/cygwin/bin out of the environment, but there are Cygwin
+    tools we want access to, like vim.  As long as all the MinGW ones
+    override those Cygwin also provides, we don't need to worry about
+    having both in the PATH.  Besides, having the alias is nice for
+    those who have 'make' committed to muscle memory.
+
+
+Building on Linux
+~~~~~~~~~~~~~~~~~
+    You might wish to build MySQL++ with MinGW because you're
+    not actually running Windows, but need Windows executables.
+    The thought being that this lets you use GCC, the same compiler
+    you're probably using to make native executables.  There are
+    indeed ways to make this work.
+
+    The most "native" way to do this is to run MinGW under Wine.
+    Leonti Bielski provided these instructions:
+
+        1. Install MinGW through Wine:
+
+           $ wine MinGW-5.1.6.exe
+
+        2. Add the MinGW directory to Wine's PATH with Wine regedit:
+
+           http://winehq.org/site/docs/wineusr-guide/environment-variables
+
+        3. Install MySQL under Wine, or at least unpack the Windows
+           ZIP file version of MySQL in a place where Wine can find it.
+           You don't need to run a Windows MySQL server under Wine.
+           We're only doing this to get the MySQL C API library and
+           its headers, which MySQL++ builds against.  The resulting
+           MinGW build of MySQL++ can talk to a native MySQL server
+           out in Wine's host environment or on some other machine.
+
+        4. Modify Makefile.mingw to match the install location for
+           the MySQL C API files.
+
+        5. Build MySQL++ with:
+        
+           $ wine mingw32-make -f Makefile.mingw
+
+    Another way is to build a Windows virtual machine, such as with
+    VMware or VirtualBox.  In that case, you'd use the regular build
+    instructions at the top of this document.
+
+    You might think to avoid the need for Wine or Windows by use of a
+    MinGW cross-compiler:
+
+        $ ./configure --target=mingw32
+        $ make
+
+    Unfortunately, that currently doesn't work.
+
+    The reason is that our autoconf build system assumes a
+    typical POSIX type target, which MinGW is not.  We made this
+    assumption because we have a perfectly good MinGW build option,
+    Makefile.mingw.  But, that also won't work on a POSIX system
+    because that Makefile assumes external commands run under cmd.exe,
+    not some Unixy shell.  Thus the advice to build with Makefile.mingw
+    under Windows or something sufficiently close to it.
+
+    If you really wanted to, you could extend the autoconf build system
+    to make it realize when it's being used to cross-compile for MinGW.
+    Patches thoughtfully considered; see HACKERS.txt.

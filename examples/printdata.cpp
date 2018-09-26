@@ -1,9 +1,11 @@
 /***********************************************************************
- printdata.cpp - Utility functions for printing out data in common
-	formats, required by most of the example programs.
+ ssqls4.cpp - Example very similar to ssqls1.cpp, except that it
+	stores its result set in an STL set container.  This demonstrates
+	how one can manipulate MySQL++ result sets in a very natural C++
+	style.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
+ (c) 2004-2010 by Educational Technology Resources, Inc.  Others may
  also hold copyrights on code in this file.  See the CREDITS.txt file
  in the top directory of the distribution for details.
 
@@ -25,92 +27,75 @@
  USA
 ***********************************************************************/
 
+#include "cmdline.h"
 #include "printdata.h"
+#include "stock.h"
 
 #include <iostream>
-#include <iomanip>
 
 using namespace std;
 
-
-//// print_stock_header ////////////////////////////////////////////////
-// Display a header suitable for use with print_stock_rows().
-
-void
-print_stock_header(size_t rows)
+int
+main(int argc, char *argv[])
 {
-	cout << "Records found: " << rows << endl << endl;
-	cout.setf(ios::left);
-	cout << setw(31) << "Item" <<
-			setw(10) << "Num" <<
-			setw(10) << "Weight" <<
-			setw(10) << "Price" <<
-			"Date" << endl << endl;
-}
-
-
-//// print_stock_row ///////////////////////////////////////////////////
-// Print out a row of data from the stock table, in a format compatible
-// with the header printed out in the previous function.
-
-void
-print_stock_row(const mysqlpp::sql_char& item, mysqlpp::sql_bigint num,
-		mysqlpp::sql_double weight, mysqlpp::sql_decimal_null price,
-		const mysqlpp::sql_date& date)
-{
-	cout << setw(30) << item << ' ' <<
-			setw(9) << num << ' ' <<
-			setw(9) << weight << ' ' <<
-			setw(9) << price << ' ' <<
-			date << endl;
-}
-
-
-//// print_stock_row ///////////////////////////////////////////////////
-// Take a Row from the example 'stock' table, break it up into fields,
-// and call the above version of this function.
-
-void
-print_stock_row(const mysqlpp::Row& row)
-{
-	print_stock_row(string(row[0]), row[1], row[2], row[3], row[4]);
-}
-
-
-//// print_stock_rows //////////////////////////////////////////////////
-// Print out a number of rows from the example 'stock' table.
-
-void
-print_stock_rows(mysqlpp::StoreQueryResult& res)
-{
-	print_stock_header(res.size());
-
-	// Use the StoreQueryResult class's read-only random access iterator to walk
-	// through the query results.
-	mysqlpp::StoreQueryResult::iterator i;
-	for (i = res.begin(); i != res.end(); ++i) {
-		// Notice that a dereferenced result iterator can be converted
-		// to a Row object, which makes for easier element access.
-		print_stock_row(*i);
+	// Get database access parameters from command line
+	mysqlpp::examples::CommandLine cmdline(argc, argv);
+	if (!cmdline) {
+		return 1;
 	}
-}
 
+	try {
+		// Establish the connection to the database server.
+		mysqlpp::Connection con(mysqlpp::examples::db_name,
+				cmdline.server(), cmdline.user(), cmdline.pass());
 
-//// print_stock_table /////////////////////////////////////////////////
-// Simply retrieve and print the entire contents of the stock table.
+		// Retrieve all rows from the stock table and put them in an
+		// STL set.  Notice that this works just as well as storing them
+		// in a vector, which we did in ssqls1.cpp.  It works because
+		// SSQLS objects are less-than comparable.
+		mysqlpp::Query query = con.query("select * from stock");
+		set<stock> res;
+		query.storein(res);
 
-void
-print_stock_table(mysqlpp::Query& query)
-{
-	// Reset query object to its pristine state in case it's been used
-	// before by our caller for template queries.
-	query.reset();
+		// Display the result set.  Since it is an STL set and we set up
+		// the SSQLS to compare based on the item column, the rows will
+		// be sorted by item.
+		print_stock_header(res.size());
+		set<stock>::iterator it;
+		cout.precision(3);
+		for (it = res.begin(); it != res.end(); ++it) {
+			print_stock_row(it->item.c_str(), it->num, it->weight,
+					it->price, it->sDate);
+		}
 
-	// Build the query itself, and show it to the user
-	query << "select * from stock";
-	cout << "Query: " << query << endl;
+		// Use set's find method to look up a stock item by item name.
+		// This also uses the SSQLS comparison setup.
+		it = res.find(stock("Hotdog Buns"));
+		if (it != res.end()) {
+			cout << endl << "Currently " << it->num <<
+					" hotdog buns in stock." << endl;
+		}
+		else {
+			cout << endl << "Sorry, no hotdog buns in stock." << endl;
+		}
+	}
+	catch (const mysqlpp::BadQuery& er) {
+		// Handle any query errors
+		cerr << "Query error: " << er.what() << endl;
+		return -1;
+	}
+	catch (const mysqlpp::BadConversion& er) {
+		// Handle bad conversions
+		cerr << "Conversion error: " << er.what() << endl <<
+				"\tretrieved data size: " << er.retrieved <<
+				", actual size: " << er.actual_size << endl;
+		return -1;
+	}
+	catch (const mysqlpp::Exception& er) {
+		// Catch-all for any other MySQL++ exceptions
+		cerr << "Error: " << er.what() << endl;
+		return -1;
+	}
 
-	// Execute it, and display the results
-	mysqlpp::StoreQueryResult res = query.store();
-	print_stock_rows(res);
+	return 0;
 }

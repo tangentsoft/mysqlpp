@@ -1,63 +1,85 @@
-@echo off
-if not exist vc2003 mkdir vc2003
-if not exist vc2005 mkdir vc2005
-if not exist vc2008 mkdir vc2008
+/***********************************************************************
+ simple2.cpp - Retrieves the entire contents of the sample stock table
+	using a "store" query, and prints it out.
 
-bakefile_gen %*
-if errorlevel 1 exit
-if not exist vc2003\mysql++.sln goto no_bakefile
-if not exist vc2005\mysql++.sln goto no_bakefile
-if not exist vc2008\mysql++.sln goto no_bakefile
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS.txt file
+ in the top directory of the distribution for details.
 
-cd lib
-perl querydef.pl
-if errorlevel 1 exit
-if not exist querydef.h goto no_perl
-perl ssqls.pl
-if errorlevel 1 exit
-if not exist ssqls.h goto no_perl
+ This file is part of MySQL++.
 
-if not exist mysql++.h goto no_mysqlpp_h
-cd ..
+ MySQL++ is free software; you can redistribute it and/or modify it
+ under the terms of the GNU Lesser General Public License as published
+ by the Free Software Foundation; either version 2.1 of the License, or
+ (at your option) any later version.
 
-exit
+ MySQL++ is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+ License for more details.
 
-:no_bakefile
-echo.
-echo Bakefile doesn't seem to be installed on this system.  Download it
-echo from http://bakefile.org/  You need version 0.2.3 or newer.
-echo.
-exit
+ You should have received a copy of the GNU Lesser General Public
+ License along with MySQL++; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
+ USA
+***********************************************************************/
 
-:no_perl
-echo.
-echo You need a Perl interpreter installed on your system, somewhere in
-echo the PATH.  Any recent version or flavor should work; we don't use
-echo any special extensions.  The easiest to install on Windows would be
-echo ActivePerl, from http://activestate.com/Products/activeperl/
-echo If you're familiar with Unix, you might like Cygwin better instead:
-echo http://cygwin.com/setup.exe
-echo.
-cd ..
-exit
+#include "cmdline.h"
+#include "printdata.h"
 
-:no_mysqlpp_h
-echo.
-echo WARNING: Can't make lib/mysql++.h
-echo.
-echo On Unixy systems, autoconf creates lib/mysql++.h from lib/mysql++.h.in
-echo but there is no easy way to do this on Windows.  You can do it manually:
-echo just copy the file to the new name, and edit the MYSQLPP_HEADER_VERSION
-echo definition to put the proper version number parts into the macro.  It
-echo needs to look something like this:
-echo.
-echo #define MYSQLPP_HEADER_VERSION MYSQLPP_VERSION(3, 0, 0)
-echo.
-echo It's important that the three numbers match the actual library version
-echo number, or else programs that check this (like resetdb) will fail.
-echo.
-echo Alternately, if you've also got MySQL++ installed on some Unixy type
-echo system, you can let its bootstrap procedure create mysql++.h and then
-echo copy it to the Windows machine.
-echo.
-cd ..
+#include <mysql++.h>
+
+#include <iostream>
+#include <iomanip>
+
+using namespace std;
+
+int
+main(int argc, char *argv[])
+{
+	// Get database access parameters from command line
+	const char* db = 0, *server = 0, *user = 0, *pass = "";
+	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
+		return 1;
+	}
+
+	// Connect to the sample database.
+	mysqlpp::Connection conn(false);
+	if (conn.connect(db, server, user, pass)) {
+		// Retrieve the sample stock table set up by resetdb
+		mysqlpp::Query query = conn.query("select * from stock");
+		mysqlpp::StoreQueryResult res = query.store();
+
+		// Display results
+		if (res) {
+			// Display header
+			cout.setf(ios::left);
+			cout << setw(31) << "Item" <<
+					setw(10) << "Num" <<
+					setw(10) << "Weight" <<
+					setw(10) << "Price" <<
+					"Date" << endl << endl;
+
+			// Get each row in result set, and print its contents
+			for (size_t i = 0; i < res.num_rows(); ++i) {
+				cout << setw(30) << res[i]["item"] << ' ' <<
+						setw(9) << res[i]["num"] << ' ' <<
+						setw(9) << res[i]["weight"] << ' ' <<
+						setw(9) << res[i]["price"] << ' ' <<
+						setw(9) << res[i]["sdate"] <<
+						endl;
+			}
+		}
+		else {
+			cerr << "Failed to get stock table: " << query.error() << endl;
+			return 1;
+		}
+
+		return 0;
+	}
+	else {
+		cerr << "DB connection failed: " << conn.error() << endl;
+		return 1;
+	}
+}

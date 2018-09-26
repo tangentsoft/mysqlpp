@@ -1,9 +1,10 @@
 /***********************************************************************
- test/ssqls2.cpp - Tests the SSQLS v2 mechanism
+ connection.cpp - Implements the Connection class.
 
- Copyright (c) 2009 by Warren Young.  Others may also hold copyrights
- on code in this file.  See the CREDITS.txt file in the top directory
- of the distribution for details.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2008 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS.txt file
+ in the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -23,124 +24,362 @@
  USA
 ***********************************************************************/
 
-#include "../ssx/parsev2.h"
+#define MYSQLPP_NOT_HEADER
+#include "connection.h"
 
-#include <mysql++.h>
-#include <ssqls2.h>
-
-#include <iostream>
+#include "dbdriver.h"
+#include "query.h"
+#include "result.h"
 
 using namespace std;
 
-// Check that we can create a custom SSQLS v2 subclass by hand.  Tests
-// for unexpected changes in SsqlsBase definition.
-class TestSubclass : public mysqlpp::SsqlsBase
+namespace mysqlpp {
+
+Connection::Connection(bool te) :
+OptionalExceptions(te),
+driver_(new DBDriver()),
+copacetic_(true)
 {
-public:
-	TestSubclass() :
-	mysqlpp::SsqlsBase()
-	{
+}
+
+
+Connection::Connection(const char* db, const char* server,
+		const char* user, const char* password, unsigned int port) :
+OptionalExceptions(),
+driver_(new DBDriver()),
+copacetic_(true)
+{
+	connect(db, server, user, password, port);
+}
+
+
+Connection::Connection(const Connection& other) :
+OptionalExceptions(other.throw_exceptions()),
+driver_(new DBDriver(*other.driver_))
+{
+	copy(other);
+}
+
+
+Connection::~Connection()
+{
+	disconnect();
+	delete driver_;
+}
+
+
+void
+Connection::build_error_message(const char* core)
+{
+	error_message_ = "Can't ";
+	error_message_ += core;
+	error_message_ += " while disconnected";
+}
+
+
+std::string
+Connection::client_version() const
+{
+	return driver_->client_version();
+}
+
+
+bool
+Connection::connect(const char* db, const char* server,
+		const char* user, const char* password, unsigned int port)
+{
+	// Figure out what the server parameter means, then try to establish
+	// the connection.
+	error_message_.clear();
+	string host, socket_name;
+	copacetic_ = parse_ipc_method(server, host, port, socket_name) &&
+			driver_->connect(host.c_str(),
+			(socket_name.empty() ? 0 : socket_name.c_str()), port, db,
+			user, password);
+
+	// If it failed, decide how to tell the user
+	if (!copacetic_ && throw_exceptions()) {
+		throw ConnectionFailed(error(), errnum());
 	}
-
-	bool create_table(mysqlpp::Connection* conn = 0) const 
-			{ (void)conn; return false; }
-	std::ostream& equal_list(std::ostream& os,
-			FieldSubset fs = fs_set) const
-			{ (void)fs; return os; }
-	std::ostream& name_list(std::ostream& os,
-			FieldSubset fs = fs_set) const 
-			{ (void)fs; return os; }
-	bool populated(FieldSubset fs = fs_all) const
-			{ (void)fs; return false; }
-	std::ostream& value_list(std::ostream& os,
-			FieldSubset fs = fs_set) const 
-			{ (void)fs; return os; }
-};
+	else {
+		return copacetic_;
+	}
+}
 
 
-// Test a single string to ParseV2::Field::Type value conversion
-static bool
-Test(const char* input_type, const ParseV2::Field::Type& expected_value)
+bool
+Connection::connected() const
 {
-	ParseV2::Field::Type actual_value(input_type);
-	if (actual_value == expected_value) {
+	return driver_->connected();
+}
+
+
+void
+Connection::copy(const Connection& other)
+{
+	error_message_.clear();
+	set_exceptions(other.throw_exceptions());
+	driver_->copy(*other.driver_);
+}
+
+
+ulonglong
+Connection::count_rows(const std::string& table)
+{
+	error_message_.clear();
+	Query q(this, throw_exceptions());
+	q << "SELECT COUNT(*) FROM `" << table << '`';
+	if (StoreQueryResult res = q.store()) {
+		return res[0][0];
+	}
+	else {
+		return 0;
+	}
+}
+
+
+bool
+Connection::create_db(const std::string& db)
+{
+	error_message_.clear();
+	Query q(this, throw_exceptions());
+	q << "CREATE DATABASE `" << db << '`';
+	return q.exec();
+}
+
+
+void
+Connection::disconnect()
+{
+	error_message_.clear();
+	driver_->disconnect();
+}
+
+
+bool
+Connection::drop_db(const std::string& db)
+{
+	error_message_.clear();
+	Query q(this, throw_exceptions());
+	q << "DROP DATABASE `" << db << '`';
+	return q.exec();
+}
+
+
+int
+Connection::errnum()
+{
+	return driver_->errnum();
+}
+
+
+const char*
+Connection::error() const
+{
+	return error_message_.size() ? error_message_.c_str() : driver_->error();
+}
+
+
+std::string
+Connection::ipc_info() const
+{
+	return driver_->ipc_info();
+}
+
+
+bool
+Connection::kill(unsigned long tid) const
+{
+	error_message_.clear();
+	return driver_->kill(tid);
+}
+
+
+Connection&
+Connection::operator=(const Connection& rhs)
+{
+	copy(rhs);
+	return *this;
+}
+
+
+bool
+Connection::parse_ipc_method(const char* server, std::string& host,
+		unsigned int& port, std::string& socket_name)
+{
+	// NOTE: This routine has no connection type knowledge.  It can only
+	// recognize a 0 value for the server parameter.  All substantial
+	// tests are delegated to our specialized subclasses, which figure
+	// out what kind of connection the server address denotes.  We do
+	// the platform-specific tests first as they're the most reliable.
+	
+	if (server == 0) {
+		// Just take all the defaults
+		return true;
+	}
+	else if (WindowsNamedPipeConnection::is_wnp(server)) {
+		// Use Windows named pipes
+		host = server;
+		return true;
+	}
+	else if (UnixDomainSocketConnection::is_socket(server)) {
+		// Use Unix domain sockets
+		socket_name = server;
 		return true;
 	}
 	else {
-		std::cerr << '"' << input_type << "\" converted to " <<
-				int(actual_value) << " not " <<
-				int(expected_value) << " as expected!" << std::endl;
+		// Failing above, it can only be some kind of TCP/IP address.
+		host = server;
+		return TCPConnection::parse_address(host, port, error_message_);
+	}
+}
+
+
+bool
+Connection::ping()
+{
+	if (connected()) {
+		error_message_.clear();
+		return driver_->ping();
+	}
+	else {
+		// Not connected, and we've forgotten everything we need in
+		// order to re-connect, if we once were connected.
+		build_error_message("ping database server");
 		return false;
 	}
 }
 
 
-// Test as many string to ParseV2::Field::Type value conversions as we
-// expect the smart enum to support.
-static bool
-TestFieldTypeConversions()
-{
-	return 
-		// First, test all the known "sane" inputs
-		Test("bigblob", ParseV2::Field::Type::ft_blob) &&
-		Test("bigint", ParseV2::Field::Type::ft_bigint) &&
-		Test("bigtext", ParseV2::Field::Type::ft_string) &&
-		Test("blob", ParseV2::Field::Type::ft_blob) &&
-		Test("bool", ParseV2::Field::Type::ft_tinyint) &&
-		Test("boolean", ParseV2::Field::Type::ft_tinyint) &&
-		Test("char", ParseV2::Field::Type::ft_string) &&
-		Test("date", ParseV2::Field::Type::ft_date) &&
-		Test("datetime", ParseV2::Field::Type::ft_datetime) &&
-		Test("decimal", ParseV2::Field::Type::ft_double) &&
-		Test("double", ParseV2::Field::Type::ft_double) &&
-		Test("enum", ParseV2::Field::Type::ft_string) &&
-		Test("fixed", ParseV2::Field::Type::ft_double) &&
-		Test("float", ParseV2::Field::Type::ft_float) &&
-		Test("float4", ParseV2::Field::Type::ft_float) &&
-		Test("float8", ParseV2::Field::Type::ft_float) &&
-		Test("int", ParseV2::Field::Type::ft_mediumint) &&
-		Test("int1", ParseV2::Field::Type::ft_tinyint) &&
-		Test("int2", ParseV2::Field::Type::ft_smallint) &&
-		Test("int3", ParseV2::Field::Type::ft_mediumint) &&
-		Test("int4", ParseV2::Field::Type::ft_mediumint) &&
-		Test("int8", ParseV2::Field::Type::ft_bigint) &&
-		Test("mediumblob", ParseV2::Field::Type::ft_blob) &&
-		Test("mediumint", ParseV2::Field::Type::ft_mediumint) &&
-		Test("mediumtext", ParseV2::Field::Type::ft_string) &&
-		Test("numeric", ParseV2::Field::Type::ft_double) &&
-		Test("set", ParseV2::Field::Type::ft_set) &&
-		Test("smallblob", ParseV2::Field::Type::ft_blob) &&
-		Test("smallint", ParseV2::Field::Type::ft_smallint) &&
-		Test("smalltext", ParseV2::Field::Type::ft_string) &&
-		Test("text", ParseV2::Field::Type::ft_string) &&
-		Test("time", ParseV2::Field::Type::ft_time) &&
-		Test("timestamp", ParseV2::Field::Type::ft_datetime) &&
-		Test("tinyblob", ParseV2::Field::Type::ft_blob) &&
-		Test("tinyint", ParseV2::Field::Type::ft_tinyint) &&
-		Test("tinytext", ParseV2::Field::Type::ft_string) &&
-		Test("varbinary", ParseV2::Field::Type::ft_blob) &&
-		Test("varchar", ParseV2::Field::Type::ft_string) &&
-		// Test that it's properly case-insensitive
-		Test("Numeric", ParseV2::Field::Type::ft_double) &&
-		Test("sEt", ParseV2::Field::Type::ft_set) &&
-		Test("SMALLBLOB", ParseV2::Field::Type::ft_blob) &&
-		// Test that mildly bogus conversions are handled sanely
-		Test("char(8)", ParseV2::Field::Type::ft_string) &&
-		Test("decimal(16)", ParseV2::Field::Type::ft_double) &&
-		Test("int5", ParseV2::Field::Type::ft_mediumint) &&
-		Test("varchar(32)", ParseV2::Field::Type::ft_string) &&
-		// Test that truly bogus stuff gets treated as stringish
-		Test("varwhatsit(64)", ParseV2::Field::Type::ft_string) &&
-		Test("klH54%KJgh^7hh4jvwtt", ParseV2::Field::Type::ft_string) &&
-		true;
-}
-
-
 int
-main()
+Connection::protocol_version() const
 {
-	// Force instantiation of custom subclass
-	TestSubclass tsc;
-
-	return TestFieldTypeConversions() ? 0 : 1;
+	return driver_->protocol_version();
 }
+
+
+Query
+Connection::query(const char* qstr)
+{
+	return Query(this, throw_exceptions(), qstr);
+}
+
+
+Query
+Connection::query(const std::string& qstr)
+{
+	return query(qstr.c_str());
+}
+
+
+bool
+Connection::select_db(const std::string& db)
+{
+	error_message_.clear();
+	if (connected()) {
+		if (driver_->select_db(db.c_str())) {
+			return true;
+		}
+		else {
+			if (throw_exceptions()) {
+				throw DBSelectionFailed(error(), errnum());
+			}
+			return false;
+		}
+	}
+	else {
+		build_error_message("select a database");
+		if (throw_exceptions()) {
+			throw DBSelectionFailed(error_message_.c_str());
+		}
+		return false;
+	}
+}
+
+
+std::string
+Connection::server_status() const
+{
+	return driver_->server_status();
+}
+
+
+std::string
+Connection::server_version() const
+{
+	return driver_->server_version();
+}
+
+
+bool
+Connection::set_option(Option* o)
+{
+	const std::type_info& oti = typeid(*o);
+	if (driver_->set_option(o)) {
+		error_message_.clear();
+		return true;
+	}
+	else {
+		error_message_ = driver_->error();
+		if (throw_exceptions()) {
+			throw BadOption(error_message_, oti);
+		}
+		return false;
+	}
+}
+
+
+bool
+Connection::shutdown()
+{
+	error_message_.clear();
+	if (connected()) {
+		if (driver_->shutdown()) {
+			return true;
+		}
+		else {
+			if (throw_exceptions()) {
+				throw ConnectionFailed(error(), errnum());
+			}
+			return false;
+		}
+	}
+	else {
+		build_error_message("shutdown database server");
+		if (throw_exceptions()) {
+			throw ConnectionFailed(error_message_.c_str());
+		}
+		return false;
+	}
+}
+
+
+bool
+Connection::thread_aware()
+{
+	return DBDriver::thread_aware();
+}
+
+
+void
+Connection::thread_end()
+{
+	DBDriver::thread_end();
+}
+
+
+unsigned long
+Connection::thread_id()
+{
+	return driver_->thread_id();
+}
+
+
+bool
+Connection::thread_start()
+{
+	return DBDriver::thread_start();
+}
+
+} // end namespace mysqlpp
+

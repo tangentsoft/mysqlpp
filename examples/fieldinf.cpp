@@ -1,6 +1,6 @@
 /***********************************************************************
- fieldinf.cpp - Shows how to request information about the fields in a
-	table, such as their SQL and C++-equivalent types.
+ ssqls3.cpp - Example showing how to update an SQL row using the
+	Specialized SQL Structures feature of MySQL++.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
  (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
@@ -27,12 +27,11 @@
 
 #include "cmdline.h"
 #include "printdata.h"
+#include "stock.h"
 
 #include <iostream>
-#include <iomanip>
 
 using namespace std;
-
 
 int
 main(int argc, char *argv[])
@@ -48,61 +47,56 @@ main(int argc, char *argv[])
 		mysqlpp::Connection con(mysqlpp::examples::db_name,
 				cmdline.server(), cmdline.user(), cmdline.pass());
 
-		// Get contents of main example table
-		mysqlpp::Query query = con.query("select * from stock");
+		// Build a query to retrieve the stock item that has Unicode
+		// characters encoded in UTF-8 form.
+		mysqlpp::Query query = con.query("select * from stock ");
+		query << "where item = " << mysqlpp::quote << "Nürnberger Brats";
+
+		// Retrieve the row, throwing an exception if it fails.
 		mysqlpp::StoreQueryResult res = query.store();
-
-		// Show info about each field in that table
-		char widths[] = { 12, 22, 46 };
-		cout.setf(ios::left);
-		cout << setw(widths[0]) << "Field" <<
-				setw(widths[1]) << "SQL Type" <<
-				setw(widths[2]) << "Equivalent C++ Type" <<
-				endl;
-		for (size_t i = 0; i < sizeof(widths) / sizeof(widths[0]); ++i) {
-			cout << string(widths[i] - 1, '=') << ' ';
-		}
-		cout << endl;
-		
-		for (size_t i = 0; i < res.field_names()->size(); i++) {
-			// Suppress C++ type name outputs when run under dtest,
-			// as they're system-specific.
-			const char* cname = res.field_type(int(i)).name();
-			mysqlpp::FieldTypes::value_type ft = res.field_type(int(i));
-			ostringstream os;
-			os << ft.sql_name() << " (" << ft.id() << ')';
-			cout << setw(widths[0]) << res.field_name(int(i)).c_str() <<
-					setw(widths[1]) << os.str() <<
-					setw(widths[2]) << cname <<
-					endl;
-		}
-		cout << endl;
-
-		// Simple type check
-		if (res.field_type(0) == typeid(string)) {
-			cout << "SQL type of 'item' field most closely resembles "
-					"the C++ string type." << endl;
+		if (res.empty()) {
+			throw mysqlpp::BadQuery("UTF-8 bratwurst item not found in "
+					"table, run resetdb");
 		}
 
-		// Tricky type check: the 'if' path shouldn't happen because the
-		// description field has the NULL attribute.  We need to dig a
-		// little deeper if we want to ignore this in our type checks.
-		if (res.field_type(5) == typeid(string)) {
-			cout << "Should not happen! Type check failure." << endl;
-		}
-		else if (res.field_type(5) == typeid(mysqlpp::sql_blob_null)) {
-			cout << "SQL type of 'description' field resembles "
-					"a nullable variant of the C++ string type." << endl;
-		}
-		else {
-			cout << "Weird: fifth field's type is now " <<
-					res.field_type(5).name() << endl;
-			cout << "Did something recently change in resetdb?" << endl;
-		}
+		// Because there should only be one row in the result set,
+		// there's no point in storing the result in an STL container.
+		// We can store the first row directly into a stock structure
+		// because one of an SSQLS's constructors takes a Row object.
+		stock row = res[0];
+
+		// Create a copy so that the replace query knows what the
+		// original values are.
+		stock orig_row = row;
+
+		// Change the stock object's item to use only 7-bit ASCII, and
+		// to deliberately be wider than normal column widths printed
+		// by print_stock_table().
+		row.item = "Nuerenberger Bratwurst";
+
+		// Form the query to replace the row in the stock table.
+		query.update(orig_row, row);
+
+		// Show the query about to be executed.
+		cout << "Query: " << query << endl;
+
+		// Run the query with execute(), since UPDATE doesn't return a
+		// result set.
+		query.execute();
+
+		// Retrieve and print out the new table contents.
+		print_stock_table(query);
 	}
 	catch (const mysqlpp::BadQuery& er) {
 		// Handle any query errors
 		cerr << "Query error: " << er.what() << endl;
+		return -1;
+	}
+	catch (const mysqlpp::BadConversion& er) {
+		// Handle bad conversions
+		cerr << "Conversion error: " << er.what() << endl <<
+				"\tretrieved data size: " << er.retrieved <<
+				", actual size: " << er.actual_size << endl;
 		return -1;
 	}
 	catch (const mysqlpp::Exception& er) {

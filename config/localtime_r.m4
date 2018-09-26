@@ -1,30 +1,38 @@
-dnl @synopsis AX_C_LOCALTIME_R
-dnl 
-dnl This macro determines whether the C runtime library contains
-dnl localtime_r(), a thread-safe replacement for localtime().
-dnl
-dnl @version 1.0, 2007/02/20
-dnl @author Warren Young <mysqlpp@etr-usa.com>
-AC_DEFUN([AX_C_LOCALTIME_R],
-[
-	AC_MSG_CHECKING([for localtime_r()])
+@echo off
+if "%1" == "" goto error
 
-	AC_TRY_RUN([
-		#include <time.h>
-		int main(void)
-		{
-			time_t tt;
-			struct tm stm;
-			localtime_r(&tt, &stm);
-			return 0;
-		}
-	], [localtime_r_found=yes], [localtime_r_found=no], [localtime_r_found=no])
+set BASE_DIR=c:\mysql++
+set INST_INC_DIR=%BASE_DIR%\include
+set INST_LIB_DIR=%BASE_DIR%\%1
 
-	AC_MSG_RESULT([$localtime_r_found])
-	if test x"$localtime_r_found" = xyes
-	then
-		AC_DEFINE(HAVE_LOCALTIME_R, 1,
-			[Define if you have the localtime_r() facility])
-	fi
-]) dnl AX_C_LOCALTIME_R
+if not exist %BASE_DIR% mkdir %BASE_DIR%
+if not exist %INST_INC_DIR% mkdir %INST_INC_DIR%
+if not exist %INST_LIB_DIR% mkdir %INST_LIB_DIR%
+if not exist %INST_LIB_DIR%\debug mkdir %INST_LIB_DIR%\debug
+if not exist %INST_LIB_DIR%\release mkdir %INST_LIB_DIR%\release
+
+copy lib\*.h "%INST_INC_DIR%" > NUL
+
+if exist *.a goto install_mingw
+copy debug\*.dll "%INST_LIB_DIR%\debug" > NUL
+copy debug\*.lib "%INST_LIB_DIR%\debug" > NUL
+copy release\*.dll "%INST_LIB_DIR%\release" > NUL
+copy release\*.lib "%INST_LIB_DIR%\release" > NUL
+goto install_done
+:install_mingw
+copy *.a "%INST_LIB_DIR%\debug" > NUL
+echo WARNING: I assume you built a debug version of the library, as that
+echo is what you get with MinGW unless you make a special effort.  You
+echo must do a manual install if you make a release version.
+
+:install_done
+echo MySQL++ (%1 version) installed successfully!
+goto end
+
+:error
+echo usage: install [subdir]
+echo.
+echo 	Installs MySQL++ into the given subdirectory of %BASE_DIR%
+
+:end
 

@@ -1,10 +1,10 @@
 /***********************************************************************
- cpool.cpp - Implements the ConnectionPool class.
+ mystring.cpp - Implements the String class.
 
- Copyright (c) 2007-2009 by Educational Technology Resources, Inc. and
- (c) 2007 by Jonathan Wakely.  Others may also hold copyrights on
- code in this file.  See the CREDITS.txt file in the top directory
- of the distribution for details.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2008 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS.txt file
+ in the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -24,199 +24,234 @@
  USA
 ***********************************************************************/
 
-#include "cpool.h"
-
-#include "connection.h"
+#include "mystring.h"
+#include "query.h"
 
 #include <algorithm>
-#include <functional>
+#include <stdexcept>
+#include <string>
 
 namespace mysqlpp {
 
 
-/// \brief Functor to test whether a given ConnectionInfo object is
-/// "too old".
-///
-/// \internal This is a template only because ConnectionInfo is private.
-/// Making it a template means the private type is only used at the point
-/// of instantiation, where it is accessible.
-
-template <typename ConnInfoT>
-class TooOld : std::unary_function<ConnInfoT, bool>
+char
+String::at(size_type pos) const
 {
-public:
+	if (pos >= size()) {
+		throw BadIndex("String", int(pos), int(size()));
+	}
+	else {
+		return buffer_->data()[pos];
+	}
+}
+
+
+int
+String::compare(const String& other) const
+{
+	if (other.buffer_) {
+		return compare(0, std::max(length(), other.length()),
+				other.buffer_->data());
+	}
+	else {
+		// Other object has no buffer, so we are greater unless empty or
+		// we also have no buffer.
+		return length() > 0 ? 1 : 0;	
+	}
+}
+
+
+int
+String::compare(const std::string& other) const
+{
+	return compare(0, std::max(length(), other.length()), other.data());
+}
+
+
+int
+String::compare(size_type pos, size_type num, std::string& other) const
+{
+	return compare(pos, num, other.data());
+}
+
+
+int
+String::compare(const char* other) const
+{
+	return compare(0, std::max(length(), strlen(other)), other);
+}
+
+
+int
+String::compare(size_type pos, size_type num,
+		const char* other) const
+{
+	if (buffer_ && other) {
+		return strncmp(data() + pos, other, num);
+	}
+	else if (!other) {
+		// Initted and non-empty is "greater than" uninitted
+		return length() > 0 ? 1 : 0;
+	}
+	else {
+		// This object has no buffer, so we are less than other object
+		// unless it is empty.
+		return other[0] == '\0' ? 0 : -1;
+	}
+}
+
+
 #if !defined(DOXYGEN_IGNORE)
-	TooOld(unsigned int tmax) :
-	min_age_(time(0) - tmax)
-	{
-	}
+// Doxygen isn't smart enough to recognize these template
+// specializations.  Maybe it's the MYSQLPP_EXPORT tags?
 
-	bool operator()(const ConnInfoT& conn_info) const
-	{
-		return !conn_info.in_use && conn_info.last_used <= min_age_;
-	}
-
-#endif
-private:
-	time_t min_age_;
-};
+template <>
+String
+String::conv(String) const { return *this; }
 
 
+template <>
+bool
+String::conv(bool) const
+{
+	return *this;	// delegate to operator bool
+}
 
-//// clear /////////////////////////////////////////////////////////////
-// Destroy connections in the pool, either all of them (completely
-// draining the pool) or just those not currently in use.  The public
-// method shrink() is an alias for clear(false).
+
+template <>
+std::string
+String::conv(std::string) const
+{
+	return buffer_ ? std::string(data(), length()) : std::string();
+}
+
+
+template <>
+Date
+String::conv(Date) const
+{
+	return buffer_ ? Date(c_str()) : Date();
+}
+
+
+template <>
+DateTime
+String::conv(DateTime) const
+{
+	return buffer_ ? DateTime(c_str()) : DateTime();
+}
+
+
+template <>
+Time
+String::conv(Time) const
+{
+	return buffer_ ? Time(c_str()) : Time();
+}
+
+#endif // !defined(DOXYGEN_IGNORE)
+
+
+const char*
+String::data() const
+{
+	return buffer_ ? buffer_->data() : 0;
+}
+
+
+String::const_iterator
+String::end() const
+{
+	return buffer_ ? buffer_->data() + buffer_->length() : 0;
+}
+
+
+bool
+String::escape_q() const
+{
+	return buffer_ ? buffer_->type().escape_q() : false;
+}
+
+
+bool
+String::is_null() const
+{
+	return buffer_ ? buffer_->is_null() : false;
+}
+
 
 void
-ConnectionPool::clear(bool all)
+String::it_is_null()
 {
-	ScopedLock lock(mutex_);	// ensure we're not interfered with
-
-	PoolIt it = pool_.begin();
-	while (it != pool_.end()) {
-		if (all || !it->in_use) {
-			remove(it++);
-		}
-		else {
-			++it;
-		}
-	}
-}
-
-
-//// exchange //////////////////////////////////////////////////////////
-// Passed connection is defective, so remove it from the pool and return
-// a new one.
-
-Connection*
-ConnectionPool::exchange(const Connection* pc)
-{
-	// Don't grab the mutex first.  remove() and grab() both do.
-	// Inefficient, but we'd have to hoist their contents up into this
-	// method or extract a mutex-free version of each mechanism for
-	// each, both of which are also inefficient.
-	remove(pc);
-	return grab();
-}
-
-
-//// find_mru //////////////////////////////////////////////////////////
-// Find most recently used available connection.  Uses operator< for
-// ConnectionInfo to order pool with MRU connection last.  Returns 0 if
-// there are no connections not in use.
-
-Connection*
-ConnectionPool::find_mru()
-{
-	PoolIt mru = std::max_element(pool_.begin(), pool_.end());
-	if (mru != pool_.end() && !mru->in_use) {
-		mru->in_use = true;
-		return mru->conn;
+	if (buffer_) {
+		buffer_->set_null();
 	}
 	else {
-		return 0;
+		buffer_ = new SQLBuffer(0, 0, mysql_type_info::string_type, true);
 	}
 }
 
 
-//// grab //////////////////////////////////////////////////////////////
-
-Connection*
-ConnectionPool::grab()
+String::size_type
+String::length() const
 {
-	ScopedLock lock(mutex_);	// ensure we're not interfered with
-	remove_old_connections();
-	if (Connection* mru = find_mru()) {
-		return mru;
+	return buffer_ ? buffer_->length() : 0;
+}
+
+
+bool
+String::quote_q() const
+{
+	// If no buffer, it means we're an empty string, so we need to be 
+	// quoted to be expressed properly in SQL.
+	return buffer_ ? buffer_->type().quote_q() : true;
+}
+
+
+void
+String::to_string(std::string& s) const
+{
+	if (buffer_) {
+		s.assign(buffer_->data(), buffer_->length());
 	}
 	else {
-		// No free connections, so create and return a new one.
-		pool_.push_back(ConnectionInfo(create()));
-		return pool_.back().conn;
+		s.clear();
 	}
 }
 
 
-//// release ///////////////////////////////////////////////////////////
+/// \brief Stream insertion operator for String objects
+///
+/// This doesn't have anything to do with the automatic quoting and
+/// escaping you get when using SQLTypeAdapter with Query.  The need to
+/// use String with Query should be rare, since String generally comes
+/// in result sets; it should only go back out as queries when using
+/// result data in a new query.  Since SQLTypeAdapter has a conversion
+/// ctor for String, this shouldn't be a problem.  It's just trading
+/// simplicity for a tiny bit of inefficiency in a rare case.  And 
+/// since String and SQLTypeAdapter can share a buffer, it's not all
+/// that inefficient anyway.
 
-void
-ConnectionPool::release(const Connection* pc)
+std::ostream&
+operator <<(std::ostream& o, const String& in)
 {
-	ScopedLock lock(mutex_);	// ensure we're not interfered with
-
-	for (PoolIt it = pool_.begin(); it != pool_.end(); ++it) {
-		if (it->conn == pc) {
-			it->in_use = false;
-			it->last_used = time(0);
-			break;
-		}
+	if (dynamic_cast<Query*>(&o)) {
+		// We can just insert the raw data into the stream
+		o.write(in.data(), in.length());
 	}
-}
-
-
-//// remove ////////////////////////////////////////////////////////////
-// 2 versions:
-//
-// First takes a Connection pointer, finds it in the pool, and calls
-// the second.  It's public, because Connection pointers are all
-// outsiders see of the pool.
-//
-// Second takes an iterator into the pool, destroys the referenced
-// connection and removes it from the pool.  This is only a utility
-// function for use by other class internals.
-
-void
-ConnectionPool::remove(const Connection* pc)
-{
-	ScopedLock lock(mutex_);	// ensure we're not interfered with
-
-	for (PoolIt it = pool_.begin(); it != pool_.end(); ++it) {
-		if (it->conn == pc) {
-			remove(it);
-			return;
-		}
+	else {
+		// Can't guess what sort of stream it is, so convert the String
+		// to a std::string so we can use the formatted output method.
+		// To see why this is necessary, change it to use write() only
+		// (unformatted output) and then run simple2: notice that the
+		// columnar output formatting is wrecked.
+		std::string temp;
+		in.to_string(temp);
+		o << temp;
 	}
+	return o;
 }
 
-void
-ConnectionPool::remove(const PoolIt& it)
-{
-	// Don't grab the mutex.  Only called from other functions that do
-	// grab it.
-	destroy(it->conn);
-	pool_.erase(it);
-}
-
-
-//// remove_old_connections ////////////////////////////////////////////
-// Remove connections that were last used too long ago.
-
-void
-ConnectionPool::remove_old_connections()
-{
-	TooOld<ConnectionInfo> too_old(max_idle_time());
-
-	PoolIt it = pool_.begin();
-	while ((it = std::find_if(it, pool_.end(), too_old)) != pool_.end()) {
-		remove(it++);
-	}
-}
-
-
-//// safe_grab /////////////////////////////////////////////////////////
-
-Connection*
-ConnectionPool::safe_grab()
-{
-	Connection* pc;
-	while (!(pc = grab())->ping()) {
-		remove(pc);
-		pc = 0;
-	}
-	return pc;
-}
 
 
 } // end namespace mysqlpp
-

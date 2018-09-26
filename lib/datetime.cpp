@@ -1,11 +1,13 @@
 /***********************************************************************
- datetime.cpp - Implements date and time classes compatible with MySQL's
-	various date and time column types.
+ beemutex.cpp - Implements the BeecryptMutex class.  The name comes
+	from the fact that we lifted this essentially intact from the
+	Beecrypt library, which is also LGPL.  See beecrypt.h for the list
+	of changes we made on integrating it into MySQL++.
 
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2008 by Educational Technology Resources, Inc.  Others may
- also hold copyrights on code in this file.  See the CREDITS.txt file
- in the top directory of the distribution for details.
+ Copyright (c) 2004 Beeyond Software Holding BV and (c) 2007 by
+ Educational Technology Resources, Inc.  Others may also hold
+ copyrights on code in this file.  See the CREDITS.txt file in the
+ top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -26,297 +28,155 @@
 ***********************************************************************/
 
 #define MYSQLPP_NOT_HEADER
+#include "beemutex.h"
+
 #include "common.h"
 
-#include "datetime.h"
-#include "stream2string.h"
+#include <errno.h>
+#include <string.h>
 
-#include <iomanip>
-
-#include <stdlib.h>
-#include <time.h>
-
-using namespace std;
 
 namespace mysqlpp {
 
-static void
-safe_localtime(struct tm* ptm, const time_t t)
-{
-#if defined(MYSQLPP_HAVE_LOCALTIME_S)
-	// common.h detected localtime_s() from native RTL of VC++ 2005 and up
-	localtime_s(ptm, &t);
-#elif defined(HAVE_LOCALTIME_R)
-	// autoconf detected POSIX's localtime_r() on this system
-	localtime_r(&t, ptm);
+#define ACTUALLY_DOES_SOMETHING
+#if defined(HAVE_PTHREAD)
+	typedef pthread_mutex_t bc_mutex_t;
+#elif defined(HAVE_SYNCH_H)
+#	include <synch.h>
+	typedef mutex_t bc_mutex_t;
+#elif defined(MYSQLPP_PLATFORM_WINDOWS)
+	typedef HANDLE bc_mutex_t;
 #else
-	// No explicitly thread-safe localtime() replacement found.  This
-	// may still be thread-safe, as some C libraries take special steps
-	// within localtime() to get thread safety, such as TLS.
-	memcpy(ptm, localtime(&t), sizeof(tm));
+// No supported mutex type found, so class becomes a no-op.
+#	undef ACTUALLY_DOES_SOMETHING
+#endif
+
+#if defined(ACTUALLY_DOES_SOMETHING)
+	static bc_mutex_t* impl_ptr(void* p)
+			{ return static_cast<bc_mutex_t*>(p); }
+#	if defined(MYSQLPP_PLATFORM_WINDOWS)
+		static bc_mutex_t impl_val(void* p)
+				{ return *static_cast<bc_mutex_t*>(p); }
+#	endif
+#endif
+
+
+BeecryptMutex::BeecryptMutex() throw (MutexFailed)
+#if defined(ACTUALLY_DOES_SOMETHING)
+	: pmutex_(new bc_mutex_t)
+#endif
+{
+#if defined(MYSQLPP_PLATFORM_WINDOWS)
+	*impl_ptr(pmutex_) = CreateMutex((LPSECURITY_ATTRIBUTES) 0, FALSE,
+			(LPCTSTR) 0);
+	if (!impl_val(pmutex_))
+		throw MutexFailed("CreateMutex failed");
+#else
+#	if HAVE_SYNCH_H || HAVE_PTHREAD
+	register int rc;
+#	endif
+#	if HAVE_PTHREAD
+		if ((rc = pthread_mutex_init(impl_ptr(pmutex_), 0)))
+			throw MutexFailed(strerror(rc));
+#	elif HAVE_SYNCH_H
+		if ((rc = mutex_init(impl_ptr(pmutex_), USYNC_THREAD, 0)))
+			throw MutexFailed(strerror(rc));
+#	endif
 #endif
 }
 
 
-std::ostream& operator <<(std::ostream& os, const Date& d)
+BeecryptMutex::~BeecryptMutex()
 {
-	char fill = os.fill('0');
-	ios::fmtflags flags = os.setf(ios::right);
-	os		<< setw(4) << d.year() << '-'
-			<< setw(2) << static_cast<int>(d.month()) << '-'
-			<< setw(2) << static_cast<int>(d.day());
-	os.flags(flags);
-	os.fill(fill);
-	return os;
+#if defined(ACTUALLY_DOES_SOMETHING)
+#	if defined(MYSQLPP_PLATFORM_WINDOWS)
+		CloseHandle(impl_val(pmutex_));
+#	elif HAVE_PTHREAD
+		pthread_mutex_destroy(impl_ptr(pmutex_));
+#	elif HAVE_SYNCH_H
+		mutex_destroy(impl_ptr(pmutex_));
+#	endif
+
+	delete impl_ptr(pmutex_);
+#endif
 }
 
 
-std::ostream& operator <<(std::ostream& os, const Time& t)
+void
+BeecryptMutex::lock() throw (MutexFailed)
 {
-	char fill = os.fill('0');
-	ios::fmtflags flags = os.setf(ios::right);
-	os		<< setw(2) << static_cast<int>(t.hour()) << ':'
-			<< setw(2) << static_cast<int>(t.minute()) << ':'
-			<< setw(2) << static_cast<int>(t.second());
-	os.flags(flags);
-	os.fill(fill);
-	return os;
+#if defined(MYSQLPP_PLATFORM_WINDOWS)
+	if (WaitForSingleObject(impl_val(pmutex_), INFINITE) == WAIT_OBJECT_0)
+		return;
+	throw MutexFailed("WaitForSingleObject failed");
+#else
+#	if HAVE_SYNCH_H || HAVE_PTHREAD
+	register int rc;
+#	endif
+#	if HAVE_PTHREAD
+		if ((rc = pthread_mutex_lock(impl_ptr(pmutex_))))
+			throw MutexFailed(strerror(rc));
+#	elif HAVE_SYNCH_H
+		if ((rc = mutex_lock(impl_ptr(pmutex_))))
+			throw MutexFailed(strerror(rc));
+#	endif
+#endif
 }
 
 
-std::ostream& operator <<(std::ostream& os, const DateTime& dt)
+bool
+BeecryptMutex::trylock() throw (MutexFailed)
 {
-	if (dt.is_now()) {
-		return os << "NOW()";
-	}
-	else {
-		operator <<(os, Date(dt));
-		os << ' ';
-		return operator <<(os, Time(dt));
-	}
-}
-
-
-Date::Date(time_t t)
-{
-	struct tm tm;
-	safe_localtime(&tm, t);
-
-	year_ = tm.tm_year + 1900;
-	month_ = tm.tm_mon + 1;
-	day_ = tm.tm_mday;
-}
-
-
-DateTime::DateTime(time_t t)
-{
-	struct tm tm;
-	safe_localtime(&tm, t);
-
-	year_ = tm.tm_year + 1900;
-	month_ = tm.tm_mon + 1;
-	day_ = tm.tm_mday;
-	hour_ = tm.tm_hour;
-	minute_ = tm.tm_min;
-	second_ = tm.tm_sec;
-
-	now_ = false;
-}
-
-
-Time::Time(time_t t)
-{
-	struct tm tm;
-	safe_localtime(&tm, t);
-
-	hour_ = tm.tm_hour;
-	minute_ = tm.tm_min;
-	second_ = tm.tm_sec;
-}
-
-
-const char*
-Date::convert(const char* str)
-{
-	char num[5];
-
-	num[0] = *str++;
-	num[1] = *str++;
-	num[2] = *str++;
-	num[3] = *str++;
-	num[4] = 0;
-	year_ = static_cast<unsigned short>(strtol(num, 0, 10));
-	if (*str == '-') str++;
-
-	num[0] = *str++;
-	num[1] = *str++;
-	num[2] = 0;
-	month_ = static_cast<unsigned char>(strtol(num, 0, 10));
-	if (*str == '-') str++;
-
-	num[0] = *str++;
-	num[1] = *str++;
-	num[2] = 0;
-	day_ = static_cast<unsigned char>(strtol(num, 0, 10));
-
-	return str;
-}
-
-
-const char*
-Time::convert(const char* str)
-{
-	char num[5];
-
-	num[0] = *str++;
-	num[1] = *str++;
-	num[2] = 0;
-	hour_ = static_cast<unsigned char>(strtol(num,0,10));
-	if (*str == ':') str++;
-
-	num[0] = *str++;
-	num[1] = *str++;
-	num[2] = 0;
-	minute_ = static_cast<unsigned char>(strtol(num,0,10));
-	if (*str == ':') str++;
-
-	num[0] = *str++;
-	num[1] = *str++;
-	num[2] = 0;
-	second_ = static_cast<unsigned char>(strtol(num,0,10));
-
-	return str;
-}
-
-
-const char*
-DateTime::convert(const char* str)
-{
-	Date d;
-	str = d.convert(str);
-	year_ = d.year();
-	month_ = d.month();
-	day_ = d.day();
-	
-	if (*str == ' ') ++str;
-
-	Time t;
-	str = t.convert(str);
-	hour_ = t.hour();
-	minute_ = t.minute();
-	second_ = t.second();
-
-	now_ = false;
-	
-	return str;
-}
-
-
-int
-Date::compare(const Date& other) const
-{
-	if (year_ != other.year_) return year_ - other.year_;
-	if (month_ != other.month_) return month_ - other.month_;
-	return day_ - other.day_;
-}
-
-
-int
-Time::compare(const Time& other) const
-{
-	if (hour_ != other.hour_) return hour_ - other.hour_;
-	if (minute_ != other.minute_) return minute_ - other.minute_;
-	return second_ - other.second_;
-}
-
-
-int
-DateTime::compare(const DateTime& other) const
-{
-	if (now_ && other.now_) {
-		return 0;
-	}
-	else {
-		Date d(*this), od(other);
-		Time t(*this), ot(other);
-
-		if (int x = d.compare(od)) {
-			return x;
+#if defined(ACTUALLY_DOES_SOMETHING)
+#	if defined(MYSQLPP_PLATFORM_WINDOWS)
+		switch (WaitForSingleObject(impl_val(pmutex_), 0)) {
+			case WAIT_TIMEOUT:
+				return false;
+			case WAIT_OBJECT_0:
+				return true;
+			default:
+				throw MutexFailed("WaitForSingleObbject failed");
 		}
-		else {
-			return t.compare(ot);
-		}
-	}
+#	else
+		register int rc;
+#		if HAVE_PTHREAD
+			if ((rc = pthread_mutex_trylock(impl_ptr(pmutex_))) == 0)
+				return true;
+			if (rc == EBUSY)
+				return false;
+			throw MutexFailed(strerror(rc));
+#		elif HAVE_SYNCH_H
+			if ((rc = mutex_trylock(impl_ptr(pmutex_))) == 0)
+				return true;
+			if (rc == EBUSY)
+				return false;
+			throw MutexFailed(strerror(rc));
+#		endif
+#	endif
+#else
+	return true;		// no-op build, so always succeed
+#endif
 }
 
 
-Date::operator std::string() const
+void
+BeecryptMutex::unlock() throw (MutexFailed)
 {
-	return stream2string(*this);
-}
-
-
-DateTime::operator std::string() const
-{
-	return stream2string(*this);
-}
-
-
-Time::operator std::string() const
-{
-	return stream2string(*this);
-}
-
-
-Date::operator time_t() const
-{
-	struct tm tm;
-	safe_localtime(&tm, time(0));
-
-	tm.tm_mday = day_;
-	tm.tm_mon = month_ - 1;
-	tm.tm_year = year_ - 1900;
-	tm.tm_isdst = -1;
-
-	return mktime(&tm);
-}
-
-
-DateTime::operator time_t() const
-{
-	if (now_) {
-		// Many factors combine to make it almost impossible for this
-		// case to return the same value as you'd get if you used this
-		// in a query.  But, you gotta better idea than to return the
-		// current time for an object initialized with the value "now"?
-		return time(0);
-	}
-	else {
-		struct tm tm;
-		tm.tm_sec = second_;
-		tm.tm_min = minute_;
-		tm.tm_hour = hour_;
-		tm.tm_mday = day_;
-		tm.tm_mon = month_ - 1;
-		tm.tm_year = year_ - 1900;
-		tm.tm_isdst = -1;
-
-		return mktime(&tm);
-	}
-}
-
-
-Time::operator time_t() const
-{
-	struct tm tm;
-	safe_localtime(&tm, time(0));
-
-	tm.tm_sec = second_;
-	tm.tm_min = minute_;
-	tm.tm_hour = hour_;
-	tm.tm_isdst = -1;
-
-	return mktime(&tm);
+#if defined(MYSQLPP_PLATFORM_WINDOWS)
+	if (!ReleaseMutex(impl_val(pmutex_)))
+		throw MutexFailed("ReleaseMutex failed");
+#else
+#	if HAVE_SYNCH_H || HAVE_PTHREAD
+		register int rc;
+#	endif
+#	if HAVE_PTHREAD
+		if ((rc = pthread_mutex_unlock(impl_ptr(pmutex_))))
+			throw MutexFailed(strerror(rc));
+#	elif HAVE_SYNCH_H
+		if ((rc = mutex_unlock(impl_ptr(pmutex_))))
+			throw MutexFailed(strerror(rc));
+#	endif
+#endif
 }
 
 } // end namespace mysqlpp

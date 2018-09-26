@@ -1,55 +1,81 @@
-dnl @synopsis STL_SLIST_EXTENSION
-dnl 
-dnl This macro determines whether the local STL implementation includes
-dnl a singly-linked list template, slist, and if so, where it is.
-dnl
-dnl @version 1.2, 2005/07/22
-dnl @author Warren Young <mysqlpp@etr-usa.com>
-AC_DEFUN([STL_SLIST_EXTENSION],
-[
-	AC_MSG_CHECKING([for STL slist extension])
+The user manual is written in XML DocBook format, version 4.2. We
+restrict ourselves to Simplified DocBook 1.1 as much as possible.
+(Why these versions? They're the newest supported on the oldest system
+I still use, Red Hat Linux 9.)
 
-	AC_COMPILE_IFELSE(
-		[AC_LANG_PROGRAM(
-			[#include <slist>],
-			[slist<int> l])],
-		AC_DEFINE(HAVE_GLOBAL_SLIST, 1,
-			[ Define if you have ::slist container in <slist> ]),
-		TRY_NEXT=yes)
+If you're looking to hack on the manual, here are some helpful resources
+for getting up to speed on DocBook:
 
-	if test -z "$TRY_NEXT"
-	then
-		SLIST_LOC="<slist>, global scope"
-	else
-		TRY_NEXT=""
-		AC_COMPILE_IFELSE(
-			[AC_LANG_PROGRAM(
-				[#include <slist>],
-				[std::slist<int> l])],
-			AC_DEFINE(HAVE_STD_SLIST, 1,
-				[ Define if you have std::slist container in <slist> ]),
-			TRY_NEXT=yes)
 
-		if test -z "$TRY_NEXT"
-		then
-			SLIST_LOC="<slist>, namespace std"
-		else
-			TRY_NEXT=""
-			AC_COMPILE_IFELSE(
-				[AC_LANG_PROGRAM(
-					[#include <ext/slist>],
-					[__gnu_cxx::slist<int> l])],
-				AC_DEFINE(HAVE_EXT_SLIST, 1,
-					[ Define if you have __gnu_cxx:slist container in <ext/slist> ]),
-				SLIST_LOC="not found")
+Mills' "Installing And Using An XML/SGML DocBook Editing Suite" article:
 
-			if test -z "$SLIST_LOC"
-			then
-				SLIST_LOC="<ext/slist>, namespace __gnu_cxx"
-			fi
-		fi
-	fi
+	http://supportweb.cs.bham.ac.uk/documentation/tutorials/docsystem/build/tutorials/docbooksys/docbooksys.html
 
-	AC_MSG_RESULT([$SLIST_LOC])
-]) dnl STL_SLIST_EXTENSION
+	This is the best tutorial I've found.
+	
+
+Walsh and Muellner's _Simplified DocBook: The Definitive Guide_ book:
+
+	http://www.docbook.org/tdg/simple/en/html/sdocbook.html
+
+	This is the most accessible reference.
+
+
+Walsh and Muellner's _DocBook: The Definitive Guide_ book, second
+edition, online version:
+
+	http://www.docbook.org/tdg/en/html/docbook.html
+
+	This is the official DocBook referece; the "Simplified" guide is a
+	subset of this book.
+
+
+DocBook FAQ:
+
+	http://www.dpawson.co.uk/docbook/
+
+	Go here when you have a question that the tutorials and references
+	do not answer.
+
+
+xsltproc:
+
+	http://xmlsoft.org/XSLT/
+
+	This is the XSL processor that takes the DocBook file and an XSL
+	stylesheet and produces either HTML or XSL+FO. (The latter is an
+	intermediate step towards any of several print-oriented formats,
+	such as PDF or TeX.) If your system has GNOME on it, you probably
+	have this installed already.
+
+	You will also need the standard set of DocBook style sheets.  On
+	Red Hat Linux and Fedora Core, these are in the docbook-style-xsl
+	package.
+
+
+FOP:
+
+	http://xml.apache.org/fop/
+
+	This is the XSL+FO document processor we use to build the PDF
+	files. ('make pdf')
+
+	If for some reason you have trouble getting FOP working, there's
+	an alternate method available as 'make oldpdf' which uses xsltproc
+	and pdfxmltex. It produces a pretty ugly PDF, but you probaly
+	already have the tools installed, if you have any of them at all.
+	pdfxmltex is in the xmltex package on Fedora Core 3.
+
+	If neither of those work for you, you could use the OpenJade
+	tool chain instead. (http://openjade.org/) This is SGML DocBook
+	rather than the more modern XML DocBook I favor, but the only
+	XML-specific thing we are using is local XSL stylesheets. You
+	could ignore them and use the standard DSSSL stylesheets
+	instead. I avoid the SGML tool chain only because I've had
+	trouble with it in the past.
+
+
+The official DocBook site:
+
+	http://docbook.org/
 

@@ -1,105 +1,79 @@
-#!/bin/bash
+/***********************************************************************
+ test/qstream.cpp - Tests insertion of all officially-supported data
+	types into a Query stream, plus some that aren't official.  Failure
+	is defined as an exception being thrown for any one of these.
 
-TMP=`mktemp bmXXXXXX`
+ Copyright (c) 2008 by Educational Technology Resources, Inc.
+ Others may also hold copyrights on code in this file.  See the
+ CREDITS.txt file in the top directory of the distribution for details.
 
-# Run simple unit tests first.
-typeset -i count=0
-echo -n 'Running unit tests:'
-for t in test_*
-do
-	if [ -x "$t" ]
-	then
-		errmsg=`./exrun "$t" 2>&1`
-		errno=$?
-		if [ "$errno" = 0 ]
-		then
-			count=count+1
-		else
-			rm -f $TMP
-			echo " $t FAILED ($errno)"
-			echo
-			echo "$errmsg"
-			exit $?
-		fi
-	fi
-done
-echo " $count tests succeeded"
-echo 'All unit tests passed' >> $TMP
+ This file is part of MySQL++.
 
-# Assume AUTO_INCREMENT id column in images table will get 1 in
-# load_jpeg call below, since we reset the DB before doing it.
-export QUERY_STRING=id=1
+ MySQL++ is free software; you can redistribute it and/or modify it
+ under the terms of the GNU Lesser General Public License as published
+ by the Free Software Foundation; either version 2.1 of the License, or
+ (at your option) any later version.
 
-# Now run examples to test high-level behavior.  The repeated use of
-# resetdb is intentional!  It's run after each example that changes
-# the database in a way that will cause a subsequent example to fail
-# because data it expects isn't present.
-echo -n 'Running examples:'
-for t in \
-	resetdb simple[0-9] store_if for_each multiquery tquery1 \
-	resetdb tquery[2-9] \
-	resetdb ssqls[0-9] \
-	load_jpeg cgi_jpeg
-do
-	if [ -x $t ]
-	then
-		if [ "$t" = "resetdb" ]
-		then
-			echo
-			echo -n "   "
-		fi
-	
-		echo -n "$t "
-		echo "---------------- BEGIN $t OUTPUT ----------------" >> $TMP
-		if ! ./exrun $t -D $* >> $TMP
-		then
-			echo
-			echo 'TESTING ABORTED.'
-			rm -f $TMP
-			exit $?
-		fi
-		echo "================ END $t OUTPUT ================" >> $TMP
-		echo >> $TMP
-	fi
-done
-echo
+ MySQL++ is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+ License for more details.
 
-# Test ssqlsxlat -o.  Note that it suppresses stdout but keeps stderr
-# so warnings about directives and line elements it doesn't understand
-# aren't suppressed.  We run the first pass's output back through
-# ssqlsxlat to deal with comments, whitespace differences, line element
-# ordering, boolean value and type canonicalization, and other niggly
-# differences we really don't care about.  diff -w isn't enough.
-for f in {examples,test}/*.ssqls
-do
-	echo -n "Testing ssqlsxlat -i $f -o..."
-	echo "--- BEGIN ssqlsxlat -i $f -o ERROR OUTPUT ---" >> $TMP
-	pass1=/tmp/dtest-ssxgv2-pass1-$bnf
-	pass2=/tmp/dtest-ssxgv2-pass2-$bnf
-	echo -n "pass 1"
-	./exrun ssqlsxlat -i $f -o $pass1 > /dev/null 2>> $TMP
-	echo -n ", pass 2"
-	./exrun ssqlsxlat -i $pass1 -o $pass2 > /dev/null 2>> $TMP
-	echo -n ", diff"
-	diff $pass1 $pass2 > /dev/null >> $TMP
-	echo "==== END ssqlsxlat -i $f -o ERROR OUTPUT ====" >> $TMP
-	echo
-done
+ You should have received a copy of the GNU Lesser General Public
+ License along with MySQL++; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
+ USA
+***********************************************************************/
 
-# Check for any changes
-BFILE=bmark.txt
-if [ -f $BFILE ]
-then
-	if diff -u -w $BFILE $TMP
-	then
-		echo
-		echo 'All tests passed.'
-	fi
-	rm -f $TMP
-else
-	mv $TMP $BFILE
-	chmod -w $BFILE
-	echo
-	echo 'BENCHMARK FILE REGENERATED.'
-	echo
-fi
+#include <mysql++.h>
+
+#include <iostream>
+
+using namespace mysqlpp;
+
+int
+main()
+{
+	try {
+		// If you're reading this for implicit recommendations of good
+		// code style, please ignore the hack-job on the following line.
+		mysqlpp::Query q = mysqlpp::Connection().query();
+
+		// Throw everything we can think of at Query's stream interface.
+		// Don't do this in real code, either.
+		q << 	sql_tinyint(0) << sql_tinyint_unsigned(0) <<
+				sql_smallint(0) << sql_smallint_unsigned(0) <<
+				sql_mediumint(0) << sql_mediumint_unsigned(0) <<
+				sql_int(0) << sql_int_unsigned(0) << long(0) <<
+				sql_bigint(0) << sql_bigint_unsigned(0) << longlong(0) <<
+				sql_int1(0) << sql_int2(0) << sql_int3(0) <<
+				sql_int4(0) << sql_int8(0) << sql_middleint(0) <<
+				sql_float(0) << sql_double(0) << sql_decimal(0) <<
+				sql_numeric(0) <<
+				sql_fixed(0) << sql_float4(0) << sql_float8(0) <<
+				sql_bool(false) << sql_boolean(false) << bool(false) <<
+				sql_enum() <<
+				sql_char() << sql_varchar() << sql_long_varchar() <<
+				sql_character_varying() << sql_long() <<
+				sql_tinytext() << sql_text() <<
+				sql_mediumtext() << sql_longtext() <<
+				sql_blob() << sql_tinyblob() << sql_mediumblob() <<
+				sql_longblob() << sql_long_varbinary() <<
+				sql_date() << sql_time() << sql_datetime() <<
+				sql_timestamp() <<
+				sql_set();
+		std::cout << q << std::endl;
+		return 0;
+	}
+	catch (const mysqlpp::TypeLookupFailed& e) {
+		std::cerr << "Query stream insert failed: " << e.what() <<
+				std::endl;
+		return 1;
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Unexpected exception: " << e.what() <<
+				std::endl;
+		return 1;
+	}
+}
+

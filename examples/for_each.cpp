@@ -1,11 +1,11 @@
 /***********************************************************************
- for_each.cpp - Demonstrates Query::for_each(), showing how to perform
-	an arbitrary action on each row in a result set.
+ printdata.h - Declares utility routines for printing out data in
+	common forms, used by most of the example programs.
 
- Copyright (c) 2005-2009 by Educational Technology Resources, Inc. and
- (c) 2007 by Switchplane, Ltd.  Others may also hold copyrights on
- code in this file.  See the CREDITS.txt file in the top directory
- of the distribution for details.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS.txt file
+ in the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -25,85 +25,18 @@
  USA
 ***********************************************************************/
 
-#include "cmdline.h"
-#include "printdata.h"
-#include "stock.h"
+#if !defined(MYSQLPP_PRINTDATA_H)
+#define MYSQLPP_PRINTDATA_H
 
 #include <mysql++.h>
 
-#include <iostream>
+void print_stock_header(size_t rows);
+void print_stock_row(const mysqlpp::Row& r);
+void print_stock_row(const mysqlpp::sql_char& item,
+		mysqlpp::sql_bigint num, mysqlpp::sql_double weight,
+		mysqlpp::sql_decimal_null price, const mysqlpp::sql_date& date);
+void print_stock_rows(mysqlpp::StoreQueryResult& res);
+void print_stock_table(mysqlpp::Query& query);
 
-#include <math.h>
+#endif // !defined(MYSQLPP_PRINTDATA_H)
 
-
-// Define a functor to collect statistics about the stock table
-class gather_stock_stats
-{
-public:
-	gather_stock_stats() :
-	items_(0),
-	weight_(0),
-	cost_(0)
-	{
-	}
-
-	void operator()(const stock& s)
-	{
-		items_  += s.num;
-		weight_ += (s.num * s.weight);
-		cost_   += (s.num * s.price.data);
-	}
-	
-private:
-	mysqlpp::sql_bigint items_;
-	mysqlpp::sql_double weight_, cost_;
-
-	friend std::ostream& operator<<(std::ostream& os,
-			const gather_stock_stats& ss);
-};
-
-
-// Dump the contents of gather_stock_stats to a stream in human-readable
-// form.
-std::ostream&
-operator<<(std::ostream& os, const gather_stock_stats& ss)
-{
-	os << ss.items_ << " items " <<
-			"weighing " << ss.weight_ << " stone and " <<
-			"costing " << ss.cost_ << " cowrie shells";
-	return os;
-}
-
-
-int
-main(int argc, char *argv[])
-{
-	// Get database access parameters from command line
-	mysqlpp::examples::CommandLine cmdline(argc, argv);
-	if (!cmdline) {
-		return 1;
-	}
-
-	try {
-		// Establish the connection to the database server.
-		mysqlpp::Connection con(mysqlpp::examples::db_name,
-				cmdline.server(), cmdline.user(), cmdline.pass());
-
-		// Gather and display the stats for the entire stock table
-		mysqlpp::Query query = con.query();
-		std::cout << "There are " << query.for_each(stock(),
-				gather_stock_stats()) << '.' << std::endl;
-	}
-	catch (const mysqlpp::BadQuery& e) {
-		// Something went wrong with the SQL query.
-		std::cerr << "Query failed: " << e.what() << std::endl;
-		return 1;
-	}
-	catch (const mysqlpp::Exception& er) {
-		// Catch-all for any other MySQL++ exceptions
-		std::cerr << "Error: " << er.what() << std::endl;
-		return 1;
-	}
-
-	return 0;
-}

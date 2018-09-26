@@ -1,10 +1,10 @@
 /***********************************************************************
- mfc_dlg.cpp - Defines the dialog box behavior for the MySQL++ MFC
-	example.
+ type_info.cpp - Implements the mysql_type_info class.
 
- Copyright (c) 2007 by Educational Technology Resources, Inc.  Others 
- may also hold copyrights on code in this file.  See the CREDITS.txt
- file in the top directory of the distribution for details.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS.txt file
+ in the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -24,251 +24,244 @@
  USA
 ***********************************************************************/
 
-#include "stdafx.h"
-#include "mfc_dlg.h"
+#include "common.h"
+#include "type_info.h"
 
-#include <mysql++.h>
+#include "datetime.h"
+#include "myset.h"
+#include "sql_types.h"
 
-BEGIN_MESSAGE_MAP(CExampleDlg, CDialog)
-	ON_BN_CLICKED(IDC_CONNECT_BUTTON, &CExampleDlg::OnBnClickedConnectButton)
-END_MESSAGE_MAP()
+#include <mysql.h>
 
+#include <string>
 
-//// ctor //////////////////////////////////////////////////////////////
+using namespace std;
 
-CExampleDlg::CExampleDlg(CWnd* pParent) :
-CDialog(IDD_MFC_DIALOG, pParent)
+namespace mysqlpp {
+
+// This table maps C++ type information to SQL type information.  As you
+// can see, it's intimately tied in with MySQL's type constants, thus the
+// name.  Unlike in earlier versions of MySQL++, this table is the only
+// place with such a dependency.  Everything else abstracts MySQL's
+// type system away by bouncing things through this table.
+//
+// The second half of the table parallels the first, to handle null-able
+// versions of the types in the first half.  This is required because
+// SQL's 'null' concept does not map neatly into the C++ type system, so
+// null-able versions of these types have to have a different C++ type,
+// implemented using the Null template.  See null.h for further details.
+//
+// Types with tf_default set are added to a lookup map in the
+// mysql_type_info_lookup class in order to provide reverse lookup
+// of C++ types to SQL types.  If you take the subset of all items
+// marked as default, the typeid() of each item must be unique.
+const mysql_type_info::sql_type_info mysql_type_info::types[] = {
+	sql_type_info("DECIMAL NOT NULL", typeid(sql_decimal),
+#if MYSQL_VERSION_ID >= 50001
+			MYSQL_TYPE_NEWDECIMAL
+#else
+			MYSQL_TYPE_DECIMAL
+#endif
+			),
+	sql_type_info("TINYINT NOT NULL", typeid(sql_tinyint),
+			MYSQL_TYPE_TINY, mysql_ti_sql_type_info::tf_default),
+	sql_type_info("TINYINT UNSIGNED NOT NULL", typeid(sql_tinyint_unsigned),
+			MYSQL_TYPE_TINY, mysql_ti_sql_type_info::tf_default |
+			mysql_ti_sql_type_info::tf_unsigned),
+	sql_type_info("SMALLINT NOT NULL", typeid(sql_smallint),
+			MYSQL_TYPE_SHORT, mysql_ti_sql_type_info::tf_default),
+	sql_type_info("SMALLINT UNSIGNED NOT NULL", typeid(sql_smallint_unsigned),
+			MYSQL_TYPE_SHORT, mysql_ti_sql_type_info::tf_default |
+			mysql_ti_sql_type_info::tf_unsigned),
+	sql_type_info("INT NOT NULL", typeid(sql_int),
+			MYSQL_TYPE_LONG, mysql_ti_sql_type_info::tf_default),
+	sql_type_info("INT UNSIGNED NOT NULL", typeid(sql_int_unsigned),
+			MYSQL_TYPE_LONG, mysql_ti_sql_type_info::tf_default |
+			mysql_ti_sql_type_info::tf_unsigned),
+	sql_type_info("FLOAT NOT NULL", typeid(sql_float),
+			MYSQL_TYPE_FLOAT, mysql_ti_sql_type_info::tf_default),
+	sql_type_info("DOUBLE NOT NULL", typeid(sql_double),
+			MYSQL_TYPE_DOUBLE, mysql_ti_sql_type_info::tf_default),
+	sql_type_info("NULL NOT NULL", typeid(void),
+			MYSQL_TYPE_NULL, mysql_ti_sql_type_info::tf_default),
+	sql_type_info("TIMESTAMP NOT NULL", typeid(sql_timestamp),
+			MYSQL_TYPE_TIMESTAMP),
+	sql_type_info("BIGINT NOT NULL", typeid(sql_bigint),
+			MYSQL_TYPE_LONGLONG, mysql_ti_sql_type_info::tf_default),
+	sql_type_info("BIGINT UNSIGNED NOT NULL", typeid(sql_bigint_unsigned),
+			MYSQL_TYPE_LONGLONG, mysql_ti_sql_type_info::tf_default |
+			mysql_ti_sql_type_info::tf_unsigned),
+	sql_type_info("MEDIUMINT NOT NULL", typeid(sql_mediumint),
+			MYSQL_TYPE_INT24, mysql_ti_sql_type_info::tf_unsigned),
+	sql_type_info("MEDIUMINT UNSIGNED NOT NULL", typeid(sql_mediumint_unsigned),
+			MYSQL_TYPE_INT24, mysql_ti_sql_type_info::tf_unsigned),
+	sql_type_info("DATE NOT NULL", typeid(sql_date),
+			MYSQL_TYPE_DATE, mysql_ti_sql_type_info::tf_default),
+	sql_type_info("TIME NOT NULL", typeid(sql_time),
+			MYSQL_TYPE_TIME, mysql_ti_sql_type_info::tf_default),
+	sql_type_info("DATETIME NOT NULL", typeid(sql_datetime),
+			MYSQL_TYPE_DATETIME, mysql_ti_sql_type_info::tf_default),
+	sql_type_info("ENUM NOT NULL", typeid(sql_enum),
+			MYSQL_TYPE_ENUM, mysql_ti_sql_type_info::tf_default),
+	sql_type_info("SET NOT NULL", typeid(sql_set),
+			MYSQL_TYPE_SET, mysql_ti_sql_type_info::tf_default),
+	sql_type_info("TINYBLOB NOT NULL", typeid(sql_tinyblob),
+			MYSQL_TYPE_TINY_BLOB),
+	sql_type_info("MEDIUMBLOB NOT NULL", typeid(sql_mediumblob),
+			MYSQL_TYPE_MEDIUM_BLOB),
+	sql_type_info("LONGBLOB NOT NULL", typeid(sql_longblob),
+			MYSQL_TYPE_LONG_BLOB),
+	sql_type_info("BLOB NOT NULL", typeid(sql_blob),
+			MYSQL_TYPE_BLOB, mysql_ti_sql_type_info::tf_default),
+	sql_type_info("VARCHAR NOT NULL", typeid(sql_varchar),
+			MYSQL_TYPE_VAR_STRING, mysql_ti_sql_type_info::tf_default),
+	sql_type_info("CHAR NOT NULL", typeid(sql_char),
+			MYSQL_TYPE_STRING),
+
+	sql_type_info("DECIMAL NULL", typeid(Null<sql_decimal>),
+#if MYSQL_VERSION_ID >= 50001
+			MYSQL_TYPE_NEWDECIMAL
+#else
+			MYSQL_TYPE_DECIMAL
+#endif
+			, mysql_ti_sql_type_info::tf_null),
+	sql_type_info("TINYINT NULL", typeid(Null<sql_tinyint>),
+			MYSQL_TYPE_TINY, mysql_ti_sql_type_info::tf_default |
+			mysql_ti_sql_type_info::tf_null),
+	sql_type_info("TINYINT UNSIGNED NULL", typeid(Null<sql_tinyint_unsigned>),
+			MYSQL_TYPE_TINY, mysql_ti_sql_type_info::tf_default |
+			mysql_ti_sql_type_info::tf_null |
+			mysql_ti_sql_type_info::tf_unsigned),
+	sql_type_info("SMALLINT NULL", typeid(Null<sql_smallint>),
+			MYSQL_TYPE_SHORT, mysql_ti_sql_type_info::tf_default |
+			mysql_ti_sql_type_info::tf_null),
+	sql_type_info("SMALLINT UNSIGNED NULL", typeid(Null<sql_smallint_unsigned>),
+			MYSQL_TYPE_SHORT, mysql_ti_sql_type_info::tf_default |
+			mysql_ti_sql_type_info::tf_null |
+			mysql_ti_sql_type_info::tf_unsigned),
+	sql_type_info("INT NULL", typeid(Null<sql_int>),
+			MYSQL_TYPE_LONG, mysql_ti_sql_type_info::tf_default |
+			mysql_ti_sql_type_info::tf_null),
+	sql_type_info("INT UNSIGNED NULL", typeid(Null<sql_int_unsigned>),
+			MYSQL_TYPE_LONG, mysql_ti_sql_type_info::tf_default |
+			mysql_ti_sql_type_info::tf_null |
+			mysql_ti_sql_type_info::tf_unsigned),
+	sql_type_info("FLOAT NULL", typeid(Null<sql_float>),
+			MYSQL_TYPE_FLOAT, mysql_ti_sql_type_info::tf_default |
+			mysql_ti_sql_type_info::tf_null),
+	sql_type_info("DOUBLE NULL", typeid(Null<sql_double>),
+			MYSQL_TYPE_DOUBLE, mysql_ti_sql_type_info::tf_default |
+			mysql_ti_sql_type_info::tf_null),
+	sql_type_info("NULL NULL", typeid(Null<void>),
+			MYSQL_TYPE_NULL, mysql_ti_sql_type_info::tf_null),
+	sql_type_info("TIMESTAMP NULL", typeid(Null<sql_timestamp>),
+			MYSQL_TYPE_TIMESTAMP),
+	sql_type_info("BIGINT NULL", typeid(Null<sql_bigint>),
+			MYSQL_TYPE_LONGLONG, mysql_ti_sql_type_info::tf_default |
+			mysql_ti_sql_type_info::tf_null),
+	sql_type_info("BIGINT UNSIGNED NULL", typeid(Null<sql_bigint_unsigned>),
+			MYSQL_TYPE_LONGLONG, mysql_ti_sql_type_info::tf_default |
+			mysql_ti_sql_type_info::tf_null |
+			mysql_ti_sql_type_info::tf_unsigned),
+	sql_type_info("MEDIUMINT NULL", typeid(Null<sql_mediumint>),
+			MYSQL_TYPE_INT24, mysql_ti_sql_type_info::tf_null),
+	sql_type_info("MEDIUMINT UNSIGNED NULL", typeid(Null<sql_mediumint_unsigned>), 
+			MYSQL_TYPE_INT24, mysql_ti_sql_type_info::tf_null |
+			mysql_ti_sql_type_info::tf_unsigned),
+	sql_type_info("DATE NULL", typeid(Null<sql_date>),
+			MYSQL_TYPE_DATE, mysql_ti_sql_type_info::tf_default |
+			mysql_ti_sql_type_info::tf_null),
+	sql_type_info("TIME NULL", typeid(Null<sql_time>),
+			MYSQL_TYPE_TIME, mysql_ti_sql_type_info::tf_default |
+			mysql_ti_sql_type_info::tf_null),
+	sql_type_info("DATETIME NULL", typeid(Null<sql_datetime>),
+			MYSQL_TYPE_DATETIME, mysql_ti_sql_type_info::tf_default |
+			mysql_ti_sql_type_info::tf_null),
+	sql_type_info("ENUM NULL", typeid(Null<sql_enum>),
+			MYSQL_TYPE_ENUM, mysql_ti_sql_type_info::tf_default |
+			mysql_ti_sql_type_info::tf_null),
+	sql_type_info("SET NULL", typeid(Null<sql_set>),
+			MYSQL_TYPE_SET, mysql_ti_sql_type_info::tf_default |
+			mysql_ti_sql_type_info::tf_null),
+	sql_type_info("TINYBLOB NULL", typeid(Null<sql_tinyblob>),
+			MYSQL_TYPE_TINY_BLOB, mysql_ti_sql_type_info::tf_null),
+	sql_type_info("MEDIUMBLOB NULL", typeid(Null<sql_mediumblob>),
+			MYSQL_TYPE_MEDIUM_BLOB, mysql_ti_sql_type_info::tf_null),
+	sql_type_info("LONGBLOB NULL", typeid(Null<sql_longblob>),
+			MYSQL_TYPE_LONG_BLOB, mysql_ti_sql_type_info::tf_null),
+	sql_type_info("BLOB NULL", typeid(Null<sql_blob>),
+			MYSQL_TYPE_BLOB, mysql_ti_sql_type_info::tf_default |
+			mysql_ti_sql_type_info::tf_null),
+	sql_type_info("VARCHAR NULL", typeid(Null<sql_varchar>),
+			MYSQL_TYPE_VAR_STRING, mysql_ti_sql_type_info::tf_default |
+			mysql_ti_sql_type_info::tf_null),
+	sql_type_info("CHAR NULL", typeid(Null<sql_char>),
+			MYSQL_TYPE_STRING, mysql_ti_sql_type_info::tf_null)
+};
+
+const int mysql_type_info::num_types =
+		sizeof(mysql_type_info::types) / sizeof(mysql_type_info::types[0]);
+
+const mysql_type_info::sql_type_info_lookup
+		mysql_type_info::lookups(mysql_type_info::types,
+		mysql_type_info::num_types);
+
+#if !defined(DOXYGEN_IGNORE)
+// Doxygen will not generate documentation for this section.
+
+mysql_ti_sql_type_info_lookup::mysql_ti_sql_type_info_lookup(
+		const sql_type_info types[], const int size)
 {
-	LoadDefaults();
-}
-
-
-//// AddMessage ////////////////////////////////////////////////////////
-// Inserts the given string at the end of the list box we're using for
-// output to the user.
-
-void 
-CExampleDlg::AddMessage(LPCTSTR pcMessage)
-{
-	ResultsList.InsertString(-1, pcMessage);
-}
-
-
-//// DoDataExchange ////////////////////////////////////////////////////
-// Transfer data from the controls into our member variables
-
-void
-CExampleDlg::DoDataExchange(CDataExchange* pDX)
-{
-	CDialog::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_SERVER_EDIT, sServerAddress);
-	DDX_Text(pDX, IDC_USER_EDIT, sUserName);
-	DDX_Text(pDX, IDC_PASSWORD_EDIT, sPassword);
-	DDX_Control(pDX, IDC_RESULTS_LIST, ResultsList);
-}
-
-
-//// LoadDefaults //////////////////////////////////////////////////////
-// Load default input values from registry, if they exist.
-
-void
-CExampleDlg::LoadDefaults()
-{
-	HKEY key = OpenSettingsRegistryKey();
-	if (key) {
-		TCHAR acSetting[100];
-		if (LoadSetting(key, _T("user"), acSetting, sizeof(acSetting))) {
-			sUserName = acSetting;
+	for (int i = 0; i < size; ++i) {
+		if (types[i].is_default()) {
+			map_[types[i].c_type_] = i;
 		}
-		if (LoadSetting(key, _T("server"), acSetting, sizeof(acSetting))) {
-			sServerAddress = acSetting;
-		}
-		RegCloseKey(key);
-	}
-
-	if (sUserName.IsEmpty()) {
-		TCHAR acUserName[100];
-		DWORD nBufferSize = sizeof(acUserName);
-		if (GetUserName(acUserName, &nBufferSize)) {
-			sUserName = acUserName;
-		}
-	}
-	if (sServerAddress.IsEmpty()) {
-		sServerAddress = _T("localhost");
 	}
 }
 
+#endif // !defined(DOXYGEN_IGNORE)
 
-//// LoadSetting ///////////////////////////////////////////////////////
-// Loads up the value of the named registry value underneath the given
-// key and returns it in pcValue.
-
-bool
-CExampleDlg::LoadSetting(HKEY key, LPCTSTR pcName, LPTSTR pcValue,
-		DWORD nValueSize)
+unsigned char mysql_type_info::type(enum_field_types t,
+		bool _unsigned, bool _null)
 {
-	return RegQueryValueEx(key, pcName, 0, 0, LPBYTE(pcValue),
-			&nValueSize) == ERROR_SUCCESS;
-}
-
-
-//// OnBnClickedConnectButton //////////////////////////////////////////
-// This is essentially the same thing as examples/simple1.cpp
-
-void
-CExampleDlg::OnBnClickedConnectButton()
-{
-	WCHAR awcTempBuf[100];
-	const int kTempBufSize = sizeof(awcTempBuf) / sizeof(awcTempBuf[0]);
-
-	// Pull user input into our member variables
-	UpdateData(TRUE);
-
-	// Clear out the results list, in case this isn't the first time
-	// we've come in here.
-	ResultsList.ResetContent();
-
-	// Translate the Unicode text we get from the UI into the UTF-8 form
-	// that MySQL wants.
-	const int kInputBufSize = 100;
-	char acServerAddress[kInputBufSize];
-	char acUserName[kInputBufSize];
-	char acPassword[kInputBufSize];
-	ToUTF8(acServerAddress, kInputBufSize, sServerAddress);
-	ToUTF8(acUserName, kInputBufSize, sUserName);
-	ToUTF8(acPassword, kInputBufSize, sPassword);
-
-	// Connect to the sample database.
-	mysqlpp::Connection con(false);
-	if (!con.connect("mysql_cpp_data", acServerAddress, acUserName,
-			acPassword)) {
-		AddMessage(_T("Failed to connect to server:"));
-		if (ToUCS2(awcTempBuf, kTempBufSize, con.error())) {
-			AddMessage(awcTempBuf);
-		}
-		return;
-	}
-
-	// Retrieve a subset of the sample stock table set up by resetdb
-	mysqlpp::Query query = con.query();
-	query << "select item from stock";
-	mysqlpp::StoreQueryResult res = query.store();
-
-	if (res) {
-		// Display the result set
-		for (size_t i = 0; i < res.num_rows(); ++i) {
-			if (ToUCS2(awcTempBuf, kTempBufSize, res[i][0])) {
-				AddMessage(awcTempBuf);
-			}
-		}
-
-		// Retreive was successful, so save user inputs now
-		SaveInputs();
-	}
-	else {
-		// Retreive failed
-		AddMessage(_T("Failed to get item list:"));
-		if (ToUCS2(awcTempBuf, kTempBufSize, query.error())) {
-			AddMessage(awcTempBuf);
+	for (unsigned char i = 0; i < num_types; ++i) {
+		if ((types[i].base_type_ == t) &&
+				(!_unsigned || types[i].is_unsigned()) &&
+				(!_null || types[i].is_null())) {
+			return i;
 		}
 	}
+
+	return type(MYSQL_TYPE_STRING, false, _null);	// punt!
 }
 
-
-//// OpenSettingsRegistryKey ///////////////////////////////////////////
-
-HKEY
-CExampleDlg::OpenSettingsRegistryKey()
+bool mysql_type_info::quote_q() const
 {
-	HKEY key1, key2;
-	if ((RegOpenKey(HKEY_CURRENT_USER, _T("Software"), &key1) ==
-			ERROR_SUCCESS) && (RegCreateKey(key1,
-			_T("MySQL++ Examples"), &key2) == ERROR_SUCCESS)) {
-		RegCloseKey(key1);
-		return key2;
-	}
-	else {
-		return 0;
-	}
+	const type_info& ti = base_type().c_type();
+	return ti == typeid(string) ||
+			ti == typeid(sql_date) ||
+			ti == typeid(sql_time) ||
+			ti == typeid(sql_datetime) ||
+			ti == typeid(sql_blob) ||
+			ti == typeid(sql_tinyblob) ||
+			ti == typeid(sql_mediumblob) ||
+			ti == typeid(sql_longblob) ||
+			ti == typeid(sql_char) ||
+			ti == typeid(sql_set);
 }
 
-
-//// SaveInputs ////////////////////////////////////////////////////////
-// Saves the input fields' values to the registry, except for the
-// password field.
-
-bool
-CExampleDlg::SaveInputs()
+bool mysql_type_info::escape_q() const
 {
-	HKEY key = OpenSettingsRegistryKey();
-	if (key) {
-		SaveSetting(key, _T("user"), sUserName);
-		SaveSetting(key, _T("server"), sServerAddress);
-		RegCloseKey(key);
-		return true;
-	}
-	else {
-		return false;
-	}
+	const type_info& ti = c_type();
+	return ti == typeid(string) ||
+			ti == typeid(sql_enum) ||
+			ti == typeid(sql_blob) ||
+			ti == typeid(sql_tinyblob) ||
+			ti == typeid(sql_mediumblob) ||
+			ti == typeid(sql_longblob) ||
+			ti == typeid(sql_char) ||
+			ti == typeid(sql_varchar);
 }
 
+} // end namespace mysqlpp
 
-//// SaveSetting ///////////////////////////////////////////////////////
-// Saves the given value as a named entry under the given registry key.
-
-bool
-CExampleDlg::SaveSetting(HKEY key, LPCTSTR pcName, LPCTSTR pcValue)
-{
-	DWORD nBytes = DWORD(sizeof(TCHAR) * (_tcslen(pcValue) + 1));
-	return RegSetValueEx(key, pcName, 0, REG_SZ, LPBYTE(pcValue),
-			nBytes) == ERROR_SUCCESS;
-}
-
-
-//// ToUCS2 ////////////////////////////////////////////////////////////
-// Convert a C string in UTF-8 format to UCS-2 format.
-
-bool
-CExampleDlg::ToUCS2(LPTSTR pcOut, int nOutLen, const char* kpcIn)
-{
-	if (strlen(kpcIn) > 0) {
-		// Do the conversion normally
-		return MultiByteToWideChar(CP_UTF8, 0, kpcIn, -1, pcOut,
-				nOutLen) > 0;
-	}
-	else if (nOutLen > 1) {
-		// Can't distinguish no bytes copied from an error, so handle
-		// an empty input string as a special case.
-		_tccpy(pcOut, _T(""));
-		return true;
-	}
-	else {
-		// Not enough room to do anything!
-		return false;
-	}
-}
-
-
-//// ToUTF8 ////////////////////////////////////////////////////////////
-// Convert a UCS-2 multibyte string to the UTF-8 format required by
-// MySQL, and thus MySQL++.
-
-bool
-CExampleDlg::ToUTF8(char* pcOut, int nOutLen, LPCWSTR kpcIn)
-{
-	if (_tcslen(kpcIn) > 0) {
-		// Do the conversion normally
-		return WideCharToMultiByte(CP_UTF8, 0, kpcIn, -1, pcOut,
-				nOutLen, 0, 0) > 0;
-	}
-	else if (nOutLen > 0) {
-		// Can't distinguish no bytes copied from an error, so handle
-		// an empty input string as a special case.
-		*pcOut = '\0';
-		return true;
-	}
-	else {
-		// Not enough room to do anything!
-		return false;
-	}
-}

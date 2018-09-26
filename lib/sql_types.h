@@ -1,213 +1,224 @@
-/// \file sql_types.h
-/// \brief Declares the closest C++ equivalent of each MySQL column type
-///
-/// The typedefs defined here are only for the "non-NULL" variants.
-/// To get nullable versions, wrap the appropriate type in the
-/// \c Null<T> template.  See null.h for more information.
+<?xml version="1.0" encoding='UTF-8'?>
+<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook V4.2//EN"
+    "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
 
-/***********************************************************************
- Copyright (c) 2006-2009 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the
- CREDITS.txt file in the top directory of the distribution for details.
+<sect1 id="tquery" xreflabel="Template Queries">
+  <title>Template Queries</title>
 
- This file is part of MySQL++.
+  <para>Another powerful feature of MySQL++ is being able to set up
+  template queries. These are kind of like C&#x2019;s
+  <function>printf()</function> facility: you give MySQL++ a string
+  containing the fixed parts of the query and placeholders for the
+  variable parts, and you can later substitute in values into those
+  placeholders.</para>
 
- MySQL++ is free software; you can redistribute it and/or modify it
- under the terms of the GNU Lesser General Public License as published
- by the Free Software Foundation; either version 2.1 of the License, or
- (at your option) any later version.
+  <para>The following program demonstrates how to use this feature. This
+  is <filename>examples/tquery1.cpp</filename>:</para>
 
- MySQL++ is distributed in the hope that it will be useful, but WITHOUT
- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
- License for more details.
+  <programlisting><xi:include href="tquery1.txt" parse="text" 
+  xmlns:xi="http://www.w3.org/2001/XInclude"/></programlisting>
 
- You should have received a copy of the GNU Lesser General Public
- License along with MySQL++; if not, write to the Free Software
- Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
- USA
-***********************************************************************/
+  <para>The line just before the call to
+  <methodname>query.parse()</methodname> sets the template, and the
+  parse call puts it into effect. From that point on, you can re-use
+  this query by calling any of several Query member functions that
+  accept query template parameters. In this example, we&#x2019;re using
+  <methodname>Query::execute()</methodname>.</para>
 
-#if !defined(MYSQLPP_SQL_TYPES_H_MAIN)
-#define MYSQLPP_SQL_TYPES_H_MAIN
-
-#include "common.h"
-#include "tiny_int.h"
-
-#include <string>
-
-#if !defined(MYSQLPP_NO_STDINT_H)
-#	include <stdint.h>
-#endif
-
-namespace mysqlpp {
-
-#if !defined(DOXYGEN_IGNORE)
-// Suppress refman documentation for these typedefs, as they're
-// system-dependent.
-
-// Define C++ integer types that are most nearly equivalent to those
-// used by the MySQL server.
-#if defined(MYSQLPP_NO_STDINT_H)
-	// Boo, we're going to have to wing it.
-	typedef tiny_int<signed char>	sql_tinyint;
-	typedef tiny_int<unsigned char>	sql_tinyint_unsigned;
-	typedef signed short			sql_smallint;
-	typedef unsigned short			sql_smallint_unsigned;
-	typedef signed int				sql_int;
-	typedef unsigned int			sql_int_unsigned;
-	typedef signed int				sql_mediumint;
-	typedef unsigned int			sql_mediumint_unsigned;
-	typedef longlong				sql_bigint;
-	typedef ulonglong				sql_bigint_unsigned;
-#else
-	// Assume a system where C99 is supported in C++ in advance of
-	// actual standardization, so we can do this portably.
-	typedef tiny_int<int8_t>		sql_tinyint;
-	typedef tiny_int<uint8_t>		sql_tinyint_unsigned;
-	typedef int16_t					sql_smallint;
-	typedef uint16_t				sql_smallint_unsigned;
-	typedef int32_t					sql_int;
-	typedef uint32_t				sql_int_unsigned;
-	typedef int32_t					sql_mediumint;
-	typedef uint32_t				sql_mediumint_unsigned;
-	typedef int64_t					sql_bigint;
-	typedef uint64_t				sql_bigint_unsigned;
-#endif
-
-// Now define typedef equivalencies for the other standard MySQL
-// data types.  There aren't serious portability issues here.
-typedef float					sql_float;
-typedef double					sql_double;
-typedef double					sql_decimal;
-typedef std::string				sql_enum;
-typedef std::string				sql_char;
-typedef std::string				sql_varchar;
-typedef std::string				sql_tinytext;
-typedef std::string				sql_text;
-typedef std::string				sql_mediumtext;
-typedef std::string				sql_longtext;
-
-// Aliases to match the rules MySQL uses in translating data types
-// from other database servers into its own type system.  From:
-// http://dev.mysql.com/doc/refman/5.0/en/other-vendor-data-types.html
-typedef sql_tinyint				sql_bool;
-typedef sql_tinyint				sql_boolean;
-typedef sql_varchar				sql_character_varying;
-typedef sql_decimal				sql_fixed;
-typedef sql_float				sql_float4;
-typedef sql_double				sql_float8;
-typedef sql_tinyint				sql_int1;
-typedef sql_smallint			sql_int2;
-typedef sql_mediumint			sql_int3;
-typedef sql_int					sql_int4;
-typedef sql_bigint				sql_int8;
-typedef sql_mediumtext			sql_long_varchar;
-typedef sql_mediumtext			sql_long;
-typedef sql_mediumint			sql_middleint;
-typedef sql_decimal				sql_numeric;
-#endif // !defined(DOXYGEN_IGNORE)
-
-} // end namespace mysqlpp
-
-#endif // !defined(MYSQLPP_SQL_TYPES_H_MAIN)
+  <para>Let&#x2019;s dig into this feature a little deeper.</para>
 
 
-// The following sections are treated separately to avoid making the
-// #include tree too dense: if mystring.h (for example) is not yet
-// #included, no sense pulling it in to define all the typedefs based
-// on String.  The separate #include guards for each section allow
-// this file to be #included as many times as necessary to build up the
-// full typedef set.  This trickery is necessary because sql_types.h
-// is needed in a few places within MySQL++, but we can't (and don't)
-// depend on having the full set of typedefs.  mysql++.h #includes this
-// at a late stage, ensuring that end-user code does see the full set.
-#if defined(MYSQLPP_MYSTRING_H) && !defined(MYSQLPP_SQL_TYPES_H_MYSTRING) && !defined(DOXYGEN_IGNORE)
-#	define MYSQLPP_SQL_TYPES_H_MYSTRING
-	namespace mysqlpp {
-		typedef String			sql_blob;
-		typedef String			sql_tinyblob;
-		typedef String			sql_mediumblob;
-		typedef String			sql_longblob;
-		typedef sql_mediumblob	sql_long_varbinary;
-	} // end namespace mysqlpp
-#endif
+  <sect2 id="tquery-setup">
+    <title>Setting up Template Queries</title>
+
+    <para>To set up a template query, you simply insert it into the
+    Query object, using numbered placeholders wherever you want to be
+    able to change the query. Then, you call the parse() function to
+    tell the Query object that the query string is a template query,
+    and it needs to parse it:</para>
+
+    <programlisting>
+query &lt;&lt; "select (%2:field1, %3:field2) from stock where %1:wheref = %0q:what";
+query.parse();</programlisting>
+
+    <para>The format of the placeholder is:</para>
+
+    <programlisting>
+%###(modifier)(:name)(:)</programlisting>
+
+    <para>Where &#x201C;###&#x201D; is a number up to three digits. It is
+    the order of parameters given to a <ulink type="classref"
+    url="SQLQueryParms"/> object, starting from 0.</para>
+
+    <para>&#x201C;modifier&#x201D; can be any one of the following:</para>
+
+    <blockquote>
+    <informaltable frame="none">
+    <tgroup cols="2">
+    <colspec colsep="1" rowsep="1"/>
+    <tbody>
+      <row>
+        <entry><emphasis role="bold">%</emphasis></entry>
+
+        <entry>Print an actual &#x201C;%&#x201D;</entry>
+      </row>
+
+      <row>
+        <entry><emphasis role="bold">""</emphasis></entry>
+
+        <entry>Don&#x2019;t quote or escape no matter what.</entry>
+      </row>
+
+      <row>
+        <entry><emphasis role="bold">q</emphasis></entry>
+
+        <entry>This will escape the item using the MySQL C API
+        function <ulink url="mysql-escape-string" type="mysqlapi"/>
+        and add single quotes around it as necessary, depending on
+        the type of the value you use.</entry>
+      </row>
+
+      <row>
+        <entry><emphasis role="bold">Q</emphasis></entry>
+
+        <entry>Quote but don&#x2019;t escape based on the same rules as
+        for &#x201C;q&#x201D;. This can save a bit of processing time if
+        you know the strings will never need quoting</entry>
+      </row>
+    </tbody>
+    </tgroup>
+    </informaltable>
+    </blockquote>
+
+    <para>&#x201C;:name&#x201D; is for an optional name which aids in
+    filling SQLQueryParms. Name can contain any alpha-numeric characters
+    or the underscore. You can have a trailing colon, which will be
+    ignored. If you need to represent an actual colon after the name,
+    follow the name with two colons. The first one will end the name and
+    the second one won&#x2019;t be processed.</para>
+  </sect2>
 
 
-#if defined(MYSQLPP_DATETIME_H) && !defined(MYSQLPP_SQL_TYPES_H_DATETIME) && !defined(DOXYGEN_IGNORE)
-#	define MYSQLPP_SQL_TYPES_H_DATETIME
-	namespace mysqlpp {
-		typedef Date			sql_date;
-		typedef Time			sql_time;
-		typedef DateTime		sql_timestamp;
-		typedef DateTime		sql_datetime;
-	} // end namespace mysqlpp
-#endif
+  <sect2 id="tquery-parms">
+    <title>Setting the Parameters at Execution Time</title>
+
+    <para>To specify the parameters when you want to execute a query
+    simply use <methodname>Query::store(const SQLString &amp;parm0,
+    [..., const SQLString &amp;parm11])</methodname>. This type of
+    multiple overload also exists for
+    <methodname>Query::storein()</methodname>,
+    <methodname>Query::use()</methodname> and
+    <methodname>Query::execute()</methodname>. &#x201C;parm0&#x201D;
+    corresponds to the first parameter, etc. You may specify up to 25
+    parameters. For example:</para>
+
+    <programlisting>
+StoreQueryResult res = query.store("Dinner Rolls", "item", "item", "price")</programlisting>
+
+    <para>with the template query provided above would produce:</para>
+
+    <programlisting>
+select (item, price) from stock where item = "Dinner Rolls"</programlisting>
+
+    <para>The reason we didn&#x2019;t put the template parameters in
+    numeric order...</para>
+
+    <programlisting>
+select (%0:field1, %1:field2) from stock where %2:wheref = %3q:what</programlisting>
+
+    <para>...will become apparent shortly.</para>
+  </sect2>
 
 
-#if defined(MYSQLPP_MYSET_H) && !defined(MYSQLPP_SQL_TYPES_H_SET) && !defined(DOXYGEN_IGNORE)
-#	define MYSQLPP_SQL_TYPES_H_SET
-	namespace mysqlpp {
-		typedef Set<>				sql_set;
-	} // end namespace mysqlpp
-#endif
+  <sect2 id="tquery-defaults">
+    <title>Default Parameters</title>
 
-#if defined(MYSQLPP_NULL_H) && !defined(MYSQLPP_SQL_TYPES_H_NULL) && !defined(DOXYGEN_IGNORE)
-#	define MYSQLPP_SQL_TYPES_H_NULL
-	// We have null.h, so define nullable versions of all the above
-	namespace mysqlpp {
-		typedef Null<sql_bigint> sql_bigint_null;
-		typedef Null<sql_bigint_unsigned> sql_bigint_unsigned_null;
-		typedef Null<sql_bool> sql_bool_null;
-		typedef Null<sql_boolean> sql_boolean_null;
-		typedef Null<sql_char> sql_char_null;
-		typedef Null<sql_character_varying> sql_character_varying_null;
-		typedef Null<sql_decimal> sql_decimal_null;
-		typedef Null<sql_double> sql_double_null;
-		typedef Null<sql_enum> sql_enum_null;
-		typedef Null<sql_fixed> sql_fixed_null;
-		typedef Null<sql_float> sql_float_null;
-		typedef Null<sql_float4> sql_float4_null;
-		typedef Null<sql_float8> sql_float8_null;
-		typedef Null<sql_int> sql_int_null;
-		typedef Null<sql_int1> sql_int1_null;
-		typedef Null<sql_int2> sql_int2_null;
-		typedef Null<sql_int3> sql_int3_null;
-		typedef Null<sql_int4> sql_int4_null;
-		typedef Null<sql_int8> sql_int8_null;
-		typedef Null<sql_int_unsigned> sql_int_unsigned_null;
-		typedef Null<sql_long> sql_long_null;
-		typedef Null<sql_longtext> sql_longtext_null;
-		typedef Null<sql_long_varchar> sql_long_varchar_null;
-		typedef Null<sql_mediumint> sql_mediumint_null;
-		typedef Null<sql_mediumint_unsigned> sql_mediumint_unsigned_null;
-		typedef Null<sql_mediumtext> sql_mediumtext_null;
-		typedef Null<sql_middleint> sql_middleint_null;
-		typedef Null<sql_numeric> sql_numeric_null;
-		typedef Null<sql_smallint> sql_smallint_null;
-		typedef Null<sql_smallint_unsigned> sql_smallint_unsigned_null;
-		typedef Null<sql_text> sql_text_null;
-		typedef Null<sql_tinyint> sql_tinyint_null;
-		typedef Null<sql_tinyint_unsigned> sql_tinyint_unsigned_null;
-		typedef Null<sql_tinytext> sql_tinytext_null;
-		typedef Null<sql_varchar> sql_varchar_null;
+    <para>The template query mechanism allows you to set default
+    parameter values. You simply assign a value for the parameter to the
+    appropriate position in the
+    <varname>Query::template_defaults</varname> array. You can refer to
+    the parameters either by position or by name:</para>
 
-		// Also do nullable versions of optional sql_* types, where possible
-#		if defined(MYSQLPP_SQL_TYPES_H_MYSTRING)
-			typedef Null<sql_blob> sql_blob_null;
-			typedef Null<sql_longblob> sql_longblob_null;
-			typedef Null<sql_mediumblob> sql_mediumblob_null;
-			typedef Null<sql_tinyblob> sql_tinyblob_null;
-			typedef Null<sql_long_varbinary> sql_long_varbinary_null;
-#		endif
-#		if defined(MYSQLPP_SQL_TYPES_H_DATETIME)
-			typedef Null<sql_date> sql_date_null;
-			typedef Null<sql_datetime> sql_datetime_null;
-			typedef Null<sql_time> sql_time_null;
-			typedef Null<sql_timestamp> sql_timestamp_null;
-#		endif
-#		if defined(MYSQLPP_SQL_TYPES_H_SET)
-			typedef Null<sql_set> sql_set_null;
-#		endif
-	} // end namespace mysqlpp
-#endif
+    <programlisting>
+query.template_defaults[1] = "item";
+query.template_defaults["wheref"] = "item";</programlisting>
+
+    <para>Both do the same thing.</para>
+
+    <para>This mechanism works much like C++&#x2019;s default function
+    parameter mechanism: if you set defaults for the parameters at the
+    end of the list, you can call one of
+    <classname>Query</classname>&#x2019;s query execution methods without
+    passing all of the values. If the query takes four parameters and
+    you&#x2019;ve set defaults for the last three, you can execute the
+    query using as little as just one explicit parameter.</para>
+
+    <para>Now you can see why we numbered the template query parameters
+    the way we did a few sections earlier. We ordered them so that the
+    ones less likely to change have higher numbers, so we don&#x2019;t
+    always have to pass them. We can just give them defaults and take
+    those defaults when applicable. This is most useful when some
+    parameters in a template query vary less often than other
+    parameters. For example:</para>
+
+    <programlisting>
+query.template_defaults["field1"] = "item"; 
+query.template_defaults["field2"] = "price"; 
+StoreQueryResult res1 = query.store("Hamburger Buns", "item"); 
+StoreQueryResult res2 = query.store(1.25, "price"); </programlisting>
+
+    <para>This stores the result of the following queries in
+    <varname>res1</varname> and <varname>res2</varname>,
+    respectively:</para>
+
+    <programlisting>
+select (item, price) from stock where item = "Hamburger Buns"
+select (item, price) from stock where price = 1.25</programlisting>
+
+    <para>Default parameters are useful in this example because we have
+    two queries to issue, and parameters 2 and 3 remain the same for
+    both, while parameters 0 and 1 vary.</para>
+
+    <para>Some have been tempted into using this mechanism as a way to
+    set all of the template parameters in a query:</para>
+
+    <programlisting>
+query.template_defaults["what"] = "Hamburger Buns";
+query.template_defaults["wheref"] = "item";
+query.template_defaults["field1"] = "item"; 
+query.template_defaults["field2"] = "price"; 
+StoreQueryResult res1 = query.store();</programlisting>
+
+    <para>This can work, but it is <emphasis>not designed to</emphasis>.
+    In fact, it&#x2019;s known to fail horribly in one common case. You
+    will not get sympathy if you complain on the mailing list about it
+    not working. If your code doesn&#x2019;t actively reuse at least one
+    of the parameters in subsequent queries, you&#x2019;re abusing
+    MySQL++, and it is likely to take its revenge on you.</para>
+  </sect2>
+
+
+  <sect2 id="tquery-errors">
+    <title>Error Handling</title>
+
+    <para>If for some reason you did not specify all the parameters when
+    executing the query and the remaining parameters do not have their
+    values set via <varname>Query::template_defaults</varname>, the
+    query object will throw a <ulink type="classref"
+    url="BadParamCount"/> object. If this happens, you can get an
+    explanation of what happened by calling
+    <methodname>BadParamCount::what()</methodname>, like so:</para>
+
+    <programlisting>
+query.template_defaults["field1"] = "item"; 
+query.template_defaults["field2"] = "price"; 
+StoreQueryResult res = query.store(1.25); </programlisting>
+
+    <para>This would throw <classname>BadParamCount</classname> because
+    the <varname>wheref</varname> is not specified.</para>
+
+    <para>In theory, this exception should never be thrown. If the
+    exception is thrown it probably a logic error in your
+    program.</para>
+  </sect2>
+</sect1>

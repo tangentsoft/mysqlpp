@@ -1,132 +1,40 @@
-/***********************************************************************
- ssx/main.cpp - Main driver module for ssqlsxlat, which does several
- 	data translations related to the SSQLSv2 mechanism of MySQL++.  The
-	primary one is SSQLSv2 language files (*.ssqls) to C++ source code,
-	but there are others.  Run "ssqlsxlat -?" to get a complete list.
+- Change version number in configure.ac and mysql++.bkl.
 
- Copyright (c) 2009 by Warren Young and (c) 2009-2010 by Educational
- Technology Resources, Inc.  Others may also hold copyrights on code
- in this file.  See the CREDITS.txt file in the top directory of the
- distribution for details.
+  All other places the version number occurs are generated files
+  created from one of these two.  If there's a corresponding *.in file
+  for the one you're looking at, the version number was substituted in
+  by autoconf from configure.ac.  Otherwise, the file was most likely
+  created by the build system using the version number in mysql++.bkl.
 
- This file is part of MySQL++.
+- Run "make abicheck".  There should be no changes.
 
- MySQL++ is free software; you can redistribute it and/or modify it
- under the terms of the GNU Lesser General Public License as published
- by the Free Software Foundation; either version 2.1 of the License, or
- (at your option) any later version.
+  You may have to run the following command in the current "stable"
+  directory before this will succeed, since it depends on there being
+  an ACC dump file in place already.
 
- MySQL++ is distributed in the hope that it will be useful, but WITHOUT
- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
- License for more details.
+      $ abi-compliance-checker -lib mysqlpp -dump abi.xml
 
- You should have received a copy of the GNU Lesser General Public
- License along with MySQL++; if not, write to the Free Software
- Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
- USA
-***********************************************************************/
+  ("Stable" is assumed to be in ../3.1.0 relative to the svn "head"
+  checkout, as I write this.)
 
-#include "genv2.h"
-#include "parsev2.h"
+  This dependence on an existing ABI dump file is deemed reasonable
+  since the ABI of the stable version had better not be changing!
+  Plus, it saves some processing time, since ACC can load the stable
+  ABI info without re-parsing its headers and library file.
 
-#include <cmdline.h>
+- Re-bootstrap the system in pedantic mode, then do a clean rebuild.
+  Fix any new errors and warnings.
 
-#include <iostream>
+  Known bogus warnings:
 
-using namespace std;
-using namespace mysqlpp::ssqlsxlat;
+  - Query's std::basic_ios<> base class is not being initialized.
+    Yes, we know.  We don't care.
 
+  - The "==" float comparisons in lib/stadapter.cpp are harmless.
+    They're comparisons against special NaN and infinity constants.
+    Those are safe.
 
-//// parse_ssqls2 //////////////////////////////////////////////////////
-// We were given the name of a putative SSQLS v2 source file; try to
-// parse it.
+- Re-bootstrap it again without "pedantic", to avoid shipping the
+  pedantic build files.
 
-static ParseV2*
-parse_ssqls2(const char* file_name)
-{
-	try {
-		cout << "Parsing SSQLS v2 file " << file_name << "..." << endl;
-		ParseV2* pt = new ParseV2(file_name);
-		cout << file_name << " parsed successfully, " <<
-				(pt->end() - pt->begin()) << " interesting lines." <<
-				endl;
-		return pt;
-	}
-	catch (const ParseV2::FileException& e) {
-		cerr << file_name << ":0" << 
-				": file I/O error in SSQLS v2 parse: " <<
-				e.what() << endl;
-	}
-	catch (const ParseV2::ParseException& e) {
-		cerr << e.file_name() << ':' << e.line() << ':' <<
-				e.what() << endl;
-	}
-	catch (const std::exception& e) {
-		cerr << file_name << ":0" << 
-				": critical error in SSQLS v2 parse: " <<
-				e.what() << endl;
-	}
-	return 0;
-}
-
-
-//// main //////////////////////////////////////////////////////////////
-
-int
-main(int argc, char* argv[])
-{
-	// Parse the command line
-	CommandLine cmdline(argc, argv);
-	if (cmdline) {
-		ParseV2* ptree = 0;
-
-		switch (cmdline.input_source()) {
-			case CommandLine::ss_ssqls2:
-				ptree = parse_ssqls2(cmdline.input());
-				break;
-
-			default:
-				cerr << "Sorry, I don't yet know what to do with input "
-						"source type " << int(cmdline.input_source()) <<
-						'!' << endl;
-				return 2;
-		}
-
-		if (cmdline.output_sink() != CommandLine::ss_unknown) {
-			if (ptree) {
-				switch (cmdline.output_sink()) {
-					case CommandLine::ss_ssqls2:
-						if (generate_ssqls2(cmdline.output(), ptree)) {
-							return 0;
-						}
-						else {
-							return 2;
-						}
-
-					default:
-						cerr << "Sorry, I don't yet know what to do "
-								"with sink type " <<
-								int(cmdline.output_sink()) << '!' <<
-								endl;
-						return 2;
-				}
-			}
-			else {
-				// Depending on someone farther up the line to write
-				// the error message, explaining why we didn't get a
-				// parse tree.
-				return 2;
-			}	
-		}
-		else {
-			cerr << "Sorry, I don't know how to write C++ output yet." <<
-					endl;
-			return 2;
-		}
-	}
-	else {
-		return 1;
-	}
-}
-
+- make rpm on each CentOS version we currently support.

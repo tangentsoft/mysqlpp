@@ -1,8 +1,7 @@
 /***********************************************************************
- test/uds.cpp - Tests the Unix domain socket verifier in
-	UnixDomainSocketConnection.  This test always succeeds on Windows!
+ test/manip.cpp - Tests the quoting and escaping manipulators.
 
- Copyright (c) 2007-2008 by Educational Technology Resources, Inc.
+ Copyright (c) 2007 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the
  CREDITS.txt file in the top directory of the distribution for details.
 
@@ -24,135 +23,148 @@
  USA
 ***********************************************************************/
 
-#include <connection.h>
-#include <exceptions.h>
+#include <mysql++.h>
 
 #include <iostream>
 #include <sstream>
 #include <string>
 
-#if !defined(MYSQLPP_PLATFORM_WINDOWS)
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/socket.h>
-#include <sys/un.h>
-#if !defined(AF_LOCAL)
-#	define AF_LOCAL AF_UNIX
-#endif
 
-#include <errno.h>
-#include <string.h>
-
-static const char* success_path = "test_uds_success.sock";
-static const char* failure_path = "test_uds_failure.sock";
-
-static int
-make_socket(const char* path, mode_t mode)
+template <class T>
+static bool
+is_quoted(const std::string& s, T orig_str, size_t orig_len)
 {
-	// Just in case a socket with this name exists already, try to
-	// remove it.  Only a failure if it exists and we can't remove it.
-	if ((unlink(path) < 0) && (errno != ENOENT)) {
-		return -1;
-	}
-
-	// Create the domain socket
-	int fd = socket(AF_LOCAL, SOCK_STREAM, 0);
-	if (fd < 0) {
-		return -1;
-	}
-	
-	// Bind the socket to the named file
-	struct sockaddr_un saun;
-	memset(&saun, 0, sizeof(saun));
-	saun.sun_family = AF_LOCAL;
-	strncpy(saun.sun_path, path, sizeof(saun.sun_path));
-	saun.sun_path[sizeof(saun.sun_path) - 1] = '\0';
-	if (bind(fd, reinterpret_cast<sockaddr*>(&saun), sizeof(saun)) < 0) {
-		return -1;
-	}
-
-	// Change the socket's mode as requested
-	if (chmod(path, mode) < 0) {
-		return -1;
-	}
-
-	return fd;
+	return (s.length() == (orig_len + 2)) &&
+			(s.at(0) == '\'') &&
+			(s.at(orig_len + 1) == '\'') &&
+			(s.compare(1, orig_len, orig_str) == 0);
 }
 
-	
-static void
-test_success()
+
+template <class T>
+static bool
+is_quoted(const std::string& s, mysqlpp::Null<T> orig_str, size_t orig_len)
 {
-	std::string error;
-	int fd = make_socket(success_path, S_IREAD | S_IWRITE);
-	if (fd >= 0) {
-		bool fail = !mysqlpp::UnixDomainSocketConnection::is_socket(
-				success_path, &error);
-		if (fail) {
-			throw mysqlpp::SelfTestFailed(error);
+	return is_quoted(s, orig_str.data, orig_len);
+}
+
+
+// Stringish types should be quoted when inserted into Query when an
+// explicit quote manipulator is used.
+template <class T>
+static bool
+explicit_query_quote(T test, size_t len)
+{
+	mysqlpp::Query q(0);
+	q << mysqlpp::quote << test;
+	if (!is_quoted(q.str(), test, len)) {
+		std::cerr << "Explicit quote of " << typeid(test).name() <<
+				" in Query failed: " << q.str() << std::endl;
+		return false;
+	}
+
+	mysqlpp::SQLStream s(0);
+	s << mysqlpp::quote << test;
+	if (is_quoted(s.str(), test, len)) {
+		return true;
+	}
+	else {
+		std::cerr << "Explicit quote of " << typeid(test).name() <<
+				" in Query failed: " << q.str() << std::endl;
+		return false;
+	}
+}
+
+
+// Nothing should be quoted when inserted into an ostream, even when an
+// explicit quote manipulator is used.  The manipulators are only for
+// use with Query streams.
+template <class T>
+static bool
+no_explicit_ostream_quote(T test, size_t len)
+{
+	std::ostringstream outs;
+	outs << mysqlpp::quote << test;
+	if (!is_quoted(outs.str(), test, len)) {
+		return true;
+	}
+	else {
+		std::cerr << "Explicit quote of " << typeid(test).name() <<
+				" in ostream erroneously honored!" << std::endl;
+		return false;
+	}
+}
+
+
+// Nothing should be implicitly quoted as of v3.  We used to do it for
+// mysqlpp::String (formerly ColData) when inserted into Query, but
+// that's a silly edge case.  The only time end-user code should be
+// using Strings to build queries via the Query stream interface is when
+// using BLOBs or when turning result set data back around in a new
+// query.  In each case, there's no reason for String to behave
+// differently from std::string, which has always had to be explicitly
+// quoted.
+template <class T>
+static bool
+no_implicit_quote(T test, size_t len)
+{
+	std::ostringstream outs;
+	outs << test;
+	if (!is_quoted(outs.str(), test, len)) {
+		mysqlpp::Query q(0);
+		q << test;
+		if (is_quoted(q.str(), test, len)) {
+			std::cerr << typeid(test).name() << " erroneously implicitly "
+					"quoted in Query: " << outs.str() <<
+					std::endl;
+			return false;
+		}
+
+		mysqlpp::SQLStream s(0);
+		s << test;
+		if (!is_quoted(s.str(), test, len)) {
+			return true;
+		}
+		else {
+			std::cerr << typeid(test).name() << " erroneously implicitly "
+					"quoted in Query: " << outs.str() <<
+					std::endl;
+			return false;
 		}
 	}
 	else {
-		std::ostringstream outs;
-		outs << "Failed to create test domain socket: " << strerror(errno);
-		throw mysqlpp::SelfTestFailed(outs.str());
+		std::cerr << typeid(test).name() << " erroneously implicitly "
+				"quoted in ostringstream: " << outs.str() <<
+				std::endl;
+		return false;
 	}
 }
 
 
-static void
-test_failure()
+// Run all tests above for the given type
+template <class T>
+static bool
+test(T test, size_t len)
 {
-	int fd = make_socket(failure_path, S_IREAD);
-	if (fd < 0) {
-		std::ostringstream outs;
-		outs << "Failed to create test domain socket: " << strerror(errno);
-		throw mysqlpp::SelfTestFailed(outs.str());
-	}
-
-	if (mysqlpp::UnixDomainSocketConnection::is_socket(failure_path)) {
-		throw mysqlpp::SelfTestFailed("Failed to fail on read-only socket");
-	}
-	else if (mysqlpp::UnixDomainSocketConnection::is_socket(
-			"BogusBogus.sock")) {
-		throw mysqlpp::SelfTestFailed("Failed to fail on bad file name");
-	}
-	else {
-		close(fd);
-		unlink(failure_path);
-		fd = creat(failure_path, S_IREAD | S_IWRITE);
-		bool success = mysqlpp::UnixDomainSocketConnection::is_socket(
-				failure_path);
-		if (success) {
-			throw mysqlpp::SelfTestFailed("Failed to fail on non-socket");
-		}
-	}
+	return explicit_query_quote(test, len) &&
+			no_explicit_ostream_quote(test, len) &&
+			no_implicit_quote(test, len);
 }
-#endif
 
 
 int
 main()
 {
-#if defined(MYSQLPP_PLATFORM_WINDOWS)
-	// Test not appropriate to this platform.  Always succeed.
-	return 0;
-#else
-	try {
-		test_success();
-		unlink(success_path);
-		test_failure();
-		unlink(failure_path);
-		return 0;
-	}
-	catch (mysqlpp::SelfTestFailed& e) {
-		std::cerr << "TCP address parse error: " << e.what() << std::endl;
-		return 1;
-	}
-	catch (std::exception& e) {
-		std::cerr << "Unexpected test failure: " << e.what() << std::endl;
-		return 2;
-	}
-#endif
+	char s[] = "Doodle me, James, doodle me!";
+	const size_t len = strlen(s);
+
+	int failures = 0;
+	failures += test(s, len) == false;
+	failures += test(static_cast<char*>(s), len) == false;
+	failures += test(static_cast<const char*>(s), len) == false;
+	failures += test(std::string(s), len) == false;
+	failures += test(mysqlpp::SQLTypeAdapter(s), len) == false;
+	failures += test(mysqlpp::Null<std::string>(s), len) == false;
+	return failures;
 }
+

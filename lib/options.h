@@ -1,497 +1,451 @@
-/// \file options.h
-/// \brief Declares the Option class hierarchy, used to implement
-/// connection options in Connection and DBDriver classes.
-///
-/// This is tied closely enough to DBDriver that there's a pure-OO
-/// argument that it should be declared as protected or private members
-/// within DBDriver.  We do it outside DBDriver because there's so much
-/// of it.  It'd overwhelm everything else that's going on in that class
-/// totally out of proprortion to the importance of options.
-
-/***********************************************************************
- Copyright (c) 2007-2009 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the
- CREDITS file in the top directory of the distribution for details.
-
- This file is part of MySQL++.
-
- MySQL++ is free software; you can redistribute it and/or modify it
- under the terms of the GNU Lesser General Public License as published
- by the Free Software Foundation; either version 2.1 of the License, or
- (at your option) any later version.
-
- MySQL++ is distributed in the hope that it will be useful, but WITHOUT
- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
- License for more details.
-
- You should have received a copy of the GNU Lesser General Public
- License along with MySQL++; if not, write to the Free Software
- Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
- USA
-***********************************************************************/
-
-#if !defined(MYSQLPP_OPTIONS_H)
-#define MYSQLPP_OPTIONS_H
-
-#include "common.h"
-
-#include <deque>
-#include <string>
-
-
-namespace mysqlpp {
-
-#if !defined(DOXYGEN_IGNORE)
-class DBDriver;
-#endif
-
-
-////////////////////////////////////////////////////////////////////////
-// Classes
-
-/// \brief Define abstract interface for all *Option subclasses.
-///
-/// This is the base class for the mid-level interface classes that take
-/// arguments, plus the direct base for options that take no arguments.
-class MYSQLPP_EXPORT Option
-{
-public:
-	/// \brief Types of option setting errors we can diagnose
-	enum Error {
-		err_NONE,		///< option was set successfully
-		err_api_limit,	///< option not supported by underlying C API
-		err_api_reject,	///< underlying C API returned error when setting option
-		err_connected,	///< can't set the given option while connected
-		err_disconnected///< can only set the given option while connected
-	};
-	
-	virtual ~Option() { }					///< Destroy object
-	virtual Error set(DBDriver* dbd) = 0;	///< Apply option
-};
-
-
-/// \brief Define abstract interface for all *Options that take a
-/// lone scalar as an argument.
-template <typename T>
-class MYSQLPP_EXPORT DataOption : public Option
-{
-public:
-	typedef T ArgType;						///< Alias for template param
-
-protected:
-	DataOption(const T& arg) : arg_(arg) { }///< Construct object
-	T arg_;									///< The argument value
-};
-
-typedef DataOption<unsigned> IntegerOption;		///< Option w/ int argument
-typedef DataOption<bool> BooleanOption;			///< Option w/ bool argument
-typedef DataOption<std::string> StringOption;	///< Option w/ string argument
-
-
-/// \brief Enable data compression on the connection
-class MYSQLPP_EXPORT CompressOption : public Option
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	CompressOption() : Option() { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-/// \brief Change Connection::connect() default timeout
-class MYSQLPP_EXPORT ConnectTimeoutOption : public IntegerOption
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	ConnectTimeoutOption(ArgType arg) : IntegerOption(arg) { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-/// \brief Make Query::affected_rows() return number of matched rows
-///
-/// Default is to return number of \b changed rows.
-class MYSQLPP_EXPORT FoundRowsOption : public BooleanOption
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	FoundRowsOption(ArgType arg) : BooleanOption(arg) { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-/// \brief Allow C API to guess what kind of connection to use
-///
-/// This is the default.  The option exists to override
-/// UseEmbeddedConnectionOption and UseEmbeddedConnectionOption.
-class MYSQLPP_EXPORT GuessConnectionOption : public Option
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	GuessConnectionOption() : Option() { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-/// \brief Allow spaces after function names in queries
-class MYSQLPP_EXPORT IgnoreSpaceOption : public BooleanOption
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	IgnoreSpaceOption(ArgType arg) : BooleanOption(arg) { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-/// \brief Give SQL executed on connect
-class MYSQLPP_EXPORT InitCommandOption : public StringOption
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	InitCommandOption(ArgType arg) : StringOption(arg) { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-/// \brief Assert that this is an interactive program
-///
-/// Affects connection timeouts.
-class MYSQLPP_EXPORT InteractiveOption : public BooleanOption
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	InteractiveOption(ArgType arg) : BooleanOption(arg) { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-/// \brief Enable LOAD DATA LOCAL statement
-class MYSQLPP_EXPORT LocalFilesOption : public BooleanOption
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	LocalFilesOption(ArgType arg) : BooleanOption(arg) { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-/// \brief Enable LOAD LOCAL INFILE statement
-class MYSQLPP_EXPORT LocalInfileOption : public IntegerOption
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	LocalInfileOption(ArgType arg) : IntegerOption(arg) { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-/// \brief Enable multiple result sets in a reply
-class MYSQLPP_EXPORT MultiResultsOption : public BooleanOption
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	MultiResultsOption(ArgType arg) : BooleanOption(arg) { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-/// \brief Enable multiple queries in a request to the server
-class MYSQLPP_EXPORT MultiStatementsOption : public BooleanOption
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	MultiStatementsOption(ArgType arg) : BooleanOption(arg) { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-/// \brief Suggest use of named pipes
-class MYSQLPP_EXPORT NamedPipeOption : public Option
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	NamedPipeOption() : Option() { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-/// \brief Disable db.tbl.col syntax in queries
-class MYSQLPP_EXPORT NoSchemaOption : public BooleanOption
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	NoSchemaOption(ArgType arg) : BooleanOption(arg) { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-#if MYSQL_VERSION_ID > 40000		// only in 4.0 +
-/// \brief Set type of protocol to use
-class MYSQLPP_EXPORT ProtocolOption : public IntegerOption
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	ProtocolOption(ArgType arg) : IntegerOption(arg) { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-#endif
-
-
-/// \brief Override use of my.cnf
-class MYSQLPP_EXPORT ReadDefaultFileOption : public StringOption
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	ReadDefaultFileOption(ArgType arg) : StringOption(arg) { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-/// \brief Override use of my.cnf
-class MYSQLPP_EXPORT ReadDefaultGroupOption : public StringOption
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	ReadDefaultGroupOption(ArgType arg) : StringOption(arg) { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-/// \brief Set timeout for IPC data reads
-class MYSQLPP_EXPORT ReadTimeoutOption : public IntegerOption
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	ReadTimeoutOption(ArgType arg) : IntegerOption(arg) { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-/// \brief Enable automatic reconnection to server
-class MYSQLPP_EXPORT ReconnectOption : public BooleanOption
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	ReconnectOption(ArgType arg) : BooleanOption(arg) { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-/// \brief Set reporting of data truncation errors
-class MYSQLPP_EXPORT ReportDataTruncationOption : public BooleanOption
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	ReportDataTruncationOption(ArgType arg) : BooleanOption(arg) { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-/// \brief Enforce use of secure authentication, refusing connection if
-/// not available
-class MYSQLPP_EXPORT SecureAuthOption : public BooleanOption
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	SecureAuthOption(ArgType arg) : BooleanOption(arg) { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-/// \brief Give path to charset definition files
-class MYSQLPP_EXPORT SetCharsetDirOption : public StringOption
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	SetCharsetDirOption(ArgType arg) : StringOption(arg) { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-/// \brief Give name of default charset
-class MYSQLPP_EXPORT SetCharsetNameOption : public StringOption
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	SetCharsetNameOption(ArgType arg) : StringOption(arg) { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-/// \brief Fake client IP address when connecting to embedded server
-class MYSQLPP_EXPORT SetClientIpOption : public StringOption
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	SetClientIpOption(ArgType arg) : StringOption(arg) { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-/// \brief Set name of shmem segment for IPC
-class MYSQLPP_EXPORT SharedMemoryBaseNameOption : public StringOption
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	SharedMemoryBaseNameOption(ArgType arg) : StringOption(arg) { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-/// \brief Specialized option for handling SSL parameters.
-class MYSQLPP_EXPORT SslOption : public Option
-{
-public:
-	/// \brief Create a set of SSL connection option parameters
-	///
-	/// \param key the pathname to the key file
-	/// \param cert the pathname to the certificate file
-	/// \param ca the pathname to the certificate authority file
-	/// \param capath directory that contains trusted SSL CA
-	///        certificates in pem format.
-	/// \param cipher list of allowable ciphers to use
-	///
-	/// This option replaces \c Connection::enable_ssl() from MySQL++
-	/// version 2.  Now you can set this connection option just like any
-	/// other.
-	SslOption(const char* key = 0, const char* cert = 0,
-			const char* ca = 0, const char* capath = 0,
-			const char* cipher = 0)
-	{
-		if (key)	key_.assign(key);
-		if (cert)	cert_.assign(cert);
-		if (ca)		ca_.assign(ca);
-		if (capath)	capath_.assign(capath);
-		if (cipher)	cipher_.assign(cipher);
-	}
-
-private:
-	std::string key_, cert_, ca_, capath_, cipher_;
-	Error set(DBDriver* dbd);
-};
-
-
-/// \brief Connect to embedded  server in preference to remote server
-class MYSQLPP_EXPORT UseEmbeddedConnectionOption : public Option
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	UseEmbeddedConnectionOption() : Option() { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-/// \brief Connect to remote server in preference to embedded server
-class MYSQLPP_EXPORT UseRemoteConnectionOption : public Option
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	UseRemoteConnectionOption() : Option() { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-/// \brief Set timeout for IPC data reads
-class MYSQLPP_EXPORT WriteTimeoutOption : public IntegerOption
-{
-#if !defined(DOXYGEN_IGNORE)
-public:
-	WriteTimeoutOption(ArgType arg) : IntegerOption(arg) { }
-
-private:
-	Error set(DBDriver* dbd);
-#endif
-};
-
-
-////////////////////////////////////////////////////////////////////////
-// Typedefs
-
-/// \brief The data type of the list of connection options
-typedef std::deque<Option*> OptionList;
-
-/// \brief Primary iterator type into List
-typedef OptionList::const_iterator OptionListIt;
-
-} // end namespace mysqlpp
-
-#endif // !defined(MYSQLPP_OPTIONS_H)
+Patches for any of these thoughtfully considered!  See the HACKERS.txt
+file for instructions on sending patches.
+
+Any Version
+-----------
+    o Any time you must hand-roll some SQL code in your program,
+      consider whether it could be generalized to a widely-useful
+      API feature.
+
+    o Suppress DOS line-ending related diffs from examples/cgi_jpeg
+      output when running dtest on Windows.  Check for -D?
+
+    o Need to link statically to connect to MySQL Embedded?
+
+      http://stackoverflow.com/questions/672451/howto-communicate-with-mysql-embedded-server-from-mysql-dll
+
+    o When Bakefile allows, bring examples/vstudio/* into the top-level
+      build system.  This will let us generate separate project
+      files for each VC++ version we support, let us use MYSQL_WIN_DIR
+      variable instead of hard-coded paths, and build against the local
+      version of MySQL++ instead of requiring it to be installed first.
+      Should probably drop the MFC example project, to avoid requiring
+      Visual C++ Professional.
+
+    o Query::storein(slist<T>&) is unusable.  As a template method, it
+      must be defined in a header file; we cannot #include config.h from
+      a header, thus the proper HAVE macro that would let us define this
+      template method is never defined.
+
+      One solution is to create lib/slist.h.in, parameterized by the
+      detected slist type name and the header file defining it.  This
+      will #include the proper header file, define SList<T>::Type (a
+      template typdedef: http://www.gotw.ca/gotw/079.htm), and #define
+      MYSQLPP_HAVE_SLIST.  Then Query::storein() can be wrapped by an
+      ifdef checking for MYSQLPP_HAVE_SLIST, only defined when the
+      configure script found a suitable slist type.
+
+      Also create a default lib/slist.h file, checked into svn as
+      lib/slistdef.h and copied to slist.h on tarball creation.  Remove
+      this file early in configure script run, so we're forced to
+      overwrite its contents with detected values.  Default version
+      contains ifdefs for non-autoconf platforms where we know what
+      slist definition is available on that platform.  Xcode, for
+      instance, will let us use <ext/slist>.
+
+
+v3.2 Plan: Finish SSQLS v2
+--------------------------
+    See http://lists.mysql.com/plusplus/6929 for high-level plan.
+
+    o Goal: Restore VC++ 2003 compatibility with SSQLS, lost with v1
+
+    o C++ code generator, from walking DSL parse tree:
+
+      examples/stock.ssqls gives ssqls_stock.h containing:
+
+          class SQLStock : public mysqlpp::SsqlsBase
+          {
+          public:
+              SQLStock(Connection* conn = 0); // default ctor
+              SQLStock(const SQLStock& other);
+              SQLStock(const mysqlpp::Row& row,
+                      Connection* conn = 0); // full init from query
+              SQLStock(mysqlpp::sql_bigint key1); // exemplar creation
+              SQLStock(Connection* conn,
+                      mysqlpp::sql_bigint key1) // calls load();
+              SQLStock(
+                  mysqlpp::sql_bigint f1,
+                  mysqlpp::sql_bigint f2,
+                  mysqlpp::sql_double f3,
+                  mysqlpp::sql_double f4,
+                  const mysqlpp::sql_date& f5,
+                  const mysqlpp::sql_mediumtext& f6); // full init
+              SQLStock(Connection* conn,
+                  mysqlpp::sql_bigint f2,
+                  mysqlpp::sql_double f3,
+                  mysqlpp::sql_double f4,
+                  const mysqlpp::sql_date& f5,
+                  const mysqlpp::sql_mediumtext& f6); // calls create()
+              SQLStock(Connection* conn,
+                  mysqlpp::sql_bigint f1,
+                  mysqlpp::sql_bigint f2,
+                  mysqlpp::sql_double f3,
+                  mysqlpp::sql_double f4,
+                  const mysqlpp::sql_date& f5,
+                  const mysqlpp::sql_mediumtext& f6); // calls save()
+
+              bool createTable(Connection* conn = 0) const;
+              const char* getTableName() const
+                      { return class_table_name_ || table(); }
+              void setTableName(const char* name)
+                      { instance_table(name); }
+              static void setTableName(const char* name)
+                      { class_table_name_ = name; }
+
+              std::ostream& equal_list(std::ostream& os) const;
+              std::ostream& json(std::ostream& os) const;
+              std::ostream& name_list(std::ostream& os) const;
+              std::ostream& value_list(std::ostream& os) const;
+              std::ostream& xml(std::ostream& os) const;
+
+              mysqlpp::sql_bigint getId() const;
+              mysqlpp::sql_bigint getNum() const;
+              mysqlpp::sql_double getWeight() const;
+              mysqlpp::sql_double getPrice() const;
+              const mysqlpp::sql_date& getSdate() const;
+              const mysqlpp::sql_mediumtext& getDescription() const;
+
+              void setId(mysqlpp::sql_bigint value);
+              void setNum(mysqlpp::sql_bigint value);
+              void setWeight(mysqlpp::sql_double value);
+              void setPrice(mysqlpp::sql_double value);
+              void setSdate(const mysqlpp::sql_date& value);
+              void setDescripion(const mysqlpp::sql_mediumtext& value);
+
+              bool operator<(const SQLStock& rhs) const;
+              SQLStock& operator=(const SQLStock& rhs);
+
+          protected:
+              mysqlpp::sql_bigint id_;
+              mysqlpp::sql_bigint num_;
+              mysqlpp::sql_double weight_;
+              mysqlpp::sql_double price_;
+              mysqlpp::sql_date sdate_;
+              mysqlpp::sql_mediumtext description_;
+
+              std::bitset<6> set_fields_;
+
+          private:
+              static const char* class_table_name_;
+          };
+
+      ...and ssqls_stock.cc, containing implementation for same.
+
+    o Ensure we're using case-insensitive SQL column to C++ field name
+      matching.  Column names aren't case-sensitive in SQL.
+
+    o SQL table updater/builder, -T option, taking .ssqls and
+      creating or updating the DB table to match.
+
+    o If using accessors, generate "std::bitset<num_fields> is_set_",
+      and set the appropriate bit when calling each setFoo() so we
+      can intuit which fields were set.  Probably also need an enum:
+
+          enum FieldIndices {
+              id_field_index_,
+              num_field_index_,
+              ...
+          };
+
+      This will allow Query::select(), for instance, to figure out that
+      we want it to select by a non-key field, returning all matches.
+
+    o Define operator<< for SSQLS and a set of manipulators which
+      govern whether the operator calls equal_list(), json(),
+      name_list(), value_list(), or xml() to do the actual insertion.
+
+    o Define operator<< for sequence_container<SsqlsBase> and similar
+      for associative containers.  Give mysql(1)-like ASCII grid or
+      some other table format.
+
+    o Define operator>> for SSQLS, taking XML as input, in the form
+      emitted via xml().  expat uses the new BSD license, so maybe
+      we can just drop it in the tree, with an option to use the
+      platform expat on autoconf systems.
+
+    o MySQL table metadata to SSQLSv2 data structure translator.
+      (-s, -u, -p and -t flag support.)  Add this to dtest, extracting
+      stock.ssqls definition from DB.
+
+    o Replace Query's template methods taking SSQLSes with concrete
+      methods taking const SsqlsBase&.
+
+    o Create Query::remove(const SsqlsBase&)
+
+    o Try to remove of 'explicit' from Date, DateTime and Time
+      ctors taking stringish types.  (Can't do it for real until v4,
+      but we can lay the ground work here.)
+
+    o Auto-create() ctor: if there is an auto_increment field,
+      populate it on query success.
+
+    o Detect ctor conflicts corresponding to sql_create_N(N, N...)
+      in SSQLSv1.  ssqlsxlat can be smart enough to just not emit
+      duplicate ctors.
+
+    o Special case of ctor suppression: if the number of key fields
+      equals the total number of fields, you get an auto-load() ctor,
+      not auto-update().
+
+    o Replace CREATE TABLE SQL in resetdb with create_table() calls.
+
+    o Option to use integer indices into Row when populating?  Only
+      bother if it gives a speed advantage we can actually see,
+      because it removes all the dynamic typing advantages we got
+      with the change to field name indices in v3.0.
+
+    o Try to add Query::storein(container, ssqls), which generates
+      SELECT * from {ssqls.table()} and stores the result.  May not be
+      possible due to existing overloads, but try.  If it works, use
+      this form in the userman Overview section, saving one LOC.
+
+    o Convert SSQLS v1 examples to v2.  SSQLS v2 isn't done until
+      there's a straightformward conversion path for all examples.
+
+    o Add #warning to generated ssqls.h saying that you should now use
+      SSQLS v2.  Wrap it in a check for MYSQLPP_ALLOW_SSQLS_V1,
+      so people can disable the warning.
+
+
+v3.3 Tentative Plan
+-------------------
+    o Add Query::storein<Container, T>(container), getting table
+      name from container::value_type.table() instead.
+
+    o Define operator<< for Fields, Row, StoreQueryResult, etc., giving
+      CSV format.
+
+    o Remove libexcommon.  Between above and SSQLSv2, we should have
+      everything we need to get equivalent output without special
+      purpose code.  There should be no ad hoc data dumping code in
+      the examples.
+
+    o Bring back mandatory quoting for manipulators?  If someone says
+      os << mysqlpp::escape << foo; do they not really really mean
+      escape foo?  Automatic quoting and escaping is different.  See
+
+      http://lists.mysql.com/plusplus/7999
+
+    o Configure script should try to get MySQL C API directories
+      from mysql_config.
+
+    o If pkg-config is available, register ourselves with it using
+      information discovered by configure.  Also, write out a
+      mysql++-config script, which either wraps pkg-config or
+      reinvents it, poorly, for systems that don't have it.
+
+    o Add String::operator==(const mysqlpp::null_type&).  Needed to
+      allow comparison of row[x] returns to SQL null.  Change one of
+      the examples to show it?
+
+    o Memory "leak" and C API library init fixes:
+    
+      - Add DBDriver::library_begin() and library_end(), wrapping
+        similarly named functions in the C API.
+
+      - Create Process class, which you create at the top of main()
+        on the stack, purely to call these automatically.
+
+      - Update userman to recommend creating Process object in
+        ConnectionPool derivatives, instead.
+
+      - Create Thread class to call existing DBDriver::thread_start()
+        and thread_end(), similar to Process, created on the stack
+        of the thread entry function.
+
+      - Move memory leak FAQ into userman, rewriting it to cover
+        all this.
+
+    o mysqlpp::execute manipulator.  Immediately executes built
+      query string.  Works best with exceptions, as that's the only way
+      to detect failures.
+
+    o Chris Frey's packarray class
+
+    o Create adaptors for std::bitset, for storing binary data in a
+      MySQL table.  Make two options available, one for storing the
+      return from bitset::to_ulong() in an UNSIGNED INTEGER column,
+      and another for storing a larger set of bits in a more flexible
+      way, perhaps as a BLOB.
+
+    o Create a backtick manipulator for use by field_list() in row.h
+      and ssqls.h.  These currently use do_nothing0, but that prevents
+      use of SQL reserved words as identifiers.
+
+    o Has experience with new thread awareness changed our mind on
+      atomic inc/dec of reference counts in RefCounted*?
+
+    o Create a fixed-point data type for use with SQL's DECIMAL and
+      related types.  Right now, sql_decimal is a typedef for double,
+      so you lose accuracy in the fractional part.  Don't forget to
+      include an "is_null" flag to cope with conversion from infinite
+      or NaN float values; that's how MySQL stores these.
+
+    o Optional checked conversions in String for numerics: throw
+      BadConversion on range overflow?
+
+    o Add Query::storein_if(), mirroring store_if()
+
+    o Add a method to mysqlpp::String to return a widened version of the
+      string.  Probably make return type templatized so we can return
+      wstring, C++/CLI native strings, etc.  Then convert examples that
+      do this conversion to use this new mechanism.
+
+    o Try to add operator std::string to String.  If it doesn't work,
+      explain why not in the userman, and in Row::operator[] refman.
+      
+    o Wrap LOAD DATA INFILE:
+
+      bool Query::load_file(
+          const char* path,
+          bool local_path,
+          const char* table,
+          const char* field_terminator = 0,   // default \t
+          const char* field_encloser = 0,     // default none
+          const char* field_escape = 0,       // default \
+          const char* line_terminator = 0,    // \n on *ix, \r\n on Windows
+          const char* line_starter = 0,       // default none
+          const char* character_set = 0,      // default UTF-8
+          const char* comment_prefix = 0,     // ignore no lines
+          bool replace_existing = false,
+          bool ignore_duplicates = false,
+          bool low_priority = false,
+          int skip_lines = 0);
+
+    o Wrappers for above: load_local_tab_file(), load_local_csv_file(),
+      load_remote_*()...
+
+    o Query::save_file() interfaces, wrapping SELECT ... INTO FILE,
+      modeled on above.
+
+
+v4.0 or Later
+-------------
+    o Database independence:
+
+      - Use libdbi or similar?  http://libdbi.sf.net/
+
+      - Make DBDriver class purely abstract; move its entire functional
+        contents to new MysqlDriver.
+
+      - Must create at least two other DBDriver subclasses to
+        ensure base class is reusable before releasing v4.0.
+        PostgresDriver and SqlLiteDriver?
+
+      - Templatize all classes that use DBDriver interface with the
+        DB driver type.  This lets you specify the driver type to use
+        with a Connection and all its children without modifying the
+        existing method parameter lists.  This also lets us worry less
+        about C API types, as they can be hidden away behind typedefs:
+
+        class MysqlDriver : public DBDriver { ...
+           typedef MYSQL_ROW row_type;
+           ...
+        }
+
+        template <class DBD = MysqlDriver>
+        class Connection ... { ...
+           Query<DBD> query();
+           ...
+        }
+
+        template <class DBD = MysqlDriver>
+        class UseQueryResult { ...
+            DBD::row_type fetch_raw_row();
+        }
+
+      - Tricky bits:
+    
+        - Initializing result set objects.
+
+        - type_info module.  Extremely closely tied to MySQL C API
+          right now.  Will probably have to turn it into a parallel
+          class hierarchy to DBDriver, or fold it in with same.
+
+        - Building MySQL++ on systems without autoconf.  How to
+          specify what DB engines are available?  Probably default to
+          supporting MySQL only, and let people turn things on manually
+          as they need them.  Or, maybe make them use Bakefile so they
+          can fiddle with the options if they want something atypical.
+
+    o Fork mysqlpp::String into mysqlpp::Blob, which differs only in
+      that it knows that it should be automatically quoted and escaped
+      when inserted into a SQL query.  Could do this in 3.x, but it's a
+      pretty serious API breakage.
+
+    o Some sort of support for prepared statements.  Can we hijack
+      the template query mechanism?
+
+    o If SSQLSv2 does use a common base class, change Query template
+      methods taking SSQLS into concrete methods taking SsqlsBase&.
+
+    o Make Query::insert(), replace() and update() execute their
+      queries immediately.  Requires an ABI break, because they'll
+      have to return SimpleResult.
+
+    o Switch Query's safe bool to overload basic_ios<>::operator
+      void*() instead.  We create an ambiguous conversion in bool
+      context with some C++ standard libraries otherwise.
+
+    o Templatize mysqlpp::String on value_type so it can be used to
+      hold wide characters.  Then the method that converts UTF-8 to the
+      platform's best wide character type can just return a different
+      variant of mysqlpp::String.
+
+    o Add wrapper functions to Null<> like length() that call the
+      corresponding function on data member, if present, to make it
+      more transparent.  At minimum, mirror the std::string API.
+
+    o Transaction class should check an "in transaction" flag on
+      Connection (or DBDriver) before sending BEGIN, defaulting to
+      false.  If set, the Transaction object does nothing.  If not
+      set, set it and send the query.  This prevents it from trying
+      to set up nested queries, which MySQL doesn't support.
+
+    o Remove throw-spec for std::out_of_range from SQLTypeAdapter::at().
+      It no longer throws this, and throw-specs are passee' anyway.
+
+    o Store failed query string in BadQuery exception object, to make
+      logging and debugging easier.  One could have a try block wrapping
+      many queries, and be able to recover the failed query string from
+      the exception object, instead of somehow keeping track yourself.
+
+      Patch: http://lists.mysql.com/plusplus/8374
+ 
+    o Query and SQLStream could have a common base class that would
+      allow the stream manipulator functions to catch and modify
+      strings based on only one dynamic_cast instead of requiring
+      two as it does since the addition of the SQLStream class.
+
+    o Make internal call chain steps like Query::execute(SQLQueryParms&)
+      protected?  No good reason for end users to call it, and making
+      it part of the public API causes people to try calling it, and
+      discovering that it's not a very elegant interface, compared to
+      the ones taking SQLStrings.
+
+    o SQL time type allows +/- 839 hours of range.  v3.0 code doesn't
+      cope with negative times, and if we change it to use signed
+      integers, we'll still only get +/-127 hours instead of +255.
+      Need to switch the hour field to a short to get the full range.
+
+    o Create a thread-safe message queue for separating DB access and
+      data use into multiple threads.  Something like ConnectionPool,
+      optional and with no ties to the internals of MySQL++.  There
+      could be an adapter between one end of the queue and a Connection
+      object, which creates Queries to handle standardized messages,
+      delivering the results back to the queue.
+
+    o Get rid of two-step create in DBDriver, requiring a connection to
+      be established in ctor for object to be valid?  RAII.  The
+      DB-specific functions that don't require a connection can be
+      static methods.  Tricky bit: a failed Connection::connect() call
+      will likely be followed by an indirect call to DBDriver::err*().
+      Does Connection cache the error value and message?  If we can pull
+      this off, we can drop the DBDriver::is_connected_ flag and change
+      Connection::connected() to "return driver_ != 0".
+
+    o Add STL-like custom Allocator template parameters to memory-hungry
+      classes like Row?  Useful in apps that process lots of data over
+      long periods, causing heap fragmentation with the default C++
+      allocator.

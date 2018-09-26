@@ -1,119 +1,55 @@
-#!/bin/bash
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                         "http://www.docbook.org/xml/4.2/docbookx.dtd"
+[ <!ENTITY % xinclude SYSTEM "xinclude.mod">
+%xinclude;
+]>
+<article>
+	<articleinfo>
+		<title>MySQL++ v3.2.1 User Manual</title>
 
-ARGS=1
-BF_OPTIONS=
-MAINT_FLAGS="--cache-file=config.cache"
-while [ $ARGS != 0 ]
-do
-	case "$1" in
-		bat)
-			cmd /c bootstrap.bat $BF_OPTIONS
-			exit 0
-			;;
+		<authorgroup>
+			<author>
+				<firstname>Kevin</firstname>
+				<surname>Atkinson</surname>
+			</author>
 
-		nodoc)
-			BF_OPTIONS="-DBUILDDOCS=no $BF_OPTIONS"
-			shift
-			;;
+			<author>
+				<firstname>Sinisa</firstname>
+				<surname>Milivojevic</surname>
+			</author>
 
-		noex)
-			BF_OPTIONS="-DBUILDEXAMPLES=no $BF_OPTIONS"
-			shift
-			;;
+			<author>
+				<firstname>Monty</firstname>
+				<surname>Widenius</surname>
+			</author>
 
-		nolib)
-			BF_OPTIONS="-DBUILDLIBRARY=no $BF_OPTIONS"
-			shift
-			;;
+			<author>
+				<firstname>Warren</firstname>
+				<surname>Young</surname>
+			</author>
+		</authorgroup>
 
-		nomaint)
-			MAINT_FLAGS=
-			shift
-			;;
+		<copyright>
+			<year>1998-2001, 2005-2010</year>
+			<holder>Kevin Atkinson (original author)</holder>
+			<holder>MySQL AB</holder>
+			<holder>Educational Technology Resources</holder>
+		</copyright>
 
-		noopt)
-			export CXXFLAGS="-g -O0"
-			shift
-			;;
+		<pubdate><?dbtimestamp format="B d, Y"?></pubdate>
+	</articleinfo>
 
-		pedantic)
-			export CXXFLAGS="-g -O2 -ansi -pedantic -Wall -Wextra -W -Wold-style-cast -Wfloat-equal -Wwrite-strings -Wno-overloaded-virtual -Wno-long-long -Wno-variadic-macros -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC"
-			shift
-			;;
 
-		*)
-			ARGS=0
-			;;
-	esac
-done
-
-# Check for existence of needed tools, so we can give a better error
-# message than the shell will.
-tools="make"											# POSIX
-tools="$tools aclocal autoconf autoheader libtoolize"	# autotools
-tools="$tools bakefile bakefilize bakefile_gen"			# Bakefile
-for tool in $tools
-do
-	if ! type -p $tool > /dev/null
-	then
-		echo "FAILED to find build tool '$tool'!"
-		echo
-		echo BOOTSTRAP FAILED!
-		echo
-		exit 1
-	fi
-done
-
-# Find location of Bakefile's stock M4 autoconf macros
-for d in /usr/share/aclocal /usr/local/share/aclocal \
-	'/c/Program Files (x86)/Bakefile/autoconf'
-do
-	BAKEFILE_M4="$d"
-	if [ -e "$BAKEFILE_M4/bakefile.m4" ] ; then break ; fi
-done
-if [ ! -e "$BAKEFILE_M4/bakefile.m4" ]
-then
-	echo
-	echo "Failed to find bakefile.m4.  Add the directory containing"
-	echo "this to the bootstrap script."
-	echo
-	exit 1
-fi
-
-# Do Bakefile stuff first.  Autoconf can't succeed without
-# autoconf_in.m4, which Bakefile creates.
-success=
-set -x &&
-	for d in 3 5 8 ; do mkdir -p vc200$d ; done &&
-	bakefilize &&
-	rm -f INSTALL &&
-	bakefile_gen $BF_OPTIONS &&
-	bakefile -f gnu -o Makefile.simple -DBUILDLIBRARY=no mysql++.bkl &&
-	set +x &&
-	success=shonuff
-
-# Do the autotools stuff if Bakefile steps succeeded
-if [ -n "$success" ]
-then
-	rm -f config.cache
-	mv autoconf_inc.m4 config > /dev/null 2>&1	# don't care if it fails
-	set -x &&
-		aclocal -I config -I "$BAKEFILE_M4" &&
-		libtoolize &&
-		autoheader &&
-		autoconf &&
-		./configure $MAINT_FLAGS $* &&
-		make lib/querydef.h lib/ssqls.h &&
-		set +x &&
-		success=awyeah
-fi
-
-# Detect failure in any part of above
-if [ -z "$success" ]
-then
-	echo
-    echo BOOTSTRAP FAILED!
-    echo
-    exit 1
-fi
-
+	<xi:include href="intro.dbx" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+	<xi:include href="overview.dbx" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+	<xi:include href="tutorial.dbx" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+	<xi:include href="tquery.dbx" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+	<xi:include href="ssqls.dbx" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+	<xi:include href="unicode.dbx" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+	<xi:include href="threads.dbx" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+	<xi:include href="configuration.dbx" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+	<xi:include href="incorporating.dbx" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+	<xi:include href="breakages.dbx" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+	<xi:include href="licenses.dbx" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</article>

@@ -1,11 +1,12 @@
 /***********************************************************************
- printdata.h - Declares utility routines for printing out data in
-	common forms, used by most of the example programs.
+ ssqls5.cpp - Example showing how to use the equal_list() member of
+	some SSQLS types to build SELECT queries with custom WHERE clauses.
 
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
- also hold copyrights on code in this file.  See the CREDITS.txt file
- in the top directory of the distribution for details.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, (c)
+ 2004-2009 by Educational Technology Resources, Inc., and (c) 2005 by
+ Chris Frey.  Others may also hold copyrights on code in this file.
+ See the CREDITS.txt file in the top directory of the distribution
+ for details.
 
  This file is part of MySQL++.
 
@@ -25,18 +26,61 @@
  USA
 ***********************************************************************/
 
-#if !defined(MYSQLPP_PRINTDATA_H)
-#define MYSQLPP_PRINTDATA_H
+#include "cmdline.h"
+#include "printdata.h"
+#include "stock.h"
 
-#include <mysql++.h>
+#include <iostream>
+#include <vector>
 
-void print_stock_header(size_t rows);
-void print_stock_row(const mysqlpp::Row& r);
-void print_stock_row(const mysqlpp::sql_char& item,
-		mysqlpp::sql_bigint num, mysqlpp::sql_double weight,
-		mysqlpp::sql_decimal_null price, const mysqlpp::sql_date& date);
-void print_stock_rows(mysqlpp::StoreQueryResult& res);
-void print_stock_table(mysqlpp::Query& query);
+using namespace std;
 
-#endif // !defined(MYSQLPP_PRINTDATA_H)
+int
+main(int argc, char *argv[])
+{
+	// Get database access parameters from command line
+	mysqlpp::examples::CommandLine cmdline(argc, argv);
+	if (!cmdline) {
+		return 1;
+	}
 
+	try {
+		// Establish the connection to the database server.
+		mysqlpp::Connection con(mysqlpp::examples::db_name,
+				cmdline.server(), cmdline.user(), cmdline.pass());
+
+		// Get all the rows in the stock table.
+		mysqlpp::Query query = con.query("select * from stock");
+		vector<stock> res;
+		query.storein(res);
+
+		if (res.size() > 0) {
+			// Build a select query using the data from the first row
+			// returned by our previous query.
+			query << "select * from stock where " <<
+					res[0].equal_list(" and ", stock_weight, stock_price);
+
+			// Display the finished query.
+			cout << "Custom query:\n" << query << endl;
+		}
+	}
+	catch (const mysqlpp::BadQuery& er) {
+		// Handle any query errors
+		cerr << "Query error: " << er.what() << endl;
+		return -1;
+	}
+	catch (const mysqlpp::BadConversion& er) {
+		// Handle bad conversions
+		cerr << "Conversion error: " << er.what() << endl <<
+				"\tretrieved data size: " << er.retrieved <<
+				", actual size: " << er.actual_size << endl;
+		return -1;
+	}
+	catch (const mysqlpp::Exception& er) {
+		// Catch-all for any other MySQL++ exceptions
+		cerr << "Error: " << er.what() << endl;
+		return -1;
+	}
+
+	return 0;
+}

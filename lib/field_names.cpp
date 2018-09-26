@@ -1,10 +1,12 @@
 /***********************************************************************
- field_names.cpp - Implements the FieldNames class.
+ store_if.cpp - Demonstrates Query::store_if(), showing only the rows
+	from the sample table with prime quantities.  This isn't intended
+	to be useful, only to show how you can do result set filtering that
+	outstrips the power of SQL.
 
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2010 by Educational Technology Resources, Inc.  Others may
- also hold copyrights on code in this file.  See the CREDITS.txt file
- in the top directory of the distribution for details.
+ Copyright (c) 2005-2010 by Educational Technology Resources, Inc.
+ Others may also hold copyrights on code in this file.  See the CREDITS
+ file in the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -24,44 +26,79 @@
  USA
 ***********************************************************************/
 
-#define MYSQLPP_NOT_HEADER
-#include "common.h"
+#include "cmdline.h"
+#include "printdata.h"
+#include "stock.h"
 
-#include "field_names.h"
-#include "result.h"
+#include <mysql++.h>
 
-#include <algorithm>
+#include <iostream>
 
-namespace mysqlpp {
+#include <math.h>
 
-namespace internal { extern void str_to_lwr(std::string& s); }
 
-void
-FieldNames::init(const ResultBase* res)
+// Define a functor for testing primality.
+struct is_prime
 {
-	size_t num = res->num_fields();
-	reserve(num);
-
-	for (size_t i = 0; i < num; i++) {
-		push_back(res->fields().at(i).name());
-	}
-}
-
-
-unsigned int
-FieldNames::operator [](const std::string& s) const
-{
-	std::string temp1(s);
-	internal::str_to_lwr(temp1);
-	for (const_iterator it = begin(); it != end(); ++it) {
-	std::string temp2(*it);
-		internal::str_to_lwr(temp2);
-		if (temp2.compare(temp1) == 0) {
-			return it - begin();
+	bool operator()(const stock& s)
+	{
+		if ((s.num == 2) || (s.num == 3)) {
+			return true;	// 2 and 3 are trivial cases
+		}
+		else if ((s.num < 2) || ((s.num % 2) == 0)) {
+			return false;	// can't be prime if < 2 or even
+		}
+		else {
+			// The only possibility left is that it's divisible by an
+			// odd number that's less than or equal to its square root.
+			for (int i = 3; i <= sqrt(double(s.num)); i += 2) {
+				if ((s.num % i) == 0) {
+					return false;
+				}
+			}
+			return true;
 		}
 	}
+};
 
-	return end() - begin();
+
+int
+main(int argc, char *argv[])
+{
+	// Get database access parameters from command line
+	mysqlpp::examples::CommandLine cmdline(argc, argv);
+	if (!cmdline) {
+		return 1;
+	}
+
+	try {
+		// Establish the connection to the database server.
+		mysqlpp::Connection con(mysqlpp::examples::db_name,
+				cmdline.server(), cmdline.user(), cmdline.pass());
+
+		// Collect the stock items with prime quantities
+		std::vector<stock> results;
+		mysqlpp::Query query = con.query();
+		query.store_if(results, stock(), is_prime());
+
+		// Show the results
+		print_stock_header(results.size());
+		std::vector<stock>::const_iterator it;
+		for (it = results.begin(); it != results.end(); ++it) {
+			print_stock_row(it->item.c_str(), it->num, it->weight,
+					it->price, it->sDate);
+		}
+	}
+	catch (const mysqlpp::BadQuery& e) {
+		// Something went wrong with the SQL query.
+		std::cerr << "Query failed: " << e.what() << std::endl;
+		return 1;
+	}
+	catch (const mysqlpp::Exception& er) {
+		// Catch-all for any other MySQL++ exceptions
+		std::cerr << "Error: " << er.what() << std::endl;
+		return 1;
+	}
+
+	return 0;
 }
-
-} // end namespace mysqlpp

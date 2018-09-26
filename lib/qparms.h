@@ -1,15 +1,9 @@
-/// \file qparms.h
-/// \brief Declares the template query parameter-related stuff.
-///
-/// The classes defined in this file are used by class Query when it
-/// parses a template query: they hold information that it finds in the
-/// template, so it can assemble a SQL statement later on demand.
-
 /***********************************************************************
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
- also hold copyrights on code in this file.  See the CREDITS.txt file
- in the top directory of the distribution for details.
+ options.cpp - Implements the Option class hierarchy.
+
+ Copyright (c) 2007 by Educational Technology Resources, Inc.  Others
+ may also hold copyrights on code in this file.  See the CREDITS
+ file in the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -29,238 +23,336 @@
  USA
 ***********************************************************************/
 
-#ifndef MYSQLPP_QPARMS_H
-#define MYSQLPP_QPARMS_H
+#define MYSQLPP_NOT_HEADER
+#include "options.h"
 
-#include "stadapter.h"
+#include "dbdriver.h"
 
-#include <vector>
 
 namespace mysqlpp {
 
 #if !defined(DOXYGEN_IGNORE)
-// Make Doxygen ignore this
-class MYSQLPP_EXPORT Query;
-#endif
+// We're hiding all the Option subclass internals from Doxygen.  All the
+// upper-level classes are documented fully, and each leaf class itself
+// is documented.  It's just the ctors and set() methods we're refusing
+// to document over and over again.
 
-/// \brief This class holds the parameter values for filling
-/// template queries. 
-class MYSQLPP_EXPORT SQLQueryParms : public std::vector<SQLTypeAdapter>
+Option::Error
+CompressOption::set(DBDriver* dbd)
 {
-public:
-	/// \brief Abbreviation so some of the declarations below don't
-	/// span many lines.
-	typedef const SQLTypeAdapter& sta;
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_OPT_COMPRESS) ?
+				Option::err_NONE : Option::err_api_reject;
+}
 
-	/// \brief Default constructor
-	SQLQueryParms() :
-	parent_(0),
-	processing_(false)
-	{
-	}
-	
-	/// \brief Create object
-	///
-	/// \param p pointer to the query object these parameters are tied
-	/// to
-	SQLQueryParms(Query* p) :
-	parent_(p),
-	processing_(false)
-	{
-	}
-	
-	/// \brief Returns true if we are bound to a query object.
-	///
-	/// Basically, this tells you which of the two ctors were called.
-	bool bound() { return parent_ != 0; }
 
-	/// \brief Clears the list
-	void clear() { erase(begin(), end()); }
+Option::Error
+ConnectTimeoutOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_OPT_CONNECT_TIMEOUT, &arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+}
 
-	/// \brief Indirect access to Query::escape_string()
-	///
-	/// \internal Needed by \c operator<<(Manip&, \c const \c T&) where
-	/// \c Manip is used on a SQLQueryParms object.  We'd have to make
-	/// all these operators friends to give access to our internal Query
-	/// object otherwise.
-	///
-	/// \see Query::escape_string(std::string*, const char*, size_t)
-	size_t escape_string(std::string* ps, const char* original = 0,
-			size_t length = 0) const;
 
-	/// \brief Indirect access to Query::escape_string()
-	///
-	/// \see escape_string(std::string*, const char*, size_t)
-	/// \see Query::escape_string(const char*, const char*, size_t)
-	size_t escape_string(char* escaped, const char* original,
-			size_t length) const;
+Option::Error
+FoundRowsOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(CLIENT_FOUND_ROWS, arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+}
 
-	/// \brief Access element number n
-	SQLTypeAdapter& operator [](size_type n)
-	{
-		if (n >= size()) {
-			insert(end(), (n + 1) - size(), "");
-		}
-		return std::vector<SQLTypeAdapter>::operator [](n);
-	}
 
-	/// \brief Access element number n
-	const SQLTypeAdapter& operator [](size_type n) const
-			{ return std::vector<SQLTypeAdapter>::operator [](n); }
-	
-	/// \brief Access the value of the element with a key of str.
-	SQLTypeAdapter& operator [](const char *str);
+Option::Error
+GuessConnectionOption::set(DBDriver* dbd)
+{
+#if MYSQL_VERSION_ID >= 40101
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_OPT_GUESS_CONNECTION) ?
+				Option::err_NONE : Option::err_api_reject;
+#else
+	return Option::err_api_limit;
+#endif
+}
 
-	/// \brief Access the value of the element with a key of str.
-	const SQLTypeAdapter& operator [](const char *str) const;
 
-	/// \brief Adds an element to the list
-	SQLQueryParms& operator <<(const SQLTypeAdapter& str)
-	{
-		push_back(str);
-		return *this;
-	}
+Option::Error
+IgnoreSpaceOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(CLIENT_IGNORE_SPACE, arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+}
 
-	/// \brief Adds an element to the list
-	SQLQueryParms& operator +=(const SQLTypeAdapter& str)
-	{
-		push_back(str);
-		return *this;
-	}
 
-	/// \brief Build a composite of two parameter lists
-	///
-	/// If this list is (a, b) and \c other is (c, d, e, f, g), then
-	/// the returned list will be (a, b, e, f, g).  That is, all of this
-	/// list's parameters are in the returned list, plus any from the
-	/// other list that are in positions beyond what exist in this list.
-	///
-	/// If the two lists are the same length or this list is longer than
-	/// the \c other list, a copy of this list is returned.
-	SQLQueryParms operator +(
-			const SQLQueryParms& other) const;
+Option::Error
+InitCommandOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_INIT_COMMAND, arg_.c_str()) ?
+				Option::err_NONE : Option::err_api_reject;
+}
 
-#if !defined(DOXYGEN_IGNORE)
-// Doxygen will not generate documentation for this section.
-	void set(sta a)
-	{
-		clear();
-		*this << a;
+
+Option::Error
+InteractiveOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(CLIENT_INTERACTIVE, arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+}
+
+
+Option::Error
+LocalFilesOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(CLIENT_LOCAL_FILES, arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+}
+
+
+Option::Error
+LocalInfileOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_OPT_LOCAL_INFILE, &arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+}
+
+
+Option::Error
+MultiResultsOption::set(DBDriver* dbd)
+{
+#if MYSQL_VERSION_ID >= 40101
+	if (dbd->connected()) {
+		return dbd->set_option(arg_ ? MYSQL_OPTION_MULTI_STATEMENTS_ON :
+				MYSQL_OPTION_MULTI_STATEMENTS_OFF) ?
+				Option::err_NONE : Option::err_api_reject;
 	}
-	void set(sta a, sta b)
-	{
-		clear();
-		*this << a << b;
+	else {
+		return dbd->set_option(CLIENT_MULTI_RESULTS, arg_) ?
+				Option::err_NONE : Option::err_api_reject;
 	}
-	void set(sta a, sta b, sta c)
-	{
-		clear();
-		*this << a << b << c;
+#else
+	return Option::err_api_limit;
+#endif
+}
+
+
+Option::Error
+MultiStatementsOption::set(DBDriver* dbd)
+{
+#if MYSQL_VERSION_ID >= 40101
+	if (dbd->connected()) {
+		return dbd->set_option(arg_ ? MYSQL_OPTION_MULTI_STATEMENTS_ON :
+				MYSQL_OPTION_MULTI_STATEMENTS_OFF) ?
+				Option::err_NONE : Option::err_api_reject;
 	}
-	void set(sta a, sta b, sta c, sta d)
-	{
-		clear();
-		*this << a << b << c << d;
+	else {
+		return dbd->set_option(CLIENT_MULTI_STATEMENTS, arg_) ?
+				Option::err_NONE : Option::err_api_reject;
 	}
-	void set(sta a, sta b, sta c, sta d, sta e)
-	{
-		clear();
-		*this << a << b << c << d << e;
-	}
-	void set(sta a, sta b, sta c, sta d, sta e, sta f)
-	{
-		clear();
-		*this << a << b << c << d << e << f;
-	}
-	void set(sta a, sta b, sta c, sta d, sta e, sta f, sta g)
-	{
-		clear();
-		*this << a << b << c << d << e << f << g;
-	}
-	void set(sta a, sta b, sta c, sta d, sta e, sta f, sta g, sta h)
-	{
-		clear();
-		*this << a << b << c << d << e << f << g << h;
-	}
-	void set(sta a, sta b, sta c, sta d, sta e, sta f, sta g, sta h, sta i)
-	{
-		clear();
-		*this << a << b << c << d << e << f << g << h << i;
-	}
-	void set(sta a, sta b, sta c, sta d, sta e, sta f, sta g, sta h, sta i, sta j)
-	{
-		clear();
-		*this << a << b << c << d << e << f << g << h << i << j;
-	}
-	void set(sta a, sta b, sta c, sta d, sta e, sta f, sta g, sta h, sta i, sta j, sta k)
-	{
-		clear();
-		*this << a << b << c << d << e << f << g << h << i << j << k;
-	}
+#else
+	return Option::err_api_limit;
+#endif
+}
+
+
+Option::Error
+NamedPipeOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_OPT_NAMED_PIPE) ?
+				Option::err_NONE : Option::err_api_reject;
+}
+
+
+Option::Error
+NoSchemaOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(CLIENT_NO_SCHEMA, arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+}
+
+
+Option::Error
+ProtocolOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_OPT_PROTOCOL, &arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+}
+
+
+Option::Error
+ReadDefaultFileOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_READ_DEFAULT_FILE, arg_.c_str()) ?
+				Option::err_NONE : Option::err_api_reject;
+}
+
+
+Option::Error
+ReadDefaultGroupOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_READ_DEFAULT_GROUP, arg_.c_str()) ?
+				Option::err_NONE : Option::err_api_reject;
+}
+
+
+Option::Error
+ReadTimeoutOption::set(DBDriver* dbd)
+{
+#if MYSQL_VERSION_ID >= 40101
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_OPT_READ_TIMEOUT, &arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+#else
+	return Option::err_api_limit;
+#endif
+}
+
+
+Option::Error
+ReconnectOption::set(DBDriver* dbd)
+{
+#if MYSQL_VERSION_ID >= 50013
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_OPT_RECONNECT, &arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+#else
+	return Option::err_api_limit;
+#endif
+}
+
+
+Option::Error
+ReportDataTruncationOption::set(DBDriver* dbd)
+{
+#if MYSQL_VERSION_ID >= 50003
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_REPORT_DATA_TRUNCATION, &arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+#else
+	return Option::err_api_limit;
+#endif
+}
+
+
+Option::Error
+SecureAuthOption::set(DBDriver* dbd)
+{
+#if MYSQL_VERSION_ID >= 40101
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_SECURE_AUTH, &arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+#else
+	return Option::err_api_limit;
+#endif
+}
+
+
+Option::Error
+SetCharsetDirOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_SET_CHARSET_DIR, arg_.c_str()) ?
+				Option::err_NONE : Option::err_api_reject;
+}
+
+
+Option::Error
+SetCharsetNameOption::set(DBDriver* dbd)
+{
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_SET_CHARSET_NAME, arg_.c_str()) ?
+				Option::err_NONE : Option::err_api_reject;
+}
+
+
+Option::Error
+SetClientIpOption::set(DBDriver* dbd)
+{
+#if MYSQL_VERSION_ID >= 40101
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_SET_CLIENT_IP, arg_.c_str()) ?
+				Option::err_NONE : Option::err_api_reject;
+#else
+	return Option::err_api_limit;
+#endif
+}
+
+
+Option::Error
+SharedMemoryBaseNameOption::set(DBDriver* dbd)
+{
+#if MYSQL_VERSION_ID >= 40100
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_SHARED_MEMORY_BASE_NAME, arg_.c_str()) ?
+				Option::err_NONE : Option::err_api_reject;
+#else
+	return Option::err_api_limit;
+#endif
+}
+
+
+Option::Error
+SslOption::set(DBDriver* dbd)
+{
+#if defined(HAVE_MYSQL_SSL_SET)
+	return dbd->connected() ? Option::err_connected :
+			dbd->enable_ssl(key_.c_str(), cert_.c_str(), ca_.c_str(),
+				capath_.c_str(), cipher_.c_str()) ?
+				Option::err_NONE : Option::err_api_reject;
+#else
+	return Option::err_api_limit;
+#endif
+}
+
+
+Option::Error
+UseEmbeddedConnectionOption::set(DBDriver* dbd)
+{
+#if MYSQL_VERSION_ID >= 40101
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_OPT_USE_EMBEDDED_CONNECTION) ?
+				Option::err_NONE : Option::err_api_reject;
+#else
+	return Option::err_api_limit;
+#endif
+}
+
+
+Option::Error
+UseRemoteConnectionOption::set(DBDriver* dbd)
+{
+#if MYSQL_VERSION_ID >= 40101
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_OPT_USE_REMOTE_CONNECTION) ?
+				Option::err_NONE : Option::err_api_reject;
+#else
+	return Option::err_api_limit;
+#endif
+}
+
+
+Option::Error
+WriteTimeoutOption::set(DBDriver* dbd)
+{
+#if MYSQL_VERSION_ID >= 40101
+	return dbd->connected() ? Option::err_connected :
+			dbd->set_option(MYSQL_OPT_WRITE_TIMEOUT, &arg_) ?
+				Option::err_NONE : Option::err_api_reject;
+#else
+	return Option::err_api_limit;
+#endif
+}
+
 #endif // !defined(DOXYGEN_IGNORE)
 
-	/// \brief Set the template query parameters.
-	///
-	/// Sets parameter 0 to a, parameter 1 to b, etc. There are
-	/// overloaded versions of this function that take anywhere from
-	/// one to a dozen parameters.
-	void set(sta a, sta b, sta c, sta d, sta e, sta f, sta g,
-			sta h, sta i, sta j, sta k, sta l)
-	{
-		clear();
-		*this << a << b << c << d << e << f << g << h << i << j << k << l;
-	}
-
-private:
-	friend class Query;
-
-	Query* parent_;
-	bool processing_;	///< true if we're building a query string
-};
-
-
-/// \brief Used within Query to hold elements for parameterized
-/// queries.
-///
-/// Each element has three parts:
-///
-/// The concept behind the \c before variable needs a little explaining.
-/// When a template query is parsed, each parameter is parsed into one
-/// of these SQLParseElement objects, but the non-parameter parts of the
-/// template also have to be stored somewhere.  MySQL++ chooses to
-/// attach the text leading up to a parameter to that parameter.  So,
-/// the \c before string is simply the text copied literally into the
-/// finished query before we insert a value for the parameter.
-///
-/// The \c option character is currently one of 'q', 'Q', 'r', 'R' or
-/// ' '.  See the "Template Queries" chapter in the user manual for
-/// details.
-///
-/// The position value (\c num) allows a template query to have its
-/// parameters in a different order than in the Query method call.
-/// An example of how this can be helpful is in the "Template Queries"
-/// chapter of the user manual.
-
-struct SQLParseElement
-{
-	/// \brief Create object
-	///
-	/// \param b the 'before' value
-	/// \param o the 'option' value
-	/// \param n the 'num' value
-	SQLParseElement(std::string b, char o, signed char n) :
-	before(b),
-	option(o),
-	num(n)
-	{
-	}
-	
-	std::string before;		///< string inserted before the parameter
-	char option;			///< the parameter option, or blank if none
-	signed char num;		///< the parameter position to use
-};
-
 } // end namespace mysqlpp
-
-#endif // !defined(MYSQLPP_QPARMS_H)
-

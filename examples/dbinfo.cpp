@@ -1,6 +1,8 @@
 /***********************************************************************
- dbinfo.cpp - Example showing how to request information about the
-	database schema, such as table names, column types, etc.
+ cgi_jpeg.cpp - Example code showing how to fetch JPEG data from a BLOB
+ 	column and send it back to a browser that requested it by ID.
+	
+	Use load_jpeg.cpp to load JPEG files into the database we query.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
  (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
@@ -26,166 +28,89 @@
 ***********************************************************************/
 
 #include "cmdline.h"
-#include "printdata.h"
+#include "images.h"
 
-#include <mysql++.h>
+#define CRLF			"\r\n"
+#define CRLF2			"\r\n\r\n"
 
-#include <iomanip>
-#include <iostream>
-#include <string>
-#include <vector>
-
-using namespace std;
-
-
-// Insert a bar into the stream with the given query string centered
-static void
-separator(ostream& os, string qstr)
-{
-	string sep("========================================"
-			"========================================");
-	if (qstr.size()) {
-		string::size_type start = (sep.size() - qstr.size()) / 2;
-		sep.replace(start - 1, 1, 1, ' ');
-		sep.replace(start, qstr.size(), qstr);
-		sep.replace(start + qstr.size(), 1, 1, ' ');
-		os << "\n\n";
-	}
-	os << sep << endl;
-}
-
-
-// Print out the MySQL server version
-static void
-show_mysql_version(mysqlpp::Connection& con)
-{
-	separator(cout, "");
-    cout << "MySQL version: " << con.client_version();
-}
-
-
-// Print out the names of all the databases managed by the server
-static void
-show_databases(mysqlpp::Connection& con)
-{
-	mysqlpp::Query query = con.query("show databases");
-	separator(cout, query.str());
-	mysqlpp::StoreQueryResult res = query.store();
-
-	cout << "Databases found: " << res.size();
-	cout.setf(ios::left);
-	mysqlpp::StoreQueryResult::iterator rit;
-	for (rit = res.begin(); rit != res.end(); ++rit) {
-		cout << "\n\t" << (*rit)[0];
-	}
-}
-
-
-// Print information about each of the tables we found
-static void
-show_table_info(mysqlpp::Connection& con, const vector<string>& tables)
-{
-	vector<string>::const_iterator it;
-	for (it = tables.begin(); it != tables.end(); ++it) {
-		mysqlpp::Query query = con.query();
-		query << "describe " << *it;
-		separator(cout, query.str());
-		mysqlpp::StoreQueryResult res = query.store();
-
-		size_t columns = res.num_fields();
-		vector<size_t> widths;
-		for (size_t i = 0; i < columns; ++i) {
-			string s = res.field_name(int(i));
-			if (s.compare("field") == 0) {
-				widths.push_back(22);
-			}
-			else if (s.compare("type") == 0) {
-				widths.push_back(20);
-			}
-			else if (s.compare("null") == 0) {
-				widths.push_back(4);
-			}
-			else if (s.compare("key") == 0) {
-				widths.push_back(3);
-			}
-			else if (s.compare("extra") == 0) {
-				widths.push_back(0);
-			}
-			else {
-				widths.push_back(15);
-			}
-
-			if (widths[i]) {
-				cout << '|' << setw(widths[i]) << 
-						res.field_name(int(i)) << '|';
-			}
-		}
-		cout << endl;
-
-		mysqlpp::StoreQueryResult::iterator rit;
-		for (rit = res.begin(); rit != res.end(); ++rit) {
-			for (unsigned int i = 0; i < columns; ++i) {
-				if (widths[i]) {
-					cout << ' ' << setw(widths[i]) <<
-							(*rit)[i].c_str() << ' ';
-				}
-			}
-			cout << endl;
-		}
-	}
-}
-
-
-// Print out the names of all tables in the sample database, and
-// return the list of tables.
-static void
-show_tables(mysqlpp::Connection& con)
-{
-	mysqlpp::Query query = con.query("show tables");
-	separator(cout, query.str());
-	mysqlpp::StoreQueryResult res = query.store();
-
-	cout << "Tables found: " << res.size();
-	cout.setf(ios::left);
-	vector<string> tables;
-	mysqlpp::StoreQueryResult::iterator rit;
-	for (rit = res.begin(); rit != res.end(); ++rit) {
-		string tbl((*rit)[0]);
-		cout << "\n\t" << tbl;
-		tables.push_back(tbl);
-	}
-
-	show_table_info(con, tables);
-}
-
-
-// Call all the above functions in sequence
 int
 main(int argc, char* argv[])
 {
-	// Get database access parameters from command line
-	mysqlpp::examples::CommandLine cmdline(argc, argv);
+	// Get database access parameters from command line if present, else
+	// use hard-coded values for true CGI case.
+	mysqlpp::examples::CommandLine cmdline(argc, argv, "root",
+			"nunyabinness");
 	if (!cmdline) {
 		return 1;
 	}
 
+	// Parse CGI query string environment variable to get image ID
+	unsigned int img_id = 0;
+	char* cgi_query = getenv("QUERY_STRING");
+	if (cgi_query) {
+		if ((strlen(cgi_query) < 4) || memcmp(cgi_query, "id=", 3)) {
+			std::cout << "Content-type: text/plain" << std::endl << std::endl;
+			std::cout << "ERROR: Bad query string" << std::endl;
+			return 1;
+		}
+		else {
+			img_id = atoi(cgi_query + 3);
+		}
+	}
+	else {
+		std::cerr << "Put this program into a web server's cgi-bin "
+				"directory, then" << std::endl;
+		std::cerr << "invoke it with a URL like this:" << std::endl;
+		std::cerr << std::endl;
+		std::cerr << "    http://server.name.com/cgi-bin/cgi_jpeg?id=2" <<
+				std::endl;
+		std::cerr << std::endl;
+		std::cerr << "This will retrieve the image with ID 2." << std::endl;
+		std::cerr << std::endl;
+		std::cerr << "You will probably have to change some of the #defines "
+				"at the top of" << std::endl;
+		std::cerr << "examples/cgi_jpeg.cpp to allow the lookup to work." <<
+				std::endl;
+		return 1;
+	}
+
+	// Retrieve image from DB by ID
 	try {
-		// Connect to server, then dump a bunch of stuff we find on it
 		mysqlpp::Connection con(mysqlpp::examples::db_name,
 				cmdline.server(), cmdline.user(), cmdline.pass());
-		show_mysql_version(con);
-		show_databases(con);
-		show_tables(con);
+		mysqlpp::Query query = con.query();
+		query << "SELECT * FROM images WHERE id = " << img_id;
+		mysqlpp::StoreQueryResult res = query.store();
+		if (res && res.num_rows()) {
+			images img = res[0];
+			if (img.data.is_null) {
+				std::cout << "Content-type: text/plain" << CRLF2;
+				std::cout << "No image content!" << CRLF;
+			}
+			else {
+				std::cout << "X-Image-Id: " << img_id << CRLF; // for debugging
+				std::cout << "Content-type: image/jpeg" << CRLF;
+				std::cout << "Content-length: " <<
+						img.data.data.length() << CRLF2;
+				std::cout << img.data;
+			}
+		}
+		else {
+			std::cout << "Content-type: text/plain" << CRLF2;
+			std::cout << "ERROR: No image with ID " << img_id << CRLF;
+		}
 	}
 	catch (const mysqlpp::BadQuery& er) {
 		// Handle any query errors
-		cerr << "Query error: " << er.what() << endl;
-		return -1;
+		std::cout << "Content-type: text/plain" << CRLF2;
+		std::cout << "QUERY ERROR: " << er.what() << CRLF;
+		return 1;
 	}
 	catch (const mysqlpp::Exception& er) {
 		// Catch-all for any other MySQL++ exceptions
-		cerr << "Error: " << er.what() << endl;
-		return -1;
+		std::cout << "Content-type: text/plain" << CRLF2;
+		std::cout << "GENERAL ERROR: " << er.what() << CRLF;
+		return 1;
 	}
 
 	return 0;

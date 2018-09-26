@@ -1,11 +1,10 @@
 /***********************************************************************
- result.cpp - Implements the ResultBase, StoreQueryResult and
-	UseQuery Result classes.
+ cpool.cpp - Implements the ConnectionPool class.
 
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
- also hold copyrights on code in this file.  See the CREDITS.txt file
- in the top directory of the distribution for details.
+ Copyright (c) 2007 by Educational Technology Resources, Inc. and
+ (c) 2007 by Jonathan Wakely.  Others may also hold copyrights on
+ code in this file.  See the CREDITS.txt file in the top directory
+ of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -25,184 +24,136 @@
  USA
 ***********************************************************************/
 
-#include "result.h"
+#include "cpool.h"
 
-#include "dbdriver.h"
+#include "connection.h"
 
+#include <algorithm>
+#include <functional>
 
 namespace mysqlpp {
 
 
-ResultBase::ResultBase(MYSQL_RES* res, DBDriver* dbd, bool te) :
-OptionalExceptions(te),
-driver_(res ? dbd : 0),
-fields_(Fields::size_type(res ? dbd->num_fields(res) : 0)),
-current_field_(0)
-{
-	if (res) {
-		Fields::size_type i = 0;
-		const MYSQL_FIELD* pf;
-		while ((i < fields_.size()) && (pf = dbd->fetch_field(res))) {
-			fields_[i++] = pf;
-		}
-		dbd->field_seek(res, 0);		// semantics break otherwise!
+/// \brief Functor to test whether a given ConnectionInfo object is
+/// "too old".
+///
+/// \internal This is a template only because ConnectionInfo is private.
+/// Making it a template means the private type is only used at the point
+/// of instantiation, where it is accessible.
 
-		names_ = new FieldNames(this);
-		types_ = new FieldTypes(this);
+template <typename ConnInfoT>
+class TooOld : std::unary_function<ConnInfoT, bool>
+{
+public:
+#if !defined(DOXYGEN_IGNORE)
+	TooOld(unsigned int tmax) :
+	min_age_(time(0) - tmax)
+	{
 	}
-}
+
+	bool operator()(const ConnInfoT& conn_info) const
+	{
+		return !conn_info.in_use && conn_info.last_used <= min_age_;
+	}
+
+#endif
+private:
+	time_t min_age_;
+};
 
 
-ResultBase&
-ResultBase::copy(const ResultBase& other)
+
+//// clear /////////////////////////////////////////////////////////////
+// Destroy connections in the pool, either all of them (completely
+// draining the pool) or just those not currently in use.  The public
+// method shrink() is an alias for clear(false).
+
+void
+ConnectionPool::clear(bool all)
 {
-	if (this != &other) {
-		set_exceptions(other.throw_exceptions());
+	ScopedLock lock(mutex_);	// ensure we're not interfered with
 
-		if (other.driver_) {
-			driver_ = other.driver_;
-			fields_ = other.fields_;
-			names_ = other.names_;
-			types_ = other.types_;
-			current_field_ = other.current_field_;
+	PoolIt it = pool_.begin(), doomed;
+	while (it != pool_.end()) {
+		if (all || !it->in_use) {
+			doomed = it++;
+			destroy(doomed->conn);
+			pool_.erase(doomed);
 		}
 		else {
-			driver_ = 0;
-			fields_.clear();
-			names_ = 0;
-			types_ = 0;
-			current_field_ = 0;
+			++it;
 		}
-	}
-
-	return *this;
-}
-
-
-int
-ResultBase::field_num(const std::string& i) const
-{
-	size_t index = (*names_)[i];
-	if ((index >= names_->size()) && throw_exceptions()) {
-		if (throw_exceptions()) {
-			throw BadFieldName(i.c_str());
-		}
-		else {
-			return -1;
-		}
-	}
-	
-	return int(index);
-}
-
-
-StoreQueryResult::StoreQueryResult(MYSQL_RES* res, DBDriver* dbd,
-		bool te) :
-ResultBase(res, dbd, te),
-list_type(list_type::size_type(res && dbd ? dbd->num_rows(res) : 0)),
-copacetic_(res && dbd)
-{
-	if (copacetic_) {
-		iterator it = begin();
-		while (MYSQL_ROW row = dbd->fetch_row(res)) {
-			if (const unsigned long* lengths = dbd->fetch_lengths(res)) {
-				*it = Row(row, this, lengths, throw_exceptions());
-				++it;
-			}
-		}
-
-		dbd->free_result(res);
 	}
 }
 
 
-StoreQueryResult&
-StoreQueryResult::copy(const StoreQueryResult& other)
+//// find_mru //////////////////////////////////////////////////////////
+// Find most recently used available connection.  Uses operator< for
+// ConnectionInfo to order pool with MRU connection last.  Returns 0 if
+// there are no connections not in use.
+
+Connection*
+ConnectionPool::find_mru()
 {
-	if (this != &other) {
-		ResultBase::copy(other);
-		assign(other.begin(), other.end());
-		copacetic_ = other.copacetic_;
-	}
-
-	return *this;
-}
-
-
-UseQueryResult::UseQueryResult(MYSQL_RES* res, DBDriver* dbd, bool te) :
-ResultBase(res, dbd, te)
-{
-	if (res) {
-		result_ = res;
-	}
-}
-
-
-UseQueryResult&
-UseQueryResult::copy(const UseQueryResult& other)
-{
-	if (this != &other) {
-		ResultBase::copy(other);
-		if (other.result_) {
-			result_ = other.result_;
-		}
-		else {
-			result_ = 0;
-		}
-	}
-
-	return *this;
-}
-
-
-const unsigned long*
-UseQueryResult::fetch_lengths() const
-{
-	return driver_->fetch_lengths(result_.raw());
-}
-
-
-Row
-UseQueryResult::fetch_row() const
-{
-	if (!result_) {
-		if (throw_exceptions()) {
-			throw UseQueryError("Results not fetched");
-		}
-		else {
-			return Row();
-		}
-	}
-
-	MYSQL_ROW row = driver_->fetch_row(result_.raw());
-	if (row) {
-		const unsigned long* lengths = fetch_lengths();
-		if (lengths) {
-			return Row(row, this, lengths, throw_exceptions());
-		}
-		else {
-			if (throw_exceptions()) {
-				throw UseQueryError("Failed to get field lengths");
-			}
-			else {
-				return Row();
-			}
-		}
+	PoolIt mru = std::max_element(pool_.begin(), pool_.end());
+	if (mru != pool_.end() && !mru->in_use) {
+		mru->in_use = true;
+		return mru->conn;
 	}
 	else {
-		// Prior to v3, this was considered an error, but it just means
-		// we've fallen off the end of a "use" query's result set.  You
-		// can't predict when this will happen, but it isn't an error.
-		// Just return a falsy row object so caller's loop terminates.
-		return Row();
+		return 0;
 	}
 }
 
 
-MYSQL_ROW
-UseQueryResult::fetch_raw_row() const
+//// grab //////////////////////////////////////////////////////////////
+
+Connection*
+ConnectionPool::grab()
 {
-	return driver_->fetch_row(result_.raw());
+	ScopedLock lock(mutex_);	// ensure we're not interfered with
+	remove_old_connections();
+	if (Connection* mru = find_mru()) {
+		return mru;
+	}
+	else {
+		// No free connections, so create and return a new one.
+		pool_.push_back(ConnectionInfo(create()));
+		return pool_.back().conn;
+	}
+}
+
+
+//// release ///////////////////////////////////////////////////////////
+
+void
+ConnectionPool::release(const Connection* pc)
+{
+	ScopedLock lock(mutex_);	// ensure we're not interfered with
+
+	for (PoolIt it = pool_.begin(); it != pool_.end(); ++it) {
+		if (it->conn == pc) {
+			it->in_use = false;
+			it->last_used = time(0);
+			break;
+		}
+	}
+}
+
+
+//// remove_old_connections ////////////////////////////////////////////
+// Remove connections that were last used too long ago.
+
+void
+ConnectionPool::remove_old_connections()
+{
+	TooOld<ConnectionInfo> too_old(max_idle_time());
+
+	PoolIt it = pool_.begin();
+	while ((it = std::find_if(it, pool_.end(), too_old)) != pool_.end()) {
+		destroy(it->conn);
+		pool_.erase(it++);
+	}
 }
 
 

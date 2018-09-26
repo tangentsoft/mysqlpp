@@ -1,121 +1,158 @@
-/// \file sqlstream.h
-/// \brief Defines a class for building quoted and escaped SQL text.
+Prerequisites
+~~~~~~~~~~~~~
+    You need to have the MySQL C API development files on your system,
+    since MySQL++ is built on top of it.
 
-/***********************************************************************
- Copyright (c) 2008 by AboveNet, Inc.  Others may also hold copyrights
- on code in this file.  See the CREDITS file in the top directory of
- the distribution for details.
+    The easiest way to get it is to download Connector/C from
+    mysql.com.
 
- This file is part of MySQL++.
-
- MySQL++ is free software; you can redistribute it and/or modify it
- under the terms of the GNU Lesser General Public License as published
- by the Free Software Foundation; either version 2.1 of the License, or
- (at your option) any later version.
-
- MySQL++ is distributed in the hope that it will be useful, but WITHOUT
- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
- License for more details.
-
- You should have received a copy of the GNU Lesser General Public
- License along with MySQL++; if not, write to the Free Software
- Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
- USA
-***********************************************************************/
-
-#if !defined(MYSQLPP_SQLSTREAM_H)
-#define MYSQLPP_SQLSTREAM_H
-
-#include "common.h"
-
-#include <sstream>
-
-namespace mysqlpp {
-
-#if !defined(DOXYGEN_IGNORE)
-// Make Doxygen ignore this
-class MYSQLPP_EXPORT Connection;
-#endif
-
-/// \brief A class for building SQL-formatted strings.
-///
-/// See the user manual for more details about these options.
-
-class MYSQLPP_EXPORT SQLStream :
-public std::ostringstream
-{
-public:
-	/// \brief Create a new stream object attached to a connection.
-	///
-	/// \param c connection used for escaping text
-	/// \param pstr an optional initial string
-	SQLStream(Connection* c, const char* pstr = 0);
-
-	/// \brief Create a new stream object as a copy of another.
-	///
-	/// This is a traditional copy ctor.
-	SQLStream(const SQLStream& s);
-
-	/// \brief Return a SQL-escaped version of a character buffer
-	///
-	/// \param ps pointer to C++ string to hold escaped version; if
-	/// original is 0, also holds the original data to be escaped
-	/// \param original if given, pointer to the character buffer to
-	/// escape instead of contents of *ps
-	/// \param length if both this and original are given, number of
-	/// characters to escape instead of ps->length()
-	///
-	/// \retval number of characters placed in *ps
-	///
-	/// \see comments for escape_string(char*, const char*, size_t)
-	/// and DBDriver::escape_string(std::string*, const char *, size_t)
-	/// for further details.
-	size_t escape_string(std::string* ps, const char* original = 0,
-			size_t length = 0) const;
-
-	/// \brief Return a SQL-escaped version of the given character
-	/// buffer
-	///
-	/// \param escaped character buffer to hold escaped version; must
-	/// point to at least (length * 2 + 1) bytes
-	/// \param original pointer to the character buffer to escape
-	/// \param length number of characters to escape
-	///
-	/// \retval number of characters placed in escaped
-	///
-	/// DBDriver provides two versions of this method and 
-	/// Query::escape_string() calls the appropriate one based on whether
-	/// or not a database connection is available.  If the connection
-	/// is available, it can call the DBDriver::escape_string() method.
-	/// If there is no database connection available (normally only in
-	/// testing), then DBDriver provides a static version of the function 
-	/// that doesn't use a database connection.
-	///
-	/// \see comments for DBDriver::escape_string(char*, const char*, size_t),
-	/// DBDriver::escape_string_no_conn(char*, const char*, size_t)
-	/// for further details.
-	size_t escape_string(char* escaped, const char* original,
-			size_t length) const;
-
-	/// \brief Assigns contents of another SQLStream to this one
-	SQLStream& operator=(const SQLStream& rhs);
-
-	/// \brief Connection to send queries through
-	Connection* conn_;
-};
+    If you need the MySQL server on your development system anyway,
+    you you can choose to install the development files along with
+    the server.  Some versions of the MySQL Server installer for
+    Windows have installed the development files by default, while
+    others have made it an optional install.
 
 
-/// \brief Insert raw string into the given stream.
-///
-/// This is just syntactic sugar for SQLStream::str(void)
-inline std::ostream& operator <<(std::ostream& os, SQLStream& s)
-{
-	return os << s.str();
-}
+Project Files
+~~~~~~~~~~~~~
+    The distribution comes with three sets of .sln and .vcproj files
+    in the vc2003, vc2005 and vc2008 subdirectories.
+
+    We do this for several reasons:
+
+      1. It lets you build MySQL++ with multiple versions of Visual
+         C++ without the build products conflicting.
+
+      2. For Visual C++ 2003, we had to disable the SSQLS feature
+         because changes made in MySQL++ 3.0 now cause the compiler
+         to crash while building.  See the Breakages chapter in the
+         user manual for workarounds if you must still use VC++ 2003.
+
+      3. The VC++ 2008 project files get built for 64-bit output, while
+         the other two build 32-bit executables.
+
+         With VC++ 2003, we have no choice about this, since it only
+         supports 32-bit targets.
+
+         VC++ 2005 did have experimental 64-bit compilers available,
+         but their beta nature was only one reason we chose not to
+         use them.  The real reason is that the current MySQL++ build
+         system isn't currently set up to make it easy to build both
+         32- and 64-bit libraries and executables at the same time
+         within the same solution.  Bakefile allows it, but it would
+         require forking many of the build rules in mysql++.bkl so
+         we can do things like have separate MYSQL_WIN_DIR values
+         for each bitness.  (See below for more on this variable.)
+
+         For that same reason, the VC++ 2008 project files are set
+         up to build 64-bit libraries and executables *only*.
+
+    It is possible to upgrade these project files to work with newer
+    versions of Visual C++, but beware that the upgrade feature tends
+    to be problematic.
+
+    When converting the VC++ 2008 project files to VC++ 2012,
+    I found that it will screw up the output file names for the
+    libraries, so that none of the executables will link properly.
+    This problem is detected by the migration process, so that even
+    though the tool doesn't know how to fix it itself, you can fix
+    it up manually afterward.
+
+    There were also problems in VC++ 2010 when you had converted 32-bit
+    VC++ 2008 projects and then were trying to switch them to 64-bit.
+    It ended up being simpler in this case to just start over from
+    scratch and build your own project files.
 
 
-} // end namespace mysqlpp
+Using Nonstandard MySQL Installations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    The Visual Studio project files that come with MySQL++ have
+    everything set up correctly for the common case.  The biggest
+    assumption in the settings is that you're building against the
+    current stable version of Connector/C, which gets installed here
+    at the time of this writing:
 
-#endif // !defined(MYSQLPP_SQLSTREAM_H)
+        C:\Program Files\MySQL\MySQL Connector C 6.1\
+
+    If you installed a different version, or it's in a different
+    directory, or you've installed the development files as part of
+    MySQL Server on the same machine, you need to change the project
+    files to reference the C API development files in that other
+    location.  There are two ways to do this.
+
+    The hard way is to make 16 different changes each to 44 separate
+    project files.  If you're a talented Visual Studio driver,
+    you can do this in as little as about 5 or 6 steps.  You might
+    even get it right the first time.  If you are not so talented,
+    you have to make all ~700 changes one at a time, and you almost
+    certainly will *not* get it right the first time.
+
+    The somewhat easier way is to open all these files in a text
+    editor that lets you make a global search and replace on all
+    open files.
+
+    The easy way is to install Bakefile (http://bakefile.org/),
+    change the value of the MYSQL_WIN_DIR variable near the top of
+    mysql++.bkl in the top level of the MySQL++ source tree, and run
+    rebake.bat.  This will rebuild all of the project files for you,
+    using the new MySQL path in all the many places it's needed.
+
+
+Building the Library and Example Programs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    You must build both the Debug and Release versions of the library,
+    because a release build of your program won't work with a Debug
+    version of the MySQL++ DLL.  These DLLs get different names, so
+    you can install them in the same directory if needed: mysqlpp_d.dll
+    for the Debug version, and mysqlpp.dll for the Release version.
+
+    With the library built, run at least the resetdb and simple1
+    examples to ensure that the library is working correctly.
+    In addition to the other generic examples, there are a few
+    Visual C++ specific examples that you might want to look at in
+    examples\vstudio.  See README-examples.txt for further details.
+
+    Once you're sure the library is working correctly, you can run
+    the install.hta file at the project root to install the library
+    files and headers in a directory of your choosing.
+    
+    (Aside: You may not have come across the .hta extension before.
+    It's for a rarely-used feature of Microsoft's Internet Explorer,
+    called HTML Applications.  Know what Adobe AIR is?  Kinda like
+    that, only without the compilation into a single binary blob which
+    you must install before you can run it.  Just open install.hta
+    in a text editor to see how it works.)
+
+
+Using MySQL++ in Your Own Projects
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    This is covered in the user manual, chapter 9.
+
+
+Working With Bakefile
+~~~~~~~~~~~~~~~~~~~~~
+    MySQL++'s top-level Visual Studio project files aren't
+    maintained directly.  Instead, we use a tool called Bakefile
+    (http://bakefile.org/) to generate them from mysql++.bkl. Since
+    there are so many project files in MySQL++, it's often simpler to
+    edit this source file and "re-bake" the project files from it than
+    to make your changes in Visual Studio.
+
+    To do this, download the native Windows version of Bakefile from the
+    web site given above.  Install it, and then put the installation
+    directory in your Windows PATH.  Then, open up a command window, cd
+    into the MySQL++ directory, and type "rebake".  This will run
+    rebake.bat, which rebuilds the Visual Studio project files from
+    mysql++.bkl.
+
+    There's more information about using Bakefile in HACKERS.txt.
+
+
+If You Run Into Problems...
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Especially if you have linking problems, make sure your project
+    settings match the above.  Visual C++ is very picky about things
+    like run time library settings.  When in doubt, try running one
+    of the example programs.  If it works, the problem is likely in
+    your project settings, not in MySQL++.
 

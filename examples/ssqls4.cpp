@@ -1,11 +1,9 @@
 /***********************************************************************
- ssqls4.cpp - Example very similar to ssqls1.cpp, except that it
-	stores its result set in an STL set container.  This demonstrates
-	how one can manipulate MySQL++ result sets in a very natural C++
-	style.
+ transaction.cpp - Example showing how to use MySQL++'s transaction
+ 	features.
 
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2010 by Educational Technology Resources, Inc.  Others may
+ (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
  also hold copyrights on code in this file.  See the CREDITS.txt file
  in the top directory of the distribution for details.
 
@@ -32,6 +30,7 @@
 #include "stock.h"
 
 #include <iostream>
+#include <cstdio>
 
 using namespace std;
 
@@ -49,42 +48,61 @@ main(int argc, char *argv[])
 		mysqlpp::Connection con(mysqlpp::examples::db_name,
 				cmdline.server(), cmdline.user(), cmdline.pass());
 
-		// Retrieve all rows from the stock table and put them in an
-		// STL set.  Notice that this works just as well as storing them
-		// in a vector, which we did in ssqls1.cpp.  It works because
-		// SSQLS objects are less-than comparable.
-		mysqlpp::Query query = con.query("select * from stock");
-		set<stock> res;
-		query.storein(res);
+		// Show initial state
+		mysqlpp::Query query = con.query();
+		cout << "Initial state of stock table:" << endl;
+		print_stock_table(query);
 
-		// Display the result set.  Since it is an STL set and we set up
-		// the SSQLS to compare based on the item column, the rows will
-		// be sorted by item.
-		print_stock_header(res.size());
-		set<stock>::iterator it;
-		cout.precision(3);
-		for (it = res.begin(); it != res.end(); ++it) {
-			print_stock_row(it->item.c_str(), it->num, it->weight,
-					it->price, it->sDate);
-		}
+		// Insert a few rows in a single transaction set
+		{
+			// Use a higher level of transaction isolation than MySQL
+			// offers by default.  This trades some speed for more
+			// predictable behavior.  We've set it to affect all
+			// transactions started through this DB server connection,
+			// so it affects the next block, too, even if we don't
+			// commit this one.
+			mysqlpp::Transaction trans(con,
+					mysqlpp::Transaction::serializable,
+					mysqlpp::Transaction::session);
 
-		// Use set's find method to look up a stock item by item name.
-		// This also uses the SSQLS comparison setup.
-		it = res.find(stock("Hotdog Buns"));
-		if (it != res.end()) {
-			cout << endl << "Currently " << it->num <<
-					" hotdog buns in stock." << endl;
+			stock row("Sauerkraut", 42, 1.2, 0.75,
+					mysqlpp::sql_date("2006-03-06"), mysqlpp::null);
+			query.insert(row);
+			query.execute();
+
+			cout << "\nRow inserted, but not committed." << endl;
+			cout << "Verify this with another program (e.g. simple1), "
+					"then hit Enter." << endl;
+			getchar();
+
+			cout << "\nCommitting transaction gives us:" << endl;
+			trans.commit();
+			print_stock_table(query);
 		}
-		else {
-			cout << endl << "Sorry, no hotdog buns in stock." << endl;
+			
+		// Now let's test auto-rollback
+		{
+			// Start a new transaction, keeping the same isolation level
+			// we set above, since it was set to affect the session.
+			mysqlpp::Transaction trans(con);
+			cout << "\nNow adding catsup to the database..." << endl;
+
+			stock row("Catsup", 3, 3.9, 2.99,
+					mysqlpp::sql_date("2006-03-06"), mysqlpp::null);
+			query.insert(row);
+			query.execute();
 		}
+		cout << "\nNo, yuck! We don't like catsup. Rolling it back:" <<
+				endl;
+		print_stock_table(query);
+			
 	}
 	catch (const mysqlpp::BadQuery& er) {
 		// Handle any query errors
 		cerr << "Query error: " << er.what() << endl;
 		return -1;
 	}
-	catch (const mysqlpp::BadConversion& er) {
+	catch (const mysqlpp::BadConversion& er) {	
 		// Handle bad conversions
 		cerr << "Conversion error: " << er.what() << endl <<
 				"\tretrieved data size: " << er.retrieved <<

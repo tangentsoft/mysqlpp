@@ -1,111 +1,101 @@
-Platform Variations
-~~~~~~~~~~~~~~~~~~~
-    This file only covers details common to all Unix variants
-    supported by MySQL++.  For platform-specific details, see the
-    file appropriate to your OS:
+MySQL++ was created by Kevin Atkinson during 1998.  From version
+1.0 (released in June 1999) through 1.7.9 (May 2001), the primary
+maintainer was Sinisa Milivojevic <sinisa@mysql.com>.  Neither Kevin
+nor Sinisa are currently involved in MySQL++ development.  The current
+maintainer is Warren Young <mysqlpp@etr-usa.com>, starting with
+version 1.7.10 in August of 2004.
 
-        README-Cygwin.txt
-        README-Linux.txt
-        README-Mac-OS-X.txt
-        README-Solaris.txt
-
-    There are no special instructions for any other Unix flavors.
-
-
-Building the Library and Example Programs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    MySQL++ uses GNU autoconf, so you can build it with the standard
-    commands:
-
-    $ ./configure
-    $ make
-    $ su
-    # make install
+For a fuller account of the library's history, see the first chapter
+of the user manual.  For the nitty-gritty details, see the ChangeLog
+in the root package directory.  ChangeLog items since 1.7.9 that
+aren't attributed to anyone else were done by Warren Young.
 
 
-Configure Options
-~~~~~~~~~~~~~~~~~
-    The configure script takes several interesting options. Say:
+Other contributors of note since 1.7.10:
 
-        $ ./configure --help
+    Chris Frey <cdfrey@foursquare.net>: Lots of GCC warning fixes
+    for the bleeding-edge compiler versions, Gentoo ebuild support,
+    and misc other fixes.
 
-    to get a list.  Some of the more interesting flags are:
+    Mark Meredino <Mark_Merendino@cnt.com>: Several fixes and
+    additions, including a lot of work on Microsoft Visual C++
+    compatibility, and discoveries made while spelunking in the
+    library.
 
-    --prefix:
+    Evan Wies <evan@athenacr.com>: Contributed several C++ code
+    style cleanups.
 
-        If you wish to install mysql++ in a root directory other than
-        /usr/local, run configure with --prefix=/some/dir/name
+    Arnon Jalon <Arnon.Jalon@247RealMedia.com>: Added the multi-query
+    result set handling features, and examples/multiquery.cpp to
+    demonstrate it.
 
-    --with-mysql*:
+    Korolyov Ilya has submitted several patches in many different
+    areas of the library.
 
-        If you installed MySQL in an atypical location, the configure
-        script will not be able to find the library and header
-        files without help.  The simplest way to clue configure into
-        where MySQL is installed is with the --with-mysql option.
-        Try something like "--with-mysql=/usr/local/mysql", for
-        instance.  The configure script will then try to guess which
-        subdirectories under the given directory contain the library
-        and include files.
+    Remi Collet <Liste@FamilleCollet.com> is maintaining offical RPMs
+    for Fedora, with other systems on the way.  His work has improved
+    the RPM spec file we distribute greatly.
 
-        If that doesn't work, it's because the library and header
-        files aren't in typical locations under the directory you gave
-        for configure to find them.  So, you need to specify them
-        separately with --with-mysql-include and --with-mysql-lib
-        instead.  As with --with-mysql, configure can often guess
-        which subdirectory under the given directory contains the
-        needed files, so you don't necessarily have to give the full
-        path to these files.
-    
-    --with-field-limit:
+    Joel Fielder <joel.fielder@switchplane.com> of Switchplane,
+    Ltd. created the ScopedConnection class, came up with the original
+    idea for Query's for_each() and store_in() methods, provided the
+    basis for examples/for_each.cpp, and provided a fix for exception
+    flag propagation in Query.
 
-        This lets you increase the maximum field limit for template
-        queries and SSQLSes.  By default, both are limited to 25
-        fields.  See chapter 8.2 in the user manual for details:
+    Jim Wallace <jwallace@kaneva.com> demonstrated the need
+    for BadQuery::errnum(), and contributed the patches and also
+    examples/deadlock.cpp to test that this feature does what it is
+    supposed to.
 
-        http://tangentsoft.net/mysql++/doc/html/userman/configuration.html
+    Jonathan Wakely <mysql@kayari.org> rebuilt my original versions
+    of ConnectionPool, RefCountedPointer, and RefCountedBuffer.
+    They're now simpler and safer.  He also created the numeric
+    conversion logic in lib/mystring.h introduced in v3.0.
 
-    --enable-thread-check:
+    Adrian Cornish <mysql@bluedreamer.com>  Several fixes and
+    additions.
 
-        Builds MySQL++ with threading support, if possible.
-        
-        This option simply turns on two tests: first, that your
-        system uses a compatible threading library; and second,
-        that the thread-safe version of the MySQL C API library
-        (libmysqlclient_r) is installed and working.  If both of
-        these are true, you get a thread-aware version of MySQL++.
-        "Thread-aware" means that the library does make an effort to
-        prevent problems, but we don't guarantee that all possible
-        uses of MySQL++ are thread-safe.
+    Rick Gutleber <rgutleber@above.net> contributed the 
+    Query::insertfrom() method and associated InsertPolicy object,
+    as well as the SQLStream class.
 
-        Note that this is a suggestion, not a command.  If we can't
-        figure out the system's threading model or can't find the
-        thread-aware build of the C API library, configure won't fail.
-        It just reverts to the standard single-thread build.
+Here are the personal credits from the old 1.7.9 documentation,
+apparently written by Kevin Atkinson:
 
-        See the chapter on threading in the user manual for more
-        details and advice on creating thread-safe programs with
-        MySQL++.
+    Chris Halverson - For helping me get it to compile under Solaris.
+
+    Fredric Fredricson - For a long talk about automatic conversions.
+
+    Michael Widenius - MySQL developer who has been very supportive of
+        my efforts.
+
+    Paul J. Lucas - For the original idea of treating the query object
+        like a stream.
+
+    Scott Barron - For helping me with the shared libraries.
+
+    Jools Enticknap - For giving me the Template Queries idea.
+
+    M. S. Sriram - For a detailed dission of how the Template Queries
+        should be implemented, the suggestion to throw exceptions on bad
+        queries, and the idea of having a back-end independent query
+        object (ie SQLQuery).
+
+    Sinisa Milivojevic - For becoming the new offical maintainer.
+
+    D. Hawkins and E. Loic for their autoconf + automake contribution.
 
 
-Building a Static Library
-~~~~~~~~~~~~~~~~~~~~~~~~~
-    As shipped, MySQL++ only builds a shared library.  It's possible to
-    change things so you get a static library instead.
+See the ChangeLog for further credits, and details about the differences
+between the many versions of this library.
 
-    Before we get to "how," beware that liking statically to MySQL++ has
-    legal consequences that may matter to you, due to the library's
-    license, the GNU LGPL.  Familiarize yourself with the license, and
-    consider getting legal counsel before proceeding.  Also, see the
-    MySQL++ FAQ: http://tangentsoft.net/mysql++/#faq  There is more on
-    this topic there.
 
-    The necessary changes are all in mysql++.bkl:
+Please do not email any of these people with general questions about
+MySQL++. All of us who are still active in MySQL++ development read the
+mailing list, so questions sent there do get to us:
 
-        - Change the <dll> tag to <lib>.  (Remember the closing tag!)
+    http://lists.mysql.com/plusplus
 
-        - Remove the <dllname> tag
-
-        - Remove the <so_version> tag
-
-    Then, re-bootstrap the library.  See HACKERS.txt if you need further
-    instruction on doing that.
+The mailing list is superior to private email because the answers are
+archived for future questioners to find, and because you are likely to
+get answers from more people.

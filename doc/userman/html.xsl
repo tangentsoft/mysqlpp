@@ -1,101 +1,99 @@
-<?xml version="1.0" encoding="utf-8"?>
+/***********************************************************************
+ store_if.cpp - Demonstrates Query::store_if(), showing only the rows
+	from the sample table with prime quantities.  This isn't intended
+	to be useful, only to show how you can do result set filtering that
+	outstrips the power of SQL.
 
-<!-- XSL stylesheet containing additions to the standard DocBook
-     chunked-HTML stylesheet.
--->
+ Copyright (c) 2005-2007 by Educational Technology Resources, Inc.
+ Others may also hold copyrights on code in this file.  See the CREDITS
+ file in the top directory of the distribution for details.
 
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-		version="1.0">
-	
-	<!-- Import the standard DocBook stylesheet that this one is based on.
-	     We use a web URL, but the local XML catalog should resolve this to
-			 the local copy of the stylesheet, if it exists. -->
-	<xsl:import href="http://docbook.sourceforge.net/release/xsl/current/html/chunk.xsl"/>
+ This file is part of MySQL++.
 
-	<!-- Bring in local changes common to both HTML and FO output -->
-	<xsl:include href="common.xsl"/>
+ MySQL++ is free software; you can redistribute it and/or modify it
+ under the terms of the GNU Lesser General Public License as published
+ by the Free Software Foundation; either version 2.1 of the License, or
+ (at your option) any later version.
 
-	<!-- The DocBook stylesheets use ISO 8859-1 by default, even when the
-	     XML files are marked UTF-8.  If you serve such files from a web
-			 server that advertises UTF-8 content, browsers display the page
-			 incorrectly, because they believe the web server. -->
-	<xsl:output method="html" encoding="UTF-8" indent="no"/>
+ MySQL++ is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+ License for more details.
 
-	<!-- HTML-specific XSL parameters -->
-	<xsl:param name="chunk.fast" select="0"/>
-	<xsl:param name="html.stylesheet" select="'tangentsoft.css'"/>
-	<xsl:param name="use.id.as.filename" select="1"/>
+ You should have received a copy of the GNU Lesser General Public
+ License along with MySQL++; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
+ USA
+***********************************************************************/
 
-	<!-- Special ulink types, to reduce boilerplate link code -->
-	<xsl:template match="ulink" name="refman_ulink">
-		<xsl:choose>
-			<!-- type=mysqlapi: makes hyperlinks to MySQL C API reference manual,
-			     given only the function name with dashes instead of underscores
-					 as the URL. -->
-			<xsl:when test="@type = 'mysqlapi'">
-				<tt>
-					<a>
-						<xsl:variable name="fn_dash" select="@url"/>
-						<xsl:variable name="fn_name"
-							select="translate($fn_dash, '-', '_')"/>
-						<xsl:attribute name="href">
-							<xsl:text>http://dev.mysql.com/doc/mysql/en/</xsl:text>
-							<xsl:value-of select="$fn_dash"/>
-							<xsl:text>.html</xsl:text>
-						</xsl:attribute>
-						<xsl:value-of select="$fn_name"/>
-						<xsl:text>()</xsl:text>
-					</a>
-				</tt>
-			</xsl:when>
+#include "util.h"
+#include "stock.h"
 
-			<!-- type=classref: makes hyperlinks to a class in the MySQL++
-			     reference manual, given its name. -->
-			<xsl:when test="@type = 'classref'">
-				<tt>
-					<a>
-						<xsl:attribute name="href">
-							<xsl:text>../refman/classmysqlpp_1_1</xsl:text>
-							<xsl:value-of select="@url"/>
-							<xsl:text>.html</xsl:text>
-						</xsl:attribute>
-						<xsl:choose>
-							<xsl:when test="count(child::node())=0">
-								<xsl:value-of select="@url"/>
-							</xsl:when>
-							<xsl:otherwise>
-								<xsl:apply-templates/>
-							</xsl:otherwise>
-						</xsl:choose>
-					</a>
-				</tt>
-			</xsl:when>
+#include <mysql++.h>
 
-			<!-- type=structref: makes hyperlinks to a struct in the MySQL++
-			     reference manual, given its name. -->
-			<xsl:when test="@type = 'structref'">
-				<tt>
-					<a>
-						<xsl:attribute name="href">
-							<xsl:text>../refman/structmysqlpp_1_1</xsl:text>
-							<xsl:value-of select="@url"/>
-							<xsl:text>.html</xsl:text>
-						</xsl:attribute>
-						<xsl:choose>
-							<xsl:when test="count(child::node())=0">
-								<xsl:value-of select="@url"/>
-							</xsl:when>
-							<xsl:otherwise>
-								<xsl:apply-templates/>
-							</xsl:otherwise>
-						</xsl:choose>
-					</a>
-				</tt>
-			</xsl:when>
+#include <iostream>
 
-			<xsl:otherwise>
-				<xsl:call-template name="ulink"/>
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:template>
-</xsl:stylesheet>
+#include <math.h>
+
+
+// Define a functor for testing primality.
+struct is_prime
+{
+	bool operator()(const stock& s)
+	{
+		if ((s.num == 2) || (s.num == 3)) {
+			return true;	// 2 and 3 are trivial cases
+		}
+		else if ((s.num < 2) || ((s.num % 2) == 0)) {
+			return false;	// can't be prime if < 2 or even
+		}
+		else {
+			// The only possibility left is that it's divisible by an
+			// odd number that's less or equal to its square root.
+			for (int i = 3; i <= sqrt(double(s.num)); i += 2) {
+				if ((s.num % i) == 0) {
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+};
+
+
+int
+main(int argc, char *argv[])
+{
+	try {
+		// Connect to the sample database
+		mysqlpp::Connection con;
+		if (!connect_to_db(argc, argv, con)) {
+			return 1;
+		}
+
+		// Collect the stock items with prime quantities
+		std::vector<stock> results;
+		mysqlpp::Query query = con.query();
+		query.store_if(results, stock(), is_prime());
+
+		// Show the results
+		print_stock_header(results.size());
+		std::vector<stock>::const_iterator it;
+		for (it = results.begin(); it != results.end(); ++it) {
+			print_stock_row(it->item.c_str(), it->num, it->weight,
+					it->price, it->sdate);
+		}
+	}
+	catch (const mysqlpp::BadQuery& e) {
+		// Something went wrong with the SQL query.
+		std::cerr << "Query failed: " << e.what() << std::endl;
+		return 1;
+	}
+	catch (const mysqlpp::Exception& er) {
+		// Catch-all for any other MySQL++ exceptions
+		std::cerr << "Error: " << er.what() << std::endl;
+		return 1;
+	}
+
+	return 0;
+}

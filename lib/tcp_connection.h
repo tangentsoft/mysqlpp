@@ -1,10 +1,11 @@
-/// \file tcp_connection.h
-/// \brief Declares the TCPConnection class.
-
 /***********************************************************************
- Copyright (c) 2007-2008 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the
- CREDITS.txt file in the top directory of the distribution for details.
+ dbinfo.cpp - Example showing how to request information about the
+	database schema, such as table names, column types, etc.
+
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS.txt file
+ in the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -24,117 +25,168 @@
  USA
 ***********************************************************************/
 
-#if !defined(MYSQLPP_TCP_CONNECTION_H)
-#define MYSQLPP_TCP_CONNECTION_H
+#include "cmdline.h"
+#include "printdata.h"
 
-#include "connection.h"
+#include <mysql++.h>
 
-namespace mysqlpp {
+#include <iomanip>
+#include <iostream>
+#include <string>
+#include <vector>
 
-/// \brief Specialization of \c Connection for TCP/IP
-///
-/// This class just simplifies the connection creation interface of
-/// \c Connection.  It does not add new functionality.
+using namespace std;
 
-class MYSQLPP_EXPORT TCPConnection : public Connection
+
+// Insert a bar into the stream with the given query string centered
+static void
+separator(ostream& os, string qstr)
 {
-public:
-	/// \brief Create object without connecting it to the MySQL server.
-	TCPConnection() :
-	Connection()
-	{
+	string sep("========================================"
+			"========================================");
+	if (qstr.size()) {
+		string::size_type start = (sep.size() - qstr.size()) / 2;
+		sep.replace(start - 1, 1, 1, ' ');
+		sep.replace(start, qstr.size(), qstr);
+		sep.replace(start + qstr.size(), 1, 1, ' ');
+		os << "\n\n";
+	}
+	os << sep << endl;
+}
+
+
+// Print out the MySQL server version
+static void
+show_mysql_version(mysqlpp::Connection& con)
+{
+	separator(cout, "");
+    cout << "MySQL version: " << con.client_version();
+}
+
+
+// Print out the names of all the databases managed by the server
+static void
+show_databases(mysqlpp::Connection& con)
+{
+	mysqlpp::Query query = con.query("show databases");
+	separator(cout, query.str());
+	mysqlpp::StoreQueryResult res = query.store();
+
+	cout << "Databases found: " << res.size();
+	cout.setf(ios::left);
+	mysqlpp::StoreQueryResult::iterator rit;
+	for (rit = res.begin(); rit != res.end(); ++rit) {
+		cout << "\n\t" << (*rit)[0];
+	}
+}
+
+
+// Print information about each of the tables we found
+static void
+show_table_info(mysqlpp::Connection& con, const vector<string>& tables)
+{
+	vector<string>::const_iterator it;
+	for (it = tables.begin(); it != tables.end(); ++it) {
+		mysqlpp::Query query = con.query();
+		query << "describe " << *it;
+		separator(cout, query.str());
+		mysqlpp::StoreQueryResult res = query.store();
+
+		size_t columns = res.num_fields();
+		vector<size_t> widths;
+		for (size_t i = 0; i < columns; ++i) {
+			string s = res.field_name(int(i));
+			if (s.compare("field") == 0) {
+				widths.push_back(22);
+			}
+			else if (s.compare("type") == 0) {
+				widths.push_back(20);
+			}
+			else if (s.compare("null") == 0) {
+				widths.push_back(4);
+			}
+			else if (s.compare("key") == 0) {
+				widths.push_back(3);
+			}
+			else if (s.compare("extra") == 0) {
+				widths.push_back(0);
+			}
+			else {
+				widths.push_back(15);
+			}
+
+			if (widths[i]) {
+				cout << '|' << setw(widths[i]) << 
+						res.field_name(int(i)) << '|';
+			}
+		}
+		cout << endl;
+
+		mysqlpp::StoreQueryResult::iterator rit;
+		for (rit = res.begin(); rit != res.end(); ++rit) {
+			for (unsigned int i = 0; i < columns; ++i) {
+				if (widths[i]) {
+					cout << ' ' << setw(widths[i]) <<
+							(*rit)[i].c_str() << ' ';
+				}
+			}
+			cout << endl;
+		}
+	}
+}
+
+
+// Print out the names of all tables in the sample database, and
+// return the list of tables.
+static void
+show_tables(mysqlpp::Connection& con)
+{
+	mysqlpp::Query query = con.query("show tables");
+	separator(cout, query.str());
+	mysqlpp::StoreQueryResult res = query.store();
+
+	cout << "Tables found: " << res.size();
+	cout.setf(ios::left);
+	vector<string> tables;
+	mysqlpp::StoreQueryResult::iterator rit;
+	for (rit = res.begin(); rit != res.end(); ++rit) {
+		string tbl((*rit)[0]);
+		cout << "\n\t" << tbl;
+		tables.push_back(tbl);
 	}
 
-	/// \brief Create object and connect to database server over TCP/IP
-	/// in one step.
-	///
-	/// \param addr TCP/IP address of server, in either dotted quad form
-	///     or as a host or domain name; may be followed by a colon and
-	///     a port number or service name to override default port
-	/// \param db name of database to use
-	/// \param user user name to log in under, or 0 to use the user
-	///		name the program is running under
-	/// \param password password to use when logging in
-	///
-	/// \b BEWARE: These parameters are not in the same order as those
-	/// in the corresponding constructor for Connection.  This is a
-	/// feature, not a bug. :)
-	TCPConnection(const char* addr, const char* db = 0, const char* user = 0,
-			const char* password = 0) :
-	Connection()
-	{
-		connect(addr, db, user, password);
+	show_table_info(con, tables);
+}
+
+
+// Call all the above functions in sequence
+int
+main(int argc, char* argv[])
+{
+	// Get database access parameters from command line
+	mysqlpp::examples::CommandLine cmdline(argc, argv);
+	if (!cmdline) {
+		return 1;
 	}
 
-	/// \brief Establish a new connection using the same parameters as
-	/// an existing connection.
-	///
-	/// \param other pre-existing connection to clone
-	TCPConnection(const TCPConnection& other) :
-	Connection(other)
-	{
+	try {
+		// Connect to server, then dump a bunch of stuff we find on it
+		mysqlpp::Connection con(mysqlpp::examples::db_name,
+				cmdline.server(), cmdline.user(), cmdline.pass());
+		show_mysql_version(con);
+		show_databases(con);
+		show_tables(con);
+	}
+	catch (const mysqlpp::BadQuery& er) {
+		// Handle any query errors
+		cerr << "Query error: " << er.what() << endl;
+		return -1;
+	}
+	catch (const mysqlpp::Exception& er) {
+		// Catch-all for any other MySQL++ exceptions
+		cerr << "Error: " << er.what() << endl;
+		return -1;
 	}
 
-	/// \brief Destroy object
-	~TCPConnection() { }
-
-	/// \brief Connect to database after object is created.
-	///
-	/// It's better to use the connect-on-create constructor if you can.
-	/// See its documentation for the meaning of these parameters.
-	///
-	/// If you call this method on an object that is already connected
-	/// to a database server, the previous connection is dropped and a
-	/// new connection is established.
-	bool connect(const char* addr = 0, const char* db = 0,
-			const char* user = 0, const char* password = 0);
-
-	/// \brief Break the given TCP/IP address up into a separate address
-	/// and port form
-	///
-	/// Does some sanity checking on the address.  Only intended to
-	/// try and prevent library misuse, not ensure that the address can
-	/// actually be used to contact a server.
-	///
-	/// It understands the following forms:
-	///
-	///	- 1.2.3.4
-	///
-	/// - a.b.com:89
-	///
-	/// - d.e.fr:mysvcname
-	///
-	/// It also understands IPv6 addresses, but to avoid confusion
-	/// between the colons they use and the colon separating the address
-	/// part from the service/port part, they must be in RFC 2732 form.
-	/// Example: \c [2010:836B:4179::836B:4179]:1234
-	///
-	/// \param addr the address and optional port/service combo to check
-	/// on input, and the verified address on successful return
-	/// \param port the port number (resolved from the service name if
-	/// necessary) on successful return
-	/// \param error on false return, reason for failure is placed here
-	///
-	/// \return false if address fails to pass sanity checks
-	static bool parse_address(std::string& addr, unsigned int& port,
-			std::string& error);
-
-private:
-	/// \brief Provide uncallable versions of the parent class ctors we
-	/// don't want to provide so we don't get warnings about hidden
-	/// overloads with some compilers
-	TCPConnection(bool) { }
-	TCPConnection(const char*, const char*, const char*, const char*,
-			unsigned int) { }
-
-	/// \brief Explicitly override parent class version so we don't get
-	/// complaints about hidden overloads with some compilers
-	bool connect(const char*, const char*, const char*, const char*,
-			unsigned int) { return false; }
-};
-
-
-} // end namespace mysqlpp
-
-#endif // !defined(MYSQLPP_TCP_CONNECTION_H)
-
+	return 0;
+}

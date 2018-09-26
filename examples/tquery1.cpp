@@ -1,9 +1,9 @@
-/***********************************************************************
- tquery1.cpp - Example similar to ssqls3.cpp, except that it uses
-	template queries instead of SSQLS.
+/// \file comparable.h
+/// \brief Declares the Comparable<T> mixin
 
+/***********************************************************************
  Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
+ (c) 2004-2008 by Educational Technology Resources, Inc.  Others may
  also hold copyrights on code in this file.  See the CREDITS.txt file
  in the top directory of the distribution for details.
 
@@ -25,69 +25,74 @@
  USA
 ***********************************************************************/
 
-#include "cmdline.h"
-#include "printdata.h"
+#if !defined(MYSQLPP_COMPARABLE_H)
+#define MYSQLPP_COMPARABLE_H
 
-#include <iostream>
+namespace mysqlpp {
 
-using namespace std;
-
-int
-main(int argc, char *argv[])
+/// \brief Mix-in that gives its subclass a full set of comparison
+/// operators.
+///
+/// Simply by inheriting publically from this and implementing
+/// compare(), the subclass gains a full set of comparison operators,
+/// because all of the operators are implemented in terms of compare().
+template <class T>
+class Comparable
 {
-	// Get database access parameters from command line
-	mysqlpp::examples::CommandLine cmdline(argc, argv);
-	if (!cmdline) {
-		return 1;
+public:
+	/// \brief Returns true if "other" is equal to this object
+	bool operator ==(const T& other) const
+	{
+		return !compare(other);
 	}
 
-	try {
-		// Establish the connection to the database server.
-		mysqlpp::Connection con(mysqlpp::examples::db_name,
-				cmdline.server(), cmdline.user(), cmdline.pass());
-
-		// Build a template query to retrieve a stock item given by
-		// item name.
-		mysqlpp::Query query = con.query(
-				"select * from stock where item = %0q");
-		query.parse();
-
-		// Retrieve an item added by resetdb; it won't be there if
-		// tquery* or ssqls3 is run since resetdb.
-		mysqlpp::StoreQueryResult res1 = query.store("Nürnberger Brats");
-		if (res1.empty()) {
-			throw mysqlpp::BadQuery("UTF-8 bratwurst item not found in "
-					"table, run resetdb");
-		}
-
-		// Replace the proper German name with a 7-bit ASCII
-		// approximation using a different template query.
-		query.reset();		// forget previous template query data
-		query << "update stock set item = %0q where item = %1q";
-		query.parse();
-		mysqlpp::SimpleResult res2 = query.execute("Nuerenberger Bratwurst",
-				res1[0][0].c_str());
-
-		// Print the new table contents.
-		print_stock_table(query);
-	}
-	catch (const mysqlpp::BadQuery& er) {
-		// Handle any query errors
-		cerr << "Query error: " << er.what() << endl;
-		return -1;
-	}
-	catch (const mysqlpp::BadConversion& er) {
-		// Handle bad conversions
-		cerr << "Conversion error: " << er.what() << endl <<
-				"\tretrieved data size: " << er.retrieved <<
-				", actual size: " << er.actual_size << endl;
-		return -1;
-	}
-	catch (const mysqlpp::Exception& er) {
-		// Catch-all for any other MySQL++ exceptions
-		cerr << "Error: " << er.what() << endl;
-		return -1;
+	/// \brief Returns true if "other" is not equal to this object
+	bool operator !=(const T& other) const
+	{
+		return compare(other);
 	}
 
-	return 0;
+	/// \brief Returns true if "other" is less than this object
+	bool operator <(const T& other) const
+	{
+		return compare(other) < 0;
+	}
+
+	/// \brief Returns true if "other" is less than or equal to this object
+	bool operator <=(const T& other) const
+	{
+		return compare(other) <= 0;
+	}
+
+	/// \brief Returns true if "other" is greater than this object
+	bool operator >(const T& other) const
+	{
+		return compare(other) > 0;
+	}
+
+	/// \brief Returns true if "other" is greater than or equal to this object
+	bool operator >=(const T& other) const
+	{
+		return compare(other) >= 0;
+	}
+
+protected:
+	/// \brief Destroy object
+	///
+	/// This class has nothing to destroy, but declaring the dtor
+	/// virtual placates some compilers set to high warning levels.
+	/// Protecting it ensures you can't delete subclasses through base
+	/// class pointers, which makes no sense because this class isn't
+	/// made for polymorphism.  It's just a mixin.
+	virtual ~Comparable() { }
+
+	/// \brief Compare this object to another of the same type
+	///
+	/// Returns < 0 if this object is "before" the other, 0 of they are
+	/// equal, and > 0 if this object is "after" the other.
+	virtual int compare(const T& other) const = 0;
+};
+
 }
+
+#endif // !defined(MYSQLPP_COMPARABLE_H)

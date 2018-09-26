@@ -1,9 +1,10 @@
 /***********************************************************************
- test/datetime.cpp - Tests the Date, DateTime, and Time classes.
+ row.cpp - Implements the Row class.
 
- Copyright (c) 2007-2008 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the
- CREDITS.txt file in the top directory of the distribution for details.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS.txt file
+ in the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -23,196 +24,182 @@
  USA
 ***********************************************************************/
 
-#include <mysql++.h>
+#include "row.h"
 
-#include <iostream>
-#include <sstream>
-#include <string>
-
-#include <stdio.h>
-
-using namespace mysqlpp;
-using namespace std;
+#include "result.h"
 
 
-// Compare the given string against the object inserted into a Query stream.
-template <class T>
-static unsigned int
-test_query_insert(const T& object, const char* expected,
-		const char* what)
+namespace mysqlpp {
+
+Row::Row(MYSQL_ROW row, const ResultBase* res,
+		const unsigned long* lengths, bool throw_exceptions) :
+OptionalExceptions(throw_exceptions),
+initialized_(false)
 {
-	Query q = Connection().query();	// don't do this in real code
-	q << object;
-	if (q.str().compare(expected) == 0) {
-		cout << what << " is '" << expected <<
-				"' in Query, as expected." << endl;
+	if (row) {
+		if (res) {
+			size_type size = res->num_fields();
+			data_.reserve(size);
+			for (size_type i = 0; i < size; ++i) {
+				bool is_null = row[i] == 0;
+				data_.push_back(value_type(
+						is_null ? "NULL" : row[i],
+						is_null ? 4 : lengths[i],
+						res->field_type(int(i)),
+						is_null));
+			}
+
+			field_names_ = res->field_names();
+			initialized_ = true;
+		}
+		else if (throw_exceptions) {
+			throw ObjectNotInitialized("RES is NULL");
+		}
+	}
+	else if (throw_exceptions) {
+		throw ObjectNotInitialized("ROW is NULL");
+	}
+}
+
+
+Row::const_reference
+Row::at(size_type i) const
+{
+	if (i < size()) {
+		return data_[i];
+	}
+	else {
+		throw BadIndex("Row", int(i), int(size()));
+	}
+}
+
+
+equal_list_ba<FieldNames, Row, quote_type0>
+Row::equal_list(const char* d, const char* e) const
+{
+	return equal_list_ba<FieldNames, Row, quote_type0>(
+			*field_names_, *this, d, e, quote);
+}
+
+
+template <class Manip>
+equal_list_ba<FieldNames, Row, Manip>
+Row::equal_list(const char* d, const char* e, Manip m) const
+{
+	return equal_list_ba<FieldNames, Row, Manip>(
+			*field_names_, *this, d, e, m);
+}
+
+
+value_list_ba<FieldNames, do_nothing_type0>
+Row::field_list(const char* d) const
+{
+	return value_list_ba<FieldNames, do_nothing_type0>
+			(*field_names_, d, do_nothing);
+}
+
+
+template <class Manip>
+value_list_ba<FieldNames, Manip>
+Row::field_list(const char *d, Manip m) const
+{
+	return value_list_ba<FieldNames, Manip>(*field_names_, d, m);
+}
+
+
+template <class Manip>
+value_list_b<FieldNames, Manip>
+Row::field_list(const char *d, Manip m, const std::vector<bool>& vb) const
+{
+	return value_list_b<FieldNames, Manip>(*field_names_, vb, d, m);
+}
+
+
+value_list_b<FieldNames, quote_type0>
+Row::field_list(const char* d, const std::vector<bool>& vb) const
+{
+	return value_list_b<FieldNames, quote_type0>(*field_names_,
+			vb, d, quote);
+}
+
+
+value_list_b<FieldNames, quote_type0>
+Row::field_list(const std::vector<bool>& vb) const
+{
+	return value_list_b<FieldNames, quote_type0>(*field_names_,
+			vb, ",", quote);
+}
+
+
+template <class Manip> value_list_b<FieldNames, Manip>
+Row::field_list(const char* d, Manip m, bool t0, bool t1, bool t2,
+		bool t3, bool t4, bool t5, bool t6, bool t7, bool t8, bool t9,
+		bool ta, bool tb, bool tc) const
+{
+	std::vector<bool> vb;
+	create_vector(field_names_->size(), vb, t0, t1, t2, t3, t4,
+			t5, t6, t7, t8, t9, ta, tb, tc);
+	return value_list_b<FieldNames, Manip>(*field_names_, vb, d, m);
+}
+
+
+value_list_b<FieldNames, quote_type0>
+Row::field_list(const char *d, bool t0, bool t1, bool t2, bool t3,
+		bool t4, bool t5, bool t6, bool t7, bool t8, bool t9, bool ta,
+		bool tb, bool tc) const
+{
+	std::vector<bool> vb;
+	create_vector(field_names_->size(), vb, t0, t1, t2, t3, t4,
+			t5, t6, t7, t8, t9, ta, tb, tc);
+	return value_list_b<FieldNames, quote_type0>(*field_names_,
+			vb, d, quote);
+}
+
+
+value_list_b<FieldNames, quote_type0>
+Row::field_list(bool t0, bool t1, bool t2, bool t3, bool t4, bool t5,
+		bool t6, bool t7, bool t8, bool t9, bool ta, bool tb,
+		bool tc) const
+{
+	std::vector<bool> vb;
+	create_vector(field_names_->size(), vb, t0, t1, t2, t3, t4,
+			t5, t6, t7, t8, t9, ta, tb, tc);
+	return value_list_b<FieldNames, quote_type0>(*field_names_,
+			vb, ",", quote);
+}
+
+
+Row::size_type
+Row::field_num(const char* name) const
+{
+	if (field_names_) {
+		return (*field_names_)[name];
+	}
+	else if (throw_exceptions()) {
+		throw BadFieldName(name);
+	}
+	else {
 		return 0;
 	}
-	else {
-		cerr << what << " '" << object << "' should be '" <<
-				expected << "' when inserted into Query!" << endl;
-		return 1;
-	}
 }
 
 
-// Compare the given string against the object inserted into an ostream.
-template <class T>
-static unsigned int
-test_ostream_insert(const T& object, const char* expected,
-		const char* what)
+const Row::value_type&
+Row::operator [](const char* field) const
 {
-	ostringstream os;
-	os << object;
-	if (os.str().compare(expected) == 0) {
-		cout << what << " is '" << expected <<
-				"' in ostream, as expected." << endl;
-		return 0;
+	size_type si = field_num(field);
+	if (si < size()) {
+		return at(si);
+	}
+	else if (throw_exceptions()) {
+		throw BadFieldName(field);
 	}
 	else {
-		cerr << what << " '" << object << "' should be '" <<
-				expected << "' when inserted into ostream!" << endl;
-		return 1;
+		static value_type empty;
+		return empty;
 	}
 }
 
 
-// Compare the given string against the return value of the object's
-// str() method.
-template <class T>
-static unsigned int
-test_str_method(const T& object, const char* expected, const char* what)
-{
-	if (object.str().compare(expected) == 0) {
-		cout << what << ".str() returns '" << expected <<
-				"', as expected." << endl;
-		return 0;
-	}
-	else {
-		cerr << what << " '" << object << "' should return '" <<
-				expected << "' from str() method!" << endl;
-		return 1;
-	}
-}
-
-
-// Compare the given string against the object when cast to std::string
-template <class T>
-static unsigned int
-test_string_operator(const T& object, const char* expected,
-		const char* what)
-{
-	if (string(object).compare(expected) == 0) {
-		cout << "string(" << what << ") is '" << expected <<
-				"', as expected." << endl;
-		return 0;
-	}
-	else {
-		cerr << what << " '" << object << "' should be '" <<
-				expected << "' when cast to std::string!" << endl;
-		return 1;
-	}
-}
-
-
-// Compare the given string against the object when converted in several
-// different ways to a string.
-template <class T>
-static unsigned int
-test_stringization(const T& object, const char* expected,
-		const char* what)
-{
-	return	test_query_insert(object, expected, what) +
-			test_ostream_insert(object, expected, what) +
-			test_string_operator(object, expected, what) +
-			test_str_method(object, expected, what);
-}
-
-
-// Given a Date and a set of values we should expect to be in it,
-// compare its outputs against values we compute separately.
-static unsigned int
-test_date(const Date& d, int year, int month, int day)
-{
-	if (	d.year() == year &&
-			d.month() == month &&
-			d.day() == day) {
-		char ac[20];
-		snprintf(ac, sizeof(ac), "%04d-%02d-%02d",
-				year, month, day);
-		return test_stringization(d, ac, "Date");
-	}
-	else {
-		cerr << "Date '" << d << "' values should be '" <<
-				year << '-' << month << '-' << day << endl;
-		return 1;
-	}
-}
-
-
-// Given a Time and a set of values we should expect to be in it,
-// compare its outputs against values we compute separately.
-static unsigned int
-test_time(const Time& t, int hour, int minute, int second)
-{
-	if (	t.hour() == hour &&
-			t.minute() == minute &&
-			t.second() == second) {
-		char ac[20];
-		snprintf(ac, sizeof(ac), "%02d:%02d:%02d",
-				hour, minute, second);
-		return test_stringization(t, ac, "Time");
-	}
-	else {
-		cerr << "Time '" << t << "' values should be '" <<
-				hour << ':' << minute << ':' << second << endl;
-		return 1;
-	}
-}
-
-
-// Given a DateTime and a set of values we should expect to be in it,
-// compare its outputs against values we compute separately.
-static unsigned int
-test_datetime(const DateTime& dt,
-		int year, int month, int day,
-		int hour, int minute, int second)
-{
-	return	test_date(Date(dt), year, month, day) +
-			test_time(Time(dt), hour, minute, second);
-}
-
-
-// Run tests above for the various types we support using the date and
-// time values given.
-static unsigned int
-test(int year, int month, int day, int hour, int minute, int second)
-{
-	unsigned int failures = 0;
-	failures += test_date(Date(year, month, day), year, month, day);
-	failures += test_datetime(
-			DateTime(year, month, day, hour, minute, second),
-			year, month, day, hour, minute, second);
-	failures += test_time(Time(hour, minute, second), hour, minute,
-			second);
-	return failures;
-}
-
-
-int
-main()
-{
-	unsigned int failures = 0;
-#if !defined(__SUNPRO_CC)
-	// Sun CC can't compile these tests for some reason.  So, skip them.
-	// See http://lists.mysql.com/plusplus/8164
-	failures += test(0, 0, 0, 0, 0, 0);
-	failures += test(1, 2, 3, 4, 5, 6);
-	failures += test_stringization(DateTime(), "NOW()", "DateTime");
-	DateTime dt;
-	dt.year(2007);
-	failures += test_stringization(dt, "2007-00-00 00:00:00", "DateTime");
-#endif
-	return failures;
-}
+} // end namespace mysqlpp
 

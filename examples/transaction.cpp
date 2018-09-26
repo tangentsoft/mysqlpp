@@ -1,11 +1,10 @@
-/***********************************************************************
- transaction.cpp - Example showing how to use MySQL++'s transaction
- 	features.
+/// \file sqlstream.h
+/// \brief Defines a class for building quoted and escaped SQL text.
 
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
- also hold copyrights on code in this file.  See the CREDITS.txt file
- in the top directory of the distribution for details.
+/***********************************************************************
+ Copyright (c) 2008 by AboveNet, Inc.  Others may also hold copyrights
+ on code in this file.  See the CREDITS file in the top directory of
+ the distribution for details.
 
  This file is part of MySQL++.
 
@@ -25,95 +24,98 @@
  USA
 ***********************************************************************/
 
-#include "cmdline.h"
-#include "printdata.h"
-#include "stock.h"
+#if !defined(MYSQLPP_SQLSTREAM_H)
+#define MYSQLPP_SQLSTREAM_H
 
-#include <iostream>
-#include <cstdio>
+#include "common.h"
 
-using namespace std;
+#include <sstream>
 
-int
-main(int argc, char *argv[])
+namespace mysqlpp {
+
+#if !defined(DOXYGEN_IGNORE)
+// Make Doxygen ignore this
+class MYSQLPP_EXPORT Connection;
+#endif
+
+/// \brief A class for building SQL-formatted strings.
+///
+/// See the user manual for more details about these options.
+
+class MYSQLPP_EXPORT SQLStream :
+public std::ostringstream
 {
-	// Get database access parameters from command line
-	mysqlpp::examples::CommandLine cmdline(argc, argv);
-	if (!cmdline) {
-		return 1;
-	}
+public:
+	/// \brief Create a new stream object attached to a connection.
+	///
+	/// \param c connection used for escaping text
+	/// \param pstr an optional initial string
+	SQLStream(Connection* c, const char* pstr = 0);
 
-	try {
-		// Establish the connection to the database server.
-		mysqlpp::Connection con(mysqlpp::examples::db_name,
-				cmdline.server(), cmdline.user(), cmdline.pass());
+	/// \brief Create a new stream object as a copy of another.
+	///
+	/// This is a traditional copy ctor.
+	SQLStream(const SQLStream& s);
 
-		// Show initial state
-		mysqlpp::Query query = con.query();
-		cout << "Initial state of stock table:" << endl;
-		print_stock_table(query);
+	/// \brief Return a SQL-escaped version of a character buffer
+	///
+	/// \param ps pointer to C++ string to hold escaped version; if
+	/// original is 0, also holds the original data to be escaped
+	/// \param original if given, pointer to the character buffer to
+	/// escape instead of contents of *ps
+	/// \param length if both this and original are given, number of
+	/// characters to escape instead of ps->length()
+	///
+	/// \retval number of characters placed in *ps
+	///
+	/// \see comments for escape_string(char*, const char*, size_t)
+	/// and DBDriver::escape_string(std::string*, const char *, size_t)
+	/// for further details.
+	size_t escape_string(std::string* ps, const char* original = 0,
+			size_t length = 0) const;
 
-		// Insert a few rows in a single transaction set
-		{
-			// Use a higher level of transaction isolation than MySQL
-			// offers by default.  This trades some speed for more
-			// predictable behavior.  We've set it to affect all
-			// transactions started through this DB server connection,
-			// so it affects the next block, too, even if we don't
-			// commit this one.
-			mysqlpp::Transaction trans(con,
-					mysqlpp::Transaction::serializable,
-					mysqlpp::Transaction::session);
+	/// \brief Return a SQL-escaped version of the given character
+	/// buffer
+	///
+	/// \param escaped character buffer to hold escaped version; must
+	/// point to at least (length * 2 + 1) bytes
+	/// \param original pointer to the character buffer to escape
+	/// \param length number of characters to escape
+	///
+	/// \retval number of characters placed in escaped
+	///
+	/// DBDriver provides two versions of this method and 
+	/// Query::escape_string() calls the appropriate one based on whether
+	/// or not a database connection is available.  If the connection
+	/// is available, it can call the DBDriver::escape_string() method.
+	/// If there is no database connection available (normally only in
+	/// testing), then DBDriver provides a static version of the function 
+	/// that doesn't use a database connection.
+	///
+	/// \see comments for DBDriver::escape_string(char*, const char*, size_t),
+	/// DBDriver::escape_string_no_conn(char*, const char*, size_t)
+	/// for further details.
+	size_t escape_string(char* escaped, const char* original,
+			size_t length) const;
 
-			stock row("Sauerkraut", 42, 1.2, 0.75,
-					mysqlpp::sql_date("2006-03-06"), mysqlpp::null);
-			query.insert(row);
-			query.execute();
+	/// \brief Assigns contents of another SQLStream to this one
+	SQLStream& operator=(const SQLStream& rhs);
 
-			cout << "\nRow inserted, but not committed." << endl;
-			cout << "Verify this with another program (e.g. simple1), "
-					"then hit Enter." << endl;
-			getchar();
+	/// \brief Connection to send queries through
+	Connection* conn_;
+};
 
-			cout << "\nCommitting transaction gives us:" << endl;
-			trans.commit();
-			print_stock_table(query);
-		}
-			
-		// Now let's test auto-rollback
-		{
-			// Start a new transaction, keeping the same isolation level
-			// we set above, since it was set to affect the session.
-			mysqlpp::Transaction trans(con);
-			cout << "\nNow adding catsup to the database..." << endl;
 
-			stock row("Catsup", 3, 3.9, 2.99,
-					mysqlpp::sql_date("2006-03-06"), mysqlpp::null);
-			query.insert(row);
-			query.execute();
-		}
-		cout << "\nNo, yuck! We don't like catsup. Rolling it back:" <<
-				endl;
-		print_stock_table(query);
-			
-	}
-	catch (const mysqlpp::BadQuery& er) {
-		// Handle any query errors
-		cerr << "Query error: " << er.what() << endl;
-		return -1;
-	}
-	catch (const mysqlpp::BadConversion& er) {	
-		// Handle bad conversions
-		cerr << "Conversion error: " << er.what() << endl <<
-				"\tretrieved data size: " << er.retrieved <<
-				", actual size: " << er.actual_size << endl;
-		return -1;
-	}
-	catch (const mysqlpp::Exception& er) {
-		// Catch-all for any other MySQL++ exceptions
-		cerr << "Error: " << er.what() << endl;
-		return -1;
-	}
-
-	return 0;
+/// \brief Insert raw string into the given stream.
+///
+/// This is just syntactic sugar for SQLStream::str(void)
+inline std::ostream& operator <<(std::ostream& os, SQLStream& s)
+{
+	return os << s.str();
 }
+
+
+} // end namespace mysqlpp
+
+#endif // !defined(MYSQLPP_SQLSTREAM_H)
+

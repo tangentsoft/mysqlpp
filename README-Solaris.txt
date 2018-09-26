@@ -1,37 +1,57 @@
-For the most part, Solaris is just another Unix variant as far as
-MySQL++ is concerned.  See README-Unix.txt for most of what you need
-to know to build and use MySQL++.
+/// \file autoflag.h
+/// \brief Defines a template for setting a flag within a given variable
+/// scope, and resetting it when exiting that scope.
 
+/***********************************************************************
+ Copyright (c) 2007 by Educational Technology Resources, Inc.
+ Others may also hold copyrights on code in this file.  See the
+ CREDITS.txt file in the top directory of the distribution for details.
 
-Prerequisite: Install the MySQL Development Files
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    MySQL++ is built on top of the MySQL C API library, so it needs the
-    C API development files to build against.
+ This file is part of MySQL++.
 
-    With the current version of Solaris, at least, a MySQL package
-    is included on the operating system disk, but not installed
-    by default.  To install it, oull down the GNOME System menu,
-    go to Administration, and then to Package Manager.  Search for
-    "mysql5" and install those packages.  While there, you may also
-    need to install the gcc packages, if you haven't done that already.
-    I'm not sure, but you may need to install Perl as well.
+ MySQL++ is free software; you can redistribute it and/or modify it
+ under the terms of the GNU Lesser General Public License as published
+ by the Free Software Foundation; either version 2.1 of the License, or
+ (at your option) any later version.
 
-    Don't search for just "mysql" in Package Manager, as that will also
-    bring up legacy MySQL 4.0 packages.  MySQL++ may build against 4.0
-    still; it's been a while since we've tested it.  What is certain
-    is that the examples won't run against 4.0 without modification,
-    as they assume the availability of UTF-8 character set support,
-    which was added in 4.1.
+ MySQL++ is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+ License for more details.
 
-    It's no doubt possible to use the official binaries from mysql.com
-    instead, or to build from source.  We don't do that ourselves,
-    though, and don't have reports from those who have, so we can't
-    advise on how to do it.
+ You should have received a copy of the GNU Lesser General Public
+ License along with MySQL++; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
+ USA
+***********************************************************************/
 
+#if !defined(MYSQLPP_AUTOFLAG_H)
+#define MYSQLPP_AUTOFLAG_H
 
-C API Development File Directories
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Sun's MySQL package installs the development files in relatively
-    uncommon locations.  The libraries are in /usr/mysql/lib/mysql,
-    and the headers are in /usr/mysql/include/mysql.  Way to be
-    redundant, guys. :)
+/// \brief A template for setting a flag on a variable as long as the
+/// object that set it is in scope.  Flag resets when object goes
+/// out of scope.  Works on anything that looks like bool.
+
+template <class T = bool>
+class AutoFlag
+{
+public:
+	/// \brief Constructor: sets ref to true.
+	AutoFlag(T& ref) :
+	referent_(ref)
+	{
+		referent_ = true;
+	}
+
+	/// \brief Destructor: sets referent passed to ctor to false.
+	~AutoFlag()
+	{
+		referent_ = false;
+	}
+
+private:
+	T& referent_;
+};
+
+#endif // !defined(MYSQLPP_AUTOFLAG_H)
+

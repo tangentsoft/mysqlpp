@@ -1,10 +1,11 @@
-/// \file uds_connection.h
-/// \brief Declares the UnixDomainSocketConnection class.
-
 /***********************************************************************
- Copyright (c) 2007-2008 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the
- CREDITS.txt file in the top directory of the distribution for details.
+ simple1.cpp - Example showing the simplest way to get data from a MySQL
+	table with MySQL++.
+
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS.txt file
+ in the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -24,95 +25,49 @@
  USA
 ***********************************************************************/
 
-#if !defined(MYSQLPP_UDS_CONNECTION_H)
-#define MYSQLPP_UDS_CONNECTION_H
+#include "cmdline.h"
+#include "printdata.h"
 
-#include "connection.h"
+#include <mysql++.h>
 
-namespace mysqlpp {
+#include <iostream>
+#include <iomanip>
 
-/// \brief Specialization of \c Connection for Unix domain sockets
-///
-/// This class just simplifies the connection creation interface of
-/// \c Connection.  It does not add new functionality.
+using namespace std;
 
-class UnixDomainSocketConnection : public Connection
+int
+main(int argc, char *argv[])
 {
-public:
-	/// \brief Create object without connecting it to the MySQL server.
-	UnixDomainSocketConnection() :
-	Connection()
-	{
+	// Get database access parameters from command line
+	mysqlpp::examples::CommandLine cmdline(argc, argv);
+	if (!cmdline) {
+		return 1;
 	}
 
-	/// \brief Create object and connect to database server over Unix
-	/// domain sockets in one step.
-	///
-	/// \param path filesystem path to socket
-	/// \param db name of database to use
-	/// \param user user name to log in under, or 0 to use the user
-	///		name the program is running under
-	/// \param password password to use when logging in
-	///
-	/// \b BEWARE: These parameters are not in the same order as those
-	/// in the corresponding constructor for Connection.  This is a
-	/// feature, not a bug. :)
-	UnixDomainSocketConnection(const char* path, const char* db = 0,
-			const char* user = 0, const char* password = 0) :
-	Connection()
-	{
-		connect(path, db, user, password);
+	// Connect to the sample database.
+	mysqlpp::Connection conn(false);
+	if (conn.connect(mysqlpp::examples::db_name, cmdline.server(),
+			cmdline.user(), cmdline.pass())) {
+		// Retrieve a subset of the sample stock table set up by resetdb
+		// and display it.
+		mysqlpp::Query query = conn.query("select item from stock");
+		if (mysqlpp::StoreQueryResult res = query.store()) {
+			cout << "We have:" << endl;
+			mysqlpp::StoreQueryResult::const_iterator it;
+			for (it = res.begin(); it != res.end(); ++it) {
+				mysqlpp::Row row = *it;
+				cout << '\t' << row[0] << endl;
+			}
+		}
+		else {
+			cerr << "Failed to get item list: " << query.error() << endl;
+			return 1;
+		}
+
+		return 0;
 	}
-
-	/// \brief Establish a new connection using the same parameters as
-	/// an existing connection.
-	///
-	/// \param other pre-existing connection to clone
-	UnixDomainSocketConnection(const UnixDomainSocketConnection& other) :
-	Connection(other)
-	{
+	else {
+		cerr << "DB connection failed: " << conn.error() << endl;
+		return 1;
 	}
-
-	/// \brief Destroy object
-	~UnixDomainSocketConnection() { }
-
-	/// \brief Connect to database after object is created.
-	///
-	/// It's better to use the connect-on-create constructor if you can.
-	/// See its documentation for the meaning of these parameters.
-	///
-	/// If you call this method on an object that is already connected
-	/// to a database server, the previous connection is dropped and a
-	/// new connection is established.
-	bool connect(const char* path, const char* db = 0,
-			const char* user = 0, const char* password = 0);
-
-	/// \brief Check that the given path names a Unix domain socket and
-	/// that we have read-write permission for it
-	///
-	/// \param path the filesystem path to the socket
-	/// \param error on failure, reason is placed here; take default
-	/// if you do not need a reason if it fails
-	///
-	/// \return false if address fails to pass sanity checks
-	static bool is_socket(const char* path, std::string* error = 0);
-
-private:
-	/// \brief Provide uncallable versions of the parent class ctors we
-	/// don't want to provide so we don't get warnings about hidden
-	/// overloads with some compilers
-	UnixDomainSocketConnection(bool) { }
-	UnixDomainSocketConnection(const char*, const char*, const char*,
-			const char*, unsigned int) { }
-
-	/// \brief Explicitly override parent class version so we don't get
-	/// complaints about hidden overloads with some compilers
-	bool connect(const char*, const char*, const char*, const char*,
-			unsigned int) { return false; }
-};
-
-
-} // end namespace mysqlpp
-
-#endif // !defined(MYSQLPP_UDS_CONNECTION_H)
-
+}

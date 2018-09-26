@@ -1,18 +1,10 @@
-/// \file mysql++.h
-/// \brief The main MySQL++ header file.
-///
-/// This file brings in all MySQL++ headers except for custom.h and
-/// custom-macros.h which are a strictly optional feature of MySQL++.
-///
-/// There is no point in trying to optimize which headers you include,
-/// because the MySQL++ headers are so intertwined.  You can only get
-/// trivial compile time benefits, at the expense of clarity.
-
 /***********************************************************************
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2010 by Educational Technology Resources, Inc.  Others may
- also hold copyrights on code in this file.  See the CREDITS.txt file
- in the top directory of the distribution for details.
+ test/sqlstream.cpp - Tests SQLStream class, which is handled by the 
+ stream manipulators just like Query.
+
+ Copyright (c) 2008 by AboveNet, Inc.  Others may also hold copyrights 
+ on code in this file.  See the CREDITS file in the top directory of 
+ the distribution for details.
 
  This file is part of MySQL++.
 
@@ -32,126 +24,68 @@
  USA
 ***********************************************************************/
 
-#ifndef MYSQLPP_MYSQLPP_H
-#define MYSQLPP_MYSQLPP_H
+#include <mysql++.h>
+#define MYSQLPP_ALLOW_SSQLS_V1	// suppress deprecation warning
+#include <ssqls.h>
+#include <sqlstream.h>
 
-/// \brief Encode MySQL++ library version number.
-///
-/// This macro takes major, minor and bugfix numbers (e.g. 1, 2, and 3)
-/// and encodes them like 0x010203.
-#define MYSQLPP_VERSION(major, minor, bugfix) \
-		(((major) << 16) | ((minor) << 8) | (bugfix))
+#include <iostream>
 
-/// \brief Get the library version number that mysql++.h comes from
-///
-/// MySQL++ Version number that the mysql++.h header file comes from,
-/// encoded by MYSQLPP_VERSION macro.  Compare this value to what
-/// get_library_version() returns in order to ensure that your program
-/// is using header files from the same version of MySQL++ as the
-/// actual library you're linking to.
-#define MYSQLPP_HEADER_VERSION MYSQLPP_VERSION(@MYSQLPP_VERSION_MAJOR@, @MYSQLPP_VERSION_MINOR@, @MYSQLPP_VERSION_BUGFIX@)
-
-// This #include order gives the fewest redundancies in the #include
-// dependency chain.
-#include "connection.h"
-#include "cpool.h"
-#include "query.h"
-#include "scopedconnection.h"
-#include "sql_types.h"
-#include "transaction.h"
-
-namespace mysqlpp {
-
-/// \brief Get the current MySQL++ library version number
-///
-/// MySQL++ version number that the program is actually linked to,
-/// encoded by MYSQLPP_VERSION macro.  Compare this value to the
-/// MYSQLPP_HEADER_VERSION constant in order to ensure that your
-/// program is using header files from the same version of MySQL++ as
-/// the actual library you're linking to.
-MYSQLPP_EXPORT unsigned int get_library_version();
-
-// This won't exist forever!  Wean yourself away from these as soon as
-// you can!
-#if defined(MYSQLPP_OLD_CLASS_NAMES)
-#	define ColData String
-#	define NullisBlank NullIsBlank
-#	define NullisNull NullIsNull
-#	define NullisZero NullIsZero
-#	define ResNSel SimpleResult
-#	define Result StoreQueryResult
-#	define ResUse UseQueryResult
-#	define SQLString SQLTypeAdapter
-#endif
-
-} // end namespace mysqlpp
-
-#endif // !defined(MYSQLPP_MYSQLPP_H)
+using namespace mysqlpp;
+using namespace std;
 
 
-/**
-	\mainpage MySQL++ Reference Manual
-
-	\section getting_started Getting Started
-
-	The best place to get started is the
-	<a href="../userman/index.html">user manual</a>. It provides
-	a guide to the example programs and more.
-
-
-	\section classes Major Classes
-
-	In MySQL++, the main user-facing classes are
-	mysqlpp::Connection, mysqlpp::Query, mysqlpp::Row,
-	mysqlpp::StoreQueryResult, and mysqlpp::UseQueryResult.
-
-	In addition, MySQL++ has a mechanism called Specialized SQL
-	Structures (SSQLS), which allow you to create C++ structures
-	that parallel the definition of the tables in your database
-	schema. These let you manipulate the data in your database using
-	native C++ data structures. Programs using this feature often
-	include very little SQL code, because MySQL++ can generate most
-	of what you need automatically when using SSQLSes. There is a
-	whole chapter in the user manual on how to use this feature of
-	the library, plus a section in the user manual's tutorial chapter
-	to introduce it. It's possible to use MySQL++ effectively without
-	using SSQLS, but it sure makes some things a lot easier.
+sql_create_23(test,
+	23, 0,
+	sql_tinyint,			tinyint_v,
+	sql_tinyint_unsigned,	tinyint_unsigned_v,
+	sql_smallint,			smallint_v,
+	sql_smallint_unsigned,	smallint_unsigned_v,
+	sql_int,				int_v,
+	sql_int_unsigned,		int_unsigned_v,
+	sql_mediumint,			mediumint_v,
+	sql_mediumint_unsigned, mediumint_unsigned_v,
+	sql_bigint,				bigint_v,
+	sql_bigint_unsigned,	bigint_unsigned_v,
+	sql_float,				float_v,
+	sql_double,				double_v,
+	sql_decimal,			decimal_v,
+	sql_bool,				bool_v,
+	sql_date,				date_v,
+	sql_time,				time_v,
+	sql_datetime,			datetime_v,
+	sql_char,				char_v,
+	sql_varchar,			varchar_v,
+	sql_tinytext,			tinytext_v,
+	sql_text,				text_v,
+	sql_mediumtext,			mediumtext_v,
+	sql_longtext,			longtext_v)
 
 
-	\section files Major Files
+int
+main()
+{
+	SQLStream sqls(0);		// don't do this in real code
+	test empty(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false,
+			Date(), Time(), DateTime(),"","","","","","");
+	test filled(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11.0, 12.0, 13.0,
+			bool(14), Date("1515-15-15"), Time("16:16:16"),
+			DateTime("1717-17-17 17:17:17"),"18","19","20","21","22","23");
 
-	The only two header files your program ever needs to include
-	are mysql++.h, and optionally custom.h. (The latter implements
-	the SSQLS mechanism.) All of the other files are used within
-	the library only.
+	sqls << "INSERT INTO " << filled.table() << " (" <<
+			filled.field_list() << ") VALUES (" <<
+			filled.value_list() << ")";
 
+	cout << sqls.str() << endl;
 
-	\section user_questions If You Have Questions...
+	sqls.str("");
 
-	If you want to email someone to ask questions about this library,
-	we greatly prefer that you send mail to the MySQL++ mailing list,
-	which you can subscribe to here: http://lists.mysql.com/plusplus
+	sqls << "INSERT INTO " << empty.table() << " (" <<
+			empty.field_list() << ") VALUES (" <<
+			empty.value_list() << ")";
 
-	That mailing list is archived, so if you have questions, do a
-	search to see if the question has been asked before.
+	cout << sqls.str() << endl;
 
-	You may find people's individual email addresses in various
-	files within the MySQL++ distribution. Please do not send mail
-	to them unless you are sending something that is inherently
-	personal. Questions that are about MySQL++ usage may well be
-	ignored if you send them to our personal email accounts. Those of
-	us still active in MySQL++ development monitor the mailing list,
-	so you aren't getting any extra "coverage" by sending messages
-	to those addresses in addition to the mailing list.
-
-
-	\section licensing Licensing
-
-	MySQL++ is licensed under the GNU Lesser General Public License,
-	which you should have received with the distribution package in
-	a file called "LGPL" or "LICENSE". You can also view it here:
-	http://www.gnu.org/licenses/lgpl.html or receive a copy by
-	writing to Free Software Foundation, Inc., 51 Franklin Street,
-	Fifth Floor, Boston, MA 02110-1301, USA.
-*/
+	return 0;
+}
 

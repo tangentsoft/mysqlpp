@@ -1,10 +1,15 @@
 /***********************************************************************
- MainForm.cpp - Defines the dialog box behavior for the MySQL++ C++/CLI
-	Windows Forms example.
+ multiquery.cpp - Example showing how to iterate over result sets upon
+	execution of a query that returns more than one result set.  You can
+	get multiple result sets when executing multiple separate SQL
+	statments in a single query, or when dealing with the results of
+	calling a stored procedure.
 
- Copyright (c) 2007 by Educational Technology Resources, Inc.  Others 
- may also hold copyrights on code in this file.  See the CREDITS.txt
- file in the top directory of the distribution for details.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
+ MySQL AB, (c) 2004, 2005 by Educational Technology Resources, Inc.,
+ and (c) 2005 by Arnon Jalon.  Others may also hold copyrights on
+ code in this file.  See the CREDITS.txt file in the top directory of
+ the distribution for details.
 
  This file is part of MySQL++.
 
@@ -24,322 +29,179 @@
  USA
 ***********************************************************************/
 
-#pragma once
+#include "cmdline.h"
+#include "printdata.h"
 
 #include <mysql++.h>
 
-namespace wforms {
+#include <iostream>
+#include <iomanip>
+#include <vector>
 
-	using namespace Microsoft::Win32;
-	using namespace System;
-	using namespace System::ComponentModel;
-	using namespace System::Collections;
-	using namespace System::Windows::Forms;
-	using namespace System::Data;
-	using namespace System::Drawing;
+using namespace std;
+using namespace mysqlpp;
 
-	public ref class MainForm : public System::Windows::Forms::Form
-	{
-	public:
-		MainForm()
-		{
-			InitializeComponent();
-			LoadDefaults();
+
+typedef vector<int> IntVectorType;
+
+
+static void
+print_header(IntVectorType& widths, StoreQueryResult& res)
+{
+	cout << "  |" << setfill(' ');
+	for (size_t i = 0; i < res.field_names()->size(); i++) {
+		cout << " " << setw(widths.at(i)) << res.field_name(i) << " |";
+	}
+	cout << endl;
+}
+
+
+static void
+print_row(IntVectorType& widths, Row& row)
+{
+	cout << "  |" << setfill(' ');
+	for (size_t i = 0; i < row.size(); ++i) {
+		cout << " " << setw(widths.at(i)) << row[i] << " |";
+	}
+	cout << endl;
+}
+
+
+static void
+print_row_separator(IntVectorType& widths)
+{
+	cout << "  +" << setfill('-');
+	for (size_t i = 0; i < widths.size(); i++) {
+		cout << "-" << setw(widths.at(i)) << '-' << "-+";
+	}
+	cout << endl;
+}
+
+
+static void
+print_result(StoreQueryResult& res, int index)
+{
+	// Show how many rows are in result, if any
+	StoreQueryResult::size_type num_results = res.size();
+	if (res && (num_results > 0)) {
+		cout << "Result set " << index << " has " << num_results <<
+				" row" << (num_results == 1 ? "" : "s") << ':' << endl;
+	}
+	else {
+		cout << "Result set " << index << " is empty." << endl;
+		return;
+	}
+
+	// Figure out the widths of the result set's columns
+	IntVectorType widths;
+	int size = res.num_fields();
+	for (int i = 0; i < size; i++) {
+		widths.push_back(max(
+				res.field(i).max_length(),
+				res.field_name(i).size()));
+	}
+
+	// Print result set header
+	print_row_separator(widths);
+	print_header(widths, res);
+	print_row_separator(widths);
+
+	// Display the result set contents
+	for (StoreQueryResult::size_type i = 0; i < num_results; ++i) {
+		print_row(widths, res[i]);
+	}
+
+	// Print result set footer
+	print_row_separator(widths);
+}
+
+
+static void
+print_multiple_results(Query& query)
+{
+	// Execute query and print all result sets
+	StoreQueryResult res = query.store();
+	print_result(res, 0);
+	for (int i = 1; query.more_results(); ++i) {
+		res = query.store_next();
+		print_result(res, i);
+	}
+}
+
+
+int
+main(int argc, char *argv[])
+{
+	// Get connection parameters from command line
+	const char* db = 0, *server = 0, *user = 0, *pass = "";
+	if (!parse_command_line(argc, argv, &db, &server, &user, &pass)) {
+		return 1;
+	}
+
+	try {
+		// Enable multi-queries.  Notice that you almost always set
+		// MySQL++ connection options before establishing the server
+		// connection, and options are always set using this one
+		// interface.  If you're familiar with the underlying C API,
+		// you know that there is poor consistency on these matters;
+		// MySQL++ abstracts these differences away.
+		Connection con;
+		con.set_option(new MultiStatementsOption(true));
+
+		// Connect to the database
+		if (!con.connect(db, server, user, pass)) {
+			return 1;
 		}
 
-	protected:
-		~MainForm()
-		{
-			if (components) {
-				delete components;
-			}
-		}
+		// Set up query with multiple queries.
+		Query query = con.query();
+		query << "DROP TABLE IF EXISTS test_table; " <<
+				"CREATE TABLE test_table(id INT); " <<
+				"INSERT INTO test_table VALUES(10); " <<
+				"UPDATE test_table SET id=20 WHERE id=10; " <<
+				"SELECT * FROM test_table; " <<
+				"DROP TABLE test_table";
+		cout << "Multi-query: " << endl << query << endl;
 
-	private:
-		// Insert a text string into the output list control
-		Void AddMessage(String^ msg)
-		{
-			resultsList_->Items->Add(msg);
-		}
+		// Execute statement and display all result sets.
+		print_multiple_results(query);
 
-		// Handle Close button click by shutting down application
-		Void CloseButton_Click(Object^ sender, EventArgs^ e)
-		{
-			Application::Exit();
-		}
-		
-		// Handle Connect button click.  The body of this function is
-		// essentially the same as the simple2 command line example, with
-		// some GUI overhead.
-		Void ConnectButton_Click(Object^ sender, EventArgs^ e)
-		{
-			// Clear out the results list, in case this isn't the first time
-			// we've come in here.
-			resultsList_->Items->Clear();
+#if MYSQL_VERSION_ID >= 50000
+		// If it's MySQL v5.0 or higher, also test stored procedures, which
+		// return their results the same way multi-queries do.
+		query << "DROP PROCEDURE IF EXISTS get_stock; " <<
+				"CREATE PROCEDURE get_stock" <<
+				"( i_item varchar(20) ) " <<
+				"BEGIN " <<
+				"SET i_item = concat('%', i_item, '%'); " <<
+				"SELECT * FROM stock WHERE lower(item) like lower(i_item); " <<
+				"END;";
+		cout << "Stored procedure query: " << endl << query << endl;
 
-			// Translate the Unicode text we get from the UI into the UTF-8
-			// form that MySQL wants.
-			const int kInputBufSize = 100;
-			char acServerAddress[kInputBufSize];
-			char acUserName[kInputBufSize];
-			char acPassword[kInputBufSize];
-			ToUTF8(acServerAddress, kInputBufSize, serverAddress_->Text);
-			ToUTF8(acUserName, kInputBufSize, userName_->Text);
-			ToUTF8(acPassword, kInputBufSize, password_->Text);
+		// Create the stored procedure.
+		print_multiple_results(query);
 
-			// Connect to the sample database.
-			mysqlpp::Connection con(false);
-			if (!con.connect("mysql_cpp_data", acServerAddress, acUserName,
-					acPassword)) {
-				AddMessage("Failed to connect to server:");
-				AddMessage(gcnew String(con.error()));
-				return;
-			}
+		// Call the stored procedure and display its results.
+		query << "CALL get_stock('relish')";
+		cout << "Query: " << query << endl;
+		print_multiple_results(query);
+#endif
 
-			// Retrieve a subset of the sample stock table set up by resetdb
-			mysqlpp::Query query = con.query();
-			query << "select item from stock";
-			mysqlpp::StoreQueryResult res = query.store();
-
-			if (res) {
-				// Display the result set
-				for (size_t i = 0; i < res.num_rows(); ++i) {
-					AddMessage(ToUCS2(res[i][0]));
-				}
-
-				// Retreive was successful, so save user inputs now
-				SaveInputs();
-			}
-			else {
-				// Retreive failed
-				AddMessage("Failed to get item list:");
-				AddMessage(ToUCS2(query.error()));
-			}
-		}
-
-		// Load the default input field values, if there are any
-		Void LoadDefaults()
-		{
-			RegistryKey^ settings = OpenSettingsRegistryKey();
-			if (settings) {
-				userName_->Text = LoadSetting(settings, L"user");
-				serverAddress_->Text = LoadSetting(settings, L"server");
-			}
-			
-			if (String::IsNullOrEmpty(userName_->Text)) {
-				userName_->Text = Environment::UserName;
-			}
-			if (String::IsNullOrEmpty(serverAddress_->Text)) {
-				serverAddress_->Text = L"localhost";
-			}
-		}
-
-		// Returns a setting from underneath the given registry key.
-		// Assumes that it's a string value under the MySQL++ examples' 
-		// settings area.
-		String^ LoadSetting(RegistryKey^ key, String^ name)
-		{
-			return (String^)key->GetValue(name);
-		}
-
-		// Returns a reference to the MySQL++ examples' settings area in the
-		// registry.
-		RegistryKey^ OpenSettingsRegistryKey()
-		{
-			RegistryKey^ key = Registry::CurrentUser->OpenSubKey(L"Software",
-					true);
-			return key ? key->CreateSubKey(L"MySQL++ Examples") : nullptr;
-		}
-
-		// Saves the input fields' values to the registry, except for the
-		// password field.
-		Void SaveInputs()
-		{
-			RegistryKey^ settings = OpenSettingsRegistryKey();
-			if (settings) {
-				SaveSetting(settings, "user", userName_->Text);
-				SaveSetting(settings, "server", serverAddress_->Text);
-			}			
-		}
-
-		// Saves the given value as a named entry under the given registry
-		// key.
-		Void SaveSetting(RegistryKey^ key, String^ name, String^ value)
-		{
-			key->SetValue(name, value);
-		}
-
-		// Takes a string in the .NET platform's native Unicode format and
-		// copies it to the given C string buffer in UTF-8 encoding.
-		Void ToUTF8(char* pcOut, int nOutLen, String^ sIn)
-		{
-			array<Byte>^ bytes = System::Text::Encoding::UTF8->GetBytes(sIn);
-			nOutLen = Math::Min(nOutLen - 1, bytes->Length);
-			System::Runtime::InteropServices::Marshal::Copy(bytes, 0, 
-				IntPtr(pcOut), nOutLen);
-			pcOut[nOutLen] = '\0';
-		}
-
-		// Takes the given C string encoded in UTF-8 and converts it to a
-		// Unicode string in the .NET platform's native Unicode encoding.
-		String^ ToUCS2(const char* utf8)
-		{
-			return gcnew String(utf8, 0, strlen(utf8), 
-					System::Text::Encoding::UTF8);
-		}
-
-	private: System::Windows::Forms::TextBox^ serverAddress_;
-	private: System::Windows::Forms::TextBox^ password_;
-	private: System::Windows::Forms::TextBox^ userName_;
-	private: System::Windows::Forms::ListBox^ resultsList_;
-	private: System::Windows::Forms::Button^ connectButton_;
-	private: System::Windows::Forms::Button^ closeButton_;
-	private: System::ComponentModel::Container^ components;
-
-#pragma region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		void InitializeComponent(void)
-		{
-			System::Windows::Forms::Label^  label1;
-			System::Windows::Forms::Label^  label2;
-			System::Windows::Forms::Label^  label3;
-			System::Windows::Forms::Label^  label4;
-			this->serverAddress_ = (gcnew System::Windows::Forms::TextBox());
-			this->password_ = (gcnew System::Windows::Forms::TextBox());
-			this->userName_ = (gcnew System::Windows::Forms::TextBox());
-			this->resultsList_ = (gcnew System::Windows::Forms::ListBox());
-			this->connectButton_ = (gcnew System::Windows::Forms::Button());
-			this->closeButton_ = (gcnew System::Windows::Forms::Button());
-			label1 = (gcnew System::Windows::Forms::Label());
-			label2 = (gcnew System::Windows::Forms::Label());
-			label3 = (gcnew System::Windows::Forms::Label());
-			label4 = (gcnew System::Windows::Forms::Label());
-			this->SuspendLayout();
-			// 
-			// label1
-			// 
-			label1->AutoSize = true;
-			label1->Location = System::Drawing::Point(29, 13);
-			label1->Name = L"label1";
-			label1->Size = System::Drawing::Size(41, 13);
-			label1->TabIndex = 6;
-			label1->Text = L"Server:";
-			label1->TextAlign = System::Drawing::ContentAlignment::TopRight;
-			// 
-			// label2
-			// 
-			label2->AutoSize = true;
-			label2->Location = System::Drawing::Point(9, 39);
-			label2->Name = L"label2";
-			label2->Size = System::Drawing::Size(61, 13);
-			label2->TabIndex = 7;
-			label2->Text = L"User name:";
-			label2->TextAlign = System::Drawing::ContentAlignment::TopRight;
-			// 
-			// label3
-			// 
-			label3->AutoSize = true;
-			label3->Location = System::Drawing::Point(14, 65);
-			label3->Name = L"label3";
-			label3->Size = System::Drawing::Size(56, 13);
-			label3->TabIndex = 8;
-			label3->Text = L"Password:";
-			label3->TextAlign = System::Drawing::ContentAlignment::TopRight;
-			// 
-			// label4
-			// 
-			label4->AutoSize = true;
-			label4->Location = System::Drawing::Point(25, 92);
-			label4->Name = L"label4";
-			label4->Size = System::Drawing::Size(45, 13);
-			label4->TabIndex = 9;
-			label4->Text = L"Results:";
-			label4->TextAlign = System::Drawing::ContentAlignment::TopRight;
-			// 
-			// serverAddress_
-			// 
-			this->serverAddress_->Location = System::Drawing::Point(70, 9);
-			this->serverAddress_->Name = L"serverAddress_";
-			this->serverAddress_->Size = System::Drawing::Size(139, 20);
-			this->serverAddress_->TabIndex = 0;
-			// 
-			// password_
-			// 
-			this->password_->Location = System::Drawing::Point(70, 61);
-			this->password_->Name = L"password_";
-			this->password_->Size = System::Drawing::Size(139, 20);
-			this->password_->TabIndex = 2;
-			this->password_->UseSystemPasswordChar = true;
-			// 
-			// userName_
-			// 
-			this->userName_->Location = System::Drawing::Point(70, 35);
-			this->userName_->Name = L"userName_";
-			this->userName_->Size = System::Drawing::Size(139, 20);
-			this->userName_->TabIndex = 1;
-			// 
-			// resultsList_
-			// 
-			this->resultsList_->Enabled = false;
-			this->resultsList_->FormattingEnabled = true;
-			this->resultsList_->Location = System::Drawing::Point(70, 88);
-			this->resultsList_->Name = L"resultsList_";
-			this->resultsList_->Size = System::Drawing::Size(228, 95);
-			this->resultsList_->TabIndex = 3;
-			this->resultsList_->TabStop = false;
-			// 
-			// connectButton_
-			// 
-			this->connectButton_->Location = System::Drawing::Point(224, 9);
-			this->connectButton_->Name = L"connectButton_";
-			this->connectButton_->Size = System::Drawing::Size(75, 23);
-			this->connectButton_->TabIndex = 3;
-			this->connectButton_->Text = L"Connect!";
-			this->connectButton_->UseVisualStyleBackColor = true;
-			this->connectButton_->Click += gcnew System::EventHandler(this, &MainForm::ConnectButton_Click);
-			// 
-			// closeButton_
-			// 
-			this->closeButton_->DialogResult = System::Windows::Forms::DialogResult::Cancel;
-			this->closeButton_->Location = System::Drawing::Point(224, 38);
-			this->closeButton_->Name = L"closeButton_";
-			this->closeButton_->Size = System::Drawing::Size(75, 23);
-			this->closeButton_->TabIndex = 4;
-			this->closeButton_->Text = L"Close";
-			this->closeButton_->UseVisualStyleBackColor = true;
-			this->closeButton_->Click += gcnew System::EventHandler(this, &MainForm::CloseButton_Click);
-			// 
-			// MainForm
-			// 
-			this->AcceptButton = this->connectButton_;
-			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
-			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->CancelButton = this->closeButton_;
-			this->ClientSize = System::Drawing::Size(310, 192);
-			this->ControlBox = false;
-			this->Controls->Add(label4);
-			this->Controls->Add(label3);
-			this->Controls->Add(label2);
-			this->Controls->Add(label1);
-			this->Controls->Add(this->closeButton_);
-			this->Controls->Add(this->connectButton_);
-			this->Controls->Add(this->resultsList_);
-			this->Controls->Add(this->userName_);
-			this->Controls->Add(this->password_);
-			this->Controls->Add(this->serverAddress_);
-			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedDialog;
-			this->MaximizeBox = false;
-			this->MinimizeBox = false;
-			this->Name = L"MainForm";
-			this->ShowIcon = false;
-			this->Text = L"MySQL++ Windows Forms Examples";
-			this->ResumeLayout(false);
-			this->PerformLayout();
-
-		}
-#pragma endregion
-};
+		return 0;
+	}
+	catch (const BadOption& err) {
+		cerr << err.what() << endl;
+		cerr << "This example requires MySQL 4.1.1 or later." << endl;
+		return 1;
+	}
+	catch (const ConnectionFailed& err) {
+		cerr << "Failed to connect to database server: " <<
+				err.what() << endl;
+		return 1;
+	}
+	catch (const Exception& er) {
+		// Catch-all for any other MySQL++ exceptions
+		cerr << "Error: " << er.what() << endl;
+		return 1;
+	}
 }

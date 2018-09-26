@@ -1,8 +1,11 @@
 /***********************************************************************
- mysql++.cpp - Implements functions dealing with the library itself,
-	as opposed to individual features of the library.
+ resetdb.cpp - (Re)initializes the example database, mysql_cpp_data.
+ 	You must run this at least once before running most of the other
+	examples, and it is helpful sometimes to run it again, as some of
+	the examples modify the table in this database.
 
- Copyright (c) 2007 by Educational Technology Resources, Inc.
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999, 2000 and 2001 by
+ MySQL AB, and (c) 2004, 2005 by Educational Technology Resources, Inc.
  Others may also hold copyrights on code in this file.  See the CREDITS
  file in the top directory of the distribution for details.
 
@@ -24,15 +27,153 @@
  USA
 ***********************************************************************/
 
-#include "mysql++.h"
+#include "util.h"
 
-namespace mysqlpp {
+#include <mysql++.h>
 
-unsigned int
-get_library_version()
+#include <iostream>
+
+using namespace std;
+
+// Convert a packed version number in the format used within MySQL++
+// to a printable string.
+static string
+version_str(int packed)
 {
-	return MYSQLPP_HEADER_VERSION;
+	char buf[9];
+	snprintf(buf, sizeof(buf), "%d.%d.%d",
+			(packed & 0xFF0000) >> 16,
+			(packed & 0x00FF00) >> 8,
+			(packed & 0x0000FF));
+	return buf;
 }
 
-} // end namespace mysqlpp
 
+int
+main(int argc, char *argv[])
+{
+	// Ensure that we're not mixing library and header file versions.
+	// This is really easy to do if you have MySQL++ on your system and
+	// are trying to build a new version, and run the examples directly
+	// instead of through exrun.
+	if (mysqlpp::get_library_version() != MYSQLPP_HEADER_VERSION) {
+		cerr << "Version mismatch: library is v" <<
+				version_str(mysqlpp::get_library_version()) <<
+				", headers are v" <<
+				version_str(MYSQLPP_HEADER_VERSION) <<
+				".  Are you running this" << endl <<
+				"with exrun?  See README.examples." << endl;
+		return 1;
+	}
+	
+	// Connect to database server
+	mysqlpp::Connection con;
+	try {
+		cout << "Connecting to database server..." << endl;
+		if (!connect_to_db(argc, argv, con, "")) {
+			return 1;
+		}
+	}
+	catch (exception& er) {
+		cerr << "Connection failed: " << er.what() << endl;
+		return 1;
+	}
+	
+	// Create new sample database, or re-create it.  We suppress
+	// exceptions, because it's not an error if DB doesn't yet exist.
+	bool new_db = false;
+	{
+		mysqlpp::NoExceptions ne(con);
+		mysqlpp::Query query = con.query();
+		if (con.select_db(kpcSampleDatabase)) {
+			// Toss old table, if it exists.  If it doesn't, we don't
+			// really care, as it'll get created next.
+			cout << "Dropping existing sample data tables..." << endl;
+			query.execute("drop table stock");
+			query.execute("drop table images");
+		}
+		else {
+			// Database doesn't exist yet, so create and select it.
+			if (con.create_db(kpcSampleDatabase) &&
+					con.select_db(kpcSampleDatabase)) {
+				new_db = true;
+			}
+			else {
+				cerr << "Error creating DB: " << con.error() << endl;
+				return 1;
+			}
+		}
+	}
+
+	// Create sample data table within sample database.
+	try {
+		// Send the query to create the stock table and execute it.
+		cout << "Creating stock table..." << endl;
+		mysqlpp::Query query = con.query();
+		query << 
+				"CREATE TABLE stock (" <<
+				"  item CHAR(20) NOT NULL, " <<
+				"  num BIGINT, " <<
+				"  weight DOUBLE, " <<
+				"  price DOUBLE, " <<
+				"  sdate DATE) " <<
+				"ENGINE = InnoDB " <<
+				"CHARACTER SET utf8 COLLATE utf8_general_ci";
+		query.execute();
+
+		// Set up the template query to insert the data.  The parse()
+		// call tells the query object that this is a template and
+		// not a literal query string.
+		query << "insert into %5:table values (%0q, %1q, %2, %3, %4q)";
+		query.parse();
+
+		// Set the template query parameter "table" to "stock".
+		query.def["table"] = "stock";
+
+		// Notice that we don't give a sixth parameter in these calls,
+		// so the default value of "stock" is used.  Also notice that
+		// the first row is a UTF-8 encoded Unicode string!  All you
+		// have to do to store Unicode data in recent versions of MySQL
+		// is use UTF-8 encoding.
+		cout << "Populating stock table..." << endl;
+		query.execute("Nürnberger Brats", 97, 1.5, 8.79, "2005-03-10");
+		query.execute("Pickle Relish", 87, 1.5, 1.75, "1998-09-04");
+		query.execute("Hot Mustard", 73, .95, .97, "1998-05-25");
+		query.execute("Hotdog Buns", 65, 1.1, 1.1, "1998-04-23");
+
+		// Now create empty images table, for testing BLOB and auto-
+		// increment column features.
+		cout << "Creating empty images table..." << endl;
+		query.reset();
+		query << 
+				"CREATE TABLE images (" <<
+				"  id INT UNSIGNED NOT NULL AUTO_INCREMENT, " <<
+				"  data BLOB, " <<
+				"  PRIMARY KEY (id)" <<
+				")";
+		query.execute();
+
+		// Report success
+		cout << (new_db ? "Created" : "Reinitialized") <<
+				" sample database successfully." << endl;
+	}
+	catch (const mysqlpp::BadQuery& er) {
+		// Handle any query errors
+		cerr << "Query error: " << er.what() << endl;
+		return 1;
+	}
+	catch (const mysqlpp::BadConversion& er) {
+		// Handle bad conversions
+		cerr << "Conversion error: " << er.what() << endl <<
+				"\tretrieved data size: " << er.retrieved <<
+				", actual size: " << er.actual_size << endl;
+		return 1;
+	}
+	catch (const mysqlpp::Exception& er) {
+		// Catch-all for any other MySQL++ exceptions
+		cerr << "Error: " << er.what() << endl;
+		return 1;
+	}
+
+	return 0;
+}

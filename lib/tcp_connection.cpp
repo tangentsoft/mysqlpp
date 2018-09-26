@@ -1,9 +1,11 @@
-/***********************************************************************
- tcp_connection.cpp - Implements the TCPConnection class.
+/// \file tiny_int.h
+/// \brief Declares class for holding a SQL TINYINT
 
- Copyright (c) 2007-2008 by Educational Technology Resources, Inc.
- Others may also hold copyrights on code in this file.  See the
- CREDITS.txt file in the top directory of the distribution for details.
+/***********************************************************************
+ Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
+ (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS.txt file
+ in the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -23,137 +25,287 @@
  USA
 ***********************************************************************/
 
-#define MYSQLPP_NOT_HEADER
+#if !defined(MYSQLPP_TINY_INT_H)
+#define MYSQLPP_TINY_INT_H
+
 #include "common.h"
-#include "tcp_connection.h"
 
-#include "exceptions.h"
-
-#if !defined(MYSQLPP_PLATFORM_WINDOWS)
-#	include <netdb.h>
-#	include <arpa/inet.h>
-#endif
-
-#include <ctype.h>
-#include <stdlib.h>
-#include <climits>
-
-using namespace std;
+#include <ostream>
 
 namespace mysqlpp {
 
+/// \brief Class for holding an SQL \c TINYINT value
+///
+/// This is required because the closest C++ type, \c char, doesn't
+/// have all the right semantics.  For one, inserting a \c char into a
+/// stream won't give you a number.  For another, if you don't specify
+/// signedness explicitly, C++ doesn't give a default, so it's signed
+/// on some platforms, unsigned on others.
+///
+/// The template parameter is intended to allow instantiating it as
+/// tiny_int<unsigned char> to hold \c TINYINT \c UNSIGNED values.
+/// There's nothing stopping you from using any other integer type if
+/// you want to be perverse, but please don't do that.
+///
+/// Several of the functions below accept an \c int argument, but
+/// internally we store the data as a \c char by default. Beware of
+/// integer overflows!
 
-bool
-TCPConnection::connect(const char* addr, const char* db,
-		const char* user, const char* pass)
+template <typename VT = signed char>
+class tiny_int
 {
-	error_message_.clear();
+public:
+	//// Type aliases
+	typedef tiny_int<VT> this_type;	///< alias for this object's type
+	typedef VT value_type;			///< alias for type of internal value
 
-	unsigned int port = 0;
-	string address;
-	if (addr) {
-		address = addr;
-		if (!parse_address(address, port, error_message_)) {
-			return false;
-		}
-	}
-
-	if (error_message_.empty()) {
-		return Connection::connect(db, address.c_str(), user, pass, port);
-	}
-	else {
-		if (throw_exceptions()) {
-			throw ConnectionFailed(error_message_.c_str());
-		}
-		else {
-			return false;
-		}
-	}
-}
-
-
-bool
-TCPConnection::parse_address(std::string& addr, unsigned int& port,
-		std::string& error)
-{
-	error.clear();
+	/// \brief Default constructor
+	///
+	/// Value is uninitialized
+	tiny_int() { }
 	
-	// Pull off service name or port number, if any
-	string service;
-	if (addr[0] == '[') {
-		// Might be IPv6 address plus port/service in RFC 2732 form.
-		string::size_type pos = addr.find(']');
-		if ((pos == string::npos) ||
-				(addr.find(':', pos + 1) != (pos + 1)) ||
-				(addr.find_first_of("[]", pos + 2) != string::npos)) {
-			error = "Malformed IPv6 [address]:service combination";
-			return false;
-		}
-
-		// We can separate address from port/service now
-		service = addr.substr(pos + 2);
-		addr = addr.substr(1, pos - 1);
-
-		// Ensure that address part is empty or has at least two colons
-		if (addr.size() &&
-				(((pos = addr.find(':')) == string::npos) ||
-				(addr.find(':', pos + 1) == string::npos))) {
-			error = "IPv6 literal needs at least two colons";
-			return false;
-		}
+	/// \brief Create object from any integral type that can be
+	/// converted to a \c short \c int.
+	tiny_int(value_type v) :
+	value_(value_type(v))
+	{
 	}
-	else {
-		// Can only be IPv4 address, so check for 0-1 colons
-		string::size_type pos = addr.find(':');
-		if (pos != string::npos) {
-			if (addr.find(':', pos + 1) != string::npos) {
-				error = "IPv4 address:service combo can have only one colon";
-				return false;
-			}
-			
-			service = addr.substr(pos + 1);
-			addr = addr.substr(0, pos);
-		}
+	
+	/// \brief Return truthiness of value
+	operator bool() const
+	{
+		return value_;
 	}
 
-	// Turn service into a port number, if it was given.  If not, don't
-	// overwrite port because it could have a legal value passed in from
-	// Connection.
-	if (!service.empty()) {
-		if (isdigit(service[0])) {
-			port = atoi(service.c_str());
-			if ((port < 1) || (port > USHRT_MAX)) {
-				error = "Invalid TCP port number " + service;
-				return false;
-			}
-		}
-		else {
-			servent* pse = getservbyname(service.c_str(), "tcp");
-			if (pse) {
-				port = ntohs(pse->s_port);
-			}
-			else {
-				error = "Failed to look up TCP service " + service;
-				return false;
-			}
-		}
+	/// \brief Return value as an \c int.
+	operator int() const
+	{
+		return static_cast<int>(value_);
 	}
 
-	// Ensure that there are only alphanumeric characters, dots,
-	// dashes and colons in address.  Anything else must be an error.
-	for (string::const_iterator it = addr.begin(); it != addr.end(); ++it) {
-		string::value_type c = *it;
-		if (!(isalnum(c) || (c == '.') || (c == '-') || (c == ':'))) {
-			error = "Bad character '";
-			error += c;
-			error += "' in TCP/IP address";
-			return false;
-		}
+	/// \brief Return raw data value with no size change
+	operator value_type() const
+	{
+		return value_;
 	}
 
-	return true;
+	/// \brief Assign a new value to the object.
+	this_type& operator =(int v)
+	{
+		value_ = static_cast<value_type>(v);
+		return *this;
+	}
+
+	/// \brief Add another value to this object
+	this_type& operator +=(int v)
+	{
+		value_ += static_cast<value_type>(v);
+		return *this;
+	}
+
+	/// \brief Subtract another value to this object
+	this_type& operator -=(int v)
+	{
+		value_ -= static_cast<value_type>(v);
+		return *this;
+	}
+
+	/// \brief Multiply this value by another object
+	this_type& operator *=(int v)
+	{
+		value_ *= static_cast<value_type>(v);
+		return *this;
+	}
+
+	/// \brief Divide this value by another object
+	this_type& operator /=(int v)
+	{
+		value_ /= static_cast<value_type>(v);
+		return *this;
+	}
+
+	/// \brief Divide this value by another object and store the
+	/// remainder
+	this_type& operator %=(int v)
+	{
+		value_ %= static_cast<value_type>(v);
+		return *this;
+	}
+
+	/// \brief Bitwise AND this value by another value
+	this_type& operator &=(int v)
+	{
+		value_ &= static_cast<value_type>(v);
+		return *this;
+	}
+
+	/// \brief Bitwise OR this value by another value
+	this_type& operator |=(int v)
+	{
+		value_ |= static_cast<value_type>(v);
+		return *this;
+	}
+
+	/// \brief Bitwise XOR this value by another value
+	this_type& operator ^=(int v)
+	{
+		value_ ^= static_cast<value_type>(v);
+		return *this;
+	}
+
+	/// \brief Shift this value left by \c v positions
+	this_type& operator <<=(int v)
+	{
+		value_ <<= static_cast<value_type>(v);
+		return *this;
+	}
+
+	/// \brief Shift this value right by \c v positions
+	this_type& operator >>=(int v)
+	{
+		value_ >>= static_cast<value_type>(v);
+		return *this;
+	}
+
+	/// \brief Add one to this value and return that value
+	this_type& operator ++()
+	{
+		++value_;
+		return *this;
+	}
+
+	/// \brief Subtract one from this value and return that value
+	this_type& operator --()
+	{
+		--value_;
+		return *this;
+	}
+
+	/// \brief Add one to this value and return the previous value
+	this_type operator ++(int)
+	{
+		this_type tmp = value_;
+		++value_;
+		return tmp;
+	}
+
+	/// \brief Subtract one from this value and return the previous
+	/// value
+	this_type operator --(int)
+	{
+		this_type tmp = value_;
+		--value_;
+		return tmp;
+	}
+
+	/// \brief Return this value minus \c i
+	this_type operator -(const this_type& i) const
+	{
+		return value_ - i.value_;
+	}
+	
+	/// \brief Return this value plus \c i
+	this_type operator +(const this_type& i) const
+	{
+		return value_ + i.value_;
+	}
+	
+	/// \brief Return this value multiplied by \c i
+	this_type operator *(const this_type& i) const
+	{
+		return value_ * i.value_;
+	}
+	
+	/// \brief Return this value divided by \c i
+	this_type operator /(const this_type& i) const
+	{
+		return value_ / i.value_;
+	}
+	
+	/// \brief Return the modulus of this value divided by \c i
+	this_type operator %(const this_type& i) const
+	{
+		return value_ % i.value_;
+	}
+	
+	/// \brief Return this value bitwise OR'd by \c i
+	this_type operator |(const this_type& i) const
+	{
+		return value_ | i.value_;
+	}
+	
+	/// \brief Return this value bitwise AND'd by \c i
+	this_type operator &(const this_type& i) const
+	{
+		return value_ & i.value_;
+	}
+	
+	/// \brief Return this value bitwise XOR'd by \c i
+	this_type operator ^(const this_type& i) const
+	{
+		return value_ ^ i.value_;
+	}
+	
+	/// \brief Return this value bitwise shifted left by \c i
+	this_type operator <<(const this_type& i) const
+	{
+		return value_ << i.value_;
+	}
+	
+	/// \brief Return this value bitwise shifted right by \c i
+	this_type operator >>(const this_type& i) const
+	{
+		return value_ >> i.value_;
+	}
+
+	/// \brief Check for equality
+	bool operator ==(const this_type& i) const
+	{
+		return value_ == i.value_;
+	}
+
+	/// \brief Check for inequality
+	bool operator !=(const this_type& i) const
+	{
+		return value_ != i.value_;
+	}
+
+	/// \brief Check that this object is less than another
+	bool operator <(const this_type& i) const
+	{
+		return value_ < i.value_;
+	}
+
+	/// \brief Check that this object is greater than another
+	bool operator >(const this_type& i) const
+	{
+		return value_ > i.value_;
+	}
+
+	/// \brief Check this object is less than or equal to another
+	bool operator <=(const this_type& i) const
+	{
+		return value_ <= i.value_;
+	}
+
+	/// \brief Check this object is greater than or equal to another
+	bool operator >=(const this_type& i) const
+	{
+		return value_ >= i.value_;
+	}
+
+private:
+	value_type value_;
+};
+
+/// \brief Insert a \c tiny_int into a C++ stream
+template <typename VT>
+std::ostream& operator <<(std::ostream& os, tiny_int<VT> i)
+{
+	os << static_cast<int>(i);
+	return os;
 }
-
 
 } // end namespace mysqlpp
 
+#endif

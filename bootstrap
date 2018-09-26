@@ -47,11 +47,35 @@ do
 	esac
 done
 
+# Find location of Bakefile stuff.
+bakefilize=bakefilize
+for d in /usr/share/aclocal /usr/local/share/aclocal \
+	'/c/Program Files (x86)/Bakefile/autoconf'
+do
+	BAKEFILE_M4="$d"
+	if [ -e "$BAKEFILE_M4/bakefile.m4" ]
+	then
+		if [ -x "$d/bakefilize" ]
+		then
+			bakefilize="$d/bakefilize"
+		fi
+		break
+	fi
+done
+if [ ! -e "$BAKEFILE_M4/bakefile.m4" ]
+then
+	echo
+	echo "Failed to find bakefile.m4.  Add the directory containing"
+	echo "this to the bootstrap script."
+	echo
+	exit 1
+fi
+
 # Check for existence of needed tools, so we can give a better error
 # message than the shell will.
-tools="make"											# POSIX
-tools="$tools aclocal autoconf autoheader libtoolize"	# autotools
-tools="$tools bakefile bakefilize bakefile_gen"			# Bakefile
+tools="make"														# POSIX
+tools="$tools aclocal autoconf autoheader autoreconf libtoolize"	# Autotools
+tools="$tools bakefile $bakefilize bakefile_gen"					# Bakefile
 for tool in $tools
 do
 	if ! type -p $tool > /dev/null
@@ -64,28 +88,12 @@ do
 	fi
 done
 
-# Find location of Bakefile's stock M4 autoconf macros
-for d in /usr/share/aclocal /usr/local/share/aclocal \
-	'/c/Program Files (x86)/Bakefile/autoconf'
-do
-	BAKEFILE_M4="$d"
-	if [ -e "$BAKEFILE_M4/bakefile.m4" ] ; then break ; fi
-done
-if [ ! -e "$BAKEFILE_M4/bakefile.m4" ]
-then
-	echo
-	echo "Failed to find bakefile.m4.  Add the directory containing"
-	echo "this to the bootstrap script."
-	echo
-	exit 1
-fi
-
 # Do Bakefile stuff first.  Autoconf can't succeed without
 # autoconf_in.m4, which Bakefile creates.
 success=
 set -x &&
 	for d in 3 5 8 ; do mkdir -p vc200$d ; done &&
-	bakefilize &&
+	$bakefilize &&
 	rm -f INSTALL &&
 	bakefile_gen $BF_OPTIONS &&
 	bakefile -f gnu -o Makefile.simple -DBUILDLIBRARY=no mysql++.bkl &&

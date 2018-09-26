@@ -100,7 +100,7 @@ done
 success=
 set -x &&
 	for d in 3 5 8 ; do mkdir -p vc200$d ; done &&
-	$bakefilize &&
+	"$bakefilize" &&
 	rm -f INSTALL &&
 	bakefile_gen $BF_OPTIONS &&
 	bakefile -f gnu -o Makefile.simple -DBUILDLIBRARY=no mysql++.bkl &&

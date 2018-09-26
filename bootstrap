@@ -70,12 +70,19 @@ then
 	echo
 	exit 1
 fi
+if [ ! -x "$bakefilize" ] && ! type -p "$bakefilize" > /dev/null
+then
+	echo
+	echo "Failed to find the bakefilize script.  Is Bakefile installed?"
+	echo
+	exit 1
+fi
 
 # Check for existence of needed tools, so we can give a better error
 # message than the shell will.
 tools="make"														# POSIX
 tools="$tools aclocal autoconf autoheader autoreconf libtoolize"	# Autotools
-tools="$tools bakefile $bakefilize bakefile_gen"					# Bakefile
+tools="$tools bakefile bakefile_gen"								# Bakefile
 for tool in $tools
 do
 	if ! type -p $tool > /dev/null

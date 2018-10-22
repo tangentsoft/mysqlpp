@@ -248,7 +248,6 @@
       <sources>ssx/main.cpp</sources>
       <depends>ssqls2parse</depends>
       <sys-lib>mysqlpp_ssqls2parse</sys-lib>
-      <sys-lib>mysqlpp</sys-lib>
     </exe>
   </if>
 
@@ -298,7 +297,6 @@
         <sources>test/ssqls2.cpp</sources>
         <depends>ssqls2parse</depends>
         <sys-lib>mysqlpp_ssqls2parse</sys-lib>
-        <sys-lib>mysqlpp</sys-lib>
       </exe>
     </if>
     <if cond="FORMAT!='msvs2003prj'">

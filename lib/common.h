@@ -89,6 +89,15 @@
 		// Disable nagging about new "secure" functions like strncpy_s()
 #		pragma warning(disable: 4996)
 
+		// Disable warning about exporting a class from a DLL which is
+		// derived from a non-exported class in another DLL.  This is
+		// safe to do with Standard C++ library types per:
+		//
+		//  https://msdn.microsoft.com/en-us/library/3tdb471s.aspx
+		//
+		// We don't hit this any other way in MySQL++.
+#		pragma warning(disable: 4275)
+
 		// Prior to Visual C++ 2015, we must use _snprintf()
 #		if _MSC_VER < 1900
 #			define snprintf _snprintf

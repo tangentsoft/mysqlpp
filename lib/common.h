@@ -98,6 +98,10 @@
 		// We don't hit this any other way in MySQL++.
 #		pragma warning(disable: 4275)
 
+		// Squish warning about passing no args to MAY_THROW() when
+		// building with newer C++ support.  We're doing it on purpose.
+#		pragma warning(disable: 4003)
+
 		// Prior to Visual C++ 2015, we must use _snprintf()
 #		if _MSC_VER < 1900
 #			define snprintf _snprintf

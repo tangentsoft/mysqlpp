@@ -170,12 +170,13 @@
     <debug-info>$(DEBUGINFO)</debug-info>
     <optimize>$(OPTIMIZE_FLAG)</optimize>
 
-    <if cond="FORMAT in ['autoconf', 'gnu', 'mingw', 'xcode2']">
+    <if cond="FORMAT in ['autoconf', 'gnu', 'xcode2']">
       <include>lib</include>
-        <include>@MYSQL_C_INC_DIR@</include>
-        <lib-path>@MYSQL_C_LIB_DIR@</lib-path>
+      <include>@MYSQL_C_INC_DIR@</include>
+      <lib-path>@MYSQL_C_LIB_DIR@</lib-path>
       <lib-path>.</lib-path>
     </if>
+
     <if cond="FORMAT in ['msvs2003prj', 'msvs2005prj', 'msvs2008prj']">
       <include>../lib</include>
     </if>
@@ -205,8 +206,10 @@
       <ldflags>
         -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc -Wl,--enable-stdcall-fixup
       </ldflags>
+      <include>lib</include>
       <include>"$(MYSQL_WIN_DIR)\include"</include>
       <lib-path>"$(MYSQL_WIN_DIR)\lib"</lib-path>
+      <lib-path>.</lib-path>
       <sys-lib>mysql</sys-lib>
       <sys-lib>mysqlpp$(DEBUG_SUFFIX)</sys-lib>
     </if>
@@ -235,19 +238,23 @@
 
   <if cond="BUILDLIBRARY=='yes'">
     <!-- SSQLS v2 parser convenience library -->
-    <lib id="ssqls2parse" template="programs">
+    <template id="ssqlsv2">
+      <depends>ssqls2parse</depends>
+      <sys-lib>mysqlpp_ssqls2parse</sys-lib>
       <depends>mysqlpp</depends>
+      <sys-lib>mysqlpp</sys-lib>
+    </template>
+
+    <lib id="ssqls2parse" template="programs,ssqlsv2">
       <libname>mysqlpp_ssqls2parse</libname>
       <sources>ssx/parsev2.cpp</sources>
       <include>.</include>
     </lib>
 
     <!-- Build rules for ssqlsxlat tool -->
-    <exe id="ssqlsxlat" template="programs">
+    <exe id="ssqlsxlat" template="programs,ssqlsv2">
       <sources>ssx/genv2.cpp</sources>
       <sources>ssx/main.cpp</sources>
-      <depends>ssqls2parse</depends>
-      <sys-lib>mysqlpp_ssqls2parse</sys-lib>
     </exe>
   </if>
 
@@ -293,7 +300,7 @@
       <sources>test/sqlstream.cpp</sources>
     </exe>
     <if cond="BUILDLIBRARY=='yes'">
-      <exe id="test_ssqls2" template="programs">
+      <exe id="test_ssqls2" template="programs,ssqlsv2">
         <sources>test/ssqls2.cpp</sources>
         <depends>ssqls2parse</depends>
         <sys-lib>mysqlpp_ssqls2parse</sys-lib>

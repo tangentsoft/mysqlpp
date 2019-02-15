@@ -245,10 +245,12 @@
       <sys-lib>mysqlpp</sys-lib>
     </template>
 
-    <lib id="ssqls2parse" template="programs,ssqlsv2">
+    <lib id="ssqls2parse" template="programs">
       <libname>mysqlpp_ssqls2parse</libname>
       <sources>ssx/parsev2.cpp</sources>
       <include>.</include>
+      <depends>mysqlpp</depends>
+      <sys-lib>mysqlpp</sys-lib>
     </lib>
 
     <!-- Build rules for ssqlsxlat tool -->

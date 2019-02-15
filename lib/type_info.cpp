@@ -101,6 +101,11 @@ const mysql_type_info::sql_type_info mysql_type_info::types[] = {
 	sql_type_info("BIGINT UNSIGNED NOT NULL", typeid(sql_bigint_unsigned),
 			MYSQL_TYPE_LONGLONG, mysql_ti_sql_type_info::tf_default |
 			mysql_ti_sql_type_info::tf_unsigned),
+	sql_type_info("BIGINT NOT NULL", typeid(longlong),
+			MYSQL_TYPE_LONGLONG, mysql_ti_sql_type_info::tf_default),
+	sql_type_info("BIGINT UNSIGNED NOT NULL", typeid(ulonglong),
+			MYSQL_TYPE_LONGLONG, mysql_ti_sql_type_info::tf_default |
+			mysql_ti_sql_type_info::tf_unsigned),
 	sql_type_info("MEDIUMINT NOT NULL", typeid(sql_mediumint),
 			MYSQL_TYPE_INT24, mysql_ti_sql_type_info::tf_unsigned),
 	sql_type_info("MEDIUMINT UNSIGNED NOT NULL", typeid(sql_mediumint_unsigned),
@@ -178,6 +183,13 @@ const mysql_type_info::sql_type_info mysql_type_info::types[] = {
 			MYSQL_TYPE_LONGLONG, mysql_ti_sql_type_info::tf_default |
 			mysql_ti_sql_type_info::tf_null),
 	sql_type_info("BIGINT UNSIGNED NULL", typeid(Null<sql_bigint_unsigned>),
+			MYSQL_TYPE_LONGLONG, mysql_ti_sql_type_info::tf_default |
+			mysql_ti_sql_type_info::tf_null |
+			mysql_ti_sql_type_info::tf_unsigned),
+	sql_type_info("BIGINT NULL", typeid(Null<longlong>),
+			MYSQL_TYPE_LONGLONG, mysql_ti_sql_type_info::tf_default |
+			mysql_ti_sql_type_info::tf_null),
+	sql_type_info("BIGINT UNSIGNED NULL", typeid(Null<ulonglong>),
 			MYSQL_TYPE_LONGLONG, mysql_ti_sql_type_info::tf_default |
 			mysql_ti_sql_type_info::tf_null |
 			mysql_ti_sql_type_info::tf_unsigned),

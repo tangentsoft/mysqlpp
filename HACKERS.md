@@ -10,6 +10,12 @@ MySQL++ uses the [Fossil][fsl] [distributed version control
 system][dvcs]. See its [quick start guide][fslq] if you are unfamilar
 with Fossil.
 
+That Fossil repository is also [mirrored to GitHub][ghm] nightly, but
+this is a read-only mirror, meant for use with Git automation tooling.
+For example, you could use MySQL++ as a submodule in a larger Git
+project via this channel. [Changes to MySQL++](#patches) still must go
+go through the Fossil repository.
+
 You must be running Fossil version 2.1 or higher to access the MySQL++
 repository. If your operating system includes an older Fossil package,
 you will either have to install [an official binary][fslb] or [build
@@ -42,28 +48,27 @@ tip of the repository's trunk into the current directory by default.
 As with `mysqlpp.fossil`, you can call the working directory anything
 you like. I actually prefer a working tree that looks like this:
 
-    ~/museum/                  # Where fossils are kept
+    ~/museum/                  # Where one keeps fossils, right?
         mysqlpp.fossil
     ~/src/                     # Working tree for software projects
         mysqlpp/
-            skull/             # Fossil head, get it?   I crack me up.
-            trunk -> skull/    # Alias to match Fossil branch naming
-            some-branch/       # Separately-opened working branch
-            3.2.3/             # Tagged release checkout
+            trunk/             # Primary working branch for MySQL++
+            other-branch/      # Separate working branch checkout
+            3.2.3/             # Older tagged stable release checkout
 
 Fossil will let you make any modifications you like to your local
-repository copy. For those with privileges on the upstream copy,
-checkins get automatically synced with it by default. (If you prefer
-Git or Mercurial style two-phase commits, you can say `fossil settings
-autosync off`.) If you don't have such permissions, you just modify
-your local copy, then have to merge in upstream changes when updating
-your local clone.
+repository copy. For those with check-in privileges on the upstream
+copy, changes get automatically synced with it by default. (If you
+prefer Git or Mercurial style two-phase commits, you can say `fossil set
+autosync off`.) If you don't have such permissions, check-ins just
+modify your local repository clone, then have to merge in upstream
+changes when updating your local clone.
 
 Developers are expected to make all changes that affect the libary's
 API, ABI, or behavior on a branch, rather than check such changes
 directly into the trunk. Once we have discussed the change on the
-[mailing list][ml] and resolved any isssues with the experimental
-branch, it will be merged into the trunk.
+[forum][for] and resolved any isssues with the experimental branch, it
+will be merged into the trunk.
 
 Creating a branch in Fossil is scary-simple, to the point that those
 coming from other version control systems may ask, "Is that really all
@@ -83,11 +88,12 @@ made to them.)
 
 [avh]:  https://tangentsoft.com/mysqlpp/wiki?name=Abridged+Version+History
 [dvcs]: http://en.wikipedia.org/wiki/Distributed_revision_control
+[for]:  https://tangentsoft.com/mysqlpp/froum/
 [fsl]:  http://fossil-scm.org/
-[fslb]: http://fossil-scm.org/index.html/uv/download.html
-[fslq]: http://fossil-scm.org/index.html/doc/trunk/www/quickstart.wiki
-[fsls]: http://fossil-scm.org/index.html/doc/trunk/www/build.wiki
-[ml]:   https://lists.mysql.com/plusplus/
+[fslb]: http://fossil-scm.org/fossil/uv/download.html
+[fslq]: http://fossil-scm.org/fossil/doc/trunk/www/quickstart.wiki
+[fsls]: http://fossil-scm.org/fossil/doc/trunk/www/build.wiki
+[ghm]:  https://github.com/tangentsoft/mysqlpp
 
 
 ## Bootstrapping the Library
@@ -318,10 +324,13 @@ support all the particulars of every odd build system out there.
 [bkl]: https://tangentsoft.com/mysqlpp/file/mysql%2B%2B.bkl
 
 
+<a id="patches"></a>
 ## Submitting Patches
 
-If you wish to submit a patch to the library, please send it to the
-[MySQL++ mailing list][ml].  We want patches in unified diff format.
+If you wish to submit a patch to the library, it’s probably simplest to
+paste it into a [forum post][for] if it’s small. If it’s large, put it
+in Pastebin or similar, then link to it from a forum post.  We want
+patches in unified diff format.
 
 We will also accept trivial patches not needing discussion as text
 in a Fossil ticket.
@@ -335,7 +344,7 @@ for you:
 
 If your patch adds new files, moves files, or needs to be understood in
 terms of multiple checkins, it's best to do that work on a [private
-local branch][pbr], then send a [bundle][fb] instead of a patch.
+local branch](#private), then send a [bundle][fb] instead of a patch.
 
 If you've sent patches to MySQL++ before and don't have a Fossil
 developer login, another alternative is to ask for a login before you
@@ -355,8 +364,7 @@ of [Cygwin](http://cygwin.com/). Fossil is also available for all of
 these systems. There are no excuses for not being able to make unified
 diffs. :)
 
-[fb]:  http://fossil-scm.org/index.html/help?cmd=bundle
-[pbr]: https://tangentsoft.com/mysqlpp/file/HACKERS.md#private
+[fb]:  http://fossil-scm.org/fossil/help?cmd=bundle
 
 
 ## The MySQL++ Code Style
@@ -428,7 +436,7 @@ File types: `txt`
 
 
 When in doubt, mimic what you see in the current code. When still in
-doubt, ask on the [mailing list][ml].
+doubt, ask on [the forum][for].
 
 
 ## Testing Your Proposed Change
@@ -519,15 +527,16 @@ usually acceptable alternatives.  Therefore, such ports become
 maintenance baggage with little compensating value.
 
 
-## <a name="private"></a>Maintaining a Private Repository
+<a name="private"></a>
+## Maintaining a Private Repository
 
-Although Fossil syncs changes back to the `tangentsoft.com/mysqlpp`
-Fossil repository by default, it is possible to maintain a private copy
+Although Fossil syncs changes back to the [MySQL++ Fossil
+repository][home] by default, it is possible to maintain a private copy
 that simply pulls changes in occasionally.
 
 The first step is to turn off the auto-sync feature:
 
-     $ fossil set autosync 0
+     $ fossil set autosync off
 
 Then, I recommend that you make any local changes on a branch:
 
@@ -559,4 +568,6 @@ you come to that decision.
 
 If you ever decide to contribute your private branch to the MySQL++
 project, there are a couple of easy ways to achieve that. Ask about it
-on the [mailing list][ml] if you find yourself in this situation.
+on [the forum][for] if you find yourself in this situation.
+
+[home]: https://tangentsoft.com/mysqlpp/

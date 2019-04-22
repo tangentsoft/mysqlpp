@@ -333,7 +333,7 @@ in Pastebin or similar, then link to it from a forum post.  We want
 patches in unified diff format.
 
 We will also accept trivial patches not needing discussion as text
-in a Fossil ticket.
+or attachments to [a Fossil ticket][tkt].
 
 The easiest way to get a unified diff is to check out a copy of the
 current MySQL++ tree as described above. Then make your change, `cd`
@@ -351,7 +351,7 @@ developer login, another alternative is to ask for a login before you
 begin work so that your changes are automatically sync'd to the main
 Fossil repository as you work, so you don't have to send bundles or
 patch files. We generally don't refuse such requests if you've already
-proven your ability to work well with the MySQL++ project.
+proven your ability to work productively with the MySQL++ project.
 
 If you're making a patch against a MySQL++ distribution tarball, then
 you can generate a patch this way:
@@ -364,7 +364,18 @@ of [Cygwin](http://cygwin.com/). Fossil is also available for all of
 these systems. There are no excuses for not being able to make unified
 diffs. :)
 
+Although MySQL++ does have a [GitHub mirror][ghm], we do not acccept PRs
+via that channel, because the mirror is read-only. You can still send us
+a PR through GitHub, but realize that what’s going to happen on the back
+end is that we’ll generate a patch and apply it to the Fossil repo by
+hand, then update the mirror, so you won’t get GitHub credit for the PR.
+Sorry; there’s no easy way for this mirroring system to accept
+contributions back the other direction. If you want credit for the
+commit, ask us for an account on the Fossil repo and commit it there
+instead.
+
 [fb]:  http://fossil-scm.org/fossil/help?cmd=bundle
+[tkt]: https://tangentsoft.com/mysqlpp/tktnew
 
 
 ## The MySQL++ Code Style

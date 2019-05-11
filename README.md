@@ -103,6 +103,15 @@ of input files.  We currently support these build systems:
 
 
 
+# Unsupported Compliers and OSes
+
+If you're using an operating system or C++ compiler not listed above, it
+is likely left out due to lack of anyone willing to spend time working
+on the port, rather than purposeful neglect. If you get MySQL++ to build
+on your system, we’re likely to accept the patch.  see [the HACKERS
+file][f3] for guidance.
+
+
 # Example Programs
 
 You may want to try out the programs in the examples subdirectory
@@ -111,25 +120,6 @@ working properly.  Also, [these examples][exr] give many examples of
 the proper use of MySQL++.
 
 [exr]: /doc/trunk/README-examples.txt
-
-
-# Unsupported Compliers
-
-If you're on Windows but want to use some other compiler besides
-Visual C++ or GCC, you are currently on your own.  There have
-been past efforts to port MySQL++ to other Windows compilers,
-but for one reason or another, all of these ports have died.
-
-On Unixy systems, GCC still works best.  "Native" compilers and
-third-party compilers may work, but you're on your own to get
-it working.
-
-We have nothing in particular against these unsupported systems.
-We just lack the time and resources to support everything
-ourselves.  If you are sufficiently motivated to get MySQL++
-working on one of these alternate systems, see [the HACKERS file][f3]
-for guidance.  If you follow the advice in that file,
-your patch will be more likely to be accepted.
 
 
 # If You Want to Hack on MySQL++...

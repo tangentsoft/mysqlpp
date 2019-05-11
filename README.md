@@ -103,7 +103,7 @@ of input files.  We currently support these build systems:
 
 
 
-# Unsupported Compliers and OSes
+# Unsupported C++ Compilers and Operating Systems
 
 If you get MySQL++ to build under an operating system or with a C++
 compiler not listed above, we’re likely to accept a patch for it.  See

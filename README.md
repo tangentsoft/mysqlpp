@@ -105,11 +105,9 @@ of input files.  We currently support these build systems:
 
 # Unsupported Compliers and OSes
 
-If you're using an operating system or C++ compiler not listed above, it
-is likely left out due to lack of anyone willing to spend time working
-on the port, rather than purposeful neglect. If you get MySQL++ to build
-on your system, we’re likely to accept the patch.  see [the HACKERS
-file][f3] for guidance.
+If you get MySQL++ to build under an operating system or with a C++
+compiler not listed above, we’re likely to accept a patch for it.  See
+[the HACKERS file][f3] for guidance.
 
 
 # Example Programs

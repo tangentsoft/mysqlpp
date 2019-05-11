@@ -9,7 +9,9 @@ database schema.
 
 MySQL++’s development home is its [Fossil repository][home]. You may be
 reading this via its [GitHub mirror][ghm], but that repository is
-read-only, meant only for use with automation tooling based on Git.
+read-only, meant as a download-only mirror and for use by automation
+tooling based on Git. Checkins to the Fossil repository get pushed
+into the GitHub mirror within a day.
 
 [ghm]:  https://github.com/tangentsoft/mysqlpp
 [home]: https://tangentsoft.com/mysqlpp/
@@ -47,20 +49,23 @@ Each major platform we support has a dedicated `README-*.txt`
 file for it containing information specific to that platform.
 Please read it.
 
-For authorship information, see the CREDITS.txt file.
+For authorship information, see [the CREDITS.txt file][f1].
 
-For license information, see the COPYING.txt file.
+For license information, see [the COPYING.txt file][f2].
 
-If you want to change MySQL++, see the HACKERS.md file.
+If you want to change MySQL++, see [the HACKERS.md file][f3].
 
-You should have received a user manual and a reference manual
-with MySQL++.  If not, you can read a recent version online:
-
-    https://tangentsoft.com/mysqlpp/doc/
+You should have received a user manual and a reference manual with
+MySQL++. If not, you can read a recent version [online][docs].
 
 Search the MySQL++ [mailing list archives][ml] and [its forum][for] if
 you have more questions.
 
+
+[docs]: https://tangentsoft.com/mysqlpp/doc/
+[f1]:   https://tangentsoft.com/mysqlpp/doc/trunk/CREDITS.txt
+[f2]:   https://tangentsoft.com/mysqlpp/doc/trunk/COPYING.txt
+[f3]:   https://tangentsoft.com/mysqlpp/doc/trunk/HACKERS.md
 [for]:  https://tangentsoft.com/mysqlpp/froum/
 [ml]:   http://lists.mysql.com/plusplus/
 
@@ -88,13 +93,13 @@ of input files.  We currently support these build systems:
 *   **Xcode:** We ship an Xcode project file, but it hasn't been well
     tested, since the autoconf method works just fine on macOS.
 
-[cyg]:   /doc/trunk/README-Cygwin.txt
-[linux]: /doc/trunk/README-Linux.txt
-[macos]: /doc/trunk/README-Mac-OS-X.txt
-[mingw]: /doc/trunk/README-MinGW.txt
-[sol]:   /doc/trunk/README-Solaris.txt
-[unix]:  /doc/trunk/README-Unix.txt
-[vcpp]:  /doc/trunk/README-Visual-C%2B%2B.txt
+[cyg]:   https://tangentsoft.com/mysqlpp/doc/trunk/README-Cygwin.txt
+[linux]: https://tangentsoft.com/mysqlpp/doc/trunk/README-Linux.txt
+[macos]: https://tangentsoft.com/mysqlpp/doc/trunk/README-Mac-OS-X.txt
+[mingw]: https://tangentsoft.com/mysqlpp/doc/trunk/README-MinGW.txt
+[sol]:   https://tangentsoft.com/mysqlpp/doc/trunk/README-Solaris.txt
+[unix]:  https://tangentsoft.com/mysqlpp/doc/trunk/README-Unix.txt
+[vcpp]:  https://tangentsoft.com/mysqlpp/doc/trunk/README-Visual-C%2B%2B.txt
 
 
 
@@ -122,17 +127,15 @@ it working.
 We have nothing in particular against these unsupported systems.
 We just lack the time and resources to support everything
 ourselves.  If you are sufficiently motivated to get MySQL++
-working on one of these alternate systems, see [the HACKERS file][hack]
+working on one of these alternate systems, see [the HACKERS file][f3]
 for guidance.  If you follow the advice in that file,
 your patch will be more likely to be accepted.
-
-[hack]: /doc/trunk/HACKERS.md
 
 
 # If You Want to Hack on MySQL++...
 
 If you intend to submit a change to the MySQL++ project, see
-[the HACKERS file][hack].
+[the HACKERS file][f3].
 
 If you want to change the MySQL++ user manual, also read
 [the user manual’s README][umr].
@@ -142,4 +145,4 @@ If you want to change the MySQL++ reference manual, see
 
 
 [dgm]: http://www.doxygen.nl/manual/
-[umr]: /doc/trunk/doc/userman/README.txt
+[umr]: https://tangentsoft.com/mysqlpp/doc/trunk/doc/userman/README.txt

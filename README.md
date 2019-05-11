@@ -145,4 +145,4 @@ If you want to change the MySQL++ reference manual, see
 
 
 [dgm]: http://www.doxygen.nl/manual/
-[umr]: https://tangentsoft.com/mysqlpp/doc/trunk/doc/userman/README.txt
+[umr]: https://tangentsoft.com/mysqlpp/doc/trunk/doc/userman/README.md

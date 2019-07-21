@@ -523,9 +523,9 @@
       <!-- Copy files into package directory -->
       <!-- top directory -->
       <command>
-        cp -RL *.bat *.css *.in *.md *.txt abi.xml aclocal.m4 \
+        cp -RL *.bat *.in *.md *.txt abi.xml aclocal.m4 \
           Bakefiles.bkgen bootstrap cleanmf config.guess config.h \
-          config.sub configure* dtest \exrun install* Makefile.* \
+          config.sub configure* dtest exrun install* Makefile.* \
           mysql++.* osver $(PKGNAME)
       </command>
 

@@ -523,7 +523,7 @@
       <!-- Copy files into package directory -->
       <!-- top directory -->
       <command>
-        cp -RL *.bat *.in *.txt abi.xml aclocal.m4 Bakefiles.bkgen \
+        cp -RL *.bat *.in *.md *.txt abi.xml aclocal.m4 Bakefiles.bkgen \
           bootstrap ChangeLog.md cleanmf config.guess config.h \
           config.sub configure* dtest exrun HACKERS.md install* \
           Makefile.* mysql++.* osver $(PKGNAME)

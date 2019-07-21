@@ -51,6 +51,7 @@ f update &&
 	f merge trunk &&
 	test -z "$(f changes --conflict)" &&
 	f diff -w --tk &&
+    ./bootstrap &&
 	tools/mmake &&
     $make dist &&
     cp mysql++-${ver}.tar.gz ~/tangentsoft.com/mysqlpp/releases &&

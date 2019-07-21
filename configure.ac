@@ -14,7 +14,7 @@
 # USA
 
 # Standard autotools stuff
-AC_INIT(mysql++, 3.2.4, plusplus@lists.mysql.com, mysql++)
+AC_INIT(mysql++, 3.2.5, plusplus@lists.mysql.com, mysql++)
 AC_CONFIG_HEADER(config.h)
 AC_CONFIG_MACRO_DIR([config])
 AC_CANONICAL_SYSTEM

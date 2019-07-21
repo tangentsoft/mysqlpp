@@ -34,21 +34,27 @@
 set -e
 
 ggrep=$(which ggrep grep 2> /dev/null | head -1)
-tag=v$(grep -F so_version mysql++.bkl | $ggrep -Po '\d+\.\d+.\d+')
-if [ $? != 0 ] || [ -z "$v" ]
+ver=$(grep -F so_version mysql++.bkl | $ggrep -Po '\d+\.\d+.\d+')
+if [ $? != 0 ] || [ -z "$ver" ]
 then
     echo "Failed to extract version info from Bakefile!"
     echo
     exit 1
 fi
 
+make=$(which gmake make 2> /dev/null | head -1)
 alias f=fossil
 f update &&
-	( test -z "$(f changes --no-classify)" || f ci -m "Released $tag" ) &&
+	( test -z "$(f changes --no-classify)" || f ci -m "Released v$ver" ) &&
 	cd ../release &&
 	f update release &&
 	f merge trunk &&
 	test -z "$(f changes --conflict)" &&
-	tools/mmake &&
 	f diff -w --tk &&
-	f ci --tag $tag -m "Merged trunk changes for $tag into release branch"
+	tools/mmake &&
+    $make dist &&
+    cp mysql++-${ver}.tar.gz ~/tangentsoft.com/mysqlpp/releases &&
+    cd ~/tangentsoft.com &&
+    $make synch &&
+    cd - &&
+	f ci --tag v$ver -m "Merged trunk changes for v$ver into release branch"

@@ -56,6 +56,6 @@ f update &&
     $make dist &&
     cp mysql++-${ver}.tar.gz ~/tangentsoft.com/mysqlpp/releases &&
     cd ~/tangentsoft.com &&
-    $make synch &&
+    $make doc synch &&
     cd - &&
 	f ci --tag v$ver -m "Merged trunk changes for v$ver into release branch"

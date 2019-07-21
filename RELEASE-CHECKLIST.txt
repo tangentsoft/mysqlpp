@@ -1,12 +1,13 @@
 - Update ChangeLog.md.
 
-- Change version number in configure.ac and mysql++.bkl.
+- Change version number in configure.ac, mysql++.bkl, and
+  ~/tangentsoft.com/mysqlpp/GNUmakefile
 
-  All other places the version number occurs are generated files
-  created from one of these two.  If there's a corresponding *.in file
-  for the one you're looking at, the version number was substituted in
-  by autoconf from configure.ac.  Otherwise, the file was most likely
-  created by the build system using the version number in mysql++.bkl.
+  All other places the version number occurs are generated from the
+  first two.  If there's a corresponding *.in file for the one you're
+  looking at, the version number was substituted in by autoconf from
+  configure.ac.  Otherwise, the file was most likely created by the
+  build system using the version number in mysql++.bkl.
 
 - Run "make abicheck".  There should be no changes.
 

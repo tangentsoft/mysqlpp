@@ -80,7 +80,7 @@ rm -rf %{buildroot} doc/examples
 
 %files
 %defattr(-,root,root,-)
-%doc ChangeLog.md COPYING.txt CREDITS.txt LICENSE.txt README.txt
+%doc ChangeLog.md COPYING.txt CREDITS.txt LICENSE.txt README.md
 %{_libdir}/libmysqlpp.so.*
 
 %files devel

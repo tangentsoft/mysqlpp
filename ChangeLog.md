@@ -1,5 +1,20 @@
 # Change Log
 
+## 3.2.5, 2019.07.21
+
+*   Supports `ulonglong` in MySQL++-to-SQL data type conversions so you
+    can pass the return from `Result.insert_id()` and such into another
+    SQL expression.  This previously required an explicit cast to one of
+    the `sql_*` types when using a C++ compiler that can’t figure out
+    that `sql_bigint` is equivalent on its own.
+
+*   Updates to support newer versions of MySQL and MariaDB.
+
+*   Assorted documentation improvements.
+
+*   Assorted build system improvements.
+
+
 ## 3.2.4, 2018.07.26
 
 *   Added the `MYSQLPP_UTF8_CS` and `MYSQLPP_UTF8_COL` macros to allow a

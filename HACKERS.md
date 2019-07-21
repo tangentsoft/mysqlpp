@@ -4,11 +4,17 @@ If you are going to make any changes to MySQL++, this file has some
 hints and commentary you may find helpful.
 
 
-## Code Repository Access
+## <a id="repo"></a>Code Repository Access
 
 MySQL++ uses the [Fossil][fsl] [distributed version control
 system][dvcs]. See its [quick start guide][fslq] if you are unfamilar
 with Fossil.
+
+That Fossil repository is also [mirrored to GitHub][ghm] nightly, but
+this is a read-only mirror, meant for use with Git automation tooling.
+For example, you could use MySQL++ as a submodule in a larger Git
+project via this channel. [Changes to MySQL++](#patches) still must go
+go through the Fossil repository.
 
 You must be running Fossil version 2.1 or higher to access the MySQL++
 repository. If your operating system includes an older Fossil package,
@@ -22,7 +28,7 @@ To clone the MySQL++ repository anonymously, say:
 If you have a developer account on the MySQL++ Fossil instance, just add
 your username to the URL like so:
 
-    $ fossil clone https://username@tanentsoft.com/mysqlpp mysqlpp.fossil
+    $ fossil clone https://username@tangentsoft.com/mysqlpp mysqlpp.fossil
 
 That will get you a file called `mysqlpp.fossil` containing the [abridged
 version history][avh] of MySQL++ back to the project's founding.
@@ -36,34 +42,39 @@ To "open" the repo clone so you can hack on it, say:
     $ cd mysqlpp
     $ fossil open ../mysqlpp.fossil
 
-We created a new subdirectory because the `open` command checks out the
-tip of the repository's trunk into the current directory by default.
+This two step “clone and open” process may seem weird if you’re used to
+Git, but it’s a feature. It means the repository and working directories
+are separate, allowing you to create multiple independent checkouts from
+a single repo clone. I like a working tree that looks like this:
 
-As with `mysqlpp.fossil`, you can call the working directory anything
-you like. I actually prefer a working tree that looks like this:
-
-    ~/museum/                  # Where fossils are kept
+    ~/museum/                  # Where one keeps fossils, right?
         mysqlpp.fossil
     ~/src/                     # Working tree for software projects
-        mysqlpp/
-            skull/             # Fossil head, get it?   I crack me up.
-            trunk -> skull/    # Alias to match Fossil branch naming
-            some-branch/       # Separately-opened working branch
-            3.2.3/             # Tagged release checkout
+        mysqlpp/               # A directory for each project
+            trunk/             # Primary working branch for MySQL++
+            v2.3.2-modern/     # Checkout for another branch
+            v3.2.3/            # Checkout for a tagged stable release
+
+You check out a branch or tag like so:
+
+    $ cd ~/src/mysqlpp/v3.2.3
+    $ fossil open ~/museum/mysqlpp.fossil v3.2.3
 
 Fossil will let you make any modifications you like to your local
-repository copy. For those with privileges on the upstream copy,
-checkins get automatically synced with it by default. (If you prefer
-Git or Mercurial style two-phase commits, you can say `fossil settings
-autosync off`.) If you don't have such permissions, you just modify
-your local copy, then have to merge in upstream changes when updating
-your local clone.
+repository copy. For those with check-in privileges on the upstream
+copy, changes get automatically synced with it by default. (If you
+prefer Git or Mercurial style two-phase commits, you can say `fossil set
+autosync off`, then later say `fossil push` after making one or more
+checkins.) If you don't have commit capability on the central repository
+server, checkins just modify your local repository clone. If you do such
+checkins on a branch, you don’t need to worry about conflicts when
+pulling down upstream changes into your local clone.
 
 Developers are expected to make all changes that affect the libary's
 API, ABI, or behavior on a branch, rather than check such changes
 directly into the trunk. Once we have discussed the change on the
-[mailing list][ml] and resolved any isssues with the experimental
-branch, it will be merged into the trunk.
+[forum][for] and resolved any isssues with the experimental branch, it
+will be merged into the trunk.
 
 Creating a branch in Fossil is scary-simple, to the point that those
 coming from other version control systems may ask, "Is that really all
@@ -72,25 +83,37 @@ there is to it?" Yes, really, this is it:
     $ fossil checkin --branch new-branch-name
 
 That is to say, you make your changes as you normally would; then when
-you go to check them in, you give the `--branch` option to the
-`ci/checkin` command to put the changes on a new branch, rather than add
-them to the same branch the changes were made against.
+you go to make the first checkin, you give the `--branch` option to put
+the changes on a new branch, rather than add them to the same branch the
+changes were made against. Every subsequent checkin without a `--branch`
+option gets checked in as the new tip of that branch.
 
-At some point, the trunk version becomes the next major version. Stable
-versions become either tags or branches. (The only difference between
-tags and branches in Fossil is that branches may have subsequent changes
-made to them.)
+If you’re creating a branch that will probably live a long enough time
+that you’ll want to return to trunk one or more times while that branch
+lives, you might follow the above command with a sequence like this:
+
+    $ fossil update trunk           # return working dir to tip-of-trunk
+    $ mkdir ../new-branch-name
+    $ cd ../new-branch-name
+    $ fossil open ~/museum/mysqlpp.fossil new-branch-name
+
+Now you can bounce back and forth between trunk and your new branch with
+a simple `cd` command, rather than switching in place, as is typical
+with Git. This style of work avoids invalidating build system outputs,
+and it makes it possible to switch branches without checking in or
+stashing your work on the other branch first.
 
 [avh]:  https://tangentsoft.com/mysqlpp/wiki?name=Abridged+Version+History
 [dvcs]: http://en.wikipedia.org/wiki/Distributed_revision_control
+[for]:  https://tangentsoft.com/mysqlpp/froum/
 [fsl]:  http://fossil-scm.org/
-[fslb]: http://fossil-scm.org/index.html/uv/download.html
-[fslq]: http://fossil-scm.org/index.html/doc/trunk/www/quickstart.wiki
-[fsls]: http://fossil-scm.org/index.html/doc/trunk/www/build.wiki
-[ml]:   https://lists.mysql.com/plusplus/
+[fslb]: http://fossil-scm.org/fossil/uv/download.html
+[fslq]: http://fossil-scm.org/fossil/doc/trunk/www/quickstart.wiki
+[fsls]: http://fossil-scm.org/fossil/doc/trunk/www/build.wiki
+[ghm]:  https://github.com/tangentsoft/mysqlpp
 
 
-## Bootstrapping the Library
+## <a id="bootstrap"></a>Bootstrapping the Library
 
 When you check out MySQL++ from Fossil, there are a lot of things
 "missing" as compared to a distributed tarball, because the Fossil
@@ -113,8 +136,10 @@ There's a third tool you'll need to bootstrap MySQL++ called
 Bakefile 0.2.5 or higher, which in turn requires Python 2.3 or higher to
 run. You may require a newer version of Bakefile to support newer OSes
 and Python versions; we've tested with versions up to 0.2.11
-successfully.  Do not use any of the Bakefile 1.x versions: it's a major
-change in direction which we haven't tried to follow.
+successfully.
+
+Do not use any of the Bakefile 1.x versions: it’s an incompatible
+change, and we currently have no intention to switch from Bakefile 0.x.
 
 Once you have all the tools in place, you can bootstrap MySQL++ with a
 Bourne shell script called `bootstrap`, which you get as part of the
@@ -152,27 +177,51 @@ Arguments:
 
     Turn off "maintainer mode" stuff in the build. These are features
     used only by those building MySQL++ from Fossil. The `dist` build
-    target uses this when creating the tarball.
+    target uses this when creating the tarball, because it reduces the
+    build time somewhat.
 
 *   `noopt`
 
     Compiler optimization will be turned off. (This currently has no
-    effect on MinGW or Visual C++.)
+    effect on the generated MinGW Makefile or the Visual C++ project
+    files.)
 
 *   `pedantic`
 
-    Turns on all of GCC's warnings and portability checks.  Good for
-    checking changes before making a public release.
+    Turns on all of GCC's warnings and portability checks.  We use this
+    as part of our [release process](./RELEASE-CHECKLIST.txt).
 
 *   `bat`
 
-    Asks `cmd.exe` to run `bootstrap.bat` for you. This is useful when
-    using Cygwin just as a command shell in preference to `cmd.exe`, as
-    opposed to using Cygwin to build MySQL++ using its native tools.
-    Passing 'bat' stops all command line processing in the bootstrap
-    script, so if you also pass some of the other options, make "`bat`"
-    last.  The only options that affect the built project files and
-    `Makefiles` work are the no* ones.
+    Runs `bootstrap.bat` via `cmd.exe` for you, passing along equivalent
+    options to any of the "*no*" options you give before it.
+
+    Only the "*no*" options above have an effect on the generated build
+    system files when you give "`bat`".  In particular, the files
+    generated by `bootstrap.bat` make no distinction between "pedantic"
+    and normal builds.
+
+    Passing `bat` stops all command line processing in the `bootstrap`
+    script, so if you also pass some of the other options, "`bat`" must
+    be last.
+    
+    The `bootstrap.bat` script is useful only when you intend to build
+    MySQL++ with MinGW or Visual C++, and you are using Cygwin only as a
+    command line environment.  If you intend to build MySQL++ with
+    Cygwin's GCC toolchain, you must not give this option, else you will
+    not end up with the necessary build system files.
+
+    One advantage of this feature is that the commands necessary to
+    achieve a given effect with `bootstrap.bat` when run via `bootstrap`
+    are shorter than when you run the batch file directly.
+
+    Another advantage is that this low-strength version of the bootstrap
+    script runs faster than the full-strength form, because it produces
+    fewer files.
+
+    Finally, running `bootstrap.bat` indirectly like this lets you avoid
+    using `cmd.exe`, a command shell greatly inferior to any of those
+    available for Cygwin.
 
 *   `configure` script options
 
@@ -185,18 +234,18 @@ Arguments:
 [rmu]: https://tangentsoft.com/mysqlpp/file/README-Unix.txt
 
 
-## Bootstrapping the Library Using Only Windows
+## <a id="winbs"></a>Bootstrapping the Library Using Only Windows
 
 The thing that makes bootstrapping on Windows difficult is that one of
-the required steps uses a Unix-centric tool, `autoconf`.  This section
-is about working out a way to get that working on Windows, or avoiding
-the need for it, so you can get on with hacking on MySQL++ on Windows.
+the required steps uses a Unix-centric tool, Autoconf.  This section
+gives alternatives for either getting Autoconf working on Windows or
+avoiding the need for it.
 
-The thing `autoconf` does that's relevant to Windows builds of MySQL++
+The thing Autoconf does that's relevant to Windows builds of MySQL++
 is that it substitutes the current MySQL++ version number into several
 source files. This allows us to change the version number in just one
 place — `configure.ac` — and have it applied to all these other places.
-Until you do this step, an Fossil checkout of MySQL++ won't build,
+Until you do this step, a Fossil checkout of MySQL++ won't build,
 because these files with the version numbers in them won't be generated.
 
 
@@ -215,25 +264,24 @@ copy over the other such generated files:
 
 Having done that, you can complete the bootstrapping process by running
 `bootstrap.bat`. It has the same purpose as the Bourne shell script
-described above, but much simpler. It has none of the command line
-options described above, for one thing.
+described [above](#bootstrap), but with a different and simpler usage:
 
-The main downside of doing it this way is that your changed version will
-have the same version number as the release of MySQL++ you copied the
-files from, unless you go into each file and change the version numbers.
+    C:\> bootstrap.bat [bakefile-options]
+
+Any options passed are passed as-is to Bakefile. This is normally used
+to pass `-D` options to affect the generated build system output files.
 
 
 ### Option 2: Cygwin
 
 If you'd like to hack on MySQL++ entirely on Windows and have all the
 build freedoms enjoyed by those working on Unixy platforms, the simplest
-solution is probably to [install Cygwin][cyg64]. (64-bit. A [32-bit
-installer][cyg32] is also available.)
+solution is probably to [install Cygwin][cyg]. It doesn’t matter whether
+you use the 32-bit or 64-bit version, for our purposes here.
 
-When you run it, it will walk you through the steps to install Cygwin.
-Autoconf and Perl 5 aren't installed in Cygwin by default, so when you
-get to the packages list, be sure to select them. Autoconf is in the
-Devel category, and Perl 5 in the Interpreters category.
+While in the Cygwin setup program, you will have to add the Autoconf and
+Perl 5 packages, which aren't installed in Cygwin by default.  Autoconf
+is in the Devel category, and Perl 5 in the Interpreters category.
 
 You will also need to install the native Windows binary version of
 [Bakefile](http://bakefile.org/).  Don't get the source version and try
@@ -244,11 +292,27 @@ need to install Cygwin's Python.
 Having done all this, you can follow the Unix bootstrapping
 instructions in the previous section.
 
-[cyg32]: http://cygwin.com/setup-x86.exe
-[cyg64]: http://cygwin.com/setup-x86_64.exe
+[cyg]: http://cygwin.com/
 
 
-### Option 3: ["Here's a nickel, kid, get yourself a better computer."][dc]
+### Option 3: Windows Subsystem for Linux (WSL)
+
+If you’re on Windows 10, you have the option of [installing WSL][wsl], a
+lightweight Linux kernel and user environment that runs atop Windows.
+This is fundamentally different technology than Cygwin, but the
+user-level effect of it is the same as far as MySQL++’s build system
+goes.
+
+Assuming you use the default Ubuntu enviroment atop WSL, the [standard
+bootstrapping process](#bootstrap) applies, after you install the needed
+tools:
+
+    $ apt install bakefile build-essential perl libmysqlclient-dev
+
+[wsl]: https://docs.microsoft.com/en-us/windows/wsl/install-win10
+
+
+### Option 4: ["Here's a nickel, kid, get yourself a better computer."][dc]
 
 Finally, you might have access to a Unixy system, or the ability to set
 one up. You don't even need a separate physical computer, now that
@@ -263,11 +327,11 @@ section, and copy the generated files back to the Windows box.
 
 ## On Manipulating the Build System Source Files
 
-One of the things the bootstrapping system described above
-does is produces various types of project and make files from a
-small number of source files. This system lets us support many
-platforms without having to maintain separate build system files
-for each platform.
+One of the things the bootstrapping system described [above](#bootstrap)
+does is produces various types of project and make files from a small
+number of source files. This system lets us support many platforms
+without having to maintain separate build system files for each
+platform.
 
 [Bakefile](http://bakefile.org/) produces most of these project and make
 files from a single source file called [`mysql++.bkl`][bkl].
@@ -281,7 +345,7 @@ Windows, if all you've changed is `mysql++.bkl`, you can use
 
 Bakefile produces finished project files for Visual C++ and Xcode and
 finished `Makefiles` for MinGW. It also produces `Makefile.in`, which is
-input to GNU Autoconf along with configure.ac and `config/*`. You may
+input to GNU Autoconf along with `configure.ac` and `config/*`. You may
 need to change these latter files in addition to or instead of
 `mysql++.bkl` to get the effect you want.  Running bootstrap
 incorporates changes to all of these files in the GNU Autoconf output.
@@ -296,31 +360,34 @@ support all the particulars of every odd build system out there.
 [bkl]: https://tangentsoft.com/mysqlpp/file/mysql%2B%2B.bkl
 
 
+<a id="patches"></a>
 ## Submitting Patches
 
-If you wish to submit a patch to the library, please send it to the
-[MySQL++ mailing list][ml].  We want patches in unified diff format.
+If you wish to submit a patch to the library, it’s probably simplest to
+paste it into a [forum post][for], if it’s small. If it’s large, put it
+in Pastebin or similar, then link to it from a forum post.  We want
+patches in unified diff format.
 
 We will also accept trivial patches not needing discussion as text
-in a Fossil ticket.
+or attachments to [a Fossil ticket][tkt].
 
 The easiest way to get a unified diff is to check out a copy of the
-current MySQL++ tree as described above. Then make your change, `cd`
-to the MySQL++ root directory, and ask Fossil to generate the patch
+current MySQL++ tree [as described above](#repo). Then make your change,
+`cd` to the MySQL++ root directory, and ask Fossil to generate the patch
 for you:
 
     $ fossil diff > mychange.patch
 
 If your patch adds new files, moves files, or needs to be understood in
 terms of multiple checkins, it's best to do that work on a [private
-local branch][pbr], then send a [bundle][fb] instead of a patch.
+local branch](#private), then send a [bundle][fb] instead of a patch.
 
 If you've sent patches to MySQL++ before and don't have a Fossil
 developer login, another alternative is to ask for a login before you
 begin work so that your changes are automatically sync'd to the main
 Fossil repository as you work, so you don't have to send bundles or
 patch files. We generally don't refuse such requests if you've already
-proven your ability to work well with the MySQL++ project.
+proven your ability to work productively with the MySQL++ project.
 
 If you're making a patch against a MySQL++ distribution tarball, then
 you can generate a patch this way:
@@ -333,8 +400,18 @@ of [Cygwin](http://cygwin.com/). Fossil is also available for all of
 these systems. There are no excuses for not being able to make unified
 diffs. :)
 
-[fb]:  http://fossil-scm.org/index.html/help?cmd=bundle
-[pbr]: https://tangentsoft.com/mysqlpp/file/HACKERS.md#private
+Although MySQL++ does have a [GitHub mirror][ghm], we do not acccept PRs
+via that channel, because the mirror is read-only. You can still send us
+a PR through GitHub, but realize that what’s going to happen on the back
+end is that we’ll generate a patch and apply it to the Fossil repo by
+hand, then update the mirror, so you won’t get GitHub credit for the PR.
+Sorry; there’s no easy way for this mirroring system to accept
+contributions back the other direction. If you want credit for the
+commit, ask us for an account on the Fossil repo, and commit it there
+instead.
+
+[fb]:  http://fossil-scm.org/fossil/help?cmd=bundle
+[tkt]: https://tangentsoft.com/mysqlpp/tktnew
 
 
 ## The MySQL++ Code Style
@@ -406,7 +483,7 @@ File types: `txt`
 
 
 When in doubt, mimic what you see in the current code. When still in
-doubt, ask on the [mailing list][ml].
+doubt, ask on [the forum][for].
 
 
 ## Testing Your Proposed Change
@@ -497,15 +574,16 @@ usually acceptable alternatives.  Therefore, such ports become
 maintenance baggage with little compensating value.
 
 
-## <a name="private"></a>Maintaining a Private Repository
+<a name="private"></a>
+## Maintaining a Private Repository
 
-Although Fossil syncs changes back to the `tangentsoft.com/mysqlpp`
-Fossil repository by default, it is possible to maintain a private copy
+Although Fossil syncs changes back to the [MySQL++ Fossil
+repository][home] by default, it is possible to maintain a private copy
 that simply pulls changes in occasionally.
 
 The first step is to turn off the auto-sync feature:
 
-     $ fossil set autosync 0
+     $ fossil set autosync off
 
 Then, I recommend that you make any local changes on a branch:
 
@@ -537,4 +615,6 @@ you come to that decision.
 
 If you ever decide to contribute your private branch to the MySQL++
 project, there are a couple of easy ways to achieve that. Ask about it
-on the [mailing list][ml] if you find yourself in this situation.
+on [the forum][for] if you find yourself in this situation.
+
+[home]: https://tangentsoft.com/mysqlpp/

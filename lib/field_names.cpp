@@ -57,11 +57,17 @@ FieldNames::operator [](const std::string& s) const
 	std::string temp2(*it);
 		internal::str_to_lwr(temp2);
 		if (temp2.compare(temp1) == 0) {
-			return it - begin();
+			// The cast is necessary for compilers where sizeof(int) !=
+			// sizeof (void*) with sufficiently good warnings.  Yes,
+			// technically this does risk data loss, but for that to
+			// happen you'd have to have more than 2^(sizeof(int)*8)-1
+			// fields in your table.  If you do that, you deserve to
+			// lose anyway.
+			return (unsigned int)(it - begin());
 		}
 	}
 
-	return end() - begin();
+	return (unsigned int)(end() - begin());	// same as above
 }
 
 } // end namespace mysqlpp

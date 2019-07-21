@@ -89,6 +89,19 @@
 		// Disable nagging about new "secure" functions like strncpy_s()
 #		pragma warning(disable: 4996)
 
+		// Disable warning about exporting a class from a DLL which is
+		// derived from a non-exported class in another DLL.  This is
+		// safe to do with Standard C++ library types per:
+		//
+		//  https://msdn.microsoft.com/en-us/library/3tdb471s.aspx
+		//
+		// We don't hit this any other way in MySQL++.
+#		pragma warning(disable: 4275)
+
+		// Squish warning about passing no args to MAY_THROW() when
+		// building with newer C++ support.  We're doing it on purpose.
+#		pragma warning(disable: 4003)
+
 		// Prior to Visual C++ 2015, we must use _snprintf()
 #		if _MSC_VER < 1900
 #			define snprintf _snprintf
@@ -136,15 +149,14 @@
 // likely be years yet until we can start using C++11 unconditionally
 // within MySQL++, then years more until we can use C++14, etc.
 //
-// Our test here currently only works for g++ and clang++: it's testing
-// for C++17.
-//
-// That release finally did away with throwspecs, a feature of C++ that
-// is only used by the oldest parts of MySQL++.  We can't drop the
-// throwspecs until MySQL++ 4, if we ever get around to that, since
-// that would break the library's ABI on systems whose C++ compiler
-// still supports throwspecs.
-#if __cplusplus < 201703L
+// C++11 deprecated throwspecs, a feature of C++ that is only used by
+// the oldest parts of MySQL++.  We can't drop the throwspecs until
+// MySQL++ 4, if we ever get around to that, since that would break
+// the library's ABI on systems whose C++ compiler still supports
+// throwspecs.  This feature isn't completely gone until C++17, but we
+// don't want the warnings on certain newer compilers expecting C++11
+// or newer C++ dialects.
+#if __cplusplus < 201103L
 #	define MAY_THROW(what) throw(what)
 #else
 #	define MAY_THROW(junk) noexcept(false)

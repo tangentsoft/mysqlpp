@@ -41,8 +41,11 @@
 
 - Run tools/mkrel to check the new ChangeLog.md, configure.ac, and
   mysqyl++.bkl files in with the proper version tag and to merge it into
-  the release branch.
+  the release branch.  This also creates mysql++-$(VERSION).tar.gz and
+  synchs it up to tangentsoft.com in the MySQL++ releases directory.
 
-- Copy mysql++-$(VERSION).tar.gz to tangentsoft.com releases directory.
+- On a CentOS 7 box, say "make rpm" from the "release" branch tree.
+  Copy the resulting ~/rpmbuild/SRPMS/mysql++-$(VERSION)-1.el7.src.rpm
+  to that same releases directory.
 
-- Update "MySQL++" wiki document to point to new release.
+- Update "MySQL++" wiki document to point to new release packages.

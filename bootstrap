@@ -108,11 +108,18 @@ set -x &&
 	success=shonuff
 
 # Do the autotools stuff if Bakefile steps succeeded
+#
+# We're calling automake only because autoconf depends on install-sh or
+# similar, and it *ass*umes you're using automake as well, so it
+# delegates installation of that to automake!  This is why we ignore its
+# errors: it fails because configure.ac doesn't refer to AM_* and there
+# is no Makefile.am file, but it does still copy over the missing files.
 if [ -n "$success" ]
 then
 	rm -f config.cache
 	mv autoconf_inc.m4 config > /dev/null 2>&1	# don't care if it fails
 	set -x &&
+        automake --add-missing > /dev/null 2>&1 ;
 		autoreconf -i -I "$BAKEFILE_M4" &&
 		./configure $MAINT_FLAGS $* &&
 		make lib/querydef.h lib/ssqls.h &&

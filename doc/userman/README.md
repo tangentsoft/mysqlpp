@@ -72,11 +72,15 @@ version for testing, and a single-user “Lite” version for $400.  There
 is no free version for personal use, however.
 
 Failing all that, `fo2pdf` falls back to the only free-as-in-liberty
-XSL-FO formmatter, [Apache FOP][5].  FOP
+XSL-FO formatter, [Apache FOP][5].  FOP
 may be available through your OS's package system.  For instance, with
-Debian tyep OSes, you can just say
+Debian type OSes, you can just say
 
     $ sudo apt install fop
+
+and on RHEL/CentOS/Fedora:
+
+    $ sudo yum install fop
 
 If FOP is not in your OS's package system, you can download
 pre-built binaries from the FOP web site that will run with the

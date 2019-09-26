@@ -78,9 +78,14 @@ Debian type OSes, you can just say
 
     $ sudo apt install fop
 
-and on RHEL/CentOS/Fedora:
+and on RHEL/CentOS through version 7:
 
     $ sudo yum install fop
+
+That command also works in Fedora as of this writing. Since `fop` hasn’t
+been removed from Fedora, I suspect this package is moving to EPEL for
+use in EL8, and it just waiting for someone to get around to doing the
+port. Meanwhile, rebuilding Fedora’s package on your OS should work.
 
 If FOP is not in your OS's package system, you can download
 pre-built binaries from the FOP web site that will run with the

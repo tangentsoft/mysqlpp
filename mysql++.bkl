@@ -514,8 +514,16 @@
     <action id="@PACKAGE_NAME@-@PACKAGE_VERSION@">
       <!-- Set up package directory -->
       <command>
-        for d in config doc/html/refman/ssx doc/html/userman \
-            doc/refman doc/userman examples lib ssx test ; \
+        for d in config \
+            doc/html/refman/search \
+            doc/html/refman/ssx \
+            doc/html/userman \
+            doc/refman/search \
+            doc/userman \
+            examples \
+            lib \
+            ssx \
+            test ; \
         do \
           mkdir -p $(PKGNAME)/$(DDD) ; \
         done
@@ -555,7 +563,8 @@
         <command>
           find doc \( -name *.css \
                    -o -name *.html \
-                   -o -name *.js \) \
+                   -o -name *.js \
+                   -o -name *.png \) \
                    -exec install -m 644 {} $(PKGNAME)/{} \;
         </command>
         <command>

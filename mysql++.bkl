@@ -433,9 +433,10 @@
       <command>
         rm -rf doc/latex doc/pdf ; \
         cd doc/html/refman ; \
-        for e in dot html map md5 png ; \
+        rm -f doxygen.css ; \
+        for e in dot html js map md5 png ; \
         do \
-          rm -f doxygen.css [a-z]*.$(DDE) ; \
+          rm -f [a-z]*.$(DDE) ; \
         done
       </command>
     </modify-target>
@@ -552,7 +553,10 @@
           done
         </command>
         <command>
-          find doc \( -name *.css -o -name *.html \) -exec install {} $(PKGNAME)/{} \;
+          find doc \( -name *.css \
+                   -o -name *.html \
+                   -o -name *.js \) \
+                   -exec install -m 644 {} $(PKGNAME)/{} \;
         </command>
         <command>
           cp doc/html/refman/*.png $(PKGNAME)/doc/html/refman

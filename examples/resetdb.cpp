@@ -142,7 +142,7 @@ main(int argc, char *argv[])
 				"  description MEDIUMTEXT NULL) " <<
 				"ENGINE = InnoDB" <<
 				" CHARACTER SET " MYSQLPP_UTF8_CS
-                " COLLATE " MYSQLPP_UTF8_COL;
+				" COLLATE " MYSQLPP_UTF8_COL;
 		query.execute();
 
 		// Set up the template query to insert the data.  The parse()

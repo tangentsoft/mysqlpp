@@ -173,8 +173,8 @@
     <if cond="FORMAT in ['autoconf', 'gnu', 'xcode2']">
       <include>lib</include>
       <include>@MYSQL_C_INC_DIR@</include>
-      <lib-path>@MYSQL_C_LIB_DIR@</lib-path>
       <lib-path>.</lib-path>
+      <lib-path>@MYSQL_C_LIB_DIR@</lib-path>
     </if>
 
     <if cond="FORMAT in ['msvs2003prj', 'msvs2005prj', 'msvs2008prj']">
@@ -208,8 +208,8 @@
       </ldflags>
       <include>lib</include>
       <include>"$(MYSQL_WIN_DIR)\include"</include>
-      <lib-path>"$(MYSQL_WIN_DIR)\lib"</lib-path>
       <lib-path>.</lib-path>
+      <lib-path>"$(MYSQL_WIN_DIR)\lib"</lib-path>
       <sys-lib>mysql</sys-lib>
       <sys-lib>mysqlpp$(DEBUG_SUFFIX)</sys-lib>
     </if>

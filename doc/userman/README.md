@@ -5,9 +5,9 @@ the official DocBook XSL stylesheets, and will build with versions at
 least as far back as 1.69.1.  (Why these versions?  They're what comes
 with CentOS 5, the oldest system I still build this manual on.)
 
-To make the HTML version of the user manual, just type `make` or `make
-html` in this directory.  To make the PDF version of the manual, say
-`make pdf`.  To make both versions, say `make all`.
+To make the HTML version of the user manual, just type `make` or
+`make html` in this directory.  To make the PDF version of the manual,
+say `make pdf`.  To make both versions, say `make all`.
 
 
 

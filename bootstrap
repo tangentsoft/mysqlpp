@@ -119,7 +119,7 @@ then
 	rm -f config.cache
 	mv autoconf_inc.m4 config > /dev/null 2>&1	# don't care if it fails
 	set -x &&
-        automake --add-missing > /dev/null 2>&1 ;
+        automake --add-missing --force-missing > /dev/null 2>&1 ;
 		autoreconf -i -I "$BAKEFILE_M4" &&
 		./configure $MAINT_FLAGS $* &&
 		make lib/querydef.h lib/ssqls.h &&

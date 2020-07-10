@@ -28,7 +28,7 @@ To clone the MySQL++ repository anonymously, say:
 If you have a developer account on the MySQL++ Fossil instance, just add
 your username to the URL like so:
 
-    $ fossil clone https://username@tangentsoft.com/mysqlpp mysqlpp.fossil
+    $ fossil clone https://USERNAME@tangentsoft.com/mysqlpp mysqlpp.fossil
 
 That will get you a file called `mysqlpp.fossil` containing the [abridged
 version history][avh] of MySQL++ back to the project's founding.
@@ -43,9 +43,10 @@ To "open" the repo clone so you can hack on it, say:
     $ fossil open ../mysqlpp.fossil
 
 This two step “clone and open” process may seem weird if you’re used to
-Git, but it’s a feature. It means the repository and working directories
-are separate, allowing you to create multiple independent checkouts from
-a single repo clone. I like a working tree that looks like this:
+Git, but [it’s an intentional feature][mck] of Fossil that the
+repository and working directories are separate. It allows you to easily
+manage multiple independent checkouts from a single repo clone. I like a
+working tree that looks like this:
 
     ~/museum/                  # Where one keeps fossils, right?
         mysqlpp.fossil
@@ -62,11 +63,14 @@ You check out a branch or tag like so:
 
 Fossil will let you make any modifications you like to your local
 repository copy. For those with check-in privileges on the upstream
-copy, changes get automatically synced with it by default. (If you
-prefer Git or Mercurial style two-phase commits, you can say `fossil set
-autosync off`, then later say `fossil push` after making one or more
-checkins.) If you don't have commit capability on the central repository
-server, checkins just modify your local repository clone. If you do such
+copy, changes get automatically synced with it by default.
+
+(If you prefer Git or Mercurial style two-phase commits, you can say
+`fossil set autosync off`, then later say `fossil push` after making one
+or more checkins.)
+
+If you don't have commit capability on the central repository server,
+checkins just modify your local repository clone. If you do such
 checkins on a branch, you don’t need to worry about conflicts when
 pulling down upstream changes into your local clone.
 
@@ -111,6 +115,7 @@ stashing your work on the other branch first.
 [fslq]: http://fossil-scm.org/fossil/doc/trunk/www/quickstart.wiki
 [fsls]: http://fossil-scm.org/fossil/doc/trunk/www/build.wiki
 [ghm]:  https://github.com/tangentsoft/mysqlpp
+[mck]:  https://fossil-scm.org/fossil/doc/trunk/www/fossil-v-git.wiki#checkouts
 
 
 ## <a id="bootstrap"></a>Bootstrapping the Library
@@ -121,10 +126,11 @@ repository contains only source files, no generated files.  The
 process that turns a fresh MySQL++ repository checkout into
 something you can build and hack on is called bootstrapping.
 
-Boostrapping is best done on a modern Unix type platform: Linux, OS
-X, BSD, Solaris...any version released since 2005 or so. It's
-possible to do it on Windows, but much harder; we cover the options
-below in a separate section.
+Boostrapping is best done on a modern Unix type platform: Linux, OS X,
+BSD, Solaris...any version released since 2005 or so.
+
+It's possible to [bootstrap MySQL++ on Windows](#winbs), but it’s much
+harder.
 
 Two of the tools you need to do this are commonly available on Unixy
 systems, at least as an option: Perl 5, and GNU Autoconf 1.59 or higher.
@@ -333,7 +339,7 @@ number of source files. This system lets us support many platforms
 without having to maintain separate build system files for each
 platform.
 
-[Bakefile](http://bakefile.org/) produces most of these project and make
+[Bakefile][bf] produces most of these project and make
 files from a single source file called [`mysql++.bkl`][bkl].
 
 Except for small local changes, it's best to change `mysql++.bkl` and
@@ -363,10 +369,11 @@ support all the particulars of every odd build system out there.
 <a id="patches"></a>
 ## Submitting Patches
 
-If you wish to submit a patch to the library, it’s probably simplest to
-paste it into a [forum post][for], if it’s small. If it’s large, put it
-in Pastebin or similar, then link to it from a forum post.  We want
-patches in unified diff format.
+If you wish to submit a patch to the library and you do not have a
+developer account on our Fossil repo, it’s probably simplest to paste it
+into a [forum post][for], if it’s small. If it’s large, put it in
+Pastebin or similar, then link to it from a forum post.  We want patches
+in unified diff format.
 
 We will also accept trivial patches not needing discussion as text
 or attachments to [a Fossil ticket][tkt].
@@ -400,17 +407,19 @@ of [Cygwin](http://cygwin.com/). Fossil is also available for all of
 these systems. There are no excuses for not being able to make unified
 diffs. :)
 
-Although MySQL++ does have a [GitHub mirror][ghm], we do not acccept PRs
-via that channel, because the mirror is read-only. You can still send us
-a PR through GitHub, but realize that what’s going to happen on the back
-end is that we’ll generate a patch and apply it to the Fossil repo by
-hand, then update the mirror, so you won’t get GitHub credit for the PR.
-Sorry; there’s no easy way for this mirroring system to accept
-contributions back the other direction. If you want credit for the
-commit, ask us for an account on the Fossil repo, and commit it there
-instead.
+Although MySQL++ does have a [GitHub mirror][ghm], we prefer not to
+acccept PRs via that channel. It is intended as a read-only mirror for
+those heavily tied into Git-based tooling. You’re welcome to send us a
+PR anyway, but realize that what’s going to happen on the back end is
+that we’ll generate a patch and apply it to the Fossil repo by hand,
+then update the mirror, so you won’t get GitHub credit for the PR. This
+is all due to [inherent limitations of the mirroring process][fge].
+
+If you want credit for your code contributions, ask us for an account on
+the Fossil repo, then commit it there instead.
 
 [fb]:  http://fossil-scm.org/fossil/help?cmd=bundle
+[fge]: https://fossil-scm.org/fossil/doc/trunk/www/mirrortogithub.md
 [tkt]: https://tangentsoft.com/mysqlpp/tktnew
 
 
@@ -502,7 +511,7 @@ patch. If it gives an expected change, remove `bmark.txt`, re-run
 `dtest`, and include the `bmark.txt` diffs in your patch. This
 communicates to us the fact that you know there are differences and want
 the patch evaluated anyway. Otherwise, we are likely to view the change
-as a bug.
+in the program outputs as a bug or regression.
 
 `dtest` also runs all of the unit tests in `test/*`. The purpose of
 `test/*` is different from that of `examples/*`:
@@ -540,24 +549,25 @@ In general, prefer modifying an existing `examples/*` or `test/*`
 program.  Add a new one only if you're introducing brand new
 functionality or when a given feature currently has no test at all.
 
-Beware that the primary role the examples is to illustrate points in the
+Beware that the primary role of the examples is to illustrate points in the
 user manual. If an existing example does something similar to what a
 proper test would need to do and the test doesn't change the nature of
 the example, don't worry about changing the example code. If your test
 would change the nature of the example, you either need to do the test
-another way, or also submit a change to `doc/userman/*.dbx` that
+another way or also submit a change to `doc/userman/*.dbx` that
 incorporates the difference.
 
 
 ## Adding Support for a Different Compiler
 
 As described above, MySQL++ uses the Bakefile system for creating
-project files and makefiles. This allows us to make changes to a single
-set of files, and have the proper changes be made to all generated
-project files and makefiles. In the past, we used more ad-hoc systems,
-and we'd frequently forget to update individual project files and
-makefiles, so at any given time, at least one target was likely to be
-broken.
+project files and makefiles. This allows a single change to propagate
+across all build systems we support. In the past, we used more ad-hoc
+systems, and we'd frequently forget to update the build system for a
+particular platform, so that at any given time, at least one target was
+likely to be broken. We will therefore resist any change that requires
+that we go back to distributing manually-maintained build system files
+not generated from a single source.
 
 If MySQL++ doesn't currently ship with project files or makefiles tuned
 for your compiler of choice, you need to work through the Bakefile
@@ -567,10 +577,10 @@ instead; we don't want them.
 
 If you want to port MySQL++ to another platform, we need to be confident
 that the entire library works on your platform before we'll accept
-patches. In the past, we've had broken ports that were missing important
-library features, or that crashed when built in certain ways. Few people
-will knowingly use a crippled version of MySQL++, since there are
-usually acceptable alternatives.  Therefore, such ports become
+patches. In the past, we've had broken ports that were either missing
+important library features, or which crashed when built in certain ways.
+Few people will knowingly use a crippled version of MySQL++, since there
+are usually acceptable alternatives.  Therefore, such ports become
 maintenance baggage with little compensating value.
 
 
@@ -585,7 +595,12 @@ The first step is to turn off the auto-sync feature:
 
      $ fossil set autosync off
 
-Then, I recommend that you make any local changes on a branch:
+...or set it so it only pulls from the central repo without trying to push
+local changes, making it complain that you don’t have commit capability:
+
+     $ fossil set autosync pullonly
+
+Then I recommend that you make any local changes on a branch:
 
     ...hack, hack, hack...
     $ fossil ci --branch my-local-branch
@@ -599,7 +614,7 @@ for that will be rare.
 When something happens on the official trunk on `tangentsoft.com` that
 you want pulled into your private repository, say:
 
-    $ fossil sync
+    $ fossil pull
     $ fossil merge trunk
 
 The first command pulls all remote changes into your local clone, but

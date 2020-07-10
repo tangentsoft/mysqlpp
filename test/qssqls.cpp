@@ -59,6 +59,8 @@ sql_create_19(test,
 int
 main()
 {
+    mysql_library_init(0, 0, 0);    // no longer implicit in newer MariaDB
+
 	Query q(0);		// don't pass 0 for conn parameter in real code
 	test empty(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false,
 			Date(), Time(), DateTime(), "", sql_blob());

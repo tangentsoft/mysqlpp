@@ -65,6 +65,8 @@ sql_create_23(test,
 int
 main()
 {
+    mysql_library_init(0, 0, 0);    // no longer implicit in newer MariaDB
+
 	SQLStream sqls(0);		// don't do this in real code
 	test empty(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false,
 			Date(), Time(), DateTime(),"","","","","","");

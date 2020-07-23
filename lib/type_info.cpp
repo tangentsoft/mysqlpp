@@ -1,10 +1,14 @@
 /***********************************************************************
  type_info.cpp - Implements the mysql_type_info class.
 
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
- also hold copyrights on code in this file.  See the CREDITS.txt file
- in the top directory of the distribution for details.
+ Copyright
+    © 1998 by Kevin Atkinson
+    © 1999-2001 by MySQL AB
+    © 2004-2007 by Educational Technology Resources, Inc.
+    © 2020 by Warren Young
+
+ Others may also hold copyrights on code in this file.  See the
+ CREDITS.txt file in the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -178,7 +182,7 @@ const mysql_type_info::sql_type_info mysql_type_info::types[] = {
 	sql_type_info("NULL NULL", typeid(Null<void>),
 			MYSQL_TYPE_NULL, mysql_ti_sql_type_info::tf_null),
 	sql_type_info("TIMESTAMP NULL", typeid(Null<sql_timestamp>),
-			MYSQL_TYPE_TIMESTAMP),
+			MYSQL_TYPE_TIMESTAMP, mysql_ti_sql_type_info::tf_null),
 	sql_type_info("BIGINT NULL", typeid(Null<sql_bigint>),
 			MYSQL_TYPE_LONGLONG, mysql_ti_sql_type_info::tf_default |
 			mysql_ti_sql_type_info::tf_null),

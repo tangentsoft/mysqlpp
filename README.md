@@ -8,10 +8,9 @@ within your own code, providing native C++ interfaces for these common
 tasks.
 
 MySQL++’s development home is its [Fossil repository][home]. You may be
-reading this via its [GitHub mirror][ghm], but that repository is
-read-only, meant as a download-only mirror and for use by automation
-tooling based on Git. Checkins to the Fossil repository get pushed
-into the GitHub mirror within a day.
+reading this via its read-only [GitHub mirror][ghm], intended for use by
+automation tooling based on Git. Checkins to the Fossil repository get
+pushed into the GitHub mirror within an hour.
 
 [ghm]:  https://github.com/tangentsoft/mysqlpp
 [home]: https://tangentsoft.com/mysqlpp/

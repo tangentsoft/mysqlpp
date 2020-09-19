@@ -2,9 +2,9 @@
  load_jpeg.cpp - Example showing how to insert BLOB data into the
 	database from a file.
 
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2009 by Educational Technology Resources, Inc.  Others may
- also hold copyrights on code in this file.  See the CREDITS.txt file
+ Copyright © 1998 by Kevin Atkinson, © 1999-2001 by MySQL AB, and
+ © 2004-2009 by Educational Technology Resources, Inc.  Others may
+ also hold copyrights on code in this file.  See the CREDITS.md file
  in the top directory of the distribution for details.
 
  This file is part of MySQL++.
@@ -80,14 +80,16 @@ load_jpeg_file(const mysqlpp::examples::CommandLine& cmdline,
 	img_name = cmdline.extra_args()[0];
 	ifstream img_file(img_name.c_str(), ios::binary);
 	if (img_file) {
-		// Slurp file contents into RAM with minimum copying.  (Idiom
-		// explained here: http://stackoverflow.com/questions/116038/)
+		// Slurp file contents into RAM with only a single copy, per
+		// https://stackoverflow.com/a/116220  It also explains why
+        // there is no concise zero-copy option here.
 		//
 		// By loading the file into a C++ string (stringstream::str())
 		// and assigning that directly to a mysqlpp::sql_blob, we avoid
 		// truncating the binary data at the first null character.
-		img.data.data = static_cast<const stringstream*>(
-				&(stringstream() << img_file.rdbuf()))->str();
+        stringstream ss;
+        ss << img_file.rdbuf();
+		img.data.data = ss.str();
 
 		// Check JPEG data for sanity.
 		const char* error;
@@ -130,7 +132,7 @@ main(int argc, char *argv[])
 			// as C strings, thus causing null-truncation.  The fact
 			// that we're using SSQLS here is a side issue, simply
 			// demonstrating that mysqlpp::Null<mysqlpp::sql_blob> is
-			// now legal in SSQLS, as of MySQL++ 3.0.7.
+            // now legal in SSQLS, as of MySQL++ 3.0.7.
 			Query query = con.query();
 			query.insert(img);
 			SimpleResult res = query.execute();

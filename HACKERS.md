@@ -109,7 +109,7 @@ stashing your work on the other branch first.
 
 [avh]:  https://tangentsoft.com/mysqlpp/wiki?name=Abridged+Version+History
 [dvcs]: http://en.wikipedia.org/wiki/Distributed_revision_control
-[for]:  https://tangentsoft.com/mysqlpp/froum/
+[for]:  https://tangentsoft.com/mysqlpp/forum/
 [fsl]:  http://fossil-scm.org/
 [fslb]: http://fossil-scm.org/fossil/uv/download.html
 [fslq]: http://fossil-scm.org/fossil/doc/trunk/www/quickstart.wiki

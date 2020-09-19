@@ -58,21 +58,15 @@ public:
 	/// \param safe By default, we get the connection from the pool with
 	/// ConnectionPool::grab(), but we can call safe_grab() instead.
 	explicit ScopedConnection(ConnectionPool& pool, bool safe = false);
-#if __cplusplus < 201103L
-	ScopedConnection(ScopedConnection&& that)
-	    : pool_(that.pool_)
-	    , connection_(that.connection_)
-	{
-	}
-#else
-	ScopedConnection(ScopedConnection&&) = default;
-#endif
 
+#if __cplusplus >= 201103L
 	// ScopedConnection objects cannot be copied.  We want them to be
 	// tightly scoped to their use point, not put in containers or
 	// passed around promiscuously.
+	ScopedConnection(ScopedConnection&&) = default;
 	ScopedConnection(const ScopedConnection& no_copies) = delete;
 	const ScopedConnection& operator=(const ScopedConnection& no_copies) = delete;
+#endif
 
 	/// \brief Destructor
 	///

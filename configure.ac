@@ -93,12 +93,15 @@ case "${host}" in
 esac
 
 
-# Check for Standard C++ support, and extensions.  This must be near
-# the end, because the CPLUSPLUS directive makes autoconf use C++
-# compiler for all subsequent tests!
+# Check for Standard C++ support, and extensions.  We try for C++11 if
+# available, but we don't insist on it.
+#
+# This must be near the end, because the CPLUSPLUS directive makes
+# autoconf use the C++ compiler for all subsequent tests!
 AC_PROG_CXX
 AC_LANG_CPLUSPLUS
 STL_SLIST_EXTENSION
+AX_CXX_COMPILE_STDCXX(11, [], optional)
 
 
 # Include Bakefile macros

@@ -386,8 +386,9 @@ for you:
     $ fossil diff > mychange.patch
 
 If your patch adds new files, moves files, or needs to be understood in
-terms of multiple checkins, it's best to do that work on a [private
-local branch](#private), then send a [bundle][fb] instead of a patch.
+terms of multiple checkins, it's best to do that work on a
+[private local branch](#private), then send a [bundle][fb] instead of a
+patch.
 
 If you've sent patches to MySQL++ before and don't have a Fossil
 developer login, another alternative is to ask for a login before you
@@ -411,12 +412,13 @@ Although MySQL++ does have a [GitHub mirror][ghm], we prefer not to
 acccept PRs via that channel. It is intended as a read-only mirror for
 those heavily tied into Git-based tooling. You’re welcome to send us a
 PR anyway, but realize that what’s going to happen on the back end is
-that we’ll generate a patch and apply it to the Fossil repo by hand,
-then update the mirror, so you won’t get GitHub credit for the PR. This
-is all due to [inherent limitations of the mirroring process][fge].
-
-If you want credit for your code contributions, ask us for an account on
-the Fossil repo, then commit it there instead.
+that we’ll generate a patch, apply it to the Fossil repo by hand, test
+it, and then commit it to the repository under one of the existing
+developer accounts. Only then do we update the mirror so that the change
+appears on GitHub, and you don’t get GitHub credit for the PR. This is
+all due to [inherent limitations of the mirroring process][fge]. If you
+want credit for your code contributions, ask us for an account on the
+Fossil repo, then commit it there instead.
 
 [fb]:  http://fossil-scm.org/fossil/help?cmd=bundle
 [fge]: https://fossil-scm.org/fossil/doc/trunk/www/mirrortogithub.md

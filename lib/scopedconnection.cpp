@@ -29,6 +29,12 @@
 
 namespace mysqlpp {
 
+ScopedConnection::ScopedConnection(ConnectionPool& pool, bool safe) :
+pool_(pool),
+connection_(safe ? pool.safe_grab() : pool.grab())
+{
+}
+
 ScopedConnection::~ScopedConnection()
 {
     pool_.release(connection_);

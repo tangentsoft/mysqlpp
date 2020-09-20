@@ -149,7 +149,18 @@ struct equal_list_b
 	/// 	equal list; doesn't actually have to be " = "!
 	/// \param m manipulator to use when inserting the list into a
 	/// 	C++ stream
+#if __cplusplus >= 201103L
 	equal_list_b(const Seq1& s1, const Seq2& s2,
+			std::vector<bool> f, const char* d,
+			const char* e, Manip m) :
+	list1(&s1),
+	list2(&s2),
+	fields(std::move(f)),
+	delim(d),
+	equl(e),
+	manip(m)
+#else
+    equal_list_b(const Seq1& s1, const Seq2& s2,
 			const std::vector<bool>& f, const char* d,
 			const char* e, Manip m) :
 	list1(&s1),
@@ -158,6 +169,7 @@ struct equal_list_b
 	delim(d),
 	equl(e),
 	manip(m)
+#endif
 	{
 	}
 };
@@ -249,12 +261,21 @@ struct value_list_b
 	///		when inserting the list into a C++ stream
 	/// \param m manipulator to use when inserting the list into a
 	///		C++ stream
-	value_list_b(const Seq& s, const std::vector<bool>& f,
+#if __cplusplus >= 201103L
+	value_list_b(const Seq& s, std::vector<bool>  f,
+			const char* d, Manip m) :
+	list(&s),
+	fields(std::move(f)),
+	delim(d),
+	manip(m)
+#else
+    value_list_b(const Seq& s, const std::vector<bool>& f,
 			const char* d, Manip m) :
 	list(&s),
 	fields(f),
 	delim(d),
 	manip(m)
+#endif
 	{
 	}
 };
@@ -276,7 +297,7 @@ std::ostream& operator <<(std::ostream& o,
 	typename Seq1::const_iterator i = el.list1->begin();
 	typename Seq2::const_iterator j = el.list2->begin();
 
-	while (1) {
+	while (true) {
 		o << *i << el.equl << el.manip << *j;
 		if ((++i == el.list1->end()) || (++j == el.list2->end())) {
 			break;
@@ -301,7 +322,7 @@ std::ostream& operator <<(std::ostream& o,
 	typename Seq2::const_iterator j = el.list2->begin();
 
 	int k = 0;
-	while (1) {
+	while (true) {
 		if (el.fields[k++]) {
 			o << *i << el.equl << el.manip << *j;
 		}
@@ -332,7 +353,7 @@ std::ostream& operator <<(std::ostream& o,
 {
 	typename Seq::const_iterator i = cl.list->begin();
 
-	while (1) {
+	while (true) {
 		o << cl.manip << *i;
 		if (++i == cl.list->end()) {
 			break;
@@ -356,7 +377,7 @@ std::ostream& operator <<(std::ostream& o,
 	typename Seq::const_iterator i = cl.list->begin();
 
 	int k = 0;
-	while (1) {
+	while (true) {
 		if (cl.fields[k++]) {
 			o << cl.manip << *i;
 		}
@@ -403,11 +424,10 @@ void create_vector(size_t size, std::vector<bool>& v, bool t0,
 
 template <class Container>
 void create_vector(const Container& c, std::vector<bool>& v,
-		std::string s0, std::string s1, std::string s2,
-		std::string s3, std::string s4, std::string s5,
-		std::string s6, std::string s7, std::string s8,
-		std::string s9, std::string sa, std::string sb,
-		std::string sc);
+		const std::string& s0, const std::string& s1, const std::string& s2, const std::string& s3,
+		const std::string& s4, const std::string& s5, const std::string& s6, const std::string& s7,
+		const std::string& s8, const std::string& s9, const std::string& sa, const std::string& sb,
+		const std::string& sc);
 
 
 

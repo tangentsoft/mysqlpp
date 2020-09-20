@@ -37,7 +37,7 @@
 #include <string>
 
 #if !defined(MYSQLPP_NO_STDINT_H)
-#	include <stdint.h>
+#	include <cstdint>
 #endif
 
 namespace mysqlpp {

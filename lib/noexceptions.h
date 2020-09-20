@@ -131,6 +131,11 @@ public:
 		assoc_.disable_exceptions();
 	}
 
+#if __cplusplus >= 201103L
+    NoExceptions(const NoExceptions&) = delete;
+	NoExceptions& operator=(const NoExceptions&) = delete;
+#endif
+
 	/// \brief Destructor
 	///
 	/// Restores our associate object's previous exception state.
@@ -145,8 +150,10 @@ private:
 
 	// Hidden assignment operator and copy ctor, because we should not
 	// be copied.
+#if __cplusplus < 201103L
 	NoExceptions(const NoExceptions&);
 	NoExceptions& operator=(const NoExceptions&);
+#endif
 };
 
 } // end namespace mysqlpp

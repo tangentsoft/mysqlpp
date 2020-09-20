@@ -49,6 +49,12 @@ class MYSQLPP_EXPORT mysql_ti_sql_type_info_lookup;
 
 class MYSQLPP_EXPORT mysql_ti_sql_type_info
 {
+public:
+#if __cplusplus >= 201103L
+    mysql_ti_sql_type_info& operator=(
+			const mysql_ti_sql_type_info&) = delete;
+#endif
+
 private:
 	// For use with flags_ bitset
 	enum {
@@ -60,8 +66,10 @@ private:
 	friend class mysql_type_info;
 	friend class mysql_ti_sql_type_info_lookup;
 
+#if __cplusplus < 201103L
 	mysql_ti_sql_type_info& operator=(
 			const mysql_ti_sql_type_info& b);
+#endif
 	
 	// Not initting _base_type and _default because only mysql_type_info
 	// can create them.  There *must* be only one copy of each.
@@ -172,10 +180,14 @@ public:
 	}
 
 	/// \brief Create object as a copy of another
-	mysql_type_info(const mysql_type_info& t) :
+#if __cplusplus >= 201103L
+	mysql_type_info(const mysql_type_info&) = default;
+#else
+    mysql_type_info(const mysql_type_info& t) :
 	num_(t.num_)
 	{
 	}
+#endif
 
 	/// \brief Create object from a C++ type_info object
 	///
@@ -187,11 +199,15 @@ public:
 	}
 
 	/// \brief Assign another mysql_type_info object to this object
-	mysql_type_info& operator =(const mysql_type_info& t)
+#if __cplusplus >= 201103L
+	mysql_type_info& operator =(const mysql_type_info&) = default;
+#else
+    mysql_type_info& operator =(const mysql_type_info& t)
 	{
 		num_ = t.num_;
 		return *this;
 	}
+#endif
 
 	/// \brief Assign a C++ type_info object to this object
 	///
@@ -258,7 +274,7 @@ public:
 	///
 	/// Returns true if the SQL ID of this type is lower than that of
 	/// another.  Used by mysqlpp::type_info_cmp when comparing types.
-	bool before(mysql_type_info& b)
+	bool before(const mysql_type_info& b) const
 	{
 		return num_ < b.num_;
 	}

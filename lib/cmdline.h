@@ -34,7 +34,7 @@
 #include <string>
 #include <vector>
 
-#include <assert.h>
+#include <cassert>
 
 namespace mysqlpp {
 	/// \brief Parses command line arguments and holds the results.

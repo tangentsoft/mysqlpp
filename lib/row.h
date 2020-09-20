@@ -346,7 +346,7 @@ public:
 	///
 	operator private_bool_type() const
 	{
-		return data_.size() && initialized_ ? &Row::initialized_ : 0;
+		return !data_.empty() && initialized_ ? &Row::initialized_ : 0;
 	}
 
 	/// \brief Return reverse iterator pointing to first element in the
@@ -465,12 +465,12 @@ public:
 	/// will be inserted before each item.
 	template <class Manip>
 	value_list_b<Row, Manip> value_list(const char *d, Manip m,
-			std::string s0, std::string s1 = "", std::string s2 = "",
-			std::string s3 = "", std::string s4 = "",
-			std::string s5 = "", std::string s6 = "",
-			std::string s7 = "", std::string s8 = "",
-			std::string s9 = "", std::string sa = "",
-			std::string sb = "", std::string sc = "") const
+			const std::string& s0, const std::string& s1 = "", const std::string& s2 = "",
+			const std::string& s3 = "", const std::string& s4 = "",
+			const std::string& s5 = "", const std::string& s6 = "",
+			const std::string& s7 = "", const std::string& s8 = "",
+			const std::string& s9 = "", const std::string& sa = "",
+			const std::string& sb = "", const std::string& sc = "") const
 	{
 		std::vector<bool> vb;
 		create_vector(*this, vb, s0, s1, s2, s3, s4, s5, s6, s7, s8,
@@ -484,14 +484,14 @@ public:
 	/// returned list.  When inserted into a C++ stream, the delimiter
 	/// 'd' will be placed between the items, and items will be quoted
 	/// and escaped.
-	value_list_b<Row, quote_type0> value_list(
+    value_list_b<Row, quote_type0> value_list(
 			const char *d,
-			std::string s0, std::string s1 = "", std::string s2 = "",
-			std::string s3 = "", std::string s4 = "",
-			std::string s5 = "", std::string s6 = "",
-			std::string s7 = "", std::string s8 = "",
-			std::string s9 = "", std::string sa = "",
-			std::string sb = "", std::string sc = "") const
+			const std::string& s0, const std::string& s1 = "", const std::string& s2 = "",
+			const std::string& s3 = "", const std::string& s4 = "",
+			const std::string& s5 = "", const std::string& s6 = "",
+			const std::string& s7 = "", const std::string& s8 = "",
+			const std::string& s9 = "", const std::string& sa = "",
+			const std::string& sb = "", const std::string& sc = "") const
 	{
 		std::vector<bool> vb;
 		create_vector(*this, vb, s0, s1, s2, s3, s4, s5, s6, s7, s8,
@@ -506,13 +506,13 @@ public:
 	/// placed between the items as a delimiter, and items will be
 	/// quoted and escaped.
 	value_list_b<Row, quote_type0> value_list(
-			std::string s0,
-			std::string s1 = "", std::string s2 = "",
-			std::string s3 = "", std::string s4 = "",
-			std::string s5 = "", std::string s6 = "",
-			std::string s7 = "", std::string s8 = "",
-			std::string s9 = "", std::string sa = "",
-			std::string sb = "", std::string sc = "") const
+			const std::string& s0,
+			const std::string& s1 = "", const std::string& s2 = "",
+			const std::string& s3 = "", const std::string& s4 = "",
+			const std::string& s5 = "", const std::string& s6 = "",
+			const std::string& s7 = "", const std::string& s8 = "",
+			const std::string& s9 = "", const std::string& sa = "",
+			const std::string& sb = "", const std::string& sc = "") const
 	{
 		std::vector<bool> vb;
 		create_vector(*this, vb, s0, s1, s2, s3, s4, s5, s6, s7, s8,

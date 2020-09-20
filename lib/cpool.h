@@ -32,8 +32,8 @@
 
 #include <list>
 
-#include <assert.h>
-#include <time.h>
+#include <cassert>
+#include <ctime>
 
 namespace mysqlpp {
 

@@ -104,12 +104,19 @@ public:
 		mutex.lock();
 	}
 
+#if __cplusplus >= 201103L
+    ScopedLock(const ScopedLock&) = delete;
+	const ScopedLock& operator=(const ScopedLock&) = delete;
+#endif
+
 	/// \brief Unlock the mutex.
 	~ScopedLock() { mutex_.unlock(); }
 
 private:
+#if __cplusplus < 201103L
 	ScopedLock(const ScopedLock&);				// can't copy
 	ScopedLock& operator =(const ScopedLock&);	// can't assign
+#endif
 
 	BeecryptMutex& mutex_;	///< the mutex object we manage
 };

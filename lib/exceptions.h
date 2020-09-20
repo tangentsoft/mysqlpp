@@ -46,18 +46,26 @@ class MYSQLPP_EXPORT Exception : public std::exception
 {
 public:
 	/// \brief Create exception object as copy of another
+#if __cplusplus >= 201103L
+    Exception(const Exception&) MAY_THROW() = default;
+#else
 	Exception(const Exception& e) MAY_THROW() :
 	std::exception(e),
 	what_(e.what_)
 	{
 	}
+#endif
 
 	/// \brief Assign another exception object's contents to this one
-	Exception& operator=(const Exception& rhs) throw()
+#if __cplusplus >= 201103L
+	Exception& operator=(const Exception& rhs) noexcept = default;
+#else
+    Exception& operator=(const Exception& rhs) throw()
 	{
 		what_ = rhs.what_;
 		return *this;
 	}
+#endif
 
 	/// \brief Destroy exception object
 	~Exception() throw() { }
@@ -76,10 +84,17 @@ protected:
 	}
 
 	/// \brief Create exception object
-	Exception(const std::string& w) throw() :
+#if __cplusplus >= 201103L
+	Exception(std::string w) throw() :
+	what_(std::move(w))
+	{
+	}
+#else
+    Exception(const std::string& w) throw() :
 	what_(w)
 	{
 	}
+#endif
 
 	/// \brief explanation of why exception was thrown
 	std::string what_;

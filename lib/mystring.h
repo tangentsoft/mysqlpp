@@ -40,8 +40,8 @@
 #include <sstream>
 #include <limits>
 
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 namespace mysqlpp {
 
@@ -176,10 +176,14 @@ public:
 	/// This ctor only copies the pointer to the other String's data
 	/// buffer and increments its reference counter.  If you need a
 	/// deep copy, use one of the ctors that takes a string.
+#if __cplusplus >= 201103L
+    String(const String&) = default;
+#else
 	String(const String& other) :
 	buffer_(other.buffer_)
 	{
 	}
+#endif
 
 	/// \brief Full constructor.
 	///
@@ -478,12 +482,16 @@ public:
 	/// This only copies the pointer to the other String's data
 	/// buffer and increments its reference counter.  If you need a
 	/// deep copy, assign a string to this object instead.
+#if __cplusplus >= 201103L
+    String& operator =(const String&) = default;
+#else
 	String& operator =(const String& other)
 	{
 		buffer_ = other.buffer_;
 
 		return *this;
 	}
+#endif
 
 	/// \brief Equality comparison operator
 	///

@@ -32,8 +32,8 @@
 
 #include "common.h"
 
-#include <errno.h>
-#include <string.h>
+#include <cerrno>
+#include <cstring>
 
 
 namespace mysqlpp {

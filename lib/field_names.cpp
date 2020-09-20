@@ -48,15 +48,22 @@ FieldNames::init(const ResultBase* res)
 }
 
 
+#if __cplusplus >= 201103L
+unsigned int
+FieldNames::operator [](std::string s) const
+{
+    std::string temp1(std::move(s));
+#else
 unsigned int
 FieldNames::operator [](const std::string& s) const
 {
 	std::string temp1(s);
+#endif
 	internal::str_to_lwr(temp1);
 	for (const_iterator it = begin(); it != end(); ++it) {
 	std::string temp2(*it);
 		internal::str_to_lwr(temp2);
-		if (temp2.compare(temp1) == 0) {
+		if (temp2 == temp1) {
 			// The cast is necessary for compilers where sizeof(int) !=
 			// sizeof (void*) with sufficiently good warnings.  Yes,
 			// technically this does risk data loss, but for that to

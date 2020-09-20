@@ -28,13 +28,13 @@
 #include "datetime.h"
 #include "sql_types.h"
 
-#include <string.h>
+#include <cstring>
 
 namespace mysqlpp {
 
 
 SQLBuffer&
-SQLBuffer::assign(const char* data, size_type length, mysql_type_info type,
+SQLBuffer::assign(const char* data, size_type length, const mysql_type_info& type,
 		bool is_null)
 {
 	replace_buffer(data, length);
@@ -44,7 +44,7 @@ SQLBuffer::assign(const char* data, size_type length, mysql_type_info type,
 }
 
 SQLBuffer&
-SQLBuffer::assign(const std::string& s, mysql_type_info type, bool is_null)
+SQLBuffer::assign(const std::string& s, const mysql_type_info& type, bool is_null)
 {
 	replace_buffer(s.data(), s.length());
 	type_ = type;

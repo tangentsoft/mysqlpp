@@ -83,10 +83,10 @@ create_vector(size_t size, std::vector<bool>& v, bool t0, bool t1, bool t2,
 
 template <class Container>
 void create_vector(const Container& c, std::vector<bool>& v,
-		std::string s0, std::string s1, std::string s2, std::string s3,
-		std::string s4, std::string s5, std::string s6, std::string s7,
-		std::string s8, std::string s9, std::string sa, std::string sb,
-		std::string sc)
+		const std::string& s0, const std::string& s1, const std::string& s2, const std::string& s3,
+		const std::string& s4, const std::string& s5, const std::string& s6, const std::string& s7,
+		const std::string& s8, const std::string& s9, const std::string& sa, const std::string& sb,
+		const std::string& sc)
 {
 	v.insert(v.begin(), c.size(), false);
 
@@ -134,10 +134,10 @@ void create_vector(const Container& c, std::vector<bool>& v,
 // Instantiate above template.  Not sure why this is necessary.  Hide it
 // from Doxygen, because we clearly cannot appease it by documenting it.
 template void
-create_vector(const Row& c, std::vector<bool>& v, string s0,
-		string s1, string s2, string s3, string s4, string s5,
-		string s6, string s7, string s8, string s9, string sa,
-		string sb, string sc);
+create_vector(const Row& c, std::vector<bool>& v, const string& s0,
+        const string& s1, const string& s2, const string& s3, const string& s4, const string& s5,
+        const string& s6, const string& s7, const string& s8, const string& s9, const string& sa,
+        const string& sb, const string& sc);
 #endif
 
 } // end namespace mysqlpp

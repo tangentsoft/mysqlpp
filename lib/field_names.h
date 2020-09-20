@@ -46,11 +46,15 @@ public:
 	FieldNames() { }
 
 	/// \brief Copy constructor
+#if __cplusplus >= 201103L
+    FieldNames(const FieldNames&) = default;
+#else
 	FieldNames(const FieldNames& other) :
 	std::vector<std::string>()
 	{
 		assign(other.begin(), other.end());
 	}
+#endif
 	
 	/// \brief Create field name list from a result set
 	FieldNames(const ResultBase* res) :
@@ -107,7 +111,11 @@ public:
 	}
 
 	/// \brief Get the index number of a field given its name
-	unsigned int operator [](const std::string& s) const;
+#if __cplusplus >= 201103L
+	unsigned int operator [](std::string s) const;
+#else
+    unsigned int operator [](const std::string& s) const;
+#endif
 
 private:
 	void init(const ResultBase* res);

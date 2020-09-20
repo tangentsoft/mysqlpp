@@ -148,7 +148,7 @@ void set2container(const char* str, Insert insert)
 	}
 
 	// Save final element of set, if any
-	if (temp.size()) {
+	if (!temp.empty()) {
 		insert(temp);
 	}
 }

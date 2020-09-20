@@ -34,8 +34,8 @@
 #	include <arpa/inet.h>
 #endif
 
-#include <ctype.h>
-#include <stdlib.h>
+#include <cctype>
+#include <cstdlib>
 #include <climits>
 
 using namespace std;
@@ -95,7 +95,7 @@ TCPConnection::parse_address(std::string& addr, unsigned int& port,
 		addr = addr.substr(1, pos - 1);
 
 		// Ensure that address part is empty or has at least two colons
-		if (addr.size() &&
+		if (!addr.empty() &&
 				(((pos = addr.find(':')) == string::npos) ||
 				(addr.find(':', pos + 1) == string::npos))) {
 			error = "IPv6 literal needs at least two colons";
@@ -141,9 +141,12 @@ TCPConnection::parse_address(std::string& addr, unsigned int& port,
 
 	// Ensure that there are only alphanumeric characters, dots,
 	// dashes and colons in address.  Anything else must be an error.
-	for (string::const_iterator it = addr.begin(); it != addr.end(); ++it) {
-		string::value_type c = *it;
-		if (!(isalnum(c) || (c == '.') || (c == '-') || (c == ':'))) {
+#if __cplusplus >= 201103L
+	for (char c : addr) {
+#else
+    for (string::const_iterator it = addr.begin(); it != addr.end(); ++it) {
+#endif
+			if (!(isalnum(c) || (c == '.') || (c == '-') || (c == ':'))) {
 			error = "Bad character '";
 			error += c;
 			error += "' in TCP/IP address";

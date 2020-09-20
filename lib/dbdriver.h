@@ -34,7 +34,7 @@
 
 #include <typeinfo>
 
-#include <limits.h>
+#include <climits>
 
 namespace mysqlpp {
 

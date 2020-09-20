@@ -53,7 +53,7 @@ public:
 	}
 
 	/// \brief Create fixed-size list of uninitialized field types
-	FieldTypes(int i) :
+	FieldTypes(std::vector<mysql_type_info>::size_type i) :
 	std::vector<mysql_type_info>(i)
 	{
 	}

@@ -51,13 +51,13 @@ public:
 	/// terminator, just for safety.  The length value we keep does
 	/// not include this extra byte, allowing this same mechanism
 	/// to work for both C strings and binary data.
-	SQLBuffer(const char* data, size_type length, mysql_type_info type,
+	SQLBuffer(const char* data, size_type length, const mysql_type_info& type,
 			bool is_null) : data_(), length_(), type_(type),
 			is_null_(is_null)
 			{ replace_buffer(data, length); }
 
 	/// \brief Initialize object as a copy of a C++ string object
-	SQLBuffer(const std::string& s, mysql_type_info type, bool is_null) :
+	SQLBuffer(const std::string& s, const mysql_type_info& type, bool is_null) :
 			data_(), length_(), type_(type), is_null_(is_null)
 	{
 		replace_buffer(s.data(), static_cast<size_type>(s.length()));
@@ -68,12 +68,12 @@ public:
 
 	/// \brief Replace contents of buffer with copy of given C string
 	SQLBuffer& assign(const char* data, size_type length,
-			mysql_type_info type = mysql_type_info::string_type,
+			const mysql_type_info& type = mysql_type_info::string_type,
 			bool is_null = false);
 
 	/// \brief Replace contents of buffer with copy of given C++ string
 	SQLBuffer& assign(const std::string& s,
-			mysql_type_info type = mysql_type_info::string_type,
+			const mysql_type_info& type = mysql_type_info::string_type,
 			bool is_null = false);
 
 	/// \brief Return pointer to raw data buffer

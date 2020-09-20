@@ -70,6 +70,9 @@ public:
 	}
 
 	/// \brief Create object as a copy of another Field
+#if __cplusplus >= 201103L
+    Field(const Field&) = default;
+#else
 	Field(const Field& other) :
 	name_(other.name_),
 	table_(other.table_),
@@ -80,6 +83,7 @@ public:
 	flags_(other.flags_)
 	{
 	}
+#endif
 
 	/// \brief Returns true if field auto-increments
 	bool auto_increment() const { return flags_ & AUTO_INCREMENT_FLAG; }

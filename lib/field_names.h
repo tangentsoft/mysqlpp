@@ -112,9 +112,9 @@ public:
 
 	/// \brief Get the index number of a field given its name
 #if __cplusplus >= 201103L
-    unsigned int operator [](std::string s) const;
+	unsigned int operator [](std::string s) const;
 #else
-    unsigned int operator [](const std::string& s) const;
+	unsigned int operator [](const std::string& s) const;
 #endif
 
 private:

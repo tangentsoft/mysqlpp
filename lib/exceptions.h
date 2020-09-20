@@ -60,7 +60,7 @@ public:
 #if __cplusplus >= 201103L
 	Exception& operator=(const Exception& rhs) noexcept = default;
 #else
-    Exception& operator=(const Exception& rhs) throw()
+	Exception& operator=(const Exception& rhs) throw()
 	{
 		what_ = rhs.what_;
 		return *this;
@@ -85,7 +85,7 @@ protected:
 
 	/// \brief Create exception object
 #if __cplusplus >= 201103L
-	Exception(std::string w) throw() :
+	Exception(std::string w) noexcept :
 	what_(std::move(w))
 	{
 	}

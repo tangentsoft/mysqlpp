@@ -56,7 +56,11 @@ FieldNames::operator [](const std::string& s) const
 	for (const_iterator it = begin(); it != end(); ++it) {
 	std::string temp2(*it);
 		internal::str_to_lwr(temp2);
+#if __cplusplus < 201703L
 		if (temp2.compare(temp1) == 0) {
+#else
+		if (temp1 == temp2) {   // faster: https://godbolt.org/z/xs114s
+#endif
 			// The cast is necessary for compilers where sizeof(int) !=
 			// sizeof (void*) with sufficiently good warnings.  Yes,
 			// technically this does risk data loss, but for that to

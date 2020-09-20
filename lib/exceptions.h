@@ -47,7 +47,7 @@ class MYSQLPP_EXPORT Exception : public std::exception
 public:
 	/// \brief Create exception object as copy of another
 #if __cplusplus >= 201103L
-    Exception(const Exception&) MAY_THROW() = default;
+	Exception(const Exception&) MAY_THROW() = default;
 #else
 	Exception(const Exception& e) MAY_THROW() :
 	std::exception(e),
@@ -90,7 +90,7 @@ protected:
 	{
 	}
 #else
-    Exception(const std::string& w) throw() :
+	Exception(const std::string& w) throw() :
 	what_(w)
 	{
 	}

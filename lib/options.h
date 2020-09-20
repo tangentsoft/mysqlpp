@@ -81,7 +81,7 @@ public:
 
 protected:
 #if __cplusplus >= 201103L
-    DataOption(T arg) : arg_(std::move(arg)) { }
+	DataOption(T arg) : arg_(std::move(arg)) { }
 #else
 	DataOption(const T& arg) : arg_(arg) { }///< Construct object
 #endif

@@ -105,7 +105,7 @@ public:
 	}
 
 #if __cplusplus >= 201103L
-    ScopedLock(const ScopedLock&) = delete;
+	ScopedLock(const ScopedLock&) = delete;
 	const ScopedLock& operator=(const ScopedLock&) = delete;
 #endif
 

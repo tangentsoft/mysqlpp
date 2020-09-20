@@ -51,7 +51,7 @@ class MYSQLPP_EXPORT mysql_ti_sql_type_info
 {
 public:
 #if __cplusplus >= 201103L
-    mysql_ti_sql_type_info& operator=(
+	mysql_ti_sql_type_info& operator=(
 			const mysql_ti_sql_type_info&) = delete;
 #endif
 
@@ -183,7 +183,7 @@ public:
 #if __cplusplus >= 201103L
 	mysql_type_info(const mysql_type_info&) = default;
 #else
-    mysql_type_info(const mysql_type_info& t) :
+	mysql_type_info(const mysql_type_info& t) :
 	num_(t.num_)
 	{
 	}
@@ -202,7 +202,7 @@ public:
 #if __cplusplus >= 201103L
 	mysql_type_info& operator =(const mysql_type_info&) = default;
 #else
-    mysql_type_info& operator =(const mysql_type_info& t)
+	mysql_type_info& operator =(const mysql_type_info& t)
 	{
 		num_ = t.num_;
 		return *this;

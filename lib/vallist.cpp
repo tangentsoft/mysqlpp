@@ -135,9 +135,9 @@ void create_vector(const Container& c, std::vector<bool>& v,
 // from Doxygen, because we clearly cannot appease it by documenting it.
 template void
 create_vector(const Row& c, std::vector<bool>& v, const string& s0,
-        const string& s1, const string& s2, const string& s3, const string& s4, const string& s5,
-        const string& s6, const string& s7, const string& s8, const string& s9, const string& sa,
-        const string& sb, const string& sc);
+		const string& s1, const string& s2, const string& s3, const string& s4, const string& s5,
+		const string& s6, const string& s7, const string& s8, const string& s9, const string& sa,
+		const string& sb, const string& sc);
 #endif
 
 } // end namespace mysqlpp

@@ -177,7 +177,7 @@ public:
 	/// buffer and increments its reference counter.  If you need a
 	/// deep copy, use one of the ctors that takes a string.
 #if __cplusplus >= 201103L
-    String(const String&) = default;
+	String(const String&) = default;
 #else
 	String(const String& other) :
 	buffer_(other.buffer_)
@@ -483,7 +483,7 @@ public:
 	/// buffer and increments its reference counter.  If you need a
 	/// deep copy, assign a string to this object instead.
 #if __cplusplus >= 201103L
-    String& operator =(const String&) = default;
+	String& operator =(const String&) = default;
 #else
 	String& operator =(const String& other)
 	{

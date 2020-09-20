@@ -67,10 +67,10 @@ public:
 #if __cplusplus >= 201103L
 	SimpleResult(bool copacetic, ulonglong insert_id,
 			ulonglong rows, std::string info) :
-    copacetic_(copacetic),
-    insert_id_(insert_id),
-    rows_(rows),
-    info_(std::move(info))
+	copacetic_(copacetic),
+	insert_id_(insert_id),
+	rows_(rows),
+	info_(std::move(info))
 #else
 	SimpleResult(bool copacetic, ulonglong insert_id,
 			ulonglong rows, const std::string& info) :

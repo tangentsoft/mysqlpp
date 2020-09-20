@@ -132,7 +132,7 @@ public:
 	}
 
 #if __cplusplus >= 201103L
-    NoExceptions(const NoExceptions&) = delete;
+	NoExceptions(const NoExceptions&) = delete;
 	NoExceptions& operator=(const NoExceptions&) = delete;
 #endif
 

@@ -52,7 +52,7 @@ FieldNames::init(const ResultBase* res)
 unsigned int
 FieldNames::operator [](std::string s) const
 {
-    std::string temp1(std::move(s));
+	std::string temp1(std::move(s));
 #else
 unsigned int
 FieldNames::operator [](const std::string& s) const

@@ -249,10 +249,10 @@ struct SQLParseElement
 	/// \param o the 'option' value
 	/// \param n the 'num' value
 #if __cplusplus >= 201103L
-    SQLParseElement(std::string b, char o, signed char n) :
-    before(std::move(b)),
-    option(o),
-    num(n)
+	SQLParseElement(std::string b, char o, signed char n) :
+	before(std::move(b)),
+	option(o),
+	num(n)
 #else
 	SQLParseElement(const std::string& b, char o, signed char n) :
 	before(b),

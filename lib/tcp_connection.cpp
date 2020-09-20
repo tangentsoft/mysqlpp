@@ -142,7 +142,7 @@ TCPConnection::parse_address(std::string& addr, unsigned int& port,
 	// Ensure that there are only alphanumeric characters, dots,
 	// dashes and colons in address.  Anything else must be an error.
 #if __cplusplus >= 201103L
-	for (char c : addr) {
+    for (char c : addr) {
 #else
     for (string::const_iterator it = addr.begin(); it != addr.end(); ++it) {
 #endif

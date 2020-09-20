@@ -71,7 +71,7 @@ public:
 
 	/// \brief Create object as a copy of another Field
 #if __cplusplus >= 201103L
-    Field(const Field&) = default;
+	Field(const Field&) = default;
 #else
 	Field(const Field& other) :
 	name_(other.name_),

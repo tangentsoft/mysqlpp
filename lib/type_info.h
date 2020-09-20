@@ -49,6 +49,13 @@ class MYSQLPP_EXPORT mysql_ti_sql_type_info_lookup;
 
 class MYSQLPP_EXPORT mysql_ti_sql_type_info
 {
+public:
+#if __cplusplus >= 201103L
+	// Do not allow copy by assignment.  (C++11+ version.)
+	mysql_ti_sql_type_info& operator=(const mysql_ti_sql_type_info&) =
+			delete;
+#endif
+
 private:
 	// For use with flags_ bitset
 	enum {
@@ -60,8 +67,11 @@ private:
 	friend class mysql_type_info;
 	friend class mysql_ti_sql_type_info_lookup;
 
+#if __cplusplus < 201103L
+	// Pre-C++11 alternative to no-assign declaration above.
 	mysql_ti_sql_type_info& operator=(
 			const mysql_ti_sql_type_info& b);
+#endif
 	
 	// Not initting _base_type and _default because only mysql_type_info
 	// can create them.  There *must* be only one copy of each.

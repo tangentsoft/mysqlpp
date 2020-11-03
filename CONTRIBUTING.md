@@ -1,52 +1,119 @@
-# Hacking on MySQL++
+# Contributing to the MySQL++ Project
 
-If you are going to make any changes to MySQL++, this file has some
-hints and commentary you may find helpful.
+If you wish to make any changes to [the project’s files][home], here are
+some rules and hints to keep in mind while you work.
+
+[home]: https://tangentsoft.com/mysqlpp/
 
 
-## <a id="repo"></a>Code Repository Access
+## <a id="anon" name="anon"></a> Fossil Anonymous Access
 
-MySQL++ uses the [Fossil][fsl] [distributed version control
-system][dvcs]. See its [quick start guide][fslq] if you are unfamilar
-with Fossil.
+There are three ways to clone the repository anonymously. The easiest
+way requires Fossil 2.14 or higher, currently unreleased but [available
+in development form][fqsg]:
 
-That Fossil repository is also [mirrored to GitHub][ghm] nightly, but
-this is a read-only mirror, meant for use with Git automation tooling.
-For example, you could use MySQL++ as a submodule in a larger Git
-project via this channel. [Changes to MySQL++](#patches) still must go
-go through the Fossil repository.
+    $ fossil clone https://tangentsoft.com/mysqlpp
+    $ cd mysqlpp
 
-You must be running Fossil version 2.1 or higher to access the MySQL++
-repository. If your operating system includes an older Fossil package,
-you will either have to install [an official binary][fslb] or [build
-it from source][fsls].
+That gets you a clone of the `mysqlpp.fossil` repository plus a check-out
+of the current trunk in a `mysqlpp/` directory alongside it. We recommend
+that you do this in a directory like `~/src` so you don’t commingle
+these files with other things in your current working directory.
 
-To clone the MySQL++ repository anonymously, say:
+If you have Fossil 2.12 or 2.13, the next-easiest method is:
 
-    $ fossil clone https://tangentsoft.com/mysqlpp mysqlpp.fossil
+    $ mkdir -p ~/src/mysqlpp
+    $ cd ~/src/mysqlpp
+    $ fossil open https://tangentsoft.com/mysqlpp
 
-If you have a developer account on the MySQL++ Fossil instance, just add
-your username to the URL like so:
+This creates a `mysqlpp` directory then clones the repository as
+`mysqlpp/mysqlpp.fossil`, then opens that repo into that same
+subdirectory.  The repo file ends up *inside* the check-out tree with
+this method.
+
+The complicated method works with all versions of Fossil back to 2.1,
+and it is the one we recommend to people who want to get involved with
+the project, because it has numerous advantages over the easy methods.
+We’ll explain those benefits later, but for now, the method is:
+
+    $ mkdir -p ~/museum ~/src/mysqlpp/trunk
+    $ fossil clone https://tangentsoft.com/mysqlpp ~/museum/mysqlpp.fossil
+    $ cd ~/src/mysqlpp/trunk
+    $ fossil open ~/museum/mysqlpp.fossil
+
+All three methods get you a file called `mysqlpp.fossil` containing
+the [abridged version history][avh] back to the project’s founding.
+
+You only need to do this once per machine. Thereafter, you
+will just be working with the cloned repository.
+
+[avh]:  https://tangentsoft.com/mysqlpp/wiki?name=Abridged+Version+History
+[fqsg]: https://fossil-scm.org/home/doc/trunk/www/quickstart.wiki
+
+
+## <a id="login"></a> Fossil Developer Access
+
+If you have a developer account on the `tangentsoft.com/mysqlpp` Fossil
+instance, just add your username to the URL like so:
 
     $ fossil clone https://USERNAME@tangentsoft.com/mysqlpp mysqlpp.fossil
 
-That will get you a file called `mysqlpp.fossil` containing the [abridged
-version history][avh] of MySQL++ back to the project's founding.
+If you’ve already cloned anonymously, simply tell Fossil about the new
+sync URL instead:
 
-The repository clone file can be named anything you like. Even the
-`.fossil` extension is just a convention, not a requirement.
+    $ cd ~/src/mysqlpp/trunk
+    $ fossil sync https://USERNAME@tangentsoft.com/mysqlpp
 
-To "open" the repo clone so you can hack on it, say:
+Either way, Fossil will ask you for the password for `USERNAME` on the
+remote Fossil instance, and it will offer to remember it for you. If
+you let it remember the password, operation from then on is scarcely
+different from working with an anonymous clone, except that on checkin,
+your changes will be sync’d back to the repository on tangentsoft.com if
+you’re online at the time, and you’ll get credit under your developer
+account name for the checkin.
 
-    $ mkdir mysqlpp
-    $ cd mysqlpp
-    $ fossil open ../mysqlpp.fossil
+If you’re working offline, Fossil will still do the checkin locally, and
+it will sync up with the central repository after you get back online.
+It is best to work on a branch when unable to use Fossil’s autosync
+feature, as you are less likely to have a sync conflict when attempting
+to send a new branch to the central server than in attempting to merge
+your changes to the tip of trunk into the current upstream trunk, which
+may well have changed since you went offline.
 
-This two step “clone and open” process may seem weird if you’re used to
-Git, but [it’s an intentional feature][mck] of Fossil that the
-repository and working directories are separate. It allows you to easily
-manage multiple independent checkouts from a single repo clone. I like a
-working tree that looks like this:
+You can purposely work offline by disabling autosync mode:
+
+    $ fossil set autosync 0
+
+Until you re-enable it (`autosync 1`) Fossil will stop trying to sync
+your local changes back to the central repo. In this mode, Fossil works
+more like Git’s default mode, buying you many of the same problems that
+go along with that working style. I recommend disabling autosync mode
+only when you are truly going to be offline and don’t want Fossil
+attempting to sync when you know it will fail.
+
+
+## <a id="gda"></a> Getting Developer Access
+
+We are pretty open about giving developer access to someone who’s
+provided at least one good, substantial [patch](#patches) to the
+software. If we’ve accepted one of your patches, just ask for a
+developer account [on the forum][pfor].
+
+[pfor]: https://tangentsoft.com/mysqlpp/forum
+
+
+## <a id="tags" name="branches"></a> Working with Existing Tags and Branches
+
+The directory structure shown in second “clone and open” sequence above is more complicated
+than strictly necessary, but it has a number of nice properties.
+
+First, it collects software projects under a common top-level
+directory. I’ve used `~/src` for this example, but you are free to use any scheme
+you like.
+
+Second, the level underneath the project directory (`~/src/mysqlpp`) stores multiple separate
+checkouts, one for each version the developer is actively working with at the moment,
+so to add a few other checkouts, you could say:
 
     ~/museum/                  # Where one keeps fossils, right?
         mysqlpp.fossil
@@ -56,66 +123,166 @@ working tree that looks like this:
             v2.3.2-modern/     # Checkout for another branch
             v3.2.3/            # Checkout for a tagged stable release
 
-You check out a branch or tag like so:
+This gives you multiple independent checkouts, which allows you to
+quickly switch between versions with “`cd`” commands. The alternative
+(favored by Git and some other version control systems) is to use a
+single working directory and switch among versions by updating that
+single working directory in place. The problem is that this
+invalidates all of the build artifacts tied to changed files, so you
+have a longer rebuild time than simply switching among check-out
+directories. Since disk space is cheap these days,
+it’s better to have multiple working states and
+just “`cd`” among them.
 
-    $ cd ~/src/mysqlpp/v3.2.3
-    $ fossil open ~/museum/mysqlpp.fossil v3.2.3
+When you say `fossil update` in a check-out directory, you get the “tip”
+state of that version’s branch. This means that if you created your
+“`release`” check-out while version 3.2.4 was current and you say
+“`fossil update`” today, you’ll get the release version 3.2.5 or later,
+because both tags are on the `release` branch.  This shows an essential
+difference between tags and branches in Fossil, which are at bottom
+otherwise nearly identical: tags apply to a single commit only, while
+branches are propagating tags, moving from one commit to the next until
+explicitly canceled.
 
-Fossil will let you make any modifications you like to your local
-repository copy. For those with check-in privileges on the upstream
-copy, changes get automatically synced with it by default.
+The project uses tags for [each released version][tags], and it
+has [many working branches][brlist]. You can use any of those names in
+“`fossil open`” and “`fossil update`” commands, and you can also use any
+of [Fossil’s special check-in names][fscn].
 
-(If you prefer Git or Mercurial style two-phase commits, you can say
-`fossil set autosync off`, then later say `fossil push` after making one
-or more checkins.)
+[brlist]: https://tangentsoft.com/mysqlpp/brlist
+[fscn]:   https://fossil-scm.org/home/doc/trunk/www/checkin_names.wiki
+[fvg]:    https://fossil-scm.org/home/doc/trunk/www/fossil-v-git.wiki
+[gitwt]:  https://git-scm.com/docs/git-worktree
+[tags]:   https://tangentsoft.com/mysqlpp/taglist
 
-If you don't have commit capability on the central repository server,
-checkins just modify your local repository clone. If you do such
-checkins on a branch, you don’t need to worry about conflicts when
-pulling down upstream changes into your local clone.
 
-Developers are expected to make all changes that affect the libary's
-API, ABI, or behavior on a branch, rather than check such changes
-directly into the trunk. Once we have discussed the change on the
-[forum][for] and resolved any isssues with the experimental branch, it
-will be merged into the trunk.
+## <a id="branching"></a> Creating Branches
 
 Creating a branch in Fossil is scary-simple, to the point that those
-coming from other version control systems may ask, "Is that really all
-there is to it?" Yes, really, this is it:
+coming from other version control systems may ask, “Is that really all
+there is to it?” Yes, really, this is it:
 
-    $ fossil checkin --branch new-branch-name
+    $ fossil ci --branch new-branch-name
 
 That is to say, you make your changes as you normally would; then when
-you go to make the first checkin, you give the `--branch` option to put
-the changes on a new branch, rather than add them to the same branch the
-changes were made against. Every subsequent checkin without a `--branch`
-option gets checked in as the new tip of that branch.
+you go to check them in, you give the `--branch` option to the
+`ci/checkin` command to put the changes on a new branch, rather than add
+them to the same branch the changes were made against.
 
-If you’re creating a branch that will probably live a long enough time
-that you’ll want to return to trunk one or more times while that branch
-lives, you might follow the above command with a sequence like this:
+While developers with login rights to the Fossil instance are
+allowed to check in on the trunk at any time, we recommend using
+branches whenever you’re working on something experimental, or where you
+can’t make the necessary changes in a single coherent checkin. A good
+example is an API or ABI breakage: those should go on a branch rather
+than on trunk, since they require discussion before we merge them down
+to trunk.
 
-    $ fossil update trunk           # return working dir to tip-of-trunk
-    $ mkdir ../new-branch-name
-    $ cd ../new-branch-name
-    $ fossil open ~/museum/mysqlpp.fossil new-branch-name
+One of this project’s core principles is that `trunk` should always
+build without error, and it should always function correctly. That’s an
+ideal we have not always achieved, but we do always *try* to achieve it.
 
-Now you can bounce back and forth between trunk and your new branch with
-a simple `cd` command, rather than switching in place, as is typical
-with Git. This style of work avoids invalidating build system outputs,
-and it makes it possible to switch branches without checking in or
-stashing your work on the other branch first.
+Contrast branches, which project developers may use to isolate work
+until it is ready to merge into the trunk. It is okay to check work in
+on a branch that doesn’t work, or doesn’t even *build*, so long as the
+goal is to get it to a point that it does build and work properly before
+merging it into trunk.
 
-[avh]:  https://tangentsoft.com/mysqlpp/wiki?name=Abridged+Version+History
-[dvcs]: http://en.wikipedia.org/wiki/Distributed_revision_control
-[for]:  https://tangentsoft.com/mysqlpp/forum/
-[fsl]:  http://fossil-scm.org/
-[fslb]: http://fossil-scm.org/fossil/uv/download.html
-[fslq]: http://fossil-scm.org/fossil/doc/trunk/www/quickstart.wiki
-[fsls]: http://fossil-scm.org/fossil/doc/trunk/www/build.wiki
-[ghm]:  https://github.com/tangentsoft/mysqlpp
-[mck]:  https://fossil-scm.org/fossil/doc/trunk/www/fossil-v-git.wiki#checkouts
+Here again we have a difference with Git: because Fossil normally syncs
+your work back to the central repository, this means we get to see the
+branches you are still working on. This is a *good thing*. Do not fear
+committing broken or otherwise bad code to a branch. [You are not your
+code.][daff] We are software developers, too: we understand that
+software development is an iterative process, that not all ideas
+spring forth perfect and production-ready from the fingers of its
+developers. These public branches let your collaborators see what
+you’re up to; they may be able to lend advice, to help with the work, or
+to at least be unsurprised when your change finally lands in trunk.
+
+Fossil fosters close cooperation, whereas Git fosters wild tangents that
+never come back home.
+
+Jim McCarthy (author of [Dynamics of Software Development][dosd]) has a
+presentation on YouTube that touches on this topic at a couple of
+points:
+
+*   [Don’t go dark](https://www.youtube.com/watch?v=9OJ9hplU8XA)
+*   [Beware of a guy in a room](https://www.youtube.com/watch?v=oY6BCHqEbyc)
+
+Fossil’s sync-by-default behavior fights these negative tendencies.
+
+Project developers are welcome to create branches at will. The
+main rule is to follow the branch naming scheme: all lowercase with
+hyphens separating words. See the [available branch list][brlist] for
+examples to emulate.
+
+If you have checkin rights on the repository, it is generally fine to
+check things in on someone else’s feature branch, as long as you do so
+in a way that cooperates with the purpose of that branch. The same is
+true of `trunk`: you should not check something in directly on the trunk
+that changes the nature of the software in a major way without
+discussing the idea first. This is yet another use for branches: to
+make a possibly-controversial change so that it can be discussed before
+being merged into the trunk.
+
+[daff]: http://www.hanselman.com/blog/YouAreNotYourCode.aspx
+[dosd]: http://amzn.to/2iEVoBL
+
+
+## <a id="special"></a> Special Branches
+
+Most of the branches in the project are feature branches of the
+sort described in the previous section: an isolated line of development
+by one or more of the project’s developers to work towards some new
+feature, with the goal of merging that feature into the `trunk` branch.
+
+There are a few branches in the project that are special, which are
+subject to different rules than other branches:
+
+*   **<code>release</code>** — One of the steps in the
+    [release process][relpr] is to merge the stabilized `trunk` into the
+    `release` branch, from which the release tarballs and binary OS
+    images are created. Only the project’s release manager — currently
+    Warren Young — should make changes to this branch.
+
+*   **<code>bogus</code>** or **<code>BOGUS</code>** — Because a branch
+    is basically just a label for a specific checkin, Fossil allows the tip
+    of one branch to be “moved” to another branch by applying a branch
+    label to that checkin. We use this label when someone makes a
+    checkin on the tip of a branch that should be “forgotten.” Fossil
+    makes destroying project history very difficult, on purpose, so
+    things moved to the “bogus” branch are not actually destroyed;
+    instead, they are merely moved out of the way so that they do not
+    interfere with that branch’s normal purpose.
+
+    If you find yourself needing to prune the tip of a branch this way,
+    the simplest way is to do it via the web UI, using the checkin
+    description page’s “edit” link. You can instead do it from the
+    command line with the `fossil amend` command.
+
+[relpr]: https://tangentsoft.com/mysqlpp/doc/trunk/RELEASE-CHECKLIST.txt
+
+
+## <a id="forum"></a> Discussion Forum
+
+The “[Forum][pfor]” link at the top of the Fossil web interface is for
+both end-user discussions and internal MySQL++ project developer
+discussions. If you come across the old mailing list, we don’t use that
+any more. We also prefer Fossil forum and ticket postings to GitHub
+issues and such.
+
+You can sign up for the forum without having a developer login, and you
+can even post anonymously. If you have a login, you can [sign up for
+email alerts][alert] if you like.
+
+Keep in mind that posts to the Fossil forum are treated much the same
+way as ticket submissions and wiki articles. They are permanently
+archived with the project. The “edit” feature of Fossil forums just
+creates a replacement record for a post, but the old post is still
+available in the repository. Don’t post anything you wouldn’t want made
+part of the permanent record of the project!
+
+[alert]: https://tangentsoft.com/mysqlpp/alerts
+
 
 
 ## <a id="bootstrap"></a>Bootstrapping the Library
@@ -303,7 +470,7 @@ instructions in the previous section.
 
 ### Option 3: Windows Subsystem for Linux (WSL)
 
-If you’re on Windows 10, you have the option of [installing WSL][wsl], a
+If you’re on Windows 10, you have the option of [installing WSL][WSL], a
 lightweight Linux kernel and user environment that runs atop Windows.
 This is fundamentally different technology than Cygwin, but the
 user-level effect of it is the same as far as MySQL++’s build system
@@ -315,7 +482,7 @@ tools:
 
     $ apt install bakefile build-essential perl libmysqlclient-dev
 
-[wsl]: https://docs.microsoft.com/en-us/windows/wsl/install-win10
+[WSL]: https://docs.microsoft.com/en-us/windows/wsl/install-win10
 
 
 ### Option 4: ["Here's a nickel, kid, get yourself a better computer."][dc]
@@ -331,7 +498,7 @@ section, and copy the generated files back to the Windows box.
 [dc]: http://tomayko.com/writings/that-dilbert-cartoon
 
 
-## On Manipulating the Build System Source Files
+## <a id="build-system"></a> Manipulating the Build System Source Files
 
 One of the things the bootstrapping system described [above](#bootstrap)
 does is produces various types of project and make files from a small
@@ -366,66 +533,101 @@ support all the particulars of every odd build system out there.
 [bkl]: https://tangentsoft.com/mysqlpp/file/mysql%2B%2B.bkl
 
 
-<a id="patches"></a>
-## Submitting Patches
 
-If you wish to submit a patch to the library and you do not have a
-developer account on our Fossil repo, it’s probably simplest to paste it
-into a [forum post][for], if it’s small. If it’s large, put it in
-Pastebin or similar, then link to it from a forum post.  We want patches
-in unified diff format.
+## <a id="patches"></a> Submitting Patches
 
-We will also accept trivial patches not needing discussion as text
-or attachments to [a Fossil ticket][tkt].
+If you do not have a developer login on the project repository, you can
+still send changes to the project.
 
-The easiest way to get a unified diff is to check out a copy of the
-current MySQL++ tree [as described above](#repo). Then make your change,
-`cd` to the MySQL++ root directory, and ask Fossil to generate the patch
-for you:
+The simplest way is to say this after developing your change against
+trunk:
 
-    $ fossil diff > mychange.patch
+    $ fossil diff > my-changes.patch
 
-If your patch adds new files, moves files, or needs to be understood in
-terms of multiple checkins, it's best to do that work on a
-[private local branch](#private), then send a [bundle][fb] instead of a
-patch.
+Then paste that into a [forum post][pfor] using a [fenced code
+block][fcb]. We will also accept trivial patches not needing discussion
+as text or attachments on [a Fossil ticket][tkt].
 
-If you've sent patches to MySQL++ before and don't have a Fossil
-developer login, another alternative is to ask for a login before you
-begin work so that your changes are automatically sync'd to the main
-Fossil repository as you work, so you don't have to send bundles or
-patch files. We generally don't refuse such requests if you've already
-proven your ability to work productively with the MySQL++ project.
-
-If you're making a patch against a MySQL++ distribution tarball, then
-you can generate a patch this way:
+If you're making a patch against a MySQL++ distribution tarball, you can
+generate a patch this way:
 
     $ diff -ruN mysql++-olddir mysql++-newdir > mychange.patch
 
 The `diff` command is part of every Unix and Linux system, and should be
 installed by default. If you're on a Windows machine, GNU diff is part
-of [Cygwin](http://cygwin.com/). Fossil is also available for all of
-these systems. There are no excuses for not being able to make unified
-diffs. :)
+of [Cygwin](http://cygwin.com/) and [WSL]. Fossil is also available for
+all of these systems. There are no excuses for not being able to make
+unified diffs. :)
 
-Although MySQL++ does have a [GitHub mirror][ghm], we prefer not to
-acccept PRs via that channel. It is intended as a read-only mirror for
-those heavily tied into Git-based tooling. You’re welcome to send us a
-PR anyway, but realize that what’s going to happen on the back end is
-that we’ll generate a patch, apply it to the Fossil repo by hand, test
-it, and then commit it to the repository under one of the existing
-developer accounts. Only then do we update the mirror so that the change
-appears on GitHub, and you don’t get GitHub credit for the PR. This is
-all due to [inherent limitations of the mirroring process][fge]. If you
-want credit for your code contributions, ask us for an account on the
-Fossil repo, then commit it there instead.
-
-[fb]:  http://fossil-scm.org/fossil/help?cmd=bundle
-[fge]: https://fossil-scm.org/fossil/doc/trunk/www/mirrortogithub.md
+[fcb]: https://www.markdownguide.org/extended-syntax#fenced-code-blocks
 [tkt]: https://tangentsoft.com/mysqlpp/tktnew
 
 
-## The MySQL++ Code Style
+#### Bundles Instead of Patches
+
+If your change is more than a small patch, `fossil diff` might not
+incorporate all of the changes you have made. The old unified `diff`
+format can’t encode branch names, file renamings, file deletions, tags,
+checkin comments, and other Fossil-specific information. For such
+changes, it is better to send a [Fossil bundle][fb]:
+
+    $ fossil set autosync 0                # disable autosync
+    $ fossil checkin --branch my-changes
+      ...followed by more checkins on that branch...
+    $ fossil bundle export --branch my-changes my-changes.bundle
+
+After that first `fossil checkin --branch ...` command, any subsequent
+`fossil ci` commands will check your changes in on that branch without
+needing a `--branch` option until you explicitly switch that checkout
+directory to some other branch. This lets you build up a larger change
+on a private branch until you’re ready to submit the whole thing as a
+bundle.
+
+Because you are working on a branch on your private copy of the
+project’s Fossil repository, you are free to make as many checkins as
+you like on the new branch before giving the `bundle export` command.
+
+Once you are done with the bundle, upload it somewhere public and point
+to it from a forum post or ticket.
+
+[fb]: https://fossil-scm.org/home/help?cmd=bundle
+
+
+#### Contribution Licensing
+
+Because MySQL++ uses the “[viral]” LGPL license, you do not have to
+declare a release of copyright or explicit license: a public diff
+against our source base is inherently made available under the same
+license.
+
+[viral]: https://en.wikipedia.org/wiki/Viral_license
+
+
+#### <a id="ghm"></a> Can I Use GitHub Instead?
+
+Although MySQL++ does have a [GitHub mirror][ghm], it
+is intended as a read-only mirror for those heavily tied into Git-based
+tooling. You’re welcome to send us a PR anyway, but realize that what’s
+going to happen on the back end is that we’ll generate a patch, apply it
+to the Fossil repo by hand, test it, and then commit it to the
+repository under one of our existing Fossil developer accounts. Only
+then do we update the mirror so that the change appears on GitHub; thus,
+you don’t get GitHub credit for the PR. You avoid these problems by
+simply asking for a developer account on the Fossil repo, so you can
+commit there instead.
+
+This is not simply because setting up bidirectional mirroring is
+difficult, it is actually [impossible to achieve 100% fidelity][ghlim]
+due to limitations of Git and/or GitHub. If you want a faithful clone of
+the project repo, or if you wish to contribute to the project’s
+development with full credit for your contributions, it’s best done via
+Fossil, not via GitHub.
+
+[ghlim]: https://fossil-scm.org/home/doc/trunk/www/mirrorlimitations.md
+[ghm]:   https://github.com/tangentsoft/mysqlpp/
+
+
+## <a id="style"></a> The MySQL++ Code Style
 
 Every code base should have a common code style. Love it or
 hate it, here are MySQL++'s current code style rules:
@@ -494,10 +696,10 @@ File types: `txt`
 
 
 When in doubt, mimic what you see in the current code. When still in
-doubt, ask on [the forum][for].
+doubt, ask on [the forum][pfor].
 
 
-## Testing Your Proposed Change
+## <a id="testing"></a> Testing Your Proposed Change
 
 MySQL++ includes a self-test mechanism called `dtest`. It's a Bourne
 shell script, run much like `exrun`:
@@ -586,12 +788,11 @@ are usually acceptable alternatives.  Therefore, such ports become
 maintenance baggage with little compensating value.
 
 
-<a name="private"></a>
-## Maintaining a Private Repository
+## <a name="private"></a> Maintaining a Private Repository
 
-Although Fossil syncs changes back to the [MySQL++ Fossil
-repository][home] by default, it is possible to maintain a private copy
-that simply pulls changes in occasionally.
+Although Fossil tries to sync changes back to the [MySQL++ Fossil
+repository][home] by default, it is possible to maintain a private
+repository that simply pulls changes in occasionally.
 
 The first step is to turn off the auto-sync feature:
 
@@ -632,6 +833,11 @@ you come to that decision.
 
 If you ever decide to contribute your private branch to the MySQL++
 project, there are a couple of easy ways to achieve that. Ask about it
-on [the forum][for] if you find yourself in this situation.
+on [the forum][pfor] if you find yourself in this situation.
+
+If you want to ensure that your private branch *never* syncs with the
+public project, even if you later get a developer account on it, you can
+go a step further and use Fossil’s [private branch feature][pbr].
 
 [home]: https://tangentsoft.com/mysqlpp/
+[pbr]:  https://fossil-scm.org/home/doc/trunk/www/private.wiki

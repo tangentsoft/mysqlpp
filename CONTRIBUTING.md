@@ -6,11 +6,21 @@ some rules and hints to keep in mind while you work.
 [home]: https://tangentsoft.com/mysqlpp/
 
 
-## <a id="anon" name="anon"></a> Fossil Anonymous Access
+## <a id="fossil-anon" name="anon"></a> Fossil Anonymous Access
 
-There are three ways to clone the repository anonymously. The easiest
-way requires Fossil 2.14 or higher, currently unreleased but [available
-in development form][fqsg]:
+There are three ways to clone the repository anonymously using Fossil.
+Each of these methods gets you a file called `mysqlpp.fossil` containing
+the [abridged version history][avh] back to the project’s founding.
+
+You only need to take one of these options, once per machine.
+Thereafter, you will just be working with the cloned repository.
+
+[avh]:  https://tangentsoft.com/mysqlpp/wiki?name=Abridged+Version+History
+
+
+### One-Step Clone-and-Open <a id="one-step-open"></a>
+
+The easiest way requires Fossil 2.14 or higher:
 
     $ fossil clone https://tangentsoft.com/mysqlpp
     $ cd mysqlpp
@@ -20,35 +30,45 @@ of the current trunk in a `mysqlpp/` directory alongside it. We recommend
 that you do this in a directory like `~/src` so you don’t commingle
 these files with other things in your current working directory.
 
+
+### Open from URI <a id="open-uri"></a>
+
 If you have Fossil 2.12 or 2.13, the next-easiest method is:
 
     $ mkdir -p ~/src/mysqlpp
     $ cd ~/src/mysqlpp
     $ fossil open https://tangentsoft.com/mysqlpp
 
-This creates a `mysqlpp` directory then clones the repository as
-`mysqlpp/mysqlpp.fossil`, then opens that repo into that same
-subdirectory.  The repo file ends up *inside* the check-out tree with
-this method.
+This opens the repository referenced by that URI into the current
+directory as `mysqlpp.fossil`, then opens that repo into that same
+subdirectory.
+
+You have to create the destination directory first with this method
+because Fossil will refuse to spam a non-empty directory with the
+check-out contents when opening the repo into a directory containing
+other files unless you give it the `--force` flag.
+
+Notice that the repo file ends up *inside* the check-out tree with this
+method. This is because of a purposeful semantic difference in Fossil
+between “open” and “clone.” It may seem strange to someone coming from
+Git, but while we don’t want to get into the whys and wherefores here,
+realize there is logic behind this choice.
+
+
+### Separate Clone and Open <a id="sep-clone-open"></a>
 
 The complicated method works with all versions of Fossil back to 2.1,
 and it is the one we recommend to people who want to get involved with
-the project, because it has numerous advantages over the easy methods.
-We’ll explain those benefits later, but for now, the method is:
+the project, because it has [numerous advantages][cowf] over the easy
+methods. We’ll explain those benefits in the context of the MySQL++
+project later, but for now, the method is:
 
     $ mkdir -p ~/museum ~/src/mysqlpp/trunk
     $ fossil clone https://tangentsoft.com/mysqlpp ~/museum/mysqlpp.fossil
     $ cd ~/src/mysqlpp/trunk
     $ fossil open ~/museum/mysqlpp.fossil
 
-All three methods get you a file called `mysqlpp.fossil` containing
-the [abridged version history][avh] back to the project’s founding.
-
-You only need to do this once per machine. Thereafter, you
-will just be working with the cloned repository.
-
-[avh]:  https://tangentsoft.com/mysqlpp/wiki?name=Abridged+Version+History
-[fqsg]: https://fossil-scm.org/home/doc/trunk/www/quickstart.wiki
+[cowf]: https://fossil-scm.org/home/doc/trunk/www/ckout-workflows.md
 
 
 ## <a id="login"></a> Fossil Developer Access
@@ -104,8 +124,9 @@ developer account [on the forum][pfor].
 
 ## <a id="tags" name="branches"></a> Working with Existing Tags and Branches
 
-The directory structure shown in second “clone and open” sequence above is more complicated
-than strictly necessary, but it has a number of nice properties.
+The directory structure shown in the [separate clone and
+open](#sep-clone-open) sequence above is more complicated than strictly
+necessary, but it has a number of nice properties.
 
 First, it collects software projects under a common top-level
 directory. I’ve used `~/src` for this example, but you are free to use any scheme

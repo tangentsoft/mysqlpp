@@ -4,7 +4,7 @@
 #   for a new public release of the software.  Also tags the trunk with
 #   the date of release, so old releases can be easily checked out.
 #
-# Copyright © 2016-2019 Warren Young
+# Copyright © 2016-2021 Warren Young
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -55,7 +55,7 @@ f update &&
 	tools/mmake &&
     $make dist &&
     cp mysql++-${ver}.tar.gz ~/tangentsoft.com/mysqlpp/releases &&
-    cd ~/tangentsoft.com &&
+    cd ~/tangentsoft.com/mysqlpp &&
     $make doc synch &&
     cd - &&
 	f ci --tag v$ver -m "Merged trunk changes for v$ver into release branch"

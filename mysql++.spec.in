@@ -7,7 +7,7 @@ Group:      Development/Libraries
 URL:        http://tangentsoft.net/mysql++/
 Source0:    http://tangentsoft.net/mysql++/releases/mysql++-%{version}.tar.gz
 BuildRoot:  %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildRequires: mysql-devel
+BuildRequires: mariadb-devel
 
 %description
 MySQL++ makes working with MySQL server queries as easy as working
@@ -18,7 +18,7 @@ programs, you also need to install the -devel package.
 %package devel
 Summary:   MySQL++ developer files (headers, examples, etc.)
 Group:     Development/Libraries
-Requires:  mysql++ = %{version}-%{release}, mysql-devel
+Requires:  mysql++ = %{version}-%{release}, mariadb-devel
 
 %description devel
 These are the files needed to compile MySQL++ based programs, plus
@@ -94,6 +94,10 @@ rm -rf %{buildroot} doc/examples
 %doc doc/html doc/pdf doc/README-manuals-RPM.txt
 
 %changelog
+* Wed Apr 28 2021 Warren Young <mysqlpp@etr-usa.com> 3.3.0-1
+- Changed dependency on mysql-devel to mariadb-devel, now that our build
+  systems no longer ship that as a compatibility RPM.
+
 * Mon Jul 2 2007 Warren Young <mysqlpp@etr-usa.com> 2.3.0-1
 - Reflected changes to doc dir layout in manuals sub-package
 

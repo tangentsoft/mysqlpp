@@ -47,7 +47,7 @@ extern const char* kpcSampleDatabase;
 static string
 version_str(int packed)
 {
-	char buf[9];
+	char buf[12];
 	snprintf(buf, sizeof(buf), "%d.%d.%d",
 			(packed & 0xFF0000) >> 16,
 			(packed & 0x00FF00) >> 8,

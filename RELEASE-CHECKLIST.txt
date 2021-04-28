@@ -45,8 +45,8 @@
   the release branch.  This also creates mysql++-$(VERSION).tar.gz and
   synchs it up to tangentsoft.com in the MySQL++ releases directory.
 
-- On a CentOS 7 box, say "make rpm" from the "release" branch tree.
-  Copy the resulting ~/rpmbuild/SRPMS/mysql++-$(VERSION)-1.el7.src.rpm
+- On a CentOS 8 box, say "make rpm" from the "release" branch tree.
+  Copy the resulting ~/rpmbuild/SRPMS/mysql++-$(VERSION)-1.el8.src.rpm
   to that same releases directory.
 
 - Update "MySQL++" wiki document to point to new release packages.

@@ -1,5 +1,63 @@
 # Change Log
 
+## 3.3.0, 2021.04.28
+
+*   MySQL++ now detects the availability of C++11, 14, and 17 capable
+    compilers on Autoconf based systems and uses the highest flavor
+    found.  The library is still intended to work on older compilers;
+    all features making use of new C++ features are conditional.
+
+    Beware: this does mean builds are only ABI-compatible within the 3.x
+    series when built with the same C++ version.  You may need to
+    override `CXX`, `CXXFLAGS` and similar to get an ABI-compatible
+    build, since older releases would use the generic compiler options,
+    which might default to older versions of C++.
+
+*   Several conditional C++11 thru C++17 improvements by GitHub user
+    “BratSinot:”
+
+    *   Added move ctors and no-copy ctors to `ScopedConnection`.
+
+    *   The copy ctor and assignment operator for `class ScopedLock`
+        changes so the compiler can elide them where it finds that safe.
+
+    *   Added no-copy and no-assign ctors to class NoExceptions.
+
+    *   Added a no-assign operator to `class mysql_ti_sql_type_info`.
+
+    *   Conditionally using (`std::string::operator==`) in the inner
+        loop of `FieldNames::operator []` to speed up comparisons when a
+        C++17 compiler is detected.
+
+*   Changed the “file slurp” idiom used by the `load_jpeg` example to
+    a form that works with C++11, squishing an “address to rvalue”
+    complaint with some compilers.
+
+*   Throwing exceptions (if enabled) from a few more places in the code
+    now when the underlying C API library reports an error.
+
+*   Fixed a SQL type mapping problem with `TIMESTAMP NULL`.  Patch by
+    repository user `nofree`.
+
+*   Replaced a use of `size()` in bool context on an STL data structure
+    where that isn’t a constant-time operation with faster `!empty()`.
+
+*   Updated the stock paths in the MySQL C API library autodiscovery
+    Autoconf macro so it'll work on MariaDB based systems where the
+    headers and/or library are installed in a `.../mariadb` directory
+    instead of `.../mysql` for backwards compatibility.
+
+*   Reordered the `-L.` flag in the build lines to ensure the examples
+    and test programs link against the in-tree version of MySQL++ if you
+    have it installed at the system level as well.
+
+*   Squished pedantic warnings from newer compilers.
+
+*   Assorted documentation improvements.
+
+*   Assorted build system improvements.
+
+
 ## 3.2.5, 2019.07.21
 
 *   Supports `ulonglong` in MySQL++-to-SQL data type conversions so you

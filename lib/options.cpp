@@ -1,7 +1,10 @@
 /***********************************************************************
  options.cpp - Implements the Option class hierarchy.
 
- Copyright © 2007-2009, 2018 by Educational Technology Resources, Inc.
+ Copyright ©
+    2007-2009, 2018 by Educational Technology Resources, Inc.
+    2021 by Warren Young
+
  Others may also hold copyrights on code in this file.  See the
  CREDITS file in the top directory of the distribution for details.
 
@@ -72,6 +75,7 @@ GuessConnectionOption::set(DBDriver* dbd)
 			dbd->set_option(MYSQL_OPT_GUESS_CONNECTION) ?
 				Option::err_NONE : Option::err_api_reject;
 #else
+    (void)dbd;
 	return Option::err_api_limit;
 #endif
 }

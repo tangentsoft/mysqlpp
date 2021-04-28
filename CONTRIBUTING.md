@@ -280,7 +280,7 @@ subject to different rules than other branches:
     description page’s “edit” link. You can instead do it from the
     command line with the `fossil amend` command.
 
-[relpr]: https://tangentsoft.com/mysqlpp/doc/trunk/RELEASE-CHECKLIST.txt
+[relpr]: ./RELEASE-CHECKLIST.md
 
 
 ## <a id="forum"></a> Discussion Forum
@@ -383,7 +383,7 @@ Arguments:
 *   `pedantic`
 
     Turns on all of GCC's warnings and portability checks.  We use this
-    as part of our [release process](./RELEASE-CHECKLIST.txt).
+    as part of our [release process][relpr].
 
 *   `bat`
 

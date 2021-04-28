@@ -478,7 +478,7 @@ Perl 5 packages, which aren't installed in Cygwin by default.  Autoconf
 is in the Devel category, and Perl 5 in the Interpreters category.
 
 You will also need to install the native Windows binary version of
-[Bakefile](http://bakefile.org/).  Don't get the source version and try
+[Bakefile][bf].  Don't get the source version and try
 to build Bakefile under Cygwin; it won't work. The Windows binary
 version of Bakefile includes an embedded version of Python, so you won't
 need to install Cygwin's Python.
@@ -501,7 +501,11 @@ Assuming you use the default Ubuntu enviroment atop WSL, the [standard
 bootstrapping process](#bootstrap) applies, after you install the needed
 tools:
 
-    $ apt install bakefile build-essential perl libmysqlclient-dev
+    $ sudo apt install build-essential perl libmysqlclient-dev
+
+You will also need to install the legacy [Bakefile 0.2.x][bf] version.
+If there is a `bakefile` package available at all, it is likely for the
+incompatible 1.x series.
 
 [WSL]: https://docs.microsoft.com/en-us/windows/wsl/install-win10
 

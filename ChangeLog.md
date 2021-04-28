@@ -11,7 +11,7 @@
     C++11: the last compilers still supporting only C++03 or C++98
     dropped out of support since the last time we checked.  It may be
     that this release still supports these older versions of C++, but we
-    will not longer go very far out of our way to ensure it.  Patches to
+    will no longer go very far out of our way to ensure it.  Patches to
     restore backwards compatibility will be accepted if they don’t break
     forward compatibility.
 

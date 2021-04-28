@@ -97,7 +97,7 @@ main(int argc, char *argv[])
 			cin.getline(dummy, sizeof(dummy));
 		}
 	}
-	catch (mysqlpp::BadQuery e) {
+	catch (const mysqlpp::BadQuery& e) {
 		if (e.errnum() == ER_LOCK_DEADLOCK) {
 			cerr << "Transaction deadlock detected!" << endl;
 			cerr << "Connection::errnum = " << con.errnum() <<
@@ -108,7 +108,7 @@ main(int argc, char *argv[])
 		}
 		return 1;
 	}
-	catch (mysqlpp::Exception e) {
+	catch (const mysqlpp::Exception& e) {
 		cerr << "General error: " << e.what() << endl;		
 		return 1;
 	}

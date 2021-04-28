@@ -2,32 +2,46 @@
 
 ## 3.3.0, 2021.04.28
 
-*   MySQL++ now detects the availability of C++11, 14, and 17 capable
-    compilers on Autoconf based systems and uses the highest flavor
-    found.  The library is still intended to work on older compilers;
-    all features making use of new C++ features are conditional.
+*   MySQL++ now detects the availability of C++11 capable compilers on
+    Autoconf based systems and adjusts the compiler calling command to
+    require that if such options are required.
 
-    Beware: this does mean builds are only ABI-compatible within the 3.x
-    series when built with the same C++ version.  You may need to
-    override `CXX`, `CXXFLAGS` and similar to get an ABI-compatible
+    The general policy for MySQL++ is to support the oldest version of
+    C++ that our oldest supported system provides.  Thus the update to
+    C++11: the last compilers still supporting only C++03 or C++98
+    dropped out of support since the last time we checked.  It may be
+    that this release still supports these older versions of C++, but we
+    will not longer go very far out of our way to ensure it.  Patches to
+    restore backwards compatibility will be accepted if they don’t break
+    forward compatibility.
+
+    **Beware:** This change means builds are only ABI-compatible within
+    the 3.x series when built with the same C++ version!  You may need
+    to override `CXX`, `CXXFLAGS` and similar to get an ABI-compatible
     build, since older releases would use the generic compiler options,
     which might default to older versions of C++.
+
+    You can adjust the build system to try for C++14 or C++17 by
+    changing the `AX_CXX_COMPILE_STDCXX` call in `configure.ac`.
+    Although this release contains features that depend on C++17,
+    they’re optional, so unless you do this or adjust the build flags
+    manually to ask your compiler to use a newer C++ version, these
+    features will not be built into MySQL++.
 
 *   Several conditional C++11 thru C++17 improvements by GitHub user
     “BratSinot:”
 
     *   Added move ctors and no-copy ctors to `ScopedConnection`.
 
-    *   The copy ctor and assignment operator for `class ScopedLock`
-        changes so the compiler can elide them where it finds that safe.
+    *   The copy ctor and assignment operators for `class ScopedLock`
+        change so the compiler can elide them where it finds that safe.
 
     *   Added no-copy and no-assign ctors to class NoExceptions.
 
     *   Added a no-assign operator to `class mysql_ti_sql_type_info`.
 
-    *   Conditionally using (`std::string::operator==`) in the inner
-        loop of `FieldNames::operator []` to speed up comparisons when a
-        C++17 compiler is detected.
+    *   Using (`std::string::operator==`) in the inner loop of
+        `FieldNames::operator []` to speed up comparisons.
 
 *   Changed the “file slurp” idiom used by the `load_jpeg` example to
     a form that works with C++11, squishing an “address to rvalue”
@@ -37,7 +51,7 @@
     now when the underlying C API library reports an error.
 
 *   Fixed a SQL type mapping problem with `TIMESTAMP NULL`.  Patch by
-    repository user `nofree`.
+    Fossil repository user `nofree`.
 
 *   Replaced a use of `size()` in bool context on an STL data structure
     where that isn’t a constant-time operation with faster `!empty()`.
@@ -46,6 +60,9 @@
     Autoconf macro so it'll work on MariaDB based systems where the
     headers and/or library are installed in a `.../mariadb` directory
     instead of `.../mysql` for backwards compatibility.
+
+*   The RPM spec file now declares a build dependency on `mariadb-devel`
+    rather than `mysql-devel`.
 
 *   Reordered the `-L.` flag in the build lines to ensure the examples
     and test programs link against the in-tree version of MySQL++ if you

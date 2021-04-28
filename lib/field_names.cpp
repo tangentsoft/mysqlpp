@@ -1,10 +1,14 @@
 /***********************************************************************
  field_names.cpp - Implements the FieldNames class.
 
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2010 by Educational Technology Resources, Inc.  Others may
- also hold copyrights on code in this file.  See the CREDITS.txt file
- in the top directory of the distribution for details.
+ Copyright ©
+    1998 by Kevin Atkinson
+    1999-2001 by MySQL AB
+    2004-2010 by Educational Technology Resources, Inc.
+    2021 by Warren Young
+
+ Others may also hold copyrights on code in this file.  See the
+ CREDITS.txt file in the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -67,11 +71,11 @@ FieldNames::operator [](const std::string& s) const
 			// happen you'd have to have more than 2^(sizeof(int)*8)-1
 			// fields in your table.  If you do that, you deserve to
 			// lose anyway.
-			return (unsigned int)(it - begin());
+			return static_cast<unsigned int>(it - begin());
 		}
 	}
 
-	return (unsigned int)(end() - begin());	// same as above
+	return static_cast<unsigned int>(end() - begin());	// same as above
 }
 
 } // end namespace mysqlpp

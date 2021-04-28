@@ -5,9 +5,9 @@ the official DocBook XSL stylesheets, and will build with versions at
 least as far back as 1.69.1.  (Why these versions?  They're what comes
 with CentOS 5, the oldest system I still build this manual on.)
 
-To make the HTML version of the user manual, just type `make` or `make
-html` in this directory.  To make the PDF version of the manual, say
-`make pdf`.  To make both versions, say `make all`.
+To make the HTML version of the user manual, just type `make` or
+`make html` in this directory.  To make the PDF version of the manual,
+say `make pdf`.  To make both versions, say `make all`.
 
 
 
@@ -72,11 +72,20 @@ version for testing, and a single-user “Lite” version for $400.  There
 is no free version for personal use, however.
 
 Failing all that, `fo2pdf` falls back to the only free-as-in-liberty
-XSL-FO formmatter, [Apache FOP][5].  FOP
+XSL-FO formatter, [Apache FOP][5].  FOP
 may be available through your OS's package system.  For instance, with
-Debian tyep OSes, you can just say
+Debian type OSes, you can just say
 
     $ sudo apt install fop
+
+and on RHEL/CentOS through version 7:
+
+    $ sudo yum install fop
+
+That command also works in Fedora as of this writing. Since `fop` hasn’t
+been removed from Fedora, I suspect this package is moving to EPEL for
+use in EL8, and it just waiting for someone to get around to doing the
+port. Meanwhile, rebuilding Fedora’s package on your OS should work.
 
 If FOP is not in your OS's package system, you can download
 pre-built binaries from the FOP web site that will run with the

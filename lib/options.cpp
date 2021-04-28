@@ -1,7 +1,10 @@
 /***********************************************************************
  options.cpp - Implements the Option class hierarchy.
 
- Copyright © 2007-2009, 2018 by Educational Technology Resources, Inc.
+ Copyright ©
+    2007-2009, 2018 by Educational Technology Resources, Inc.
+    2021 by Warren Young
+
  Others may also hold copyrights on code in this file.  See the
  CREDITS file in the top directory of the distribution for details.
 
@@ -72,6 +75,7 @@ GuessConnectionOption::set(DBDriver* dbd)
 			dbd->set_option(MYSQL_OPT_GUESS_CONNECTION) ?
 				Option::err_NONE : Option::err_api_reject;
 #else
+    (void)dbd;
 	return Option::err_api_limit;
 #endif
 }
@@ -215,6 +219,7 @@ ReadTimeoutOption::set(DBDriver* dbd)
 			dbd->set_option(MYSQL_OPT_READ_TIMEOUT, &arg_) ?
 				Option::err_NONE : Option::err_api_reject;
 #else
+    (void)dbd;
 	return Option::err_api_limit;
 #endif
 }
@@ -238,6 +243,7 @@ ReconnectOption::set(DBDriver* dbd)
 				Option::err_NONE : Option::err_api_reject :
 				Option::err_disconnected;
 #else
+    (void)dbd;
 	return Option::err_api_limit;
 #endif
 }
@@ -251,6 +257,7 @@ ReportDataTruncationOption::set(DBDriver* dbd)
 			dbd->set_option(MYSQL_REPORT_DATA_TRUNCATION, &arg_) ?
 				Option::err_NONE : Option::err_api_reject;
 #else
+    (void)dbd;
 	return Option::err_api_limit;
 #endif
 }
@@ -264,6 +271,7 @@ SecureAuthOption::set(DBDriver* dbd)
 			dbd->set_option(MYSQL_SECURE_AUTH, &arg_) ?
 				Option::err_NONE : Option::err_api_reject;
 #else
+    (void)dbd;
 	return Option::err_api_limit;
 #endif
 }
@@ -295,6 +303,7 @@ SetClientIpOption::set(DBDriver* dbd)
 			dbd->set_option(MYSQL_SET_CLIENT_IP, arg_.c_str()) ?
 				Option::err_NONE : Option::err_api_reject;
 #else
+    (void)dbd;
 	return Option::err_api_limit;
 #endif
 }
@@ -308,6 +317,7 @@ SharedMemoryBaseNameOption::set(DBDriver* dbd)
 			dbd->set_option(MYSQL_SHARED_MEMORY_BASE_NAME, arg_.c_str()) ?
 				Option::err_NONE : Option::err_api_reject;
 #else
+    (void)dbd;
 	return Option::err_api_limit;
 #endif
 }
@@ -340,6 +350,7 @@ UseEmbeddedConnectionOption::set(DBDriver* dbd)
 			dbd->set_option(MYSQL_OPT_USE_EMBEDDED_CONNECTION) ?
 				Option::err_NONE : Option::err_api_reject;
 #else
+    (void)dbd;
 	return Option::err_api_limit;
 #endif
 }
@@ -353,6 +364,7 @@ UseRemoteConnectionOption::set(DBDriver* dbd)
 			dbd->set_option(MYSQL_OPT_USE_REMOTE_CONNECTION) ?
 				Option::err_NONE : Option::err_api_reject;
 #else
+    (void)dbd;
 	return Option::err_api_limit;
 #endif
 }
@@ -366,6 +378,7 @@ WriteTimeoutOption::set(DBDriver* dbd)
 			dbd->set_option(MYSQL_OPT_WRITE_TIMEOUT, &arg_) ?
 				Option::err_NONE : Option::err_api_reject;
 #else
+    (void)dbd;
 	return Option::err_api_limit;
 #endif
 }

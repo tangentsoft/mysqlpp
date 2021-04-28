@@ -104,12 +104,21 @@ public:
 		mutex.lock();
 	}
 
+#if __cplusplus >= 201103L
+	// Disallow copies and assignments
+    ScopedLock(const ScopedLock&) = delete;
+	const ScopedLock& operator =(const ScopedLock&) = delete;
+#endif
+
 	/// \brief Unlock the mutex.
 	~ScopedLock() { mutex_.unlock(); }
 
 private:
-	ScopedLock(const ScopedLock&);				// can't copy
-	ScopedLock& operator =(const ScopedLock&);	// can't assign
+#if __cplusplus < 201103L
+	// Pre-C++11 alternatives to disallow copies and assignments.
+	ScopedLock(const ScopedLock&);
+	ScopedLock& operator =(const ScopedLock&);
+#endif
 
 	BeecryptMutex& mutex_;	///< the mutex object we manage
 };

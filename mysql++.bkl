@@ -63,7 +63,7 @@
     <dll id="mysqlpp">
       <dllname>mysqlpp$(DEBUG_SUFFIX)</dllname>
       <libname>mysqlpp$(DEBUG_SUFFIX)</libname>
-      <so_version>3.2.5</so_version>
+      <so_version>3.3.0</so_version>
 
       <sources>
         lib/beemutex.cpp
@@ -173,8 +173,8 @@
     <if cond="FORMAT in ['autoconf', 'gnu', 'xcode2']">
       <include>lib</include>
       <include>@MYSQL_C_INC_DIR@</include>
-      <lib-path>@MYSQL_C_LIB_DIR@</lib-path>
       <lib-path>.</lib-path>
+      <lib-path>@MYSQL_C_LIB_DIR@</lib-path>
     </if>
 
     <if cond="FORMAT in ['msvs2003prj', 'msvs2005prj', 'msvs2008prj']">
@@ -208,8 +208,8 @@
       </ldflags>
       <include>lib</include>
       <include>"$(MYSQL_WIN_DIR)\include"</include>
-      <lib-path>"$(MYSQL_WIN_DIR)\lib"</lib-path>
       <lib-path>.</lib-path>
+      <lib-path>"$(MYSQL_WIN_DIR)\lib"</lib-path>
       <sys-lib>mysql</sys-lib>
       <sys-lib>mysqlpp$(DEBUG_SUFFIX)</sys-lib>
     </if>
@@ -433,9 +433,10 @@
       <command>
         rm -rf doc/latex doc/pdf ; \
         cd doc/html/refman ; \
-        for e in dot html map md5 png ; \
+        rm -f doxygen.css ; \
+        for e in dot html js map md5 png ; \
         do \
-          rm -f doxygen.css [a-z]*.$(DDE) ; \
+          rm -f [a-z]*.$(DDE) ; \
         done
       </command>
     </modify-target>
@@ -513,8 +514,16 @@
     <action id="@PACKAGE_NAME@-@PACKAGE_VERSION@">
       <!-- Set up package directory -->
       <command>
-        for d in config doc/html/refman/ssx doc/html/userman \
-            doc/refman doc/userman examples lib ssx test ; \
+        for d in config \
+            doc/html/refman/search \
+            doc/html/refman/ssx \
+            doc/html/userman \
+            doc/refman/search \
+            doc/userman \
+            examples \
+            lib \
+            ssx \
+            test ; \
         do \
           mkdir -p $(PKGNAME)/$(DDD) ; \
         done
@@ -552,7 +561,11 @@
           done
         </command>
         <command>
-          find doc \( -name *.css -o -name *.html \) -exec install {} $(PKGNAME)/{} \;
+          find doc \( -name *.css \
+                   -o -name *.html \
+                   -o -name *.js \
+                   -o -name *.png \) \
+                   -exec install -m 644 {} $(PKGNAME)/{} \;
         </command>
         <command>
           cp doc/html/refman/*.png $(PKGNAME)/doc/html/refman

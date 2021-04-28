@@ -47,7 +47,7 @@ extern const char* kpcSampleDatabase;
 static string
 version_str(int packed)
 {
-	char buf[9];
+	char buf[12];
 	snprintf(buf, sizeof(buf), "%d.%d.%d",
 			(packed & 0xFF0000) >> 16,
 			(packed & 0x00FF00) >> 8,
@@ -142,7 +142,7 @@ main(int argc, char *argv[])
 				"  description MEDIUMTEXT NULL) " <<
 				"ENGINE = InnoDB" <<
 				" CHARACTER SET " MYSQLPP_UTF8_CS
-                " COLLATE " MYSQLPP_UTF8_COL;
+				" COLLATE " MYSQLPP_UTF8_COL;
 		query.execute();
 
 		// Set up the template query to insert the data.  The parse()

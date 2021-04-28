@@ -155,6 +155,8 @@ test(T test, size_t len)
 int
 main()
 {
+    mysql_library_init(0, 0, 0);    // no longer implicit in newer MariaDB
+
 	char s[] = "Doodle me, James, doodle me!";
 	const size_t len = strlen(s);
 

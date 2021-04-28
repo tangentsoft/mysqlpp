@@ -1,17 +1,16 @@
 # What It Is
 
 MySQL++ is a C++ wrapper for the MySQL and MariaDB C APIs.  It is built
-around STL principles, to make dealing with the database as easy as
-dealing with an STL container.  MySQL++ relieves the programmer of
-dealing with cumbersome C data structures, generation of repetitive SQL
-statements, and manual creation of C++ data structures to mirror the
-database schema.
+on the same principles as the Standard C++ Library to make dealing with
+the database as easy as dealing with `std` containers. MySQL++ also
+provides facilities that let you avoid the most repetitive sorts of SQL
+within your own code, providing native C++ interfaces for these common
+tasks.
 
 MySQL++’s development home is its [Fossil repository][home]. You may be
-reading this via its [GitHub mirror][ghm], but that repository is
-read-only, meant as a download-only mirror and for use by automation
-tooling based on Git. Checkins to the Fossil repository get pushed
-into the GitHub mirror within a day.
+reading this via its read-only [GitHub mirror][ghm], intended for use by
+automation tooling based on Git. Checkins to the Fossil repository get
+pushed into the GitHub mirror within an hour.
 
 [ghm]:  https://github.com/tangentsoft/mysqlpp
 [home]: https://tangentsoft.com/mysqlpp/
@@ -22,25 +21,26 @@ into the GitHub mirror within a day.
 To build MySQL++, you must have the MySQL/MariaDB C API development
 files installed.
 
-On Unixy systems (Linux, Mac OS X, Cygwin, \*BSD, Solaris...), the MySQL
-development files are installed if you build MySQL from source.  If you
-installed MySQL as a binary package, then the development files are
-often packaged separately from the MySQL server itself.  It's common for
-the package containing the development files to be called something like
+On Unixy systems — Linux, macOS, Cygwin, \*BSD, Solaris... — you are
+most likely using a binary MySQL/MariaDB package where the server,
+client, and development pieces are packaged separately.  The package
+containing the development files is typically called something like
 `MySQL-devel`, `libmysqlclient-dev`, etc.
 
 If you're building on Windows with Visual C++ or MinGW, you need to
-install the native Windows port of MySQL or MariaDB.  The way that’s
-packaged changes occasionally, so you might have to select a "complete"
-version rather than the server-only version. You might also have to
-choose a “custom” installation option to get the development files.
+install the native Windows port of MySQL or MariaDB.  That includes the
+development files in the installer, but depending on how it was built,
+those files might not be installed by default.  You might have to select
+a “complete” or “custom” install to get what you need to build MySQL++
+against that version of MySQL/MariaDB.
 
-Another pitfall is that the project files we ship assume that you've
-installed the current General Availability release of MySQL in its
-default location on your computer. If you've installed a different
-version, or if those packaging the development files move them around —
-which happens occasionally! — you'll have to adjust the link and include
-file paths in the project settings.
+Another common pitfall is that the Windows installers install
+MySQL/MariaDB to a path with the version number embedded, which means we
+cannot ship a single set of build system files that works with all
+versions. We simply point at the General Availability version of
+MySQL/MariaDB at the time of release, which may well be different from
+the version installed on your computer.  You will have to adjust the
+link and include file paths in the build system files accordingly.
 
 
 # Additional Things to Read
@@ -53,7 +53,13 @@ For authorship information, see [the CREDITS.txt file][f1].
 
 For license information, see [the COPYING.txt file][f2].
 
-If you want to change MySQL++, see [the HACKERS.md file][f3].
+If you want to change MySQL++ itself, see [the HACKERS.md file][f3].
+
+If you want to change the MySQL++ user manual, also read
+[the user manual’s README][umr].
+
+If you want to change the MySQL++ reference manual, see
+[the Doxygen manual][dgm].
 
 You should have received a user manual and a reference manual with
 MySQL++. If not, you can read a recent version [online][docs].
@@ -62,12 +68,14 @@ Search the MySQL++ [mailing list archives][ml] and [its forum][for] if
 you have more questions.
 
 
+[dgm]:  https://www.doxygen.nl/manual/
 [docs]: https://tangentsoft.com/mysqlpp/doc/
 [f1]:   https://tangentsoft.com/mysqlpp/doc/trunk/CREDITS.txt
 [f2]:   https://tangentsoft.com/mysqlpp/doc/trunk/COPYING.txt
 [f3]:   https://tangentsoft.com/mysqlpp/doc/trunk/HACKERS.md
 [for]:  https://tangentsoft.com/mysqlpp/froum/
 [ml]:   http://lists.mysql.com/plusplus/
+[umr]:  https://tangentsoft.com/mysqlpp/doc/trunk/doc/userman/README.md
 
 
 # Building the Library
@@ -118,19 +126,3 @@ working properly.  Also, [these examples][exr] give many examples of
 the proper use of MySQL++.
 
 [exr]: /doc/trunk/README-examples.txt
-
-
-# If You Want to Hack on MySQL++...
-
-If you intend to submit a change to the MySQL++ project, see
-[the HACKERS file][f3].
-
-If you want to change the MySQL++ user manual, also read
-[the user manual’s README][umr].
-
-If you want to change the MySQL++ reference manual, see
-[the Doxygen manual][dgm].
-
-
-[dgm]: http://www.doxygen.nl/manual/
-[umr]: https://tangentsoft.com/mysqlpp/doc/trunk/doc/userman/README.md

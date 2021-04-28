@@ -116,11 +116,13 @@ set -x &&
 # is no Makefile.am file, but it does still copy over the missing files.
 if [ -n "$success" ]
 then
+    # autoreconf from old Autoconf doesn't pass -I to aclocal properly.
+    export ACLOCAL="aclocal -I config -I '${BAKEFILE_M4}'"
 	rm -f config.cache
 	mv autoconf_inc.m4 config > /dev/null 2>&1	# don't care if it fails
 	set -x &&
-        automake --add-missing > /dev/null 2>&1 ;
-		autoreconf -i -I "$BAKEFILE_M4" &&
+        automake --add-missing --force-missing > /dev/null 2>&1 ;
+		autoreconf -i &&
 		./configure $MAINT_FLAGS $* &&
 		make lib/querydef.h lib/ssqls.h &&
 		set +x &&

@@ -2,10 +2,14 @@
  result.cpp - Implements the ResultBase, StoreQueryResult and
 	UseQuery Result classes.
 
- Copyright (c) 1998 by Kevin Atkinson, (c) 1999-2001 by MySQL AB, and
- (c) 2004-2007 by Educational Technology Resources, Inc.  Others may
- also hold copyrights on code in this file.  See the CREDITS.txt file
- in the top directory of the distribution for details.
+ Copyright
+    © 1998 by Kevin Atkinson
+    © 1999-2001 by MySQL AB
+    © 2004-2007 by Educational Technology Resources, Inc.
+    © 2020 by Warren Young
+
+ Others may also hold copyrights on code in this file.  See the
+ CREDITS.txt file in the top directory of the distribution for details.
 
  This file is part of MySQL++.
 
@@ -110,8 +114,10 @@ copacetic_(res && dbd)
 				++it;
 			}
 		}
-
 		dbd->free_result(res);
+		if (throw_exceptions() && dbd->errnum() != 0) {
+			throw UseQueryError(dbd->error());
+		}
 	}
 }
 
@@ -190,6 +196,9 @@ UseQueryResult::fetch_row() const
 		}
 	}
 	else {
+		if (throw_exceptions() && driver_->errnum() != 0) {
+			throw UseQueryError(driver_->error());
+		}
 		// Prior to v3, this was considered an error, but it just means
 		// we've fallen off the end of a "use" query's result set.  You
 		// can't predict when this will happen, but it isn't an error.

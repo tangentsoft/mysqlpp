@@ -7,7 +7,7 @@
 /// leak in the pool.
 
 /***********************************************************************
- Copyright (c) 2010 by Joel Fielder.  Others may also hold copyrights
+ Copyright © 2010 by Joel Fielder.  Others may also hold copyrights
  on code in this file.  See the CREDITS.txt file in the top directory
  of the distribution for details.
 
@@ -59,6 +59,15 @@ public:
 	/// ConnectionPool::grab(), but we can call safe_grab() instead.
 	explicit ScopedConnection(ConnectionPool& pool, bool safe = false);
 
+#if __cplusplus >= 201103L
+	// ScopedConnection objects cannot be copied.  We want them to be
+	// tightly scoped to their use point, not put in containers or
+	// passed around promiscuously.
+	ScopedConnection(ScopedConnection&&) = default;
+	ScopedConnection(const ScopedConnection& no_copies) = delete;
+	const ScopedConnection& operator=(const ScopedConnection& no_copies) = delete;
+#endif
+
 	/// \brief Destructor
 	///
 	/// Releases the Connection back to the ConnectionPool.
@@ -74,11 +83,11 @@ public:
 	operator void*() const { return connection_; }
 
 private:
-	// ScopedConnection objects cannot be copied.  We want them to be
-	// tightly scoped to their use point, not put in containers or
-	// passed around promiscuously.
-	ScopedConnection(const ScopedConnection& no_copies);   
+#if __cplusplus < 201103L
+	// Pre C++11 alternative to no-copies ctors above.
+	ScopedConnection(const ScopedConnection& no_copies);
 	const ScopedConnection& operator=(const ScopedConnection& no_copies);
+#endif
 
 	ConnectionPool& pool_;
 	Connection* const connection_;

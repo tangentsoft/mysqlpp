@@ -225,11 +225,13 @@ typedef unsigned long ulong;
 // MySQL header.  Basically, the above largely replaces MySQL's my_global.h
 // while actually working with C++.  This is why we disobey the MySQL
 // developer docs, which recommend including my_global.h before mysql.h.
+extern "C" {
 #if defined(MYSQLPP_MYSQL_HEADERS_BURIED)
 #	include <mysql/mysql.h>
 #else
 #	include <mysql.h>
 #endif
+}
 
 // The Unicode chapter of the user manual justifies the following.
 #if MYSQL_VERSION_ID >= 50500

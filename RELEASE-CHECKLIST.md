@@ -58,3 +58,6 @@
     to that same releases directory.
 
 -   Update “MySQL++” wiki document to point to new release packages.
+
+-   Send an announcement update via the public repo:
+    [](https://tangentsoft.com/mysqlpp/announce).

@@ -135,7 +135,7 @@
         <depends>lib/querydef.h</depends>
 
         <cxxflags>@PTHREAD_CFLAGS@</cxxflags>
-        <include>.</include>
+        <include>$(srcdir)</include>
         <include>@MYSQL_C_INC_DIR@</include>
         <ldflags>-L@MYSQL_C_LIB_DIR@</ldflags>
         <ldflags>-l@MYSQL_C_LIB_NAME@ @PTHREAD_LIBS@ @MYSQLPP_EXTRA_LIBS@</ldflags>
@@ -248,7 +248,7 @@
     <lib id="ssqls2parse" template="programs">
       <libname>mysqlpp_ssqls2parse</libname>
       <sources>ssx/parsev2.cpp</sources>
-      <include>.</include>
+      <include>$(SRCDIR)/lib</include>
       <depends>mysqlpp</depends>
       <sys-lib>mysqlpp</sys-lib>
     </lib>
@@ -451,26 +451,26 @@
     </modify-target>
 
     <action id="Makefile">
-      <depends-on-file>configure.ac</depends-on-file>
-      <depends-on-file>install.hta.in</depends-on-file>
-      <depends-on-file>mysql++.bkl</depends-on-file>
-      <depends-on-file>mysql++.spec.in</depends-on-file>
-      <depends-on-file>doc/userman/userman.dbx.in</depends-on-file>
-      <depends-on-file>lib/Doxyfile.in</depends-on-file>
-      <depends-on-file>lib/mysql++.h.in</depends-on-file>
-      <depends-on-file>ssx/Doxyfile.in</depends-on-file>
+      <depends-on-file>$(srcdir)/configure.ac</depends-on-file>
+      <depends-on-file>$(srcdir)/install.hta.in</depends-on-file>
+      <depends-on-file>$(srcdir)/mysql++.bkl</depends-on-file>
+      <depends-on-file>$(srcdir)/mysql++.spec.in</depends-on-file>
+      <depends-on-file>$(srcdir)/doc/userman/userman.dbx.in</depends-on-file>
+      <depends-on-file>$(srcdir)/lib/Doxyfile.in</depends-on-file>
+      <depends-on-file>$(srcdir)/lib/mysql++.h.in</depends-on-file>
+      <depends-on-file>$(srcdir)/ssx/Doxyfile.in</depends-on-file>
       <command>bakefile_gen</command>
       <command>./config.status</command>
     </action>
 
     <action id="lib/ssqls.h">
-      <command>cd lib ; ./ssqls.pl</command>
-      <depends-on-file>lib/ssqls.pl</depends-on-file>
+      <command>cd lib ; $(srcdir)/../lib/ssqls.pl</command>
+      <depends-on-file>$(srcdir)/lib/ssqls.pl</depends-on-file>
     </action>
 
     <action id="lib/querydef.h">
-      <command>cd lib ; ./querydef.pl</command>
-      <depends-on-file>lib/querydef.pl</depends-on-file>
+      <command>cd lib ; $(srcdir)/../lib/querydef.pl</command>
+      <depends-on-file>$(srcdir)/lib/querydef.pl</depends-on-file>
     </action>
 
     <action id="tags">
@@ -481,8 +481,8 @@
 
     <action id="doc/html/refman/index.html">
       <depends-on-file>lib/Doxyfile</depends-on-file>
-      <depends-on-file>lib/*.cpp</depends-on-file>
-      <depends-on-file>lib/*.h</depends-on-file>
+      <depends-on-file>$(srcdir)/lib/*.cpp</depends-on-file>
+      <depends-on-file>$(srcdir)/lib/*.h</depends-on-file>
       <command>
         cd lib ; doxygen > /dev/null
       </command>
@@ -490,16 +490,16 @@
 
     <action id="doc/html/refman/ssx/index.html">
       <depends-on-file>ssx/Doxyfile</depends-on-file>
-      <depends-on-file>ssx/*.cpp</depends-on-file>
-      <depends-on-file>ssx/*.h</depends-on-file>
+      <depends-on-file>$(srcdir)/ssx/*.cpp</depends-on-file>
+      <depends-on-file>$(srcdir)/ssx/*.h</depends-on-file>
       <command>
         cd ssx ; doxygen > /dev/null
       </command>
     </action>
 
     <action id="doc/html/userman/index.html">
-      <depends-on-file>doc/userman/*.dbx</depends-on-file>
-      <depends-on-file>doc/userman/userman.dbx.in</depends-on-file>
+      <depends-on-file>$(srcdir)/doc/userman/*.dbx</depends-on-file>
+      <depends-on-file>$(srcdir)/doc/userman/userman.dbx.in</depends-on-file>
       <command>
         cd doc/userman ; make html pdf
       </command>

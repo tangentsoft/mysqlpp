@@ -117,10 +117,10 @@ AC_OUTPUT([\
 	lib/Doxyfile \
 	lib/mysql++.h \
 	ssx/Doxyfile \
+    tools/print-version \
 	abi.xml \
 	mysql++.spec \
-	Makefile \
-	version
+	Makefile
 ])
-chmod +x version
+chmod +x tools/print-version
 

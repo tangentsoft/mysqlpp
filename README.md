@@ -43,9 +43,9 @@ the version installed on your computer.  You will have to adjust the
 link and include file paths in the build system files accordingly.
 
 
-# Additional Things to Read
+# Documentation
 
-Each major platform we support has a dedicated `README-*.txt`
+Each major platform we support has [a dedicated `README-*.txt`][rmpf]
 file for it containing information specific to that platform.
 Please read it.
 
@@ -53,7 +53,7 @@ For authorship information, see [the CREDITS.txt file][f1].
 
 For license information, see [the COPYING.txt file][f2].
 
-If you want to change MySQL++ itself, see [the HACKERS.md file][f3].
+If you want to change MySQL++ itself, see [the contribution guide][f3].
 
 If you want to change the MySQL++ user manual, also read
 [the user manual’s README][umr].
@@ -72,9 +72,10 @@ you have more questions.
 [docs]: https://tangentsoft.com/mysqlpp/doc/
 [f1]:   https://tangentsoft.com/mysqlpp/doc/trunk/CREDITS.txt
 [f2]:   https://tangentsoft.com/mysqlpp/doc/trunk/COPYING.txt
-[f3]:   https://tangentsoft.com/mysqlpp/doc/trunk/HACKERS.md
+[f3]:   https://tangentsoft.com/mysqlpp/doc/trunk/CONTRIBUTING.md
 [for]:  https://tangentsoft.com/mysqlpp/froum/
 [ml]:   http://lists.mysql.com/plusplus/
+[rmpf]: https://tangentsoft.com/mysqlpp/dir?re=README-.*&ci=trunk
 [umr]:  https://tangentsoft.com/mysqlpp/doc/trunk/doc/userman/README.md
 
 

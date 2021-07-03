@@ -87,8 +87,8 @@ of input files.  We currently support these build systems:
 
 *   **autoconf:** Use this method for most Unix type platforms along
     with [the generic instructions][unix].  We have supplemental
-    information for [Linux][linux], [macOS][macos], [Cygwin][cyg], and
-    [Solaris][sol].
+    information for [Linux][linux], [macOS], [Cygwin], and
+    [Solaris].
 
 *   **MinGW:** We ship `Makefile.mingw` for MinGW. See
     [its README][mingw] for details.
@@ -102,13 +102,13 @@ of input files.  We currently support these build systems:
 *   **Xcode:** We ship an Xcode project file, but it hasn't been well
     tested, since the autoconf method works just fine on macOS.
 
-[cyg]:   https://tangentsoft.com/mysqlpp/doc/trunk/README-Cygwin.txt
-[linux]: https://tangentsoft.com/mysqlpp/doc/trunk/README-Linux.txt
-[macos]: https://tangentsoft.com/mysqlpp/doc/trunk/README-Mac-OS-X.txt
-[mingw]: https://tangentsoft.com/mysqlpp/doc/trunk/README-MinGW.txt
-[sol]:   https://tangentsoft.com/mysqlpp/doc/trunk/README-Solaris.txt
-[unix]:  https://tangentsoft.com/mysqlpp/doc/trunk/README-Unix.txt
-[vcpp]:  https://tangentsoft.com/mysqlpp/doc/trunk/README-Visual-C%2B%2B.txt
+[Cygwin]:  https://tangentsoft.com/mysqlpp/doc/trunk/README-Cygwin.txt
+[linux]:   https://tangentsoft.com/mysqlpp/doc/trunk/README-Linux.txt
+[macOS]:   https://tangentsoft.com/mysqlpp/doc/trunk/README-macOS.txt
+[mingw]:   https://tangentsoft.com/mysqlpp/doc/trunk/README-MinGW.txt
+[Solaris]: https://tangentsoft.com/mysqlpp/doc/trunk/README-Solaris.txt
+[unix]:    https://tangentsoft.com/mysqlpp/doc/trunk/README-Unix.txt
+[vcpp]:    https://tangentsoft.com/mysqlpp/doc/trunk/README-Visual-C%2B%2B.txt
 
 
 

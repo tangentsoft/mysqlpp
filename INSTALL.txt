@@ -4,7 +4,7 @@ instructions for all popular platforms:
 
 	README-Cygwin.txt     - for Cygwin
 	README-Linux.txt      - for Linux
-	README-Mac-OS-X.txt   - for Mac OS X
+	README-macOS.txt      - for macOS
 	README-MinGW.txt      - for MinGW
 	README-Solaris.txt    - for Solaris
 	README-Visual-C++.txt - for Visual C++

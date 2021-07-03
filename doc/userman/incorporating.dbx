@@ -262,7 +262,7 @@
       call <filename>ld</filename> directly.</para>
 
       <para>Another tricky bit on OS X is the concept of Universal
-      binaries. See <filename>README-Mac-OS-X.txt</filename> for
+      binaries. See <filename>README-macOS.txt</filename> for
       details on building a Universal version of the MySQL++ library,
       if you need one. By default, you only get a version tuned for
       the system type you build it on.</para>

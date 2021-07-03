@@ -51,7 +51,7 @@
     do this, exactly, varies based on platform and what tools you
     have on hand. See <filename>README-Visual-C++.txt</filename>,
     <filename>README-MinGW.txt</filename>, or
-    <filename>README-Mac-OS-X.txt</filename>, as appropriate.</para>
+    <filename>README-macOS.txt</filename>, as appropriate.</para>
   </sect2>
 
 

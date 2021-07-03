@@ -6,7 +6,7 @@ Platform Variations
 
         README-Cygwin.txt
         README-Linux.txt
-        README-Mac-OS-X.txt
+        README-macOS.txt
         README-Solaris.txt
 
     There are no special instructions for any other Unix flavors.

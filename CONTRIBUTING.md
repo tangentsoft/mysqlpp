@@ -6,6 +6,64 @@ some rules and hints to keep in mind while you work.
 [home]: https://tangentsoft.com/mysqlpp/
 
 
+## <a id="gs-fossil"></a> Getting Started with Fossil
+
+The MySQL++ software project is hosted using the Fossil [distributed
+version control system][dvcs], which provides most of the features of
+GitHub without [the complexities of Git][fvg].
+
+I recommend one of three paths to learning Fossil:
+
+*   Those coming from command line Git will benefit from the brief
+    command-based approach taken by the [Git to Fossil Translation
+    Guide][gitusr], since it builds on your existing knowledge.
+
+*   The [Fossil Quick Start][fqsg] takes you briefly through the primary
+    topics.  This is best for people with existing version control
+    knowledge, particularly those who’ve used version control primarily
+    via a GUI or web app of some sort.  This path is also good for those
+    coming from some other command-line version control system.
+
+    Note in particular the [Fossil Glossary][fgloss] linked from the
+    quick start doc: it outlines the key concepts you must internalize
+    to understand how Fossil works at the user level.
+
+*   If you prefer a linear tutorial approach or have little to no
+    experience with modern version control systems, the 3rd edition of
+    “[Fossil Version Control: A User Guide][fbook]” is worth reading.
+    It’s novella length, so you should be able to get through it in a
+    single read between mealtimes, if you don’t stop to experiment.
+
+I do *not* recommend starting with [the Fossil doc index][fdoc] and
+seeking topics out from there; not to begin with, anyway.  That path is
+best once you have some Fossil experience and know what you’re looking
+for.
+
+If you have questions about Fossil, ask on [the Fossil forum][ffor]
+where I, your humble project maintainer, am active. I also work on the
+Fossil docs quite a bit, so if your question really isn’t answered
+somewhere in the above material, I might just solve it by extending the
+Fossil docs.
+
+Fossil is available in many binary package repositories, and there are
+[official precompiled binaries][fbin] for several popular platforms. The
+project repository requires at least Fossil version 2.1, so if you’re
+stuck with a Fossil 1.*x* binary, you will have to [build Fossil from
+source][bffs].
+
+
+[bffs]:   https://fossil-scm.org/home/doc/trunk/www/build.wiki
+[dvcs]:   https://en.wikipedia.org/wiki/Distributed_revision_control
+[fbin]:   https://fossil-scm.org/index.html/uv/download.html
+[fbook]:  https://fossil-scm.org/fossil-book/uv/FossilBook.html
+[fdoc]:   https://fossil-scm.org/home/doc/trunk/www/permutedindex.html
+[ffor]:   https://fossil-scm.org/forum/
+[fgloss]: https://fossil-scm.org/home/doc/trunk/www/glossary.md
+[fqsg]:   https://fossil-scm.org/home/doc/trunk/www/quickstart.wiki
+[fvg]:    https://fossil-scm.org/home/doc/trunk/www/fossil-v-git.wiki
+[gitusr]: https://fossil-scm.org/home/doc/trunk/www/gitusers.md
+
+
 ## <a id="fossil-anon" name="anon"></a> Fossil Anonymous Access
 
 There are three ways to clone the repository anonymously using Fossil.

@@ -1,15 +1,13 @@
-MySQL++ was created by Kevin Atkinson during 1998.  From version
-1.0 (released in June 1999) through 1.7.9 (May 2001), the primary
-maintainer was Sinisa Milivojevic <sinisa@mysql.com>.  Neither Kevin
-nor Sinisa are currently involved in MySQL++ development.  The current
-maintainer is Warren Young <mysqlpp@etr-usa.com>, starting with
-version 1.7.10 in August of 2004.
+MySQL++ was created by Kevin Atkinson during 1998.  From version 1.0
+(released in June 1999) through 1.7.9 (May 2001), the primary maintainer
+was Sinisa Milivojevic.  Neither Kevin nor Sinisa are currently involved
+in MySQL++ development.  The current maintainer is Warren Young,
+starting with version 1.7.10 in August of 2004.
 
 For a fuller account of the library's history, see the first chapter of
 the user manual.  For the nitty-gritty details, see the ChangeLog.md
 file in the root package directory.  Change log items since 1.7.9 that
 aren't attributed to anyone else were done by Warren Young.
-
 
 Other contributors of note since 1.7.10:
 
@@ -43,7 +41,7 @@ Other contributors of note since 1.7.10:
     flag propagation in Query.
 
     Jim Wallace <jwallace@kaneva.com> demonstrated the need
-    for BadQuery::errnum(), and contributed the patches and also
+    for BadQuery::errnum(), then contributed the patches and also
     examples/deadlock.cpp to test that this feature does what it is
     supposed to.
 
@@ -85,17 +83,11 @@ apparently written by Kevin Atkinson:
 
     D. Hawkins and E. Loic for their autoconf + automake contribution.
 
-
-See the ChangeLog.md file for further credits and details about the
-differences between the many versions of this library.
-
-
 Please do not email any of these people with general questions about
-MySQL++. All of us who are still active in MySQL++ development read the
-mailing list, so questions sent there do get to us:
+MySQL++. All of us who are still active in MySQL++ development read
+the forum, so questions sent there do get to us:
 
-    http://lists.mysql.com/plusplus
+    https://tangentsoft.com/mysqlpp/forum/
 
-The mailing list is superior to private email because the answers are
-archived for future questioners to find, and because you are likely to
-get answers from more people.
+Answers there are archived for future questioners to find, and you are
+likely to get answers from more people.

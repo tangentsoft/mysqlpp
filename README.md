@@ -64,8 +64,7 @@ If you want to change the MySQL++ reference manual, see
 You should have received a user manual and a reference manual with
 MySQL++. If not, you can read a recent version [online][docs].
 
-Search the MySQL++ [mailing list archives][ml] and [its forum][for] if
-you have more questions.
+Visit the MySQL++ [forum][for] if you have more questions.
 
 
 [dgm]:  https://www.doxygen.nl/manual/
@@ -74,7 +73,6 @@ you have more questions.
 [f2]:   https://tangentsoft.com/mysqlpp/doc/trunk/COPYING.txt
 [f3]:   https://tangentsoft.com/mysqlpp/doc/trunk/CONTRIBUTING.md
 [for]:  https://tangentsoft.com/mysqlpp/froum/
-[ml]:   http://lists.mysql.com/plusplus/
 [rmpf]: https://tangentsoft.com/mysqlpp/dir?re=README-.*&ci=trunk
 [umr]:  https://tangentsoft.com/mysqlpp/doc/trunk/doc/userman/README.md
 

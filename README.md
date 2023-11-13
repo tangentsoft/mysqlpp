@@ -72,7 +72,7 @@ Visit the MySQL++ [forum][for] if you have more questions.
 [f1]:   https://tangentsoft.com/mysqlpp/doc/trunk/CREDITS.txt
 [f2]:   https://tangentsoft.com/mysqlpp/doc/trunk/COPYING.txt
 [f3]:   https://tangentsoft.com/mysqlpp/doc/trunk/CONTRIBUTING.md
-[for]:  https://tangentsoft.com/mysqlpp/froum/
+[for]:  https://tangentsoft.com/mysqlpp/forum/
 [rmpf]: https://tangentsoft.com/mysqlpp/dir?re=README-.*&ci=trunk
 [umr]:  https://tangentsoft.com/mysqlpp/doc/trunk/doc/userman/README.md
 
